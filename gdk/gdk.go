@@ -27,7 +27,7 @@ package gdk
 import "C"
 import (
 	"errors"
-	"opensource.conformal.com/go/gotk3/glib"
+	"github.com/conformal/gotk3/glib"
 	"runtime"
 	"unsafe"
 )
