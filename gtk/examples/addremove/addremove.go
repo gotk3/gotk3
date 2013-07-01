@@ -43,14 +43,15 @@ func windowWidget() *gtk.Widget {
 	// of any struct type embedding a glib.InitiallyUnowned, and by setting
 	// a finalizer to unreference the object when Go has lost scope of the
 	// variable.  Due to this design, widgets may be allocated freely
-	// without worry about handling memory incorrectly.
+	// without worrying about handling memory incorrectly.
 	//
 	// The following code is not entirely useful (except to demonstrate
 	// this point), but it is also not "incorrect" as the C equivalent
 	// would be.
 	unused, err := gtk.LabelNew("This label is never used")
 	if err != nil {
-		// Calling Destroy() is also unnecessary in this case.
+		// Calling Destroy() is also unnecessary in this case.  The
+		// memory will still be freed with or without calling it.
 		unused.Destroy()
 	}
 
