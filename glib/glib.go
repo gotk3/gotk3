@@ -28,6 +28,7 @@ package glib
 import "C"
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"runtime"
 	"unsafe"
@@ -35,6 +36,7 @@ import (
 
 var (
 	callbackContexts []*CallbackContext
+	idleFnContexts   []*idleFnContext
 )
 
 /*
@@ -143,6 +145,70 @@ func _go_glib_callback(cbi *C.cbinfo) {
 		bret, _ := ret[0].Interface().(bool)
 		cbi.ret = gbool(bret)
 	}
+}
+
+/*
+ * Main event loop
+ */
+
+type idleFnContext struct {
+	f    interface{}
+	args []reflect.Value
+	idl  *C.idleinfo
+}
+
+func IdleAdd(f interface{}, datas ...interface{}) (uint, error) {
+	rf := reflect.ValueOf(f)
+	if rf.Kind() != reflect.Func {
+		return 0, errors.New("f is not a function")
+	}
+	t := rf.Type()
+	if t.NumIn() != len(datas) {
+		return 0, errors.New("Number of arguments do not match")
+	}
+
+	ctx := &idleFnContext{}
+
+	var vals []reflect.Value
+	for i := range datas {
+		ntharg := t.In(i)
+		val := reflect.ValueOf(datas[i])
+		if ntharg.Kind() != val.Kind() {
+			s := fmt.Sprint("Types of arg", i, "do not match")
+			return 0, errors.New(s)
+		}
+		vals = append(vals, val)
+	}
+
+	ctx.f = f
+	ctx.args = vals
+
+	idleFnContexts = append(idleFnContexts, ctx)
+
+	idl := C._g_idle_add(C.int(len(idleFnContexts) - 1))
+
+	ctx.idl = idl
+
+	return uint(idl.id), nil
+}
+
+//export _go_glib_idle_fn
+func _go_glib_idle_fn(idl *C.idleinfo) {
+	ctx := idleFnContexts[int(idl.func_n)]
+	rf := reflect.ValueOf(ctx.f)
+	rv := rf.Call(ctx.args)
+	if len(rv) == 1 {
+		if rv[0].Kind() == reflect.Bool {
+			idl.ret = gbool(rv[0].Bool())
+			return
+		}
+	}
+	idl.ret = gbool(false)
+}
+
+//export _go_nil_unused_idle_ctx
+func _go_nil_unused_idle_ctx(n C.int) {
+	idleFnContexts[int(n)] = nil
 }
 
 /*

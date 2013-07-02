@@ -108,6 +108,60 @@ cbinfo_get_id(cbinfo *cbi)
 	return (cbi->id);
 }
 
+typedef struct {
+	int		func_n;
+	gboolean	ret;
+	guint		id;
+} idleinfo;
+
+/* Call to Go to nil this context to free memory next garbage collection */
+extern void _go_nil_unused_idle_ctx(int n);
+
+/*
+ * Called after a function is removed from the main loop context to free the
+ * idle context.
+ */
+static void
+idleinfo_free(gpointer data)
+{
+	idleinfo	*idl = (idleinfo *)data;
+
+	_go_nil_unused_idle_ctx(idl->func_n);
+	free(idl);
+}
+
+/* Call to Go to run func in the main loop context */
+extern void _go_glib_idle_fn(idleinfo *idl);
+
+static gboolean
+_g_idle_run(gpointer user_data)
+{
+	idleinfo	*idl = (idleinfo *)user_data;
+
+	_go_glib_idle_fn(idl);
+	return (idl->ret);
+}
+
+/*
+ * Create idleinfo context and add _g_idle_run and its context to run
+ * in the GTK main loop during idle state
+ */
+static idleinfo *
+_g_idle_add(int func_n)
+{
+	idleinfo	*idl;
+
+	idl = (idleinfo *)malloc(sizeof(idleinfo));
+	idl->func_n = func_n;
+	idl->id = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, _g_idle_run,
+	    (gpointer)idl, idleinfo_free);
+	return (idl);
+}
+
+/*
+ * GValue
+ */
+
 static GValue *
 _g_value_alloc()
 {
