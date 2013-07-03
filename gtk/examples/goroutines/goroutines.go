@@ -27,9 +27,9 @@ import (
 )
 
 var (
-	topLabel *gtk.Label
+	topLabel    *gtk.Label
 	bottomLabel *gtk.Label
-	nSets = 1
+	nSets       = 1
 )
 
 func main() {

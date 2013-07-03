@@ -87,7 +87,7 @@ func main() {
 	// Widgets may also be added by calling (*gtk.Grid).Attach() to specify
 	// where to place the widget in the grid, and optionally how many rows
 	// and columns to span over.
-	// 
+	//
 	// Additional rows and columns are automatically added to the grid as
 	// necessary when new widgets are added with (*gtk.Container).Add(), or,
 	// as shown in this case, using (*gtk.Grid).Attach().

@@ -127,7 +127,7 @@ func windowWidget() *gtk.Widget {
 	// these arguments, pass in a *glib.CallbackContext as an argument, and
 	// access by calling (*glib.CallbackContext).Arg(n) for the nth
 	// argument.
-	label.Connect("activate-link", func (ctx *glib.CallbackContext) {
+	label.Connect("activate-link", func(ctx *glib.CallbackContext) {
 		uri := ctx.Arg(0).String()
 		fmt.Println("you clicked a link to:", uri)
 	})

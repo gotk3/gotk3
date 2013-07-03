@@ -54,6 +54,6 @@ func main() {
 	win.ShowAll()
 
 	// Begin executing the GTK main loop.  This blocks until
-	// gtk.MainQuit() is run. 
+	// gtk.MainQuit() is run.
 	gtk.Main()
 }
