@@ -31,12 +31,16 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"sync"
 	"unsafe"
 )
 
 var (
 	callbackContexts []*CallbackContext
-	idleFnContexts   []*idleFnContext
+	idleFnContexts = struct{
+		sync.RWMutex
+		s []*idleFnContext
+	}{}
 )
 
 /*
@@ -167,8 +171,6 @@ func IdleAdd(f interface{}, datas ...interface{}) (uint, error) {
 		return 0, errors.New("Number of arguments do not match")
 	}
 
-	ctx := &idleFnContext{}
-
 	var vals []reflect.Value
 	for i := range datas {
 		ntharg := t.In(i)
@@ -180,12 +182,18 @@ func IdleAdd(f interface{}, datas ...interface{}) (uint, error) {
 		vals = append(vals, val)
 	}
 
+	ctx := &idleFnContext{}
 	ctx.f = f
 	ctx.args = vals
 
-	idleFnContexts = append(idleFnContexts, ctx)
+	idleFnContexts.Lock()
+	idleFnContexts.s = append(idleFnContexts.s, ctx)
+	idleFnContexts.Unlock()
 
-	idl := C._g_idle_add(C.int(len(idleFnContexts) - 1))
+	idleFnContexts.RLock()
+	nIdleFns := len(idleFnContexts.s)
+	idleFnContexts.RUnlock()
+	idl := C._g_idle_add(C.int(nIdleFns) - 1)
 
 	ctx.idl = idl
 
@@ -194,7 +202,9 @@ func IdleAdd(f interface{}, datas ...interface{}) (uint, error) {
 
 //export _go_glib_idle_fn
 func _go_glib_idle_fn(idl *C.idleinfo) {
-	ctx := idleFnContexts[int(idl.func_n)]
+	idleFnContexts.RLock()
+	ctx := idleFnContexts.s[int(idl.func_n)]
+	idleFnContexts.RUnlock()
 	rf := reflect.ValueOf(ctx.f)
 	rv := rf.Call(ctx.args)
 	if len(rv) == 1 {
@@ -208,7 +218,9 @@ func _go_glib_idle_fn(idl *C.idleinfo) {
 
 //export _go_nil_unused_idle_ctx
 func _go_nil_unused_idle_ctx(n C.int) {
-	idleFnContexts[int(n)] = nil
+	idleFnContexts.Lock()
+	idleFnContexts.s[int(n)] = nil
+	idleFnContexts.Unlock()
 }
 
 /*
