@@ -36,7 +36,10 @@ import (
 )
 
 var (
-	callbackContexts []*CallbackContext
+	callbackContexts = struct{
+		sync.RWMutex
+		s []*CallbackContext
+	}{}
 	idleFnContexts = struct{
 		sync.RWMutex
 		s []*idleFnContext
@@ -137,13 +140,15 @@ func (c CallbackArg) UInt() uint {
 
 //export _go_glib_callback
 func _go_glib_callback(cbi *C.cbinfo) {
-	ctx := callbackContexts[int(cbi.func_n)]
+	callbackContexts.RLock()
+	ctx := callbackContexts.s[int(cbi.func_n)]
 	rf := reflect.ValueOf(ctx.f)
 	t := rf.Type()
 	fargs := make([]reflect.Value, t.NumIn())
 	if len(fargs) > 0 {
 		fargs[0] = reflect.ValueOf(ctx)
 	}
+	callbackContexts.RUnlock()
 	ret := rf.Call(fargs)
 	if len(ret) > 0 {
 		bret, _ := ret[0].Interface().(bool)
@@ -285,10 +290,15 @@ func (v *Object) StopEmission(s string) {
 func (v *Object) connectCtx(ctx *CallbackContext, s string, f interface{}) int {
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
+	callbackContexts.RLock()
+	nCbCtxs := len(callbackContexts.s)
+	callbackContexts.RUnlock()
 	ctx.cbi = unsafe.Pointer(C._g_signal_connect(unsafe.Pointer(v.GObject),
-		(*C.gchar)(cstr), C.int(len(callbackContexts))))
-	callbackContexts = append(callbackContexts, ctx)
-	return len(callbackContexts) - 1
+		(*C.gchar)(cstr), C.int(nCbCtxs)))
+	callbackContexts.Lock()
+	callbackContexts.s = append(callbackContexts.s, ctx)
+	callbackContexts.Unlock()
+	return nCbCtxs
 }
 
 func (v *Object) Connect(s string, f interface{}) int {
@@ -362,17 +372,23 @@ func (v *Object) Emit(s string) {
 }
 
 func (v *Object) HandlerBlock(callID int) {
-	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts[callID].cbi))
+	callbackContexts.RLock()
+	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
+	callbackContexts.RUnlock()
 	C.g_signal_handler_block((C.gpointer)(v.GObject), id)
 }
 
 func (v *Object) HandlerUnblock(callID int) {
-	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts[callID].cbi))
+	callbackContexts.RLock()
+	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
+	callbackContexts.RUnlock()
 	C.g_signal_handler_unblock((C.gpointer)(v.GObject), id)
 }
 
 func (v *Object) HandlerDisconnect(callID int) {
-	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts[callID].cbi))
+	callbackContexts.RLock()
+	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
+	callbackContexts.RUnlock()
 	C.g_signal_handler_disconnect((C.gpointer)(v.GObject), id)
 }
 
