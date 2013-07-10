@@ -99,6 +99,7 @@ const (
 	TYPE_BOXED
 	TYPE_PARAM
 	TYPE_OBJECT
+	TYPE_VARIANT
 )
 
 /*
