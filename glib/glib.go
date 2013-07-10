@@ -329,19 +329,19 @@ func (v *Object) Set(name string, value interface{}) {
 		c := gbool(value.(bool))
 		p = unsafe.Pointer(&c)
 	case byte:
-		c := C.int(value.(byte))
+		c := C.gchar(value.(byte))
 		p = unsafe.Pointer(&c)
 	case int:
-		c := C.int(value.(int))
+		c := C.gint(value.(int))
 		p = unsafe.Pointer(&c)
 	case uint:
-		c := C.int(value.(uint))
+		c := C.guint(value.(uint))
 		p = unsafe.Pointer(&c)
 	case float32:
-		c := C.int(value.(float32))
+		c := C.gfloat(value.(float32))
 		p = unsafe.Pointer(&c)
 	case float64:
-		c := C.int(value.(float64))
+		c := C.gdouble(value.(float64))
 		p = unsafe.Pointer(&c)
 	case string:
 		cstr := C.CString(value.(string))
