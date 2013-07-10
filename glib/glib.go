@@ -36,11 +36,11 @@ import (
 )
 
 var (
-	callbackContexts = struct{
+	callbackContexts = struct {
 		sync.RWMutex
 		s []*CallbackContext
 	}{}
-	idleFnContexts = struct{
+	idleFnContexts = struct {
 		sync.RWMutex
 		s []*idleFnContext
 	}{}
