@@ -287,7 +287,7 @@ func (v *Object) StopEmission(s string) {
 		(*C.gchar)(cstr))
 }
 
-func (v *Object) connectCtx(ctx *CallbackContext, s string, f interface{}) int {
+func (v *Object) connectCtx(ctx *CallbackContext, s string) int {
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
 	callbackContexts.RLock()
@@ -304,13 +304,13 @@ func (v *Object) connectCtx(ctx *CallbackContext, s string, f interface{}) int {
 func (v *Object) Connect(s string, f interface{}) int {
 	ctx := &CallbackContext{f, nil, reflect.ValueOf(v),
 		reflect.ValueOf(nil)}
-	return v.connectCtx(ctx, s, f)
+	return v.connectCtx(ctx, s)
 }
 
 func (v *Object) ConnectWithData(s string, f interface{}, data interface{}) int {
 	ctx := &CallbackContext{f, nil, reflect.ValueOf(v),
 		reflect.ValueOf(data)}
-	return v.connectCtx(ctx, s, f)
+	return v.connectCtx(ctx, s)
 }
 
 // Unlike g_object_set(), this function only sets one name value pair.
