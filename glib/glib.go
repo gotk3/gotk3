@@ -315,7 +315,7 @@ func (v *Object) ConnectWithData(s string, f interface{}, data interface{}) int 
 
 // Unlike g_object_set(), this function only sets one name value pair.
 // Make multiple calls to set multiple properties.
-func (v *Object) Set(name string, value interface{}) {
+func (v *Object) Set(name string, value interface{}) error {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -323,20 +323,43 @@ func (v *Object) Set(name string, value interface{}) {
 		value = value.(Object).GObject
 	}
 
-	var p unsafe.Pointer
+	var p unsafe.Pointer = nil
 	switch value.(type) {
 	case bool:
 		c := gbool(value.(bool))
 		p = unsafe.Pointer(&c)
-	case byte:
-		c := C.gchar(value.(byte))
+	case int8:
+		c := C.gint8(value.(int8))
+		p = unsafe.Pointer(&c)
+	case int16:
+		c := C.gint16(value.(int16))
+		p = unsafe.Pointer(&c)
+	case int32:
+		c := C.gint32(value.(int32))
+		p = unsafe.Pointer(&c)
+	case int64:
+		c := C.gint64(value.(int64))
 		p = unsafe.Pointer(&c)
 	case int:
 		c := C.gint(value.(int))
 		p = unsafe.Pointer(&c)
+	case uint8:
+		c := C.guchar(value.(uint8))
+		p = unsafe.Pointer(&c)
+	case uint16:
+		c := C.guint16(value.(uint16))
+		p = unsafe.Pointer(&c)
+	case uint32:
+		c := C.guint32(value.(uint32))
+		p = unsafe.Pointer(&c)
+	case uint64:
+		c := C.guint64(value.(uint64))
+		p = unsafe.Pointer(&c)
 	case uint:
 		c := C.guint(value.(uint))
 		p = unsafe.Pointer(&c)
+	case uintptr:
+		p = unsafe.Pointer(C.gpointer(value.(uintptr)))
 	case float32:
 		c := C.gfloat(value.(float32))
 		p = unsafe.Pointer(&c)
@@ -351,14 +374,27 @@ func (v *Object) Set(name string, value interface{}) {
 		if pv, ok := value.(unsafe.Pointer); ok {
 			p = pv
 		} else {
+			// Constants with separate types are not type asserted
+			// above, so do a runtime check here instead.
 			val := reflect.ValueOf(value)
-			c := C.int(val.Int())
-			p = unsafe.Pointer(&c)
+			switch val.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16,
+				reflect.Int32, reflect.Int64:
+				c := C.int(val.Int())
+				p = unsafe.Pointer(&c)
+			case reflect.Uintptr:
+				p = unsafe.Pointer(C.gpointer(val.Pointer()))
+			}
 		}
 	}
 	// Can't call g_object_set() as it uses a variable arg list, use a
 	// wrapper instead
-	C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
+	if p != nil {
+		C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
+		return nil
+	} else {
+		return errors.New("Unable to perform type conversion")
+	}
 }
 
 /*
