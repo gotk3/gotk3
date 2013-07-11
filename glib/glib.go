@@ -75,10 +75,6 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 
 type Type uint
 
-func (v Type) Native() C.GType {
-	return C.GType(v)
-}
-
 const _TYPE_FUNDAMENTAL_SHIFT = 2
 
 const (
@@ -449,11 +445,8 @@ func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
 		return nil, errors.New("Error creating Value for return value")
 	}
 	C.g_signal_emitv(valv, id, C.GQuark(0), ret.Native())
-	goret, err := ret.GoValue()
-	if err != nil {
-		return nil, err
-	}
-	return goret, nil
+
+	return ret.GoValue()
 }
 
 func (v *Object) HandlerBlock(callID int) {
