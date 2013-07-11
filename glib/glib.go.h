@@ -19,11 +19,17 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-// GObject Type Casting
+/* GObject Type Casting */
 static GObject *
 toGObject(void *p)
 {
 	return (G_OBJECT(p));
+}
+
+static GType
+_g_type_from_instance(gpointer instance)
+{
+	return (G_TYPE_FROM_INSTANCE(instance));
 }
 
 /* Wrapper to avoid variable arg list */
@@ -33,11 +39,19 @@ _g_object_set_one(gpointer object, const gchar *property_name, void *val)
 	g_object_set(object, property_name, *(gpointer **)val, NULL);
 }
 
-/* Wrapper to avoid variable arg list */
-static void
-_g_signal_emit_by_name_one(gpointer instance, const gchar *detailed_signal)
+static GValue *
+alloc_gvalue_list(int n)
 {
-	g_signal_emit_by_name(instance, detailed_signal);
+	GValue		*valv;
+
+	valv = g_new0(GValue, n);
+	return (valv);
+}
+
+static void
+val_list_insert(GValue *valv, int i, GValue *val)
+{
+	valv[i] = *val;
 }
 
 typedef struct {
@@ -60,7 +74,7 @@ _glib_callback(void *data, ...) {
 	cbinfo          *cbi = (cbinfo *)data;
 	int             i;
 
-	cbi->args = calloc(cbi->nargs, sizeof(void *));
+	cbi->args = calloc(cbi->nargs, sizeof(uintptr_t));
 	va_start(ap, data);
 	for (i = 0; i < cbi->nargs; ++i)
 		cbi->args[i] = va_arg(ap, uintptr_t);
@@ -165,10 +179,7 @@ _g_idle_add(int func_n)
 static GValue *
 _g_value_alloc()
 {
-	GValue		value = G_VALUE_INIT;
-
-	/* Can't do a sizeof(GValue) */
-	return ((GValue *)g_malloc0(sizeof(value)));
+	return (g_new0(GValue, 1));
 }
 
 static GValue *
@@ -178,4 +189,10 @@ _g_value_init(GType g_type)
 
 	value = g_new0(GValue, 1);
 	return (g_value_init(value, g_type));
+}
+
+static gboolean
+_g_value_holds_gtype(gpointer val)
+{
+	return (G_VALUE_HOLDS_GTYPE(val));
 }

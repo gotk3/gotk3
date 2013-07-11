@@ -73,7 +73,11 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
  * Constants
  */
 
-type Type int
+type Type uint
+
+func (v Type) Native() C.GType {
+	return C.GType(v)
+}
 
 const _TYPE_FUNDAMENTAL_SHIFT = 2
 
@@ -256,6 +260,11 @@ func (v *Object) toGObject() *C.GObject {
 	return v.Native()
 }
 
+func (v *Object) typeFromInstance() Type {
+	c := C._g_type_from_instance(C.gpointer(unsafe.Pointer(v.Native())))
+	return Type(c)
+}
+
 func ToGObject(p unsafe.Pointer) *C.GObject {
 	return C.toGObject(p)
 }
@@ -402,10 +411,49 @@ func (v *Object) Set(name string, value interface{}) error {
  * GObject Signals
  */
 
-func (v *Object) Emit(s string) {
+// Emit() emits the signal specified by the string s to an Object.
+// Arguments to callback functions connected to this signal must be
+// specified in args.  Emit() returns an interface{} which must be type
+// asserted as the Go equivalent type to the return value for native C
+// callback.
+//
+// Note that this code is unsafe in that the types of values in args are
+// not checked against whether they are suitable for the callback.
+func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
-	C._g_signal_emit_by_name_one((C.gpointer)(v.GObject), (*C.gchar)(cstr))
+
+	// Create array of this instance and arguments
+	valv := C.alloc_gvalue_list(C.int(len(args)) + 1)
+	defer C.free(unsafe.Pointer(valv))
+
+	// Add args and valv
+	val, err := GValue(v)
+	if err != nil {
+		return nil, errors.New("Error converting Object to GValue: " + err.Error())
+	}
+	C.val_list_insert(valv, C.int(0), val.Native())
+	for i := range args {
+		val, err := GValue(args[i])
+		if err != nil {
+			return nil, fmt.Errorf("Error converting arg %d to GValue: %s", i, err.Error())
+		}
+		C.val_list_insert(valv, C.int(i+1), val.Native())
+	}
+
+	t := v.typeFromInstance()
+	id := C.g_signal_lookup((*C.gchar)(cstr), C.GType(t))
+
+	ret, err := ValueAlloc()
+	if err != nil {
+		return nil, errors.New("Error creating Value for return value")
+	}
+	C.g_signal_emitv(valv, id, C.GQuark(0), ret.Native())
+	goret, err := ret.GoValue()
+	if err != nil {
+		return nil, err
+	}
+	return goret, nil
 }
 
 func (v *Object) HandlerBlock(callID int) {
@@ -477,13 +525,46 @@ func (v *Value) unset() {
 }
 
 func (v *Value) GetType() Type {
-	c := C.g_value_get_gtype(v.Native())
-	return Type(c)
+	c := C._g_value_holds_gtype(C.gpointer(unsafe.Pointer(v.Native())))
+	if gobool(c) {
+		c := C.g_value_get_gtype(v.Native())
+		return Type(c)
+	}
+	return TYPE_INVALID
 }
 
-// Converts a native Go type to the comparable GValue.
+// Converts a Go type to a comparable GValue.
 func GValue(v interface{}) (gvalue *Value, err error) {
+	if v == nil {
+		val, err := ValueInit(TYPE_POINTER)
+		if err != nil {
+			return nil, err
+		}
+		val.SetPointer(uintptr(0)) // technically not portable
+		return val, nil
+	}
+
 	switch v.(type) {
+	case bool:
+		val, err := ValueInit(TYPE_BOOLEAN)
+		if err != nil {
+			return nil, err
+		}
+		val.SetBool(v.(bool))
+		return val, nil
+	case int8:
+		val, err := ValueInit(TYPE_CHAR)
+		if err != nil {
+			return nil, err
+		}
+		val.SetSChar(v.(int8))
+	case int64:
+		val, err := ValueInit(TYPE_INT64)
+		if err != nil {
+			return nil, err
+		}
+		val.SetInt64(v.(int64))
+		return val, nil
 	case int:
 		val, err := ValueInit(TYPE_INT)
 		if err != nil {
@@ -491,6 +572,36 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		}
 		val.SetInt(v.(int))
 		return val, nil
+	case uint8:
+		val, err := ValueInit(TYPE_UCHAR)
+		if err != nil {
+			return nil, err
+		}
+		val.SetUChar(v.(uint8))
+	case uint64:
+		val, err := ValueInit(TYPE_UINT64)
+		if err != nil {
+			return nil, err
+		}
+		val.SetUInt64(v.(uint64))
+	case uint:
+		val, err := ValueInit(TYPE_UINT)
+		if err != nil {
+			return nil, err
+		}
+		val.SetUInt(v.(uint))
+	case float32:
+		val, err := ValueInit(TYPE_FLOAT)
+		if err != nil {
+			return nil, err
+		}
+		val.SetFloat(v.(float32))
+	case float64:
+		val, err := ValueInit(TYPE_DOUBLE)
+		if err != nil {
+			return nil, err
+		}
+		val.SetDouble(v.(float64))
 	case string:
 		val, err := ValueInit(TYPE_STRING)
 		if err != nil {
@@ -499,17 +610,89 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		val.SetString(v.(string))
 		return val, nil
 	default:
-		return nil, errors.New("Type not implemented")
+		if obj, ok := v.(*Object); ok {
+			val, err := ValueInit(TYPE_OBJECT)
+			if err != nil {
+				return nil, err
+			}
+			val.SetInstance(uintptr(unsafe.Pointer(obj.GObject)))
+			return val, nil
+		}
+
+		/* Try this since above doesn't catch constants under other types */
+		rval := reflect.ValueOf(v)
+		switch rval.Kind() {
+		case reflect.Int8:
+			val, err := ValueInit(TYPE_CHAR)
+			if err != nil {
+				return nil, err
+			}
+			val.SetSChar(int8(rval.Int()))
+			return val, nil
+		case reflect.Int16:
+			return nil, errors.New("Type not implemented")
+		case reflect.Int32:
+			return nil, errors.New("Type not implemented")
+		case reflect.Int64:
+			val, err := ValueInit(TYPE_INT64)
+			if err != nil {
+				return nil, err
+			}
+			val.SetInt64(rval.Int())
+			return val, nil
+		case reflect.Int:
+			val, err := ValueInit(TYPE_INT)
+			if err != nil {
+				return nil, err
+			}
+			val.SetInt(int(rval.Int()))
+			return val, nil
+		case reflect.Uintptr:
+			val, err := ValueInit(TYPE_POINTER)
+			if err != nil {
+				return nil, err
+			}
+			val.SetPointer(rval.Pointer())
+			return val, nil
+		}
 	}
-	return nil, nil
+	return nil, errors.New("Type not implemented")
 }
 
 // Converts a GValue to comparable Go type
 func (v *Value) GoValue() (interface{}, error) {
 	switch v.GetType() {
+	case TYPE_INVALID:
+		return nil, errors.New("Invalid type")
+	case TYPE_NONE:
+		return nil, nil
+	case TYPE_BOOLEAN:
+		c := C.g_value_get_boolean(v.Native())
+		return gobool(c), nil
+	case TYPE_CHAR:
+		c := C.g_value_get_schar(v.Native())
+		return int8(c), nil
+	case TYPE_UCHAR:
+		c := C.g_value_get_uchar(v.Native())
+		return uint8(c), nil
+	case TYPE_INT64:
+		c := C.g_value_get_int64(v.Native())
+		return int64(c), nil
 	case TYPE_INT:
 		c := C.g_value_get_int(v.Native())
 		return int(c), nil
+	case TYPE_UINT64:
+		c := C.g_value_get_uint64(v.Native())
+		return uint64(c), nil
+	case TYPE_UINT:
+		c := C.g_value_get_uint(v.Native())
+		return uint(c), nil
+	case TYPE_FLOAT:
+		c := C.g_value_get_float(v.Native())
+		return float32(c), nil
+	case TYPE_DOUBLE:
+		c := C.g_value_get_double(v.Native())
+		return float64(c), nil
 	case TYPE_STRING:
 		c := C.g_value_get_string(v.Native())
 		return C.GoString((*C.char)(c)), nil
@@ -518,14 +701,54 @@ func (v *Value) GoValue() (interface{}, error) {
 	}
 }
 
+func (v *Value) SetBool(val bool) {
+	C.g_value_set_boolean(v.Native(), gbool(val))
+}
+
+func (v *Value) SetSChar(val int8) {
+	C.g_value_set_schar(v.Native(), C.gint8(val))
+}
+
+func (v *Value) SetInt64(val int64) {
+	C.g_value_set_int64(v.Native(), C.gint64(val))
+}
+
 func (v *Value) SetInt(val int) {
 	C.g_value_set_int(v.Native(), C.gint(val))
+}
+
+func (v *Value) SetUChar(val uint8) {
+	C.g_value_set_uchar(v.Native(), C.guchar(val))
+}
+
+func (v *Value) SetUInt64(val uint64) {
+	C.g_value_set_uint64(v.Native(), C.guint64(val))
+}
+
+func (v *Value) SetUInt(val uint) {
+	C.g_value_set_uint(v.Native(), C.guint(val))
+}
+
+func (v *Value) SetFloat(val float32) {
+	C.g_value_set_float(v.Native(), C.gfloat(val))
+}
+
+func (v *Value) SetDouble(val float64) {
+	C.g_value_set_double(v.Native(), C.gdouble(val))
 }
 
 func (v *Value) SetString(val string) {
 	cstr := C.CString(val)
 	defer C.free(unsafe.Pointer(cstr))
 	C.g_value_set_string(v.Native(), (*C.gchar)(cstr))
+}
+
+func (v *Value) SetInstance(instance uintptr) {
+	C.g_value_set_instance(v.Native(), C.gpointer(instance))
+}
+
+func (v *Value) SetPointer(p uintptr) {
+	C.g_value_set_pointer(v.Native(), C.gpointer(p))
 }
 
 func (v *Value) GetString() (string, error) {
