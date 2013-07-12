@@ -45,12 +45,6 @@ going out of scope and the next time Go's garbage collector is run, a
 finalizer is run to remove Go's reference to the GObject.  When this
 reference count hits zero (when neither Go nor GTK holds ownership)
 the object will be freed internally by GTK.
-
-It may be required to use these bindings with a patched Go, as GTK
-seems to send signals on non-Go threads, causing the Go runtime to
-promptly kill the process.  If you run into this error, try again
-after patching Go with this patch:
-https://codereview.appspot.com/10286046/.
 */
 package gtk
 
