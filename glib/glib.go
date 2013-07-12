@@ -551,6 +551,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			return nil, err
 		}
 		val.SetSChar(v.(int8))
+		return val, nil
 	case int64:
 		val, err := ValueInit(TYPE_INT64)
 		if err != nil {
@@ -571,30 +572,35 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			return nil, err
 		}
 		val.SetUChar(v.(uint8))
+		return val, nil
 	case uint64:
 		val, err := ValueInit(TYPE_UINT64)
 		if err != nil {
 			return nil, err
 		}
 		val.SetUInt64(v.(uint64))
+		return val, nil
 	case uint:
 		val, err := ValueInit(TYPE_UINT)
 		if err != nil {
 			return nil, err
 		}
 		val.SetUInt(v.(uint))
+		return val, nil
 	case float32:
 		val, err := ValueInit(TYPE_FLOAT)
 		if err != nil {
 			return nil, err
 		}
 		val.SetFloat(v.(float32))
+		return val, nil
 	case float64:
 		val, err := ValueInit(TYPE_DOUBLE)
 		if err != nil {
 			return nil, err
 		}
 		val.SetDouble(v.(float64))
+		return val, nil
 	case string:
 		val, err := ValueInit(TYPE_STRING)
 		if err != nil {
