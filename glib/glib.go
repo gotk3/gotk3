@@ -73,6 +73,7 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
  * Constants
  */
 
+// Type is a representation of GLib's GType.
 type Type uint
 
 const _TYPE_FUNDAMENTAL_SHIFT = 2
@@ -106,6 +107,9 @@ const (
  * Events
  */
 
+// CallbackContext is a special type used to represent parameters
+// passed to callback functions.  It is in most cases unneeded, due to
+// Connect() supporting closures.
 type CallbackContext struct {
 	f      interface{}
 	cbi    unsafe.Pointer
@@ -113,28 +117,46 @@ type CallbackContext struct {
 	data   reflect.Value
 }
 
+// CallbackArg is a generic type representing individual parameters
+// passed to callback functions.
 type CallbackArg uintptr
 
+// Target() returns the target Object connected to a callback
+// function.  This value should be type asserted as the type of the
+// target.
 func (c *CallbackContext) Target() interface{} {
 	return c.target.Interface()
 }
 
+// Data() returns the optional user data passed to a callback function
+// connected with ConnectWithData().  This value should be type asserted
+// as the type of the data.
 func (c *CallbackContext) Data() interface{} {
 	return c.data.Interface()
 }
 
+// Arg() returns the nth argument passed to the callback function.
 func (c *CallbackContext) Arg(n int) CallbackArg {
 	return CallbackArg(C.cbinfo_get_arg((*C.cbinfo)(c.cbi), C.int(n)))
 }
 
+// String() returns this callback argument as a Go string.  Calling
+// this function results in undefined behavior if the argument for the
+// native C callback function is not a C string.
 func (c CallbackArg) String() string {
 	return C.GoString((*C.char)(unsafe.Pointer(c)))
 }
 
+// Int() returns this callback argument as a Go int.  Calling this
+// function results in undefined behavior if the argument for the native
+// C callback function is not an int.
 func (c CallbackArg) Int() int {
 	return int(C.int(C.uintptr_t(c)))
 }
 
+// UInt() returns this callback argument as a Go uint.  Calling this
+// function results in undefined behavior if the argument for the native
+// C callback function is not an unsigned int.
 func (c CallbackArg) UInt() uint {
 	return uint(C.uint(C.uintptr_t(c)))
 }
@@ -167,6 +189,12 @@ type idleFnContext struct {
 	idl  *C.idleinfo
 }
 
+// IdleAdd() is a wrapper around g_idle_add() and adds the function f,
+// called with the arguments in datas, to run in the context of the GLib
+// event loop.  IdleAdd() returns a uint representing the identifier for
+// this source function, and an error if f is not a function, len(datas)
+// does not match the number of inputs to f, or there is a type mismatch
+// between arguments.
 func IdleAdd(f interface{}, datas ...interface{}) (uint, error) {
 	rf := reflect.ValueOf(f)
 	if rf.Kind() != reflect.Func {
@@ -233,14 +261,19 @@ func _go_nil_unused_idle_ctx(n C.int) {
  * GObject
  */
 
+// IObject is an interface type implemented by Object and all types which embed
+// an Object.  It is meant to be used as a type for function arguments which
+// require GObjects or any subclasses thereof.
 type IObject interface {
 	toGObject() *C.GObject
 }
 
+// Object is a representation of GLib's GObject.
 type Object struct {
 	GObject *C.GObject
 }
 
+// Native() returns a pointer to the underlying GObject.
 func (v *Object) Native() *C.GObject {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -261,31 +294,40 @@ func (v *Object) typeFromInstance() Type {
 	return Type(c)
 }
 
+// ToGObject() type converts an unsafe.Pointer as a native C GObject.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
 func ToGObject(p unsafe.Pointer) *C.GObject {
 	return C.toGObject(p)
 }
 
+// Ref() is a wrapper around g_object_ref().
 func (v *Object) Ref() {
 	C.g_object_ref(C.gpointer(v.GObject))
 }
 
+// Unref() is a wrapper around g_object_unref().
 func (v *Object) Unref() {
 	C.g_object_unref(C.gpointer(v.GObject))
 }
 
+// RefSink() is a wrapper around g_object_ref_sink().
 func (v *Object) RefSink() {
 	C.g_object_ref_sink(C.gpointer(v.GObject))
 }
 
+// IsFloating() is a wrapper around g_object_is_floating().
 func (v *Object) IsFloating() bool {
 	c := C.g_object_is_floating(C.gpointer(v.GObject))
 	return gobool(c)
 }
 
+// ForceFloating() is a wrapper around g_object_force_floating().
 func (v *Object) ForceFloating() {
 	C.g_object_force_floating(v.GObject)
 }
 
+// StopEmission() is a wrapper around g_signal_stop_emission_by_name().
 func (v *Object) StopEmission(s string) {
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
@@ -307,20 +349,34 @@ func (v *Object) connectCtx(ctx *CallbackContext, s string) int {
 	return nCbCtxs
 }
 
-func (v *Object) Connect(s string, f interface{}) int {
+// Connect() is a wrapper around g_signal_connect().  Connect()
+// returns an int representing the handler id, and a non-nil error if f
+// is not a function.
+func (v *Object) Connect(s string, f interface{}) (int, error) {
+	rf := reflect.ValueOf(f)
+	if rf.Kind() != reflect.Func {
+		return 0, errors.New("f is not a function")
+	}
 	ctx := &CallbackContext{f, nil, reflect.ValueOf(v),
 		reflect.ValueOf(nil)}
-	return v.connectCtx(ctx, s)
+	return v.connectCtx(ctx, s), nil
 }
 
+// ConnectWithData() is a wrapper around g_signal_connect().  This
+// function differs from Connect() in that it allows passing an
+// additional argument for user data.  This additional argument is
+// usually unneeded since Connect() supports full closures, however, if f
+// was not created with the necessary data in scope, it may be passed in
+// this by connecting with this function.
 func (v *Object) ConnectWithData(s string, f interface{}, data interface{}) int {
 	ctx := &CallbackContext{f, nil, reflect.ValueOf(v),
 		reflect.ValueOf(data)}
 	return v.connectCtx(ctx, s)
 }
 
-// Unlike g_object_set(), this function only sets one name value pair.
-// Make multiple calls to set multiple properties.
+// Set() is a wrapper around g_object_set().  However, unlike
+// g_object_set(), this function only sets one name value pair.  Make
+// multiple calls to this function to set multiple properties.
 func (v *Object) Set(name string, value interface{}) error {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
@@ -407,11 +463,11 @@ func (v *Object) Set(name string, value interface{}) error {
  * GObject Signals
  */
 
-// Emit() emits the signal specified by the string s to an Object.
-// Arguments to callback functions connected to this signal must be
-// specified in args.  Emit() returns an interface{} which must be type
-// asserted as the Go equivalent type to the return value for native C
-// callback.
+// Emit() is a wrapper around g_signal_emitv() and emits the signal
+// specified by the string s to an Object.  Arguments to callback
+// functions connected to this signal must be specified in args.  Emit()
+// returns an interface{} which must be type asserted as the Go
+// equivalent type to the return value for native C callback.
 //
 // Note that this code is unsafe in that the types of values in args are
 // not checked against whether they are suitable for the callback.
@@ -449,6 +505,7 @@ func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
 	return ret.GoValue()
 }
 
+// HandlerBlock() is a wrapper around g_signal_handler_block().
 func (v *Object) HandlerBlock(callID int) {
 	callbackContexts.RLock()
 	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
@@ -456,6 +513,7 @@ func (v *Object) HandlerBlock(callID int) {
 	C.g_signal_handler_block((C.gpointer)(v.GObject), id)
 }
 
+// HandlerUnblock() is a wrapper around g_signal_handler_unblock().
 func (v *Object) HandlerUnblock(callID int) {
 	callbackContexts.RLock()
 	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
@@ -463,6 +521,7 @@ func (v *Object) HandlerUnblock(callID int) {
 	C.g_signal_handler_unblock((C.gpointer)(v.GObject), id)
 }
 
+// HandlerDisconnect() is a wrapper around g_signal_handler_disconnect().
 func (v *Object) HandlerDisconnect(callID int) {
 	callbackContexts.RLock()
 	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
@@ -474,6 +533,7 @@ func (v *Object) HandlerDisconnect(callID int) {
  * GInitiallyUnowned
  */
 
+// InitiallyUnowned is a representation of GLib's GInitiallyUnowned.
 type InitiallyUnowned struct {
 	*Object
 }
@@ -482,17 +542,24 @@ type InitiallyUnowned struct {
  * GValue
  */
 
+// Value is a representation of GLib's GValue.
+//
 // Don't allocate Values on the stack or heap manually as they may not
 // be properly unset when going out of scope. Instead, use ValueAlloc(),
-// which will set the runtime finalizer to unset the Value.
+// which will set the runtime finalizer to unset the Value after it has
+// left scope.
 type Value struct {
 	GValue C.GValue
 }
 
+// Native() returns a pointer to the underlying GValue.
 func (v *Value) Native() *C.GValue {
 	return &v.GValue
 }
 
+// ValueAlloc() allocates a Value and sets a runtime finalizer to call
+// g_value_unset() on the underlying GValue after leaving scope.
+// ValueAlloc() returns a non-nil error if the allocation failed.
 func ValueAlloc() (*Value, error) {
 	c := C._g_value_alloc()
 	if c == nil {
@@ -503,6 +570,10 @@ func ValueAlloc() (*Value, error) {
 	return v, nil
 }
 
+// ValueInit() is a wrapper around g_value_init() and allocates and
+// initializes a new Value with the Type t.  A runtime finalizer is set
+// to call g_value_unset() on the underlying GValue after leaving scope.
+// ValueInit() returns a non-nil error if the allocation failed.
 func ValueInit(t Type) (*Value, error) {
 	c := C._g_value_init(C.GType(t))
 	if c == nil {
@@ -517,6 +588,9 @@ func (v *Value) unset() {
 	C.g_value_unset(v.Native())
 }
 
+// GetType() is a wrappr around the G_VALUE_HOLDS_GTYPE() macro and
+// the g_value_get_gtype() function.  GetType() returns TYPE_INVALID if v
+// does not hold a Type, or otherwise returns the Type of v.
 func (v *Value) GetType() Type {
 	c := C._g_value_holds_gtype(C.gpointer(unsafe.Pointer(v.Native())))
 	if gobool(c) {
@@ -526,7 +600,8 @@ func (v *Value) GetType() Type {
 	return TYPE_INVALID
 }
 
-// Converts a Go type to a comparable GValue.
+// GValue() converts a Go type to a comparable GValue.  GValue()
+// returns a non-nil error if the conversion was unsuccessful.
 func GValue(v interface{}) (gvalue *Value, err error) {
 	if v == nil {
 		val, err := ValueInit(TYPE_POINTER)
@@ -658,7 +733,13 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 	return nil, errors.New("Type not implemented")
 }
 
-// Converts a GValue to comparable Go type
+// GoValue() converts a Value to comparable Go type.  GoValue()
+// returns a non-nil error if the conversion was unsuccessful.  The
+// returned interface{} must be type asserted as the actual Go
+// representation of the Value.
+//
+// This function is a wrapper around the many g_value_get_*()
+// functions, depending on the type of the Value.
 func (v *Value) GoValue() (interface{}, error) {
 	switch v.GetType() {
 	case TYPE_INVALID:
@@ -700,56 +781,72 @@ func (v *Value) GoValue() (interface{}, error) {
 	}
 }
 
+// SetBool() is a wrapper around g_value_set_boolean().
 func (v *Value) SetBool(val bool) {
 	C.g_value_set_boolean(v.Native(), gbool(val))
 }
 
+// SetSChar() is a wrapper around g_value_set_schar().
 func (v *Value) SetSChar(val int8) {
 	C.g_value_set_schar(v.Native(), C.gint8(val))
 }
 
+// SetInt64() is a wrapper around g_value_set_int64().
 func (v *Value) SetInt64(val int64) {
 	C.g_value_set_int64(v.Native(), C.gint64(val))
 }
 
+// SetInt() is a wrapper around g_value_set_int().
 func (v *Value) SetInt(val int) {
 	C.g_value_set_int(v.Native(), C.gint(val))
 }
 
+// SetUChar() is a wrapper around g_value_set_uchar().
 func (v *Value) SetUChar(val uint8) {
 	C.g_value_set_uchar(v.Native(), C.guchar(val))
 }
 
+// SetUInt64() is a wrapper around g_value_set_uint64().
 func (v *Value) SetUInt64(val uint64) {
 	C.g_value_set_uint64(v.Native(), C.guint64(val))
 }
 
+// SetUInt() is a wrapper around g_value_set_uint().
 func (v *Value) SetUInt(val uint) {
 	C.g_value_set_uint(v.Native(), C.guint(val))
 }
 
+// SetFloat() is a wrapper around g_value_set_float().
 func (v *Value) SetFloat(val float32) {
 	C.g_value_set_float(v.Native(), C.gfloat(val))
 }
 
+// SetDouble() is a wrapper around g_value_set_double().
 func (v *Value) SetDouble(val float64) {
 	C.g_value_set_double(v.Native(), C.gdouble(val))
 }
 
+// SetString() is a wrapper around g_value_set_string().
 func (v *Value) SetString(val string) {
 	cstr := C.CString(val)
 	defer C.free(unsafe.Pointer(cstr))
 	C.g_value_set_string(v.Native(), (*C.gchar)(cstr))
 }
 
+// SetInstance() is a wrapper around g_value_set_instance().
 func (v *Value) SetInstance(instance uintptr) {
 	C.g_value_set_instance(v.Native(), C.gpointer(instance))
 }
 
+// SetPointer() is a wrapper around g_value_set_pointer().
 func (v *Value) SetPointer(p uintptr) {
 	C.g_value_set_pointer(v.Native(), C.gpointer(p))
 }
 
+// GetString() is a wrapper around g_value_get_string().  GetString()
+// returns a non-nil error if g_value_get_string() returned a NULL
+// pointer to distinguish between returning a NULL pointer and returning
+// an empty string.
 func (v *Value) GetString() (string, error) {
 	c := C.g_value_get_string(v.Native())
 	if c == nil {
