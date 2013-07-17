@@ -72,7 +72,7 @@ func main() {
 			}
 			nSets++
 			s = fmt.Sprintf("Set a label %d time(s)!", nSets)
-			glib.IdleAdd(bottomLabel.SetText, s)
+			_, err = glib.IdleAdd(bottomLabel.SetText, s)
 			if err != nil {
 				log.Fatal("IdleAdd() failed:", err)
 			}
