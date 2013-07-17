@@ -61,22 +61,22 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 
 // Selections
 const (
-	SELECTION_PRIMARY       = Atom(uintptr(1))
-	SELECTION_SECONDARY     = Atom(uintptr(2))
-	SELECTION_CLIPBOARD     = Atom(uintptr(69))
-	TARGET_BITMAP           = Atom(uintptr(5))
-	TARGET_COLORMAP         = Atom(uintptr(7))
-	TARGET_DRAWABLE         = Atom(uintptr(17))
-	TARGET_PIXMAP           = Atom(uintptr(20))
-	TARGET_STRING           = Atom(uintptr(31))
-	SELECTION_TYPE_ATOM     = Atom(uintptr(4))
-	SELECTION_TYPE_BITMAP   = Atom(uintptr(5))
-	SELECTION_TYPE_COLORMAP = Atom(uintptr(7))
-	SELECTION_TYPE_DRAWABLE = Atom(uintptr(17))
-	SELECTION_TYPE_INTEGER  = Atom(uintptr(19))
-	SELECTION_TYPE_PIXMAP   = Atom(uintptr(20))
-	SELECTION_TYPE_WINDOW   = Atom(uintptr(33))
-	SELECTION_TYPE_STRING   = Atom(uintptr(31))
+	SELECTION_PRIMARY       Atom = 1
+	SELECTION_SECONDARY          = 2
+	SELECTION_CLIPBOARD          = 69
+	TARGET_BITMAP                = 5
+	TARGET_COLORMAP              = 7
+	TARGET_DRAWABLE              = 17
+	TARGET_PIXMAP                = 20
+	TARGET_STRING                = 31
+	SELECTION_TYPE_ATOM          = 4
+	SELECTION_TYPE_BITMAP        = 5
+	SELECTION_TYPE_COLORMAP      = 7
+	SELECTION_TYPE_DRAWABLE      = 17
+	SELECTION_TYPE_INTEGER       = 19
+	SELECTION_TYPE_PIXMAP        = 20
+	SELECTION_TYPE_WINDOW        = 33
+	SELECTION_TYPE_STRING        = 31
 )
 
 /*

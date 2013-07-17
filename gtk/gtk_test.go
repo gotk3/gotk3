@@ -30,13 +30,6 @@ func TestBoolConvs(t *testing.T) {
 	}
 }
 
-// TestConsts tests Go constants against the GTK equivalents.
-func TestConsts(t *testing.T) {
-	if err := testConsts(); err != nil {
-		t.Error(err)
-	}
-}
-
 // TestBox tests creating and adding widgets to a Box
 func TestBox(t *testing.T) {
 	vbox, err := BoxNew(ORIENTATION_VERTICAL, 0)

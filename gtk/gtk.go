@@ -57,7 +57,6 @@ import (
 	"fmt"
 	"github.com/conformal/gotk3/gdk"
 	"github.com/conformal/gotk3/glib"
-	"reflect"
 	"runtime"
 	"unsafe"
 )
@@ -109,167 +108,167 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 type Align int
 
 const (
-	ALIGN_FILL Align = iota
-	ALIGN_START
-	ALIGN_END
-	ALIGN_CENTER
+	ALIGN_FILL   Align = C.GTK_ALIGN_FILL
+	ALIGN_START        = C.GTK_ALIGN_START
+	ALIGN_END          = C.GTK_ALIGN_END
+	ALIGN_CENTER       = C.GTK_ALIGN_CENTER
 )
 
 // ButtonsType is a representation of GTK's GtkButtonsType.
 type ButtonsType int
 
 const (
-	BUTTONS_NONE ButtonsType = iota
-	BUTTONS_OK
-	BUTTONS_CLOSE
-	BUTTONS_CANCEL
-	BUTTONS_YES_NO
-	BUTTONS_OK_CANCEL
+	BUTTONS_NONE      ButtonsType = C.GTK_BUTTONS_NONE
+	BUTTONS_OK                    = C.GTK_BUTTONS_OK
+	BUTTONS_CLOSE                 = C.GTK_BUTTONS_CLOSE
+	BUTTONS_CANCEL                = C.GTK_BUTTONS_CANCEL
+	BUTTONS_YES_NO                = C.GTK_BUTTONS_YES_NO
+	BUTTONS_OK_CANCEL             = C.GTK_BUTTONS_OK_CANCEL
 )
 
 // DialogFlags is a representation of GTK's GtkDialogFlags.
 type DialogFlags int
 
 const (
-	DIALOG_MODAL DialogFlags = 1 << iota
-	DIALOG_DESTROY_WITH_PARENT
+	DIALOG_MODAL               DialogFlags = C.GTK_DIALOG_MODAL
+	DIALOG_DESTROY_WITH_PARENT             = C.GTK_DIALOG_DESTROY_WITH_PARENT
 )
 
 // EntryIconPosition is a representation of GTK's GtkEntryIconPosition.
 type EntryIconPosition int
 
 const (
-	ENTRY_ICON_PRIMARY EntryIconPosition = iota
-	ENTRY_ICON_SECONDARY
+	ENTRY_ICON_PRIMARY   EntryIconPosition = C.GTK_ENTRY_ICON_PRIMARY
+	ENTRY_ICON_SECONDARY                   = C.GTK_ENTRY_ICON_SECONDARY
 )
 
 // IconSize is a representation of GTK's GtkIconSize.
 type IconSize int
 
 const (
-	ICON_SIZE_INVALID IconSize = iota
-	ICON_SIZE_MENU
-	ICON_SIZE_SMALL_TOOLBAR
-	ICON_SIZE_LARGE_TOOLBAR
-	ICON_SIZE_BUTTON
-	ICON_SIZE_DND
-	ICON_SIZE_DIALOG
+	ICON_SIZE_INVALID       IconSize = C.GTK_ICON_SIZE_INVALID
+	ICON_SIZE_MENU                   = C.GTK_ICON_SIZE_MENU
+	ICON_SIZE_SMALL_TOOLBAR          = C.GTK_ICON_SIZE_SMALL_TOOLBAR
+	ICON_SIZE_LARGE_TOOLBAR          = C.GTK_ICON_SIZE_LARGE_TOOLBAR
+	ICON_SIZE_BUTTON                 = C.GTK_ICON_SIZE_BUTTON
+	ICON_SIZE_DND                    = C.GTK_ICON_SIZE_DND
+	ICON_SIZE_DIALOG                 = C.GTK_ICON_SIZE_DIALOG
 )
 
 // ImageType is a representation of GTK's GtkImageType.
 type ImageType int
 
 const (
-	IMAGE_EMPTY ImageType = iota
-	IMAGE_PIXBUF
-	IMAGE_STOCK
-	IMAGE_ICON_SET
-	IMAGE_ANIMATION
-	IMAGE_ICON_NAME
-	IMAGE_GICON
+	IMAGE_EMPTY     ImageType = C.GTK_IMAGE_EMPTY
+	IMAGE_PIXBUF              = C.GTK_IMAGE_PIXBUF
+	IMAGE_STOCK               = C.GTK_IMAGE_STOCK
+	IMAGE_ICON_SET            = C.GTK_IMAGE_ICON_SET
+	IMAGE_ANIMATION           = C.GTK_IMAGE_ANIMATION
+	IMAGE_ICON_NAME           = C.GTK_IMAGE_ICON_NAME
+	IMAGE_GICON               = C.GTK_IMAGE_GICON
 )
 
 // InputHints is a representation of GTK's GtkInputHints.
 type InputHints int
 
 const (
-	INPUT_HINT_NONE       InputHints = 0
-	INPUT_HINT_SPELLCHECK            = 1 << (iota - 1)
-	INPUT_HINT_NO_SPELLCHECK
-	INPUT_HINT_WORD_COMPLETION
-	INPUT_HINT_LOWERCASE
-	INPUT_HINT_UPPERCASE_CHARS
-	INPUT_HINT_UPPERCASE_WORDS
-	INPUT_HINT_UPPERCASE_SENTENCES
-	INPUT_HINT_INHIBIT_OSK
+	INPUT_HINT_NONE                InputHints = C.GTK_INPUT_HINT_NONE
+	INPUT_HINT_SPELLCHECK                     = C.GTK_INPUT_HINT_SPELLCHECK
+	INPUT_HINT_NO_SPELLCHECK                  = C.GTK_INPUT_HINT_NO_SPELLCHECK
+	INPUT_HINT_WORD_COMPLETION                = C.GTK_INPUT_HINT_WORD_COMPLETION
+	INPUT_HINT_LOWERCASE                      = C.GTK_INPUT_HINT_LOWERCASE
+	INPUT_HINT_UPPERCASE_CHARS                = C.GTK_INPUT_HINT_UPPERCASE_CHARS
+	INPUT_HINT_UPPERCASE_WORDS                = C.GTK_INPUT_HINT_UPPERCASE_WORDS
+	INPUT_HINT_UPPERCASE_SENTENCES            = C.GTK_INPUT_HINT_UPPERCASE_SENTENCES
+	INPUT_HINT_INHIBIT_OSK                    = C.GTK_INPUT_HINT_INHIBIT_OSK
 )
 
 // InputPurpose is a representation of GTK's GtkInputPurpose.
 type InputPurpose int
 
 const (
-	INPUT_PURPOSE_FREE_FORM InputPurpose = iota
-	INPUT_PURPOSE_ALPHA
-	INPUT_PURPOSE_DIGITS
-	INPUT_PURPOSE_NUMBER
-	INPUT_PURPOSE_PHONE
-	INPUT_PURPOSE_URL
-	INPUT_PURPOSE_EMAIL
-	INPUT_PURPOSE_NAME
-	INPUT_PURPOSE_PASSWORD
-	INPUT_PURPOSE_PIN
+	INPUT_PURPOSE_FREE_FORM InputPurpose = C.GTK_INPUT_PURPOSE_FREE_FORM
+	INPUT_PURPOSE_ALPHA                  = C.GTK_INPUT_PURPOSE_ALPHA
+	INPUT_PURPOSE_DIGITS                 = C.GTK_INPUT_PURPOSE_DIGITS
+	INPUT_PURPOSE_NUMBER                 = C.GTK_INPUT_PURPOSE_NUMBER
+	INPUT_PURPOSE_PHONE                  = C.GTK_INPUT_PURPOSE_PHONE
+	INPUT_PURPOSE_URL                    = C.GTK_INPUT_PURPOSE_URL
+	INPUT_PURPOSE_EMAIL                  = C.GTK_INPUT_PURPOSE_EMAIL
+	INPUT_PURPOSE_NAME                   = C.GTK_INPUT_PURPOSE_NAME
+	INPUT_PURPOSE_PASSWORD               = C.GTK_INPUT_PURPOSE_PASSWORD
+	INPUT_PURPOSE_PIN                    = C.GTK_INPUT_PURPOSE_PIN
 )
 
 // MessageType is a representation of GTK's GtkMessageType.
 type MessageType int
 
 const (
-	MESSAGE_INFO MessageType = iota
-	MESSAGE_WARNING
-	MESSAGE_QUESTION
-	MESSAGE_ERROR
-	MESSAGE_OTHER
+	MESSAGE_INFO     MessageType = C.GTK_MESSAGE_INFO
+	MESSAGE_WARNING              = C.GTK_MESSAGE_WARNING
+	MESSAGE_QUESTION             = C.GTK_MESSAGE_QUESTION
+	MESSAGE_ERROR                = C.GTK_MESSAGE_ERROR
+	MESSAGE_OTHER                = C.GTK_MESSAGE_OTHER
 )
 
 // Orientation is a representation of GTK's GtkOrientation.
 type Orientation int
 
 const (
-	ORIENTATION_HORIZONTAL Orientation = iota
-	ORIENTATION_VERTICAL
+	ORIENTATION_HORIZONTAL Orientation = C.GTK_ORIENTATION_HORIZONTAL
+	ORIENTATION_VERTICAL               = C.GTK_ORIENTATION_VERTICAL
 )
 
 // PackType is a representation of GTK's GtkPackType.
 type PackType int
 
 const (
-	PACK_START PackType = iota
-	PACK_END
+	PACK_START PackType = C.GTK_PACK_START
+	PACK_END            = C.GTK_PACK_END
 )
 
 // PolicyType is a representation of GTK's GtkPolicyType.
 type PolicyType int
 
 const (
-	POLICY_ALWAYS PolicyType = iota
-	POLICY_AUTOMATIC
-	POLICY_NEVER
+	POLICY_ALWAYS    PolicyType = C.GTK_POLICY_ALWAYS
+	POLICY_AUTOMATIC            = C.GTK_POLICY_AUTOMATIC
+	POLICY_NEVER                = C.GTK_POLICY_NEVER
 )
 
 // PositionType is a representation of GTK's GtkPositionType.
 type PositionType int
 
 const (
-	POS_LEFT PositionType = iota
-	POS_RIGHT
-	POS_TOP
-	POS_BOTTOM
+	POS_LEFT   PositionType = C.GTK_POS_LEFT
+	POS_RIGHT               = C.GTK_POS_RIGHT
+	POS_TOP                 = C.GTK_POS_TOP
+	POS_BOTTOM              = C.GTK_POS_BOTTOM
 )
 
 // ReliefStyle is a representation of GTK's GtkReliefStyle.
 type ReliefStyle int
 
 const (
-	RELIEF_NORMAL ReliefStyle = iota
-	RELIEF_HALF
-	RELIEF_NONE
+	RELIEF_NORMAL ReliefStyle = C.GTK_RELIEF_NORMAL
+	RELIEF_HALF               = C.GTK_RELIEF_HALF
+	RELIEF_NONE               = C.GTK_RELIEF_NONE
 )
 
 // ResponseType is a representation of GTK's GtkResponseType.
 type ResponseType int
 
 const (
-	RESPONSE_NONE ResponseType = -(iota + 1)
-	RESPONSE_REJECT
-	RESPONSE_ACCEPT
-	RESPONSE_DELETE_EVENT
-	RESPONSE_OK
-	RESPONSE_CANCEL
-	RESPONSE_CLOSE
-	RESPONSE_YES
-	RESPONSE_NO
-	RESPONSE_APPLY
-	RESPONSE_HELP
+	RESPONSE_NONE         ResponseType = C.GTK_RESPONSE_NONE
+	RESPONSE_REJECT                    = C.GTK_RESPONSE_REJECT
+	RESPONSE_ACCEPT                    = C.GTK_RESPONSE_ACCEPT
+	RESPONSE_DELETE_EVENT              = C.GTK_RESPONSE_DELETE_EVENT
+	RESPONSE_OK                        = C.GTK_RESPONSE_OK
+	RESPONSE_CANCEL                    = C.GTK_RESPONSE_CANCEL
+	RESPONSE_CLOSE                     = C.GTK_RESPONSE_CLOSE
+	RESPONSE_YES                       = C.GTK_RESPONSE_YES
+	RESPONSE_NO                        = C.GTK_RESPONSE_NO
+	RESPONSE_APPLY                     = C.GTK_RESPONSE_APPLY
+	RESPONSE_HELP                      = C.GTK_RESPONSE_HELP
 )
 
 // Stock is a special type that does not have an equivalent type in
@@ -280,252 +279,139 @@ const (
 type Stock string
 
 const (
-	STOCK_ABOUT                         Stock = "gtk-about"
-	STOCK_ADD                           Stock = "gtk-add"
-	STOCK_APPLY                         Stock = "gtk-apply"
-	STOCK_BOLD                          Stock = "gtk-bold"
-	STOCK_CANCEL                        Stock = "gtk-cancel"
-	STOCK_CAPS_LOCK_WARNING             Stock = "gtk-caps-lock-warning"
-	STOCK_CDROM                         Stock = "gtk-cdrom"
-	STOCK_CLEAR                         Stock = "gtk-clear"
-	STOCK_CLOSE                         Stock = "gtk-close"
-	STOCK_COLOR_PICKER                  Stock = "gtk-color-picker"
-	STOCK_CONNECT                       Stock = "gtk-connect"
-	STOCK_CONVERT                       Stock = "gtk-convert"
-	STOCK_COPY                          Stock = "gtk-copy"
-	STOCK_CUT                           Stock = "gtk-cut"
-	STOCK_DELETE                        Stock = "gtk-delete"
-	STOCK_DIALOG_AUTHENTICATION         Stock = "gtk-dialog-authentication"
-	STOCK_DIALOG_INFO                   Stock = "gtk-dialog-info"
-	STOCK_DIALOG_WARNING                Stock = "gtk-dialog-warning"
-	STOCK_DIALOG_ERROR                  Stock = "gtk-dialog-error"
-	STOCK_DIALOG_QUESTION               Stock = "gtk-dialog-question"
-	STOCK_DIRECTORY                     Stock = "gtk-directory"
-	STOCK_DISCARD                       Stock = "gtk-discard"
-	STOCK_DISCONNECT                    Stock = "gtk-disconnect"
-	STOCK_DND                           Stock = "gtk-dnd"
-	STOCK_DND_MULTIPLE                  Stock = "gtk-dnd-multiple"
-	STOCK_EDIT                          Stock = "gtk-edit"
-	STOCK_EXECUTE                       Stock = "gtk-execute"
-	STOCK_FILE                          Stock = "gtk-file"
-	STOCK_FIND                          Stock = "gtk-find"
-	STOCK_FIND_AND_REPLACE              Stock = "gtk-find-and-replace"
-	STOCK_FLOPPY                        Stock = "gtk-floppy"
-	STOCK_FULLSCREEN                    Stock = "gtk-fullscreen"
-	STOCK_GOTO_BOTTOM                   Stock = "gtk-goto-bottom"
-	STOCK_GOTO_FIRST                    Stock = "gtk-goto-first"
-	STOCK_GOTO_LAST                     Stock = "gtk-goto-last"
-	STOCK_GOTO_TOP                      Stock = "gtk-goto-top"
-	STOCK_GO_BACK                       Stock = "gtk-go-back"
-	STOCK_GO_DOWN                       Stock = "gtk-go-down"
-	STOCK_GO_FORWARD                    Stock = "gtk-go-forward"
-	STOCK_GO_UP                         Stock = "gtk-go-up"
-	STOCK_HARDDISK                      Stock = "gtk-harddisk"
-	STOCK_HELP                          Stock = "gtk-help"
-	STOCK_HOME                          Stock = "gtk-home"
-	STOCK_INDEX                         Stock = "gtk-index"
-	STOCK_INDENT                        Stock = "gtk-indent"
-	STOCK_INFO                          Stock = "gtk-info"
-	STOCK_ITALIC                        Stock = "gtk-italic"
-	STOCK_JUMP_TO                       Stock = "gtk-jump-to"
-	STOCK_JUSTIFY_CENTER                Stock = "gtk-justify-center"
-	STOCK_JUSTIFY_FILL                  Stock = "gtk-justify-fill"
-	STOCK_JUSTIFY_LEFT                  Stock = "gtk-justify-left"
-	STOCK_JUSTIFY_RIGHT                 Stock = "gtk-justify-right"
-	STOCK_LEAVE_FULLSCREEN              Stock = "gtk-leave-fullscreen"
-	STOCK_MISSING_IMAGE                 Stock = "gtk-missing-image"
-	STOCK_MEDIA_FORWARD                 Stock = "gtk-media-forward"
-	STOCK_MEDIA_NEXT                    Stock = "gtk-media-next"
-	STOCK_MEDIA_PAUSE                   Stock = "gtk-media-pause"
-	STOCK_MEDIA_PLAY                    Stock = "gtk-media-play"
-	STOCK_MEDIA_PREVIOUS                Stock = "gtk-media-previous"
-	STOCK_MEDIA_RECORD                  Stock = "gtk-media-record"
-	STOCK_MEDIA_REWIND                  Stock = "gtk-media-rewind"
-	STOCK_MEDIA_STOP                    Stock = "gtk-media-stop"
-	STOCK_NETWORK                       Stock = "gtk-network"
-	STOCK_NEW                           Stock = "gtk-new"
-	STOCK_NO                            Stock = "gtk-no"
-	STOCK_OK                            Stock = "gtk-ok"
-	STOCK_OPEN                          Stock = "gtk-open"
-	STOCK_ORIENTATION_PORTRAIT          Stock = "gtk-orientation-portrait"
-	STOCK_ORIENTATION_LANDSCAPE         Stock = "gtk-orientation-landscape"
-	STOCK_ORIENTATION_REVERSE_LANDSCAPE Stock = "gtk-orientation-reverse-landscape"
-	STOCK_ORIENTATION_REVERSE_PORTRAIT  Stock = "gtk-orientation-reverse-portrait"
-	STOCK_PAGE_SETUP                    Stock = "gtk-page-setup"
-	STOCK_PASTE                         Stock = "gtk-paste"
-	STOCK_PREFERENCES                   Stock = "gtk-preferences"
-	STOCK_PRINT                         Stock = "gtk-print"
-	STOCK_PRINT_ERROR                   Stock = "gtk-print-error"
-	STOCK_PRINT_PAUSED                  Stock = "gtk-print-paused"
-	STOCK_PRINT_PREVIEW                 Stock = "gtk-print-preview"
-	STOCK_PRINT_REPORT                  Stock = "gtk-print-report"
-	STOCK_PRINT_WARNING                 Stock = "gtk-print-warning"
-	STOCK_PROPERTIES                    Stock = "gtk-properties"
-	STOCK_QUIT                          Stock = "gtk-quit"
-	STOCK_REDO                          Stock = "gtk-redo"
-	STOCK_REFRESH                       Stock = "gtk-refresh"
-	STOCK_REMOVE                        Stock = "gtk-remove"
-	STOCK_REVERT_TO_SAVED               Stock = "gtk-revert-to-saved"
-	STOCK_SAVE                          Stock = "gtk-save"
-	STOCK_SAVE_AS                       Stock = "gtk-save-as"
-	STOCK_SELECT_ALL                    Stock = "gtk-select-all"
-	STOCK_SELECT_COLOR                  Stock = "gtk-select-color"
-	STOCK_SELECT_FONT                   Stock = "gtk-select-font"
-	STOCK_SORT_ASCENDING                Stock = "gtk-sort-ascending"
-	STOCK_SORT_DESCENDING               Stock = "gtk-sort-descending"
-	STOCK_SPELL_CHECK                   Stock = "gtk-spell-check"
-	STOCK_STOP                          Stock = "gtk-stop"
-	STOCK_STRIKETHROUGH                 Stock = "gtk-strikethrough"
-	STOCK_UNDELETE                      Stock = "gtk-undelete"
-	STOCK_UNDERLINE                     Stock = "gtk-underline"
-	STOCK_UNDO                          Stock = "gtk-undo"
-	STOCK_UNINDENT                      Stock = "gtk-unindent"
-	STOCK_YES                           Stock = "gtk-yes"
-	STOCK_ZOOM_100                      Stock = "gtk-zoom-100"
-	STOCK_ZOOM_FIT                      Stock = "gtk-zoom-fit"
-	STOCK_ZOOM_IN                       Stock = "gtk-zoom-in"
-	STOCK_ZOOM_OUT                      Stock = "gtk-zoom-out"
+	STOCK_ABOUT                         Stock = C.GTK_STOCK_ABOUT
+	STOCK_ADD                                 = C.GTK_STOCK_ADD
+	STOCK_APPLY                               = C.GTK_STOCK_APPLY
+	STOCK_BOLD                                = C.GTK_STOCK_BOLD
+	STOCK_CANCEL                              = C.GTK_STOCK_CANCEL
+	STOCK_CAPS_LOCK_WARNING                   = C.GTK_STOCK_CAPS_LOCK_WARNING
+	STOCK_CDROM                               = C.GTK_STOCK_CDROM
+	STOCK_CLEAR                               = C.GTK_STOCK_CLEAR
+	STOCK_CLOSE                               = C.GTK_STOCK_CLOSE
+	STOCK_COLOR_PICKER                        = C.GTK_STOCK_COLOR_PICKER
+	STOCK_CONNECT                             = C.GTK_STOCK_CONNECT
+	STOCK_CONVERT                             = C.GTK_STOCK_CONVERT
+	STOCK_COPY                                = C.GTK_STOCK_COPY
+	STOCK_CUT                                 = C.GTK_STOCK_CUT
+	STOCK_DELETE                              = C.GTK_STOCK_DELETE
+	STOCK_DIALOG_AUTHENTICATION               = C.GTK_STOCK_DIALOG_AUTHENTICATION
+	STOCK_DIALOG_INFO                         = C.GTK_STOCK_DIALOG_INFO
+	STOCK_DIALOG_WARNING                      = C.GTK_STOCK_DIALOG_WARNING
+	STOCK_DIALOG_ERROR                        = C.GTK_STOCK_DIALOG_ERROR
+	STOCK_DIALOG_QUESTION                     = C.GTK_STOCK_DIALOG_QUESTION
+	STOCK_DIRECTORY                           = C.GTK_STOCK_DIRECTORY
+	STOCK_DISCARD                             = C.GTK_STOCK_DISCARD
+	STOCK_DISCONNECT                          = C.GTK_STOCK_DISCONNECT
+	STOCK_DND                                 = C.GTK_STOCK_DND
+	STOCK_DND_MULTIPLE                        = C.GTK_STOCK_DND_MULTIPLE
+	STOCK_EDIT                                = C.GTK_STOCK_EDIT
+	STOCK_EXECUTE                             = C.GTK_STOCK_EXECUTE
+	STOCK_FILE                                = C.GTK_STOCK_FILE
+	STOCK_FIND                                = C.GTK_STOCK_FIND
+	STOCK_FIND_AND_REPLACE                    = C.GTK_STOCK_FIND_AND_REPLACE
+	STOCK_FLOPPY                              = C.GTK_STOCK_FLOPPY
+	STOCK_FULLSCREEN                          = C.GTK_STOCK_FULLSCREEN
+	STOCK_GOTO_BOTTOM                         = C.GTK_STOCK_GOTO_BOTTOM
+	STOCK_GOTO_FIRST                          = C.GTK_STOCK_GOTO_FIRST
+	STOCK_GOTO_LAST                           = C.GTK_STOCK_GOTO_LAST
+	STOCK_GOTO_TOP                            = C.GTK_STOCK_GOTO_TOP
+	STOCK_GO_BACK                             = C.GTK_STOCK_GO_BACK
+	STOCK_GO_DOWN                             = C.GTK_STOCK_GO_DOWN
+	STOCK_GO_FORWARD                          = C.GTK_STOCK_GO_FORWARD
+	STOCK_GO_UP                               = C.GTK_STOCK_GO_UP
+	STOCK_HARDDISK                            = C.GTK_STOCK_HARDDISK
+	STOCK_HELP                                = C.GTK_STOCK_HELP
+	STOCK_HOME                                = C.GTK_STOCK_HOME
+	STOCK_INDEX                               = C.GTK_STOCK_INDEX
+	STOCK_INDENT                              = C.GTK_STOCK_INDENT
+	STOCK_INFO                                = C.GTK_STOCK_INFO
+	STOCK_ITALIC                              = C.GTK_STOCK_ITALIC
+	STOCK_JUMP_TO                             = C.GTK_STOCK_JUMP_TO
+	STOCK_JUSTIFY_CENTER                      = C.GTK_STOCK_JUSTIFY_CENTER
+	STOCK_JUSTIFY_FILL                        = C.GTK_STOCK_JUSTIFY_FILL
+	STOCK_JUSTIFY_LEFT                        = C.GTK_STOCK_JUSTIFY_LEFT
+	STOCK_JUSTIFY_RIGHT                       = C.GTK_STOCK_JUSTIFY_RIGHT
+	STOCK_LEAVE_FULLSCREEN                    = C.GTK_STOCK_LEAVE_FULLSCREEN
+	STOCK_MISSING_IMAGE                       = C.GTK_STOCK_MISSING_IMAGE
+	STOCK_MEDIA_FORWARD                       = C.GTK_STOCK_MEDIA_FORWARD
+	STOCK_MEDIA_NEXT                          = C.GTK_STOCK_MEDIA_NEXT
+	STOCK_MEDIA_PAUSE                         = C.GTK_STOCK_MEDIA_PAUSE
+	STOCK_MEDIA_PLAY                          = C.GTK_STOCK_MEDIA_PLAY
+	STOCK_MEDIA_PREVIOUS                      = C.GTK_STOCK_MEDIA_PREVIOUS
+	STOCK_MEDIA_RECORD                        = C.GTK_STOCK_MEDIA_RECORD
+	STOCK_MEDIA_REWIND                        = C.GTK_STOCK_MEDIA_REWIND
+	STOCK_MEDIA_STOP                          = C.GTK_STOCK_MEDIA_STOP
+	STOCK_NETWORK                             = C.GTK_STOCK_NETWORK
+	STOCK_NEW                                 = C.GTK_STOCK_NEW
+	STOCK_NO                                  = C.GTK_STOCK_NO
+	STOCK_OK                                  = C.GTK_STOCK_OK
+	STOCK_OPEN                                = C.GTK_STOCK_OPEN
+	STOCK_ORIENTATION_PORTRAIT                = C.GTK_STOCK_ORIENTATION_PORTRAIT
+	STOCK_ORIENTATION_LANDSCAPE               = C.GTK_STOCK_ORIENTATION_LANDSCAPE
+	STOCK_ORIENTATION_REVERSE_LANDSCAPE       = C.GTK_STOCK_ORIENTATION_REVERSE_LANDSCAPE
+	STOCK_ORIENTATION_REVERSE_PORTRAIT        = C.GTK_STOCK_ORIENTATION_REVERSE_PORTRAIT
+	STOCK_PAGE_SETUP                          = C.GTK_STOCK_PAGE_SETUP
+	STOCK_PASTE                               = C.GTK_STOCK_PASTE
+	STOCK_PREFERENCES                         = C.GTK_STOCK_PREFERENCES
+	STOCK_PRINT                               = C.GTK_STOCK_PRINT
+	STOCK_PRINT_ERROR                         = C.GTK_STOCK_PRINT_ERROR
+	STOCK_PRINT_PAUSED                        = C.GTK_STOCK_PRINT_PAUSED
+	STOCK_PRINT_PREVIEW                       = C.GTK_STOCK_PRINT_PREVIEW
+	STOCK_PRINT_REPORT                        = C.GTK_STOCK_PRINT_REPORT
+	STOCK_PRINT_WARNING                       = C.GTK_STOCK_PRINT_WARNING
+	STOCK_PROPERTIES                          = C.GTK_STOCK_PROPERTIES
+	STOCK_QUIT                                = C.GTK_STOCK_QUIT
+	STOCK_REDO                                = C.GTK_STOCK_REDO
+	STOCK_REFRESH                             = C.GTK_STOCK_REFRESH
+	STOCK_REMOVE                              = C.GTK_STOCK_REMOVE
+	STOCK_REVERT_TO_SAVED                     = C.GTK_STOCK_REVERT_TO_SAVED
+	STOCK_SAVE                                = C.GTK_STOCK_SAVE
+	STOCK_SAVE_AS                             = C.GTK_STOCK_SAVE_AS
+	STOCK_SELECT_ALL                          = C.GTK_STOCK_SELECT_ALL
+	STOCK_SELECT_COLOR                        = C.GTK_STOCK_SELECT_COLOR
+	STOCK_SELECT_FONT                         = C.GTK_STOCK_SELECT_FONT
+	STOCK_SORT_ASCENDING                      = C.GTK_STOCK_SORT_ASCENDING
+	STOCK_SORT_DESCENDING                     = C.GTK_STOCK_SORT_DESCENDING
+	STOCK_SPELL_CHECK                         = C.GTK_STOCK_SPELL_CHECK
+	STOCK_STOP                                = C.GTK_STOCK_STOP
+	STOCK_STRIKETHROUGH                       = C.GTK_STOCK_STRIKETHROUGH
+	STOCK_UNDELETE                            = C.GTK_STOCK_UNDELETE
+	STOCK_UNDERLINE                           = C.GTK_STOCK_UNDERLINE
+	STOCK_UNDO                                = C.GTK_STOCK_UNDO
+	STOCK_UNINDENT                            = C.GTK_STOCK_UNINDENT
+	STOCK_YES                                 = C.GTK_STOCK_YES
+	STOCK_ZOOM_100                            = C.GTK_STOCK_ZOOM_100
+	STOCK_ZOOM_FIT                            = C.GTK_STOCK_ZOOM_FIT
+	STOCK_ZOOM_IN                             = C.GTK_STOCK_ZOOM_IN
+	STOCK_ZOOM_OUT                            = C.GTK_STOCK_ZOOM_OUT
 )
 
 // TreeModelFlags is a representation of GTK's GtkTreeModelFlags.
 type TreeModelFlags int
 
 const (
-	TREE_MODEL_ITERS_PERSIST TreeModelFlags = 1 << iota
-	TREE_MODEL_LIST_ONLY
+	TREE_MODEL_ITERS_PERSIST TreeModelFlags = C.GTK_TREE_MODEL_ITERS_PERSIST
+	TREE_MODEL_LIST_ONLY                    = C.GTK_TREE_MODEL_LIST_ONLY
 )
 
 // WindowPosition is a representation of GTK's GtkWindowPosition.
 type WindowPosition int
 
 const (
-	WIN_POS_NONE WindowPosition = iota
-	WIN_POS_CENTER
-	WIN_POS_MOUSE
-	WIN_POS_CENTER_ALWAYS
-	WIN_POS_CENTER_ON_PARENT
+	WIN_POS_NONE             WindowPosition = C.GTK_WIN_POS_NONE
+	WIN_POS_CENTER                          = C.GTK_WIN_POS_CENTER
+	WIN_POS_MOUSE                           = C.GTK_WIN_POS_MOUSE
+	WIN_POS_CENTER_ALWAYS                   = C.GTK_WIN_POS_CENTER_ALWAYS
+	WIN_POS_CENTER_ON_PARENT                = C.GTK_WIN_POS_CENTER_ON_PARENT
 )
 
 // WindowType is a representation of GTK's GtkWindowType.
 type WindowType int
 
 const (
-	WINDOW_TOPLEVEL WindowType = iota
-	WINDOW_POPUP
+	WINDOW_TOPLEVEL WindowType = C.GTK_WINDOW_TOPLEVEL
+	WINDOW_POPUP               = C.GTK_WINDOW_POPUP
 )
-
-// Wrapper function for TestConsts since cgo can't be used with
-// testing package
-func testConsts() error {
-	tests := []struct {
-		GoConst  interface{}
-		GtkConst interface{}
-	}{
-		{ALIGN_FILL, C.GTK_ALIGN_FILL},
-		{ALIGN_START, C.GTK_ALIGN_START},
-		{ALIGN_END, C.GTK_ALIGN_END},
-		{ALIGN_CENTER, C.GTK_ALIGN_CENTER},
-
-		{BUTTONS_NONE, C.GTK_BUTTONS_NONE},
-		{BUTTONS_OK, C.GTK_BUTTONS_OK},
-		{BUTTONS_CLOSE, C.GTK_BUTTONS_CLOSE},
-		{BUTTONS_CANCEL, C.GTK_BUTTONS_CANCEL},
-		{BUTTONS_YES_NO, C.GTK_BUTTONS_YES_NO},
-		{BUTTONS_OK_CANCEL, C.GTK_BUTTONS_OK_CANCEL},
-
-		{DIALOG_MODAL, C.GTK_DIALOG_MODAL},
-		{DIALOG_DESTROY_WITH_PARENT, C.GTK_DIALOG_DESTROY_WITH_PARENT},
-
-		{ENTRY_ICON_PRIMARY, C.GTK_ENTRY_ICON_PRIMARY},
-		{ENTRY_ICON_SECONDARY, C.GTK_ENTRY_ICON_SECONDARY},
-
-		{IMAGE_EMPTY, C.GTK_IMAGE_EMPTY},
-		{IMAGE_PIXBUF, C.GTK_IMAGE_PIXBUF},
-		{IMAGE_STOCK, C.GTK_IMAGE_STOCK},
-		{IMAGE_ICON_SET, C.GTK_IMAGE_ICON_SET},
-		{IMAGE_ANIMATION, C.GTK_IMAGE_ANIMATION},
-		{IMAGE_ICON_NAME, C.GTK_IMAGE_ICON_NAME},
-		{IMAGE_GICON, C.GTK_IMAGE_GICON},
-
-		{INPUT_HINT_NONE, C.GTK_INPUT_HINT_NONE},
-		{INPUT_HINT_SPELLCHECK, C.GTK_INPUT_HINT_SPELLCHECK},
-		{INPUT_HINT_NO_SPELLCHECK, C.GTK_INPUT_HINT_NO_SPELLCHECK},
-		{INPUT_HINT_WORD_COMPLETION, C.GTK_INPUT_HINT_WORD_COMPLETION},
-		{INPUT_HINT_LOWERCASE, C.GTK_INPUT_HINT_LOWERCASE},
-		{INPUT_HINT_UPPERCASE_CHARS, C.GTK_INPUT_HINT_UPPERCASE_CHARS},
-		{INPUT_HINT_UPPERCASE_WORDS, C.GTK_INPUT_HINT_UPPERCASE_WORDS},
-		{INPUT_HINT_UPPERCASE_SENTENCES, C.GTK_INPUT_HINT_UPPERCASE_SENTENCES},
-		{INPUT_HINT_INHIBIT_OSK, C.GTK_INPUT_HINT_INHIBIT_OSK},
-
-		{INPUT_PURPOSE_FREE_FORM, C.GTK_INPUT_PURPOSE_FREE_FORM},
-		{INPUT_PURPOSE_ALPHA, C.GTK_INPUT_PURPOSE_ALPHA},
-		{INPUT_PURPOSE_DIGITS, C.GTK_INPUT_PURPOSE_DIGITS},
-		{INPUT_PURPOSE_NUMBER, C.GTK_INPUT_PURPOSE_NUMBER},
-		{INPUT_PURPOSE_PHONE, C.GTK_INPUT_PURPOSE_PHONE},
-		{INPUT_PURPOSE_URL, C.GTK_INPUT_PURPOSE_URL},
-		{INPUT_PURPOSE_EMAIL, C.GTK_INPUT_PURPOSE_EMAIL},
-		{INPUT_PURPOSE_NAME, C.GTK_INPUT_PURPOSE_NAME},
-		{INPUT_PURPOSE_PASSWORD, C.GTK_INPUT_PURPOSE_PASSWORD},
-		{INPUT_PURPOSE_PIN, C.GTK_INPUT_PURPOSE_PIN},
-
-		{MESSAGE_INFO, C.GTK_MESSAGE_INFO},
-		{MESSAGE_WARNING, C.GTK_MESSAGE_WARNING},
-		{MESSAGE_QUESTION, C.GTK_MESSAGE_QUESTION},
-		{MESSAGE_ERROR, C.GTK_MESSAGE_ERROR},
-		{MESSAGE_OTHER, C.GTK_MESSAGE_OTHER},
-
-		{ORIENTATION_HORIZONTAL, C.GTK_ORIENTATION_HORIZONTAL},
-		{ORIENTATION_VERTICAL, C.GTK_ORIENTATION_VERTICAL},
-
-		{PACK_START, C.GTK_PACK_START},
-		{PACK_END, C.GTK_PACK_END},
-
-		{POLICY_ALWAYS, C.GTK_POLICY_ALWAYS},
-		{POLICY_AUTOMATIC, C.GTK_POLICY_AUTOMATIC},
-		{POLICY_NEVER, C.GTK_POLICY_NEVER},
-
-		{POS_LEFT, C.GTK_POS_LEFT},
-		{POS_RIGHT, C.GTK_POS_RIGHT},
-		{POS_TOP, C.GTK_POS_TOP},
-		{POS_BOTTOM, C.GTK_POS_BOTTOM},
-
-		{RELIEF_NORMAL, C.GTK_RELIEF_NORMAL},
-		{RELIEF_HALF, C.GTK_RELIEF_HALF},
-		{RELIEF_NONE, C.GTK_RELIEF_NONE},
-
-		{RESPONSE_NONE, C.GTK_RESPONSE_NONE},
-		{RESPONSE_REJECT, C.GTK_RESPONSE_REJECT},
-		{RESPONSE_ACCEPT, C.GTK_RESPONSE_ACCEPT},
-		{RESPONSE_DELETE_EVENT, C.GTK_RESPONSE_DELETE_EVENT},
-		{RESPONSE_OK, C.GTK_RESPONSE_OK},
-		{RESPONSE_CANCEL, C.GTK_RESPONSE_CANCEL},
-		{RESPONSE_CLOSE, C.GTK_RESPONSE_CLOSE},
-		{RESPONSE_YES, C.GTK_RESPONSE_YES},
-		{RESPONSE_NO, C.GTK_RESPONSE_NO},
-		{RESPONSE_APPLY, C.GTK_RESPONSE_APPLY},
-		{RESPONSE_HELP, C.GTK_RESPONSE_HELP},
-
-		{TREE_MODEL_ITERS_PERSIST, C.GTK_TREE_MODEL_ITERS_PERSIST},
-		{TREE_MODEL_LIST_ONLY, C.GTK_TREE_MODEL_LIST_ONLY},
-
-		{WIN_POS_NONE, C.GTK_WIN_POS_NONE},
-		{WIN_POS_CENTER, C.GTK_WIN_POS_CENTER},
-		{WIN_POS_MOUSE, C.GTK_WIN_POS_MOUSE},
-		{WIN_POS_CENTER_ALWAYS, C.GTK_WIN_POS_CENTER_ALWAYS},
-		{WIN_POS_CENTER_ON_PARENT, C.GTK_WIN_POS_CENTER_ON_PARENT},
-
-		{WINDOW_TOPLEVEL, C.GTK_WINDOW_TOPLEVEL},
-		{WINDOW_POPUP, C.GTK_WINDOW_POPUP},
-	}
-	for i, test := range tests {
-		v := reflect.ValueOf(test.GoConst)
-		iv := int(v.Int())
-		if iv != test.GtkConst.(int) {
-			return fmt.Errorf("Constant mismatch %d: %d != %d", i, iv, test.GtkConst.(int))
-		}
-	}
-	return nil
-}
 
 /*
  * Init and main event loop
@@ -2480,7 +2366,7 @@ func (v *ListStore) SetColumnTypes(types ...glib.Type) {
 // a function similar to gtk_list_store_set() in that multiple columns
 // may be set by one call.  The length of columns and values slices must
 // match, or Set() will return a non-nil error.
-// 
+//
 // As an example, a call to:
 //  store.Set(iter, []int{0, 1}, []interface{}{"Foo", "Bar"})
 // is functionally equivalent to calling the native C GTK function:
