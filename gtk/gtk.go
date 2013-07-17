@@ -2619,7 +2619,11 @@ func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, butt
 	s := fmt.Sprintf(format, a...)
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C._gtk_message_dialog_new(parent.toWindow(),
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+	c := C._gtk_message_dialog_new(w,
 		C.GtkDialogFlags(flags), C.GtkMessageType(mType),
 		C.GtkButtonsType(buttons), cstr)
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
