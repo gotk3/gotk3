@@ -103,6 +103,22 @@ const (
 	TYPE_VARIANT
 )
 
+// UserDirectory is a representation of GLib's GUserDirectory.
+type UserDirectory int
+
+const (
+	USER_DIRECTORY_DESKTOP UserDirectory = C.G_USER_DIRECTORY_DESKTOP
+	USER_DIRECTORY_DOCUMENTS UserDirectory = C.G_USER_DIRECTORY_DOCUMENTS
+	USER_DIRECTORY_DOWNLOAD UserDirectory = C.G_USER_DIRECTORY_DOWNLOAD
+	USER_DIRECTORY_MUSIC UserDirectory = C.G_USER_DIRECTORY_MUSIC
+	USER_DIRECTORY_PICTURES UserDirectory = C.G_USER_DIRECTORY_PICTURES
+	USER_DIRECTORY_PUBLIC_SHARE UserDirectory = C.G_USER_DIRECTORY_PUBLIC_SHARE
+	USER_DIRECTORY_TEMPLATES UserDirectory = C.G_USER_DIRECTORY_TEMPLATES
+	USER_DIRECTORY_VIDEOS UserDirectory = C.G_USER_DIRECTORY_VIDEOS
+)
+
+const USER_N_DIRECTORIES int = C.G_USER_N_DIRECTORIES
+
 /*
  * Events
  */
@@ -255,6 +271,21 @@ func _go_nil_unused_idle_ctx(n C.int) {
 	idleFnContexts.Lock()
 	idleFnContexts.s[int(n)] = nil
 	idleFnContexts.Unlock()
+}
+
+/*
+ * Miscellaneous Utility Functions
+ */
+
+// GetUserSpecialDir() is a wrapper around g_get_user_special_dir().  A
+// non-nil error is returned in the case that g_get_user_special_dir()
+// returns NULL to differentiate between NULL and an empty string.
+func GetUserSpecialDir(directory UserDirectory) (string, error) {
+	c := C.g_get_user_special_dir(C.GUserDirectory(directory))
+	if c == nil {
+		return "", nilPtrErr
+	}
+	return C.GoString((*C.char)(c)), nil
 }
 
 /*
