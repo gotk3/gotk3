@@ -477,6 +477,10 @@ func (v *Adjustment) Native() *C.GtkAdjustment {
 	return C.toGtkAdjustment(p)
 }
 
+func wrapAdjustment(obj *glib.Object) (*Adjustment) {
+	return &Adjustment{glib.InitiallyUnowned{obj}}
+}
+
 /*
  * GtkBin
  */
@@ -495,6 +499,10 @@ func (v *Bin) Native() *C.GtkBin {
 	return C.toGtkBin(p)
 }
 
+func wrapBin(obj *glib.Object) (*Bin) {
+	return &Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // GetChild() is a wrapper around gtk_bin_get_child().
 func (v *Bin) GetChild() (*Widget, error) {
 	c := C.gtk_bin_get_child(v.Native())
@@ -502,10 +510,110 @@ func (v *Bin) GetChild() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
+	w := wrapWidget(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
+}
+
+/*
+ * GtkBuilder
+ */
+
+// Builder is a representation of GTK's GtkBuilder.
+type Builder struct {
+	*glib.Object
+}
+
+// Native() returns a pointer to the underlying GtkBuilder.
+func (b *Builder) Native() *C.GtkBuilder {
+	if b == nil || b.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(b.GObject)
+	return C.toGtkBuilder(p)
+}
+
+// BuilderNew() is a wrapper around gtk_builder_new().
+func BuilderNew() (*Builder, error) {
+	c := C.gtk_builder_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := &Builder{obj}
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return b, nil
+}
+
+// AddFromFile() is a wrapper around gtk_builder_add_from_file().
+func (b *Builder) AddFromFile(filename string) error {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	res := C.gtk_builder_add_from_file(b.Native(), (*C.gchar)(cstr), &err)
+	if res == 0 {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(C.error_get_message(err))))
+	}
+	return nil
+}
+
+// AddFromResource() is a wrapper around gtk_builder_add_from_resource().
+func (b *Builder) AddFromResource(path string) error {
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	res := C.gtk_builder_add_from_resource(b.Native(), (*C.gchar)(cstr), &err)
+	if res == 0 {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(C.error_get_message(err))))
+	}
+	return nil
+}
+
+// AddFromString() is a wrapper around gtk_builder_add_from_string().
+func (b *Builder) AddFromString(str string) error {
+	cstr := C.CString(str)
+	defer C.free(unsafe.Pointer(cstr))
+	length := (C.gsize)(len(str))
+	var err *C.GError = nil
+	res := C.gtk_builder_add_from_string(b.Native(), (*C.gchar)(cstr), length, &err)
+	if res == 0 {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(C.error_get_message(err))))
+	}
+	return nil
+}
+
+// GetObject() is a wrapper around gtk_builder_get_object(). The returned result
+// is an IObject, so it will need to be type-asserted to the appropriate type before
+// being used. For example, to get an object and type assert it as a window:
+//
+//   obj, err := builder.GetObject("window")
+//   if err != nil {
+//       // object not found
+//       return
+//   }
+//   if w, ok := obj.(*gtk.Window); ok {
+//       // do stuff with w here
+//   } else {
+//       // not a *gtk.Window
+//   }
+//
+func (b *Builder) GetObject(name string) (glib.IObject, error) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_builder_get_object(b.Native(), (*C.gchar)(cstr))
+	if c == nil {
+		return nil, errors.New("object '" + name + "' not found")
+	}
+	obj, err := cast(c)
+	if err != nil {
+		return nil, err
+	}
+	return obj, nil
 }
 
 /*
@@ -526,6 +634,10 @@ func (v *Button) Native() *C.GtkButton {
 	return C.toGtkButton(p)
 }
 
+func wrapButton(obj *glib.Object) (*Button) {
+	return &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
 // ButtonNew() is a wrapper around gtk_button_new().
 func ButtonNew() (*Button, error) {
 	c := C.gtk_button_new()
@@ -533,7 +645,7 @@ func ButtonNew() (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	b := wrapButton(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return b, nil
@@ -548,7 +660,7 @@ func ButtonNewWithLabel(label string) (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	b := wrapButton(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return b, nil
@@ -563,7 +675,7 @@ func ButtonNewFromStock(stock Stock) (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	b := wrapButton(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return b, nil
@@ -578,7 +690,7 @@ func ButtonNewWithMnemonic(label string) (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	b := wrapButton(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return b, nil
@@ -674,7 +786,7 @@ func (v *Button) GetImage() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
+	w := wrapWidget(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
@@ -733,6 +845,10 @@ func (v *Box) Native() *C.GtkBox {
 	return C.toGtkBox(p)
 }
 
+func wrapBox(obj *glib.Object) (*Box) {
+	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // BoxNew() is a wrapper around gtk_box_new().
 func BoxNew(orientation Orientation, spacing int) (*Box, error) {
 	c := C.gtk_box_new(C.GtkOrientation(orientation), C.gint(spacing))
@@ -740,7 +856,7 @@ func BoxNew(orientation Orientation, spacing int) (*Box, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
+	b := wrapBox(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return b, nil
@@ -828,6 +944,10 @@ func (v *CellLayout) Native() *C.GtkCellLayout {
 	return C.toGtkCellLayout(p)
 }
 
+func wrapCellLayout(obj *glib.Object) (*CellLayout) {
+	return &CellLayout{obj}
+}
+
 func (v *CellLayout) toCellLayout() *C.GtkCellLayout {
 	if v == nil {
 		return nil
@@ -882,6 +1002,10 @@ func (v *CellRenderer) toCellRenderer() *C.GtkCellRenderer {
 	return v.Native()
 }
 
+func wrapCellRenderer(obj *glib.Object) (*CellRenderer) {
+	return &CellRenderer{glib.InitiallyUnowned{obj}}
+}
+
 /*
  * GtkCellRendererText
  */
@@ -907,6 +1031,10 @@ func (v *CellRendererText) toCellRenderer() *C.GtkCellRenderer {
 	return v.CellRenderer.Native()
 }
 
+func wrapCellRendererText(obj *glib.Object) (*CellRendererText) {
+	return &CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}
+}
+
 // CellRendererTextNew() is a wrapper around gtk_cell_renderer_text_new().
 func CellRendererTextNew() (*CellRendererText, error) {
 	c := C.gtk_cell_renderer_text_new()
@@ -914,7 +1042,7 @@ func CellRendererTextNew() (*CellRendererText, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	crt := &CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}
+	crt := wrapCellRendererText(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return crt, nil
@@ -936,6 +1064,10 @@ func (v *Clipboard) Native() *C.GtkClipboard {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkClipboard(p)
+}
+
+func wrapClipboard(obj *glib.Object) (*Clipboard) {
+	return &Clipboard{obj}
 }
 
 // ClipboardGet() is a wrapper around gtk_clipboard_get().
@@ -1000,6 +1132,11 @@ func (v *ComboBox) toCellLayout() *C.GtkCellLayout {
 	return C.toGtkCellLayout(unsafe.Pointer(v.GObject))
 }
 
+func wrapComboBox(obj *glib.Object) (*ComboBox) {
+	cl := wrapCellLayout(obj)
+	return &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl}
+}
+
 // ComboBoxNew() is a wrapper around gtk_combo_box_new().
 func ComboBoxNew() (*ComboBox, error) {
 	c := C.gtk_combo_box_new()
@@ -1007,8 +1144,7 @@ func ComboBoxNew() (*ComboBox, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cl := CellLayout{obj}
-	cb := &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, cl}
+	cb := wrapComboBox(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return cb, nil
@@ -1021,8 +1157,7 @@ func ComboBoxNewWithEntry() (*ComboBox, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cl := CellLayout{obj}
-	cb := &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, cl}
+	cb := wrapComboBox(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return cb, nil
@@ -1035,8 +1170,7 @@ func ComboBoxNewWithModel(model ITreeModel) (*ComboBox, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cl := CellLayout{obj}
-	cb := &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, cl}
+	cb := wrapComboBox(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return cb, nil
@@ -1071,6 +1205,10 @@ func (v *Container) Native() *C.GtkContainer {
 	return C.toGtkContainer(p)
 }
 
+func wrapContainer(obj *glib.Object) (*Container) {
+	return &Container{Widget{glib.InitiallyUnowned{obj}}}
+}
+
 // Add() is a wrapper around gtk_container_add().
 func (v *Container) Add(w IWidget) {
 	C.gtk_container_add(v.Native(), w.toWidget())
@@ -1099,6 +1237,10 @@ func (v *Dialog) Native() *C.GtkDialog {
 	return C.toGtkDialog(p)
 }
 
+func wrapDialog(obj *glib.Object) (*Dialog) {
+	return &Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+}
+
 // DialogNew() is a wrapper around gtk_dialog_new().
 func DialogNew() (*Dialog, error) {
 	c := C.gtk_dialog_new()
@@ -1106,7 +1248,7 @@ func DialogNew() (*Dialog, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	d := &Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+	d := wrapDialog(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return d, nil
@@ -1172,7 +1314,7 @@ func (v *Dialog) GetWidgetForResponse(id ResponseType) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
+	w := wrapWidget(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
@@ -1185,7 +1327,7 @@ func (v *Dialog) GetActionArea() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
+	w := wrapWidget(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
@@ -1236,6 +1378,10 @@ func (v *Entry) Native() *C.GtkEntry {
 	return C.toGtkEntry(p)
 }
 
+func wrapEntry(obj *glib.Object) (*Entry) {
+	return &Entry{Widget{glib.InitiallyUnowned{obj}}}
+}
+
 // EntryNew() is a wrapper around gtk_entry_new().
 func EntryNew() (*Entry, error) {
 	c := C.gtk_entry_new()
@@ -1243,7 +1389,7 @@ func EntryNew() (*Entry, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	e := &Entry{Widget{glib.InitiallyUnowned{obj}}}
+	e := wrapEntry(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return e, nil
@@ -1256,7 +1402,7 @@ func EntryNewWithBuffer(buffer *EntryBuffer) (*Entry, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	e := &Entry{Widget{glib.InitiallyUnowned{obj}}}
+	e := wrapEntry(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return e, nil
@@ -1733,6 +1879,10 @@ func (v *EntryBuffer) Native() *C.GtkEntryBuffer {
 	return C.toGtkEntryBuffer(p)
 }
 
+func wrapEntryBuffer(obj *glib.Object) (*EntryBuffer) {
+	return &EntryBuffer{obj}
+}
+
 // EntryBufferNew() is a wrapper around gtk_entry_buffer_new().
 func EntryBufferNew(initialChars string, nInitialChars int) (*EntryBuffer, error) {
 	cstr := C.CString(initialChars)
@@ -1742,7 +1892,7 @@ func EntryBufferNew(initialChars string, nInitialChars int) (*EntryBuffer, error
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	e := &EntryBuffer{obj}
+	e := wrapEntryBuffer(obj)
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return e, nil
@@ -1838,6 +1988,10 @@ func (v *EntryCompletion) Native() *C.GtkEntryCompletion {
 	return C.toGtkEntryCompletion(p)
 }
 
+func wrapEntryCompletion(obj *glib.Object) (*EntryCompletion) {
+	return &EntryCompletion{obj}
+}
+
 /*
  * GtkGrid
  */
@@ -1866,6 +2020,11 @@ func (v *Grid) toOrientable() *C.GtkOrientable {
 	return C.toGtkOrientable(unsafe.Pointer(v.GObject))
 }
 
+func wrapGrid(obj *glib.Object) (*Grid) {
+	o := wrapOrientable(obj)
+	return &Grid{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}
+}
+
 // GridNew() is a wrapper around gtk_grid_new().
 func GridNew() (*Grid, error) {
 	c := C.gtk_grid_new()
@@ -1873,8 +2032,7 @@ func GridNew() (*Grid, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	o := Orientable{obj}
-	g := &Grid{Container{Widget{glib.InitiallyUnowned{obj}}}, o}
+	g := wrapGrid(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return g, nil
@@ -1900,7 +2058,7 @@ func (v *Grid) GetChildAt(left, top int) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
+	w := wrapWidget(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
@@ -1984,6 +2142,10 @@ func (v *Image) Native() *C.GtkImage {
 	return C.toGtkImage(p)
 }
 
+func wrapImage(obj *glib.Object) (*Image) {
+	return &Image{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // ImageNew() is a wrapper around gtk_image_new().
 func ImageNew() (*Image, error) {
 	c := C.gtk_image_new()
@@ -1991,7 +2153,7 @@ func ImageNew() (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	i := &Image{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	i := wrapImage(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return i, nil
@@ -2006,7 +2168,7 @@ func ImageNewFromFile(filename string) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	i := &Image{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	i := wrapImage(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return i, nil
@@ -2021,7 +2183,7 @@ func ImageNewFromResource(resourcePath string) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	i := &Image{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	i := wrapImage(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return i, nil
@@ -2042,7 +2204,7 @@ func ImageNewFromStock(stock Stock, size IconSize) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	i := &Image{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	i := wrapImage(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return i, nil
@@ -2070,7 +2232,7 @@ func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	i := &Image{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	i := wrapImage(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return i, nil
@@ -2208,6 +2370,10 @@ func (v *Label) Native() *C.GtkLabel {
 	return C.toGtkLabel(p)
 }
 
+func wrapLabel(obj *glib.Object) (*Label) {
+	return &Label{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // LabelNew() is a wrapper around gtk_label_new().
 func LabelNew(str string) (*Label, error) {
 	cstr := C.CString(str)
@@ -2217,7 +2383,7 @@ func LabelNew(str string) (*Label, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	l := &Label{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	l := wrapLabel(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return l, nil
@@ -2291,7 +2457,7 @@ func LabelNewWithMnemonic(str string) (*Label, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	l := &Label{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	l := wrapLabel(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return l, nil
@@ -2330,6 +2496,11 @@ func (v *ListStore) Native() *C.GtkListStore {
 	return C.toGtkListStore(p)
 }
 
+func wrapListStore(obj *glib.Object) (*ListStore) {
+	tm := wrapTreeModel(obj)
+	return &ListStore{obj, *tm}
+}
+
 func (v *ListStore) toTreeModel() *C.GtkTreeModel {
 	if v == nil {
 		return nil
@@ -2349,8 +2520,7 @@ func ListStoreNew(types ...glib.Type) (*ListStore, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tm := TreeModel{obj}
-	ls := &ListStore{obj, tm}
+	ls := wrapListStore(obj)
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return ls, nil
@@ -2460,6 +2630,10 @@ func (v *Menu) Native() *C.GtkMenu {
 	return C.toGtkMenu(p)
 }
 
+func wrapMenu(obj *glib.Object) (*Menu) {
+	return &Menu{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
 // MenuNew() is a wrapper around gtk_menu_new().
 func MenuNew() (*Menu, error) {
 	c := C.gtk_menu_new()
@@ -2467,7 +2641,7 @@ func MenuNew() (*Menu, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := &Menu{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	m := wrapMenu(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return m, nil
@@ -2491,6 +2665,10 @@ func (v *MenuBar) Native() *C.GtkMenuBar {
 	return C.toGtkMenuBar(p)
 }
 
+func wrapMenuBar(obj *glib.Object) (*MenuBar) {
+	return &MenuBar{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
 // MenuBarNew() is a wrapper around gtk_menu_bar_new().
 func MenuBarNew() (*MenuBar, error) {
 	c := C.gtk_menu_bar_new()
@@ -2498,7 +2676,7 @@ func MenuBarNew() (*MenuBar, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := &MenuBar{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	m := wrapMenuBar(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return m, nil
@@ -2522,6 +2700,10 @@ func (v *MenuItem) Native() *C.GtkMenuItem {
 	return C.toGtkMenuItem(p)
 }
 
+func wrapMenuItem(obj *glib.Object) (*MenuItem) {
+	return &MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
 // MenuItemNew() is a wrapper around gtk_menu_item_new().
 func MenuItemNew() (*MenuItem, error) {
 	c := C.gtk_menu_item_new()
@@ -2529,7 +2711,7 @@ func MenuItemNew() (*MenuItem, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := &MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	m := wrapMenuItem(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return m, nil
@@ -2544,7 +2726,7 @@ func MenuItemNewWithLabel(label string) (*MenuItem, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := &MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	m := wrapMenuItem(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return m, nil
@@ -2560,7 +2742,7 @@ func MenuItemNewWithMnemonic(label string) (*MenuItem, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := &MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	m := wrapMenuItem(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return m, nil
@@ -2589,6 +2771,10 @@ func (v *MenuShell) Native() *C.GtkMenuShell {
 	return C.toGtkMenuShell(p)
 }
 
+func wrapMenuShell(obj *glib.Object) (*MenuShell) {
+	return &MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // Append() is a wrapper around gtk_menu_shell_append().
 func (v *MenuShell) Append(child IWidget) {
 	C.gtk_menu_shell_append(v.Native(), child.toWidget())
@@ -2612,6 +2798,10 @@ func (v *MessageDialog) Native() *C.GtkMessageDialog {
 	return C.toGtkMessageDialog(p)
 }
 
+func wrapMessageDialog(obj *glib.Object) (*MessageDialog) {
+	return &MessageDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
+}
+
 // MessageDialogNew() is a wrapper around gtk_message_dialog_new().
 // The text is created and formatted by the format specifier and any
 // additional arguments.
@@ -2627,8 +2817,7 @@ func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, butt
 		C.GtkDialogFlags(flags), C.GtkMessageType(mType),
 		C.GtkButtonsType(buttons), cstr)
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := &MessageDialog{Dialog{Window{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}}}
+	m := wrapMessageDialog(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return m
@@ -2652,6 +2841,10 @@ func (v *Misc) Native() *C.GtkMisc {
 	return C.toGtkMisc(p)
 }
 
+func wrapMisc(obj *glib.Object) (*Misc) {
+	return &Misc{Widget{glib.InitiallyUnowned{obj}}}
+}
+
 /*
  * GtkNotebook
  */
@@ -2670,6 +2863,10 @@ func (v *Notebook) Native() *C.GtkNotebook {
 	return C.toGtkNotebook(p)
 }
 
+func wrapNotebook(obj *glib.Object) (*Notebook) {
+	return &Notebook{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // NotebookNew() is a wrapper around gtk_notebook_new().
 func NotebookNew() (*Notebook, error) {
 	c := C.gtk_notebook_new()
@@ -2677,7 +2874,7 @@ func NotebookNew() (*Notebook, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	n := &Notebook{Container{Widget{glib.InitiallyUnowned{obj}}}}
+	n := wrapNotebook(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return n, nil
@@ -2795,8 +2992,8 @@ func (v *Notebook) GetMenuLabel(child IWidget) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
-	w.RefSink()
+	w := wrapWidget(obj)
+	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
 }
@@ -2808,8 +3005,8 @@ func (v *Notebook) GetNthPage(pageNum int) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
-	w.RefSink()
+	w := wrapWidget(obj)
+	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
 }
@@ -2827,8 +3024,8 @@ func (v *Notebook) GetTabLabel(child IWidget) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
-	w.RefSink()
+	w := wrapWidget(obj)
+	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
 }
@@ -2962,9 +3159,9 @@ func (v *Notebook) GetActionWidget(packType PackType) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
-	w.RefSink()
-	runtime.SetFinalizer(w, (*glib.Object).Unref)
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
 }
 
@@ -2992,6 +3189,10 @@ func (v *Orientable) Native() *C.GtkOrientable {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkOrientable(p)
+}
+
+func wrapOrientable(obj *glib.Object) (*Orientable) {
+	return &Orientable{obj}
 }
 
 // GetOrientation() is a wrapper around gtk_orientable_get_orientation().
@@ -3024,6 +3225,10 @@ func (v *ProgressBar) Native() *C.GtkProgressBar {
 	return C.toGtkProgressBar(p)
 }
 
+func wrapProgressBar(obj *glib.Object) (*ProgressBar) {
+	return &ProgressBar{Widget{glib.InitiallyUnowned{obj}}}
+}
+
 // ProgressBarNew() is a wrapper around gtk_progress_bar_new().
 func ProgressBarNew() (*ProgressBar, error) {
 	c := C.gtk_progress_bar_new()
@@ -3031,7 +3236,7 @@ func ProgressBarNew() (*ProgressBar, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &ProgressBar{Widget{glib.InitiallyUnowned{obj}}}
+	p := wrapProgressBar(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
@@ -3073,6 +3278,10 @@ func (v *ScrolledWindow) Native() *C.GtkScrolledWindow {
 	return C.toGtkScrolledWindow(p)
 }
 
+func wrapScrolledWindow(obj *glib.Object) (*ScrolledWindow) {
+	return &ScrolledWindow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
 // ScrolledWindowNew() is a wrapper around gtk_scrolled_window_new().
 func ScrolledWindowNew(hadjustment, vadjustment *Adjustment) (*ScrolledWindow, error) {
 	c := C.gtk_scrolled_window_new(hadjustment.Native(),
@@ -3081,7 +3290,7 @@ func ScrolledWindowNew(hadjustment, vadjustment *Adjustment) (*ScrolledWindow, e
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &ScrolledWindow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	s := wrapScrolledWindow(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
@@ -3112,6 +3321,10 @@ func (v *SpinButton) Native() *C.GtkSpinButton {
 	return C.toGtkSpinButton(p)
 }
 
+func wrapSpinButton(obj *glib.Object) (*SpinButton) {
+	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // Configure() is a wrapper around gtk_spin_button_configure().
 func (v *SpinButton) Configure(adjustment *Adjustment, climbRate float64, digits uint) {
 	C.gtk_spin_button_configure(v.Native(), adjustment.Native(),
@@ -3126,7 +3339,7 @@ func SpinButtonNew(adjustment *Adjustment, climbRate float64, digits uint) (*Spi
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}}}
+	s := wrapSpinButton(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
@@ -3141,7 +3354,7 @@ func SpinButtonNewWithRange(min, max, step float64) (*SpinButton, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}}}
+	s := wrapSpinButton(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
@@ -3177,6 +3390,10 @@ func (v *Statusbar) Native() *C.GtkStatusbar {
 	return C.toGtkStatusbar(p)
 }
 
+func wrapStatusbar(obj *glib.Object) (*Statusbar) {
+	return &Statusbar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
 // StatusbarNew() is a wrapper around gtk_statusbar_new().
 func StatusbarNew() (*Statusbar, error) {
 	c := C.gtk_statusbar_new()
@@ -3184,7 +3401,7 @@ func StatusbarNew() (*Statusbar, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &Statusbar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	s := wrapStatusbar(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
@@ -3210,6 +3427,16 @@ func (v *Statusbar) Push(contextID uint, text string) uint {
 // Pop() is a wrapper around gtk_statusbar_pop().
 func (v *Statusbar) Pop(contextID uint) {
 	C.gtk_statusbar_pop(v.Native(), C.guint(contextID))
+}
+
+// GetMessageArea() is a wrapper around gtk_statusbar_get_message_area().
+func (v *Statusbar) GetMessageArea() (*Box, error) {
+	c := C.gtk_statusbar_get_message_area(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, nil
 }
 
 /*
@@ -3272,6 +3499,10 @@ func (v *TreeModel) toTreeModel() *C.GtkTreeModel {
 		return nil
 	}
 	return v.Native()
+}
+
+func wrapTreeModel(obj *glib.Object) (*TreeModel) {
+	return &TreeModel{obj}
 }
 
 // GetFlags() is a wrapper around gtk_tree_model_get_flags().
@@ -3396,6 +3627,10 @@ func (v *TreeSelection) Native() *C.GtkTreeSelection {
 	return C.toGtkTreeSelection(p)
 }
 
+func wrapTreeSelection(obj *glib.Object) (*TreeSelection) {
+	return &TreeSelection{obj}
+}
+
 // GetSelected() is a wrapper around gtk_tree_selection_get_selected().
 func (v *TreeSelection) GetSelected(model *ITreeModel, iter *TreeIter) bool {
 	var pcmodel **C.GtkTreeModel
@@ -3428,6 +3663,10 @@ func (v *TreeView) Native() *C.GtkTreeView {
 	return C.toGtkTreeView(p)
 }
 
+func wrapTreeView(obj *glib.Object) (*TreeView) {
+	return &TreeView{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
 // TreeViewNew() is a wrapper around gtk_tree_view_new().
 func TreeViewNew() (*TreeView, error) {
 	c := C.gtk_tree_view_new()
@@ -3435,7 +3674,7 @@ func TreeViewNew() (*TreeView, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := &TreeView{Container{Widget{glib.InitiallyUnowned{obj}}}}
+	t := wrapTreeView(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return t, nil
@@ -3448,7 +3687,7 @@ func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := &TreeView{Container{Widget{glib.InitiallyUnowned{obj}}}}
+	t := wrapTreeView(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return t, nil
@@ -3461,7 +3700,7 @@ func (v *TreeView) GetModel() (*TreeModel, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := &TreeModel{obj}
+	t := wrapTreeModel(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return t, nil
@@ -3479,7 +3718,7 @@ func (v *TreeView) GetSelection() (*TreeSelection, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &TreeSelection{obj}
+	s := wrapTreeSelection(obj)
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
@@ -3509,6 +3748,10 @@ func (v *TreeViewColumn) Native() *C.GtkTreeViewColumn {
 	return C.toGtkTreeViewColumn(p)
 }
 
+func wrapTreeViewColumn(obj *glib.Object) (*TreeViewColumn) {
+	return &TreeViewColumn{glib.InitiallyUnowned{obj}}
+}
+
 // TreeViewColumnNew() is a wrapper around gtk_tree_view_column_new().
 func TreeViewColumnNew() (*TreeViewColumn, error) {
 	c := C.gtk_tree_view_column_new()
@@ -3516,7 +3759,7 @@ func TreeViewColumnNew() (*TreeViewColumn, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := &TreeViewColumn{glib.InitiallyUnowned{obj}}
+	t := wrapTreeViewColumn(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return t, nil
@@ -3536,7 +3779,7 @@ func TreeViewColumnNewWithAttribute(title string, renderer ICellRenderer, attrib
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := &TreeViewColumn{glib.InitiallyUnowned{obj}}
+	t := wrapTreeViewColumn(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return t, nil
@@ -3605,6 +3848,10 @@ func (v *Widget) toWidget() *C.GtkWidget {
 	return v.Native()
 }
 
+func wrapWidget(obj *glib.Object) (*Widget) {
+	return &Widget{glib.InitiallyUnowned{obj}}
+}
+
 // Destroy() is a wrapper around gtk_widget_destroy().
 func (v *Widget) Destroy() {
 	C.gtk_widget_destroy(v.Native())
@@ -3634,6 +3881,11 @@ func (v *Widget) Show() {
 // Hide() is a wrapper around gtk_widget_hide().
 func (v *Widget) Hide() {
 	C.gtk_widget_hide(v.Native())
+}
+
+// SetVisible() is a wrapper around gtk_widget_set_visible().
+func (v *Widget) SetVisible(visible bool) {
+	C.gtk_widget_set_visible(v.Native(), gbool(visible))
 }
 
 // ShowNow() is a wrapper around gtk_widget_show_now().
@@ -3784,7 +4036,7 @@ func (v *Widget) GetParent() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
+	w := wrapWidget(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
@@ -3874,7 +4126,7 @@ func (v *Widget) GetToplevel() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Widget{glib.InitiallyUnowned{obj}}
+	w := wrapWidget(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
@@ -3983,6 +4235,10 @@ func (v *Window) toWindow() *C.GtkWindow {
 	return v.Native()
 }
 
+func wrapWindow(obj *glib.Object) *Window {
+	return &Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
 // WindowNew() is a wrapper around gtk_window_new().
 func WindowNew(t WindowType) (*Window, error) {
 	c := C.gtk_window_new(C.GtkWindowType(t))
@@ -3990,7 +4246,7 @@ func WindowNew(t WindowType) (*Window, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	w := wrapWindow(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return w, nil
@@ -4044,4 +4300,91 @@ func (v *Window) SetTransientFor(parent IWindow) {
 		pw = parent.toWindow()
 	}
 	C.gtk_window_set_transient_for(v.Native(), pw)
+}
+
+// cast() takes a native GObject and casts it to the appropriate Go struct.
+func cast(c *C.GObject) (glib.IObject, error) {
+	var (
+		className = C.GoString((*C.char)(C.object_get_class_name(c)))
+		obj       = &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+		g         glib.IObject
+	)
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	switch className {
+	case "GtkAdjustment":
+		g = wrapAdjustment(obj)
+	case "GtkBin":
+		g = wrapBin(obj)
+	case "GtkBox":
+		g = wrapBox(obj)
+	case "GtkButton":
+		g = wrapButton(obj)
+	case "GtkCellLayout":
+		g = wrapCellLayout(obj)
+	case "GtkCellRenderer":
+		g = wrapCellRenderer(obj)
+	case "GtkCellRendererText":
+		g = wrapCellRendererText(obj)
+	case "GtkClipboard":
+		g = wrapClipboard(obj)
+	case "GtkComboBox":
+		g = wrapComboBox(obj)
+	case "GtkContainer":
+		g = wrapContainer(obj)
+	case "GtkDialog":
+		g = wrapDialog(obj)
+	case "GtkEntry":
+		g = wrapEntry(obj)
+	case "GtkEntryBuffer":
+		g = wrapEntryBuffer(obj)
+	case "GtkEntryCompletion":
+		g = wrapEntryCompletion(obj)
+	case "GtkGrid":
+		g = wrapGrid(obj)
+	case "GtkImage":
+		g = wrapImage(obj)
+	case "GtkLabel":
+		g = wrapLabel(obj)
+	case "GtkListStore":
+		g = wrapListStore(obj)
+	case "GtkMenu":
+		g = wrapMenu(obj)
+	case "GtkMenuBar":
+		g = wrapMenuBar(obj)
+	case "GtkMenuItem":
+		g = wrapMenuItem(obj)
+	case "GtkMenuShell":
+		g = wrapMenuShell(obj)
+	case "GtkMessageDialog":
+		g = wrapMessageDialog(obj)
+	case "GtkMisc":
+		g = wrapMisc(obj)
+	case "GtkNotebook":
+		g = wrapNotebook(obj)
+	case "GtkOrientable":
+		g = wrapOrientable(obj)
+	case "GtkProgressBar":
+		g = wrapProgressBar(obj)
+	case "GtkScrolledWindow":
+		g = wrapScrolledWindow(obj)
+	case "GtkSpinButton":
+		g = wrapSpinButton(obj)
+	case "GtkStatusbar":
+		g = wrapStatusbar(obj)
+	case "GtkTreeModel":
+		g = wrapTreeModel(obj)
+	case "GtkTreeSelection":
+		g = wrapTreeSelection(obj)
+	case "GtkTreeView":
+		g = wrapTreeView(obj)
+	case "GtkTreeViewColumn":
+		g = wrapTreeViewColumn(obj)
+	case "GtkWidget":
+		g = wrapWidget(obj)
+	case "GtkWindow":
+		g = wrapWindow(obj)
+	default:
+		return nil, errors.New("unrecognized class name '" + className + "'")
+	}
+	return g, nil
 }

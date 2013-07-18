@@ -236,6 +236,12 @@ toGtkMessageDialog(void *p)
 	return (GTK_MESSAGE_DIALOG(p));
 }
 
+static GtkBuilder *
+toGtkBuilder(void *p)
+{
+	return (GTK_BUILDER(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
@@ -266,4 +272,16 @@ _gtk_message_dialog_new(GtkWindow *parent, GtkDialogFlags flags,
 
 	w = gtk_message_dialog_new(parent, flags, type, buttons, "%s", msg);
 	return (w);
+}
+
+static gchar *
+error_get_message(GError *error)
+{
+	return error->message;
+}
+
+static const gchar *
+object_get_class_name(GObject *object)
+{
+	return G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(object));
 }
