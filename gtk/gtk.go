@@ -4039,5 +4039,9 @@ func (v *Window) SetPosition(position WindowPosition) {
 
 // SetTransientFor() is a wrapper around gtk_window_set_transient_for().
 func (v *Window) SetTransientFor(parent IWindow) {
-	C.gtk_window_set_transient_for(v.Native(), parent.toWindow())
+	var pw *C.GtkWindow = nil
+	if parent != nil {
+		pw = parent.toWindow()
+	}
+	C.gtk_window_set_transient_for(v.Native(), pw)
 }
