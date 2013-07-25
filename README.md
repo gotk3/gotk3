@@ -74,6 +74,10 @@ http://localhost:6060/pkg/github.com/conformal/gotk3
 
 ## Installation
 
+gotk3 currently requires GTK 3.8 and GLib 2.36 or later.  Older GTK
+and GLib versions may work due to missing bindings, but installing on
+these older versions is not supported.
+
 The gtk package requires glib and gdk packages as dependencies, so
 only one `go get` is necessary for complete installation.
 
