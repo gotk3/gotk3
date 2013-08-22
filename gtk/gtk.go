@@ -3366,6 +3366,11 @@ func (v *SpinButton) GetValueAsInt() int {
 	return int(c)
 }
 
+// SetValue() is a wrapper around gtk_spin_button_set_value().
+func (v *SpinButton) SetValue(value float64) {
+	C.gtk_spin_button_set_value(v.Native(), C.gdouble(value))
+}
+
 // GetValue() is a wrapper around gtk_spin_button_get_value().
 func (v *SpinButton) GetValue() float64 {
 	c := C.gtk_spin_button_get_value(v.Native())
