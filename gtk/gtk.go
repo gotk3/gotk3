@@ -3118,6 +3118,41 @@ func (v *ScrolledWindow) SetPolicy(hScrollbarPolicy, vScrollbarPolicy PolicyType
 }
 
 /*
+ * GtkSeparatorMenuItem
+ */
+
+// SeparatorMenuItem is a representation of GTK's GtkSeparatorMenuItem.
+type SeparatorMenuItem struct {
+	MenuItem
+}
+
+// Native() returns a pointer to the underlying GtkSeparatorMenuItem.
+func (v *SeparatorMenuItem) Native() *C.GtkSeparatorMenuItem {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkSeparatorMenuItem(p)
+}
+
+func wrapSeparatorMenuItem(obj *glib.Object) *SeparatorMenuItem {
+	return &SeparatorMenuItem{MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+}
+
+// SeparatorMenuItemNew is a wrapper around gtk_separator_menu_item_new().
+func SeparatorMenuItemNew() (*SeparatorMenuItem, error) {
+	c := C.gtk_separator_menu_item_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := wrapSeparatorMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
+}
+
+/*
  * GtkSpinButton
  */
 
@@ -4186,6 +4221,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapProgressBar(obj)
 	case "GtkScrolledWindow":
 		g = wrapScrolledWindow(obj)
+	case "GtkSeparatorMenuItem":
+		g = wrapSeparatorMenuItem(obj)
 	case "GtkSpinButton":
 		g = wrapSpinButton(obj)
 	case "GtkStatusbar":

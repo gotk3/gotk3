@@ -242,6 +242,12 @@ toGtkBuilder(void *p)
 	return (GTK_BUILDER(p));
 }
 
+static GtkSeparatorMenuItem *
+toGtkSeparatorMenuItem(void *p)
+{
+	return (GTK_SEPARATOR_MENU_ITEM(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
