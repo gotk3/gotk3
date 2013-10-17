@@ -2696,8 +2696,11 @@ func NotebookNew() (*Notebook, error) {
 
 // AppendPage() is a wrapper around gtk_notebook_append_page().
 func (v *Notebook) AppendPage(child IWidget, tabLabel IWidget) int {
-	c := C.gtk_notebook_append_page(v.Native(), child.toWidget(),
-		tabLabel.toWidget())
+	var cTabLabel *C.GtkWidget
+	if tabLabel != nil {
+		cTabLabel = tabLabel.toWidget()
+	}
+	c := C.gtk_notebook_append_page(v.Native(), child.toWidget(), cTabLabel)
 	return int(c)
 }
 
