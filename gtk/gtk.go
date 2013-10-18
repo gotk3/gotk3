@@ -2659,6 +2659,18 @@ func wrapMisc(obj *glib.Object) *Misc {
 	return &Misc{Widget{glib.InitiallyUnowned{obj}}}
 }
 
+// GetAlignment is a wrapper around gtk_misc_get_alignment().
+func (v *Misc) GetAlignment() (xAlign, yAlign float32) {
+	var x, y C.gfloat
+	C.gtk_misc_get_alignment(v.Native(), &x, &y)
+	return float32(x), float32(y)
+}
+
+// SetAlignment is a wrapper around gtk_misc_set_alignment().
+func (v *Misc) SetAlignment(xAlign, yAlign float32) {
+	C.gtk_misc_set_alignment(v.Native(), C.gfloat(xAlign), C.gfloat(yAlign))
+}
+
 /*
  * GtkNotebook
  */
