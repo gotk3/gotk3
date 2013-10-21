@@ -248,6 +248,18 @@ toGtkSeparatorMenuItem(void *p)
 	return (GTK_SEPARATOR_MENU_ITEM(p));
 }
 
+static GtkCheckButton *
+toGtkCheckButton(void *p)
+{
+	return (GTK_CHECK_BUTTON(p));
+}
+
+static GtkToggleButton *
+toGtkToggleButton(void *p)
+{
+	return (GTK_TOGGLE_BUTTON(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));

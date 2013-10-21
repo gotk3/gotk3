@@ -904,6 +904,74 @@ func CellRendererTextNew() (*CellRendererText, error) {
 }
 
 /*
+ * GtkCheckButton
+ */
+
+// CheckButton is a wrapper around GTK's GtkCheckButton.
+type CheckButton struct {
+	ToggleButton
+}
+
+// Native returns a pointer to the underlying GtkCheckButton.
+func (v *CheckButton) Native() *C.GtkCheckButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCheckButton(p)
+}
+
+func wrapCheckButton(obj *glib.Object) *CheckButton {
+	return &CheckButton{ToggleButton{Button{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}}
+}
+
+// CheckButtonNew is a wrapper around gtk_check_button_new().
+func CheckButtonNew() (*CheckButton, error) {
+	c := C.gtk_check_button_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	cb := wrapCheckButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return cb, nil
+}
+
+// CheckButtonNewWithLabel is a wrapper around
+// gtk_check_button_new_with_label().
+func CheckButtonNewWithLabel(label string) (*CheckButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_check_button_new_with_label((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	cb := wrapCheckButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return cb, nil
+}
+
+// CheckButtonNewWithMnemonic is a wrapper around
+// gtk_check_button_new_with_mnemonic().
+func CheckButtonNewWithMnemonic(label string) (*CheckButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_check_button_new_with_mnemonic((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	cb := wrapCheckButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return cb, nil
+}
+
+/*
  * GtkClipboard
  */
 
@@ -3309,6 +3377,85 @@ func (v *Statusbar) GetMessageArea() (*Box, error) {
 }
 
 /*
+ * GtkToggleButton
+ */
+
+// ToggleButton is a representation of GTK's GtkToggleButton.
+type ToggleButton struct {
+	Button
+}
+
+// Native returns a pointer to the underlying GtkToggleButton.
+func (v *ToggleButton) Native() *C.GtkToggleButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkToggleButton(p)
+}
+
+func wrapToggleButton(obj *glib.Object) *ToggleButton {
+	return &ToggleButton{Button{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}
+}
+
+// ToggleButtonNew is a wrapper around gtk_toggle_button_new().
+func ToggleButtonNew() (*ToggleButton, error) {
+	c := C.gtk_toggle_button_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	tb := wrapToggleButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return tb, nil
+}
+
+// ToggleButtonNewWithLabel is a wrapper around
+// gtk_toggle_button_new_with_label().
+func ToggleButtonNewWithLabel(label string) (*ToggleButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_toggle_button_new_with_label((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	tb := wrapToggleButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return tb, nil
+}
+
+// ToggleButtonNewWithMnemonic is a wrapper around
+// gtk_toggle_button_new_with_mnemonic().
+func ToggleButtonNewWithMnemonic(label string) (*ToggleButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_toggle_button_new_with_mnemonic((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	tb := wrapToggleButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return tb, nil
+}
+
+// GetActive is a wrapper around gtk_toggle_button_get_active().
+func (v *ToggleButton) GetActive() bool {
+	c := C.gtk_toggle_button_get_active(v.Native())
+	return gobool(c)
+}
+
+// SetActive is a wrapper around gtk_toggle_button_set_active().
+func (v *ToggleButton) SetActive(isActive bool) {
+	C.gtk_toggle_button_set_active(v.Native(), gbool(isActive))
+}
+
+/*
  * GtkTreeIter
  */
 
@@ -4194,6 +4341,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapCellRenderer(obj)
 	case "GtkCellRendererText":
 		g = wrapCellRendererText(obj)
+	case "GtkCheckButton":
+		g = wrapCheckButton(obj)
 	case "GtkClipboard":
 		g = wrapClipboard(obj)
 	case "GtkComboBox":
@@ -4242,6 +4391,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapSpinButton(obj)
 	case "GtkStatusbar":
 		g = wrapStatusbar(obj)
+	case "GtkToggleButton":
+		g = wrapToggleButton(obj)
 	case "GtkTreeModel":
 		g = wrapTreeModel(obj)
 	case "GtkTreeSelection":
