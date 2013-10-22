@@ -4580,6 +4580,10 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapOrientable(obj)
 	case "GtkProgressBar":
 		g = wrapProgressBar(obj)
+	case "GtkRange":
+		g = wrapRange(obj)
+	case "GtkScrollbar":
+		g = wrapScrollbar(obj)
 	case "GtkScrolledWindow":
 		g = wrapScrolledWindow(obj)
 	case "GtkSeparator":
