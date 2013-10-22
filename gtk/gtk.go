@@ -3261,6 +3261,63 @@ func (v *ProgressBar) SetText(text string) {
 }
 
 /*
+ * GtkRange
+ */
+
+// Range is a representation of GTK's GtkRange.
+type Range struct {
+	Widget
+}
+
+// Native returns a pointer to the underlying GtkRange.
+func (v *Range) Native() *C.GtkRange {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkRange(p)
+}
+
+func wrapRange(obj *glib.Object) *Range {
+	return &Range{Widget{glib.InitiallyUnowned{obj}}}
+}
+
+/*
+ * GtkScrollbar
+ */
+
+// Scrollbar is a representation of GTK's GtkScrollbar.
+type Scrollbar struct {
+	Range
+}
+
+// Native returns a pointer to the underlying GtkScrollbar.
+func (v *Scrollbar) Native() *C.GtkScrollbar {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkScrollbar(p)
+}
+
+func wrapScrollbar(obj *glib.Object) *Scrollbar {
+	return &Scrollbar{Range{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// ScrollbarNew is a wrapper around gtk_scrollbar_new().
+func ScrollbarNew(orientation Orientation, adjustment *Adjustment) (*Scrollbar, error) {
+	c := C.gtk_scrollbar_new(C.GtkOrientation(orientation), adjustment.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := wrapScrollbar(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
+}
+
+/*
  * GtkScrolledWindow
  */
 

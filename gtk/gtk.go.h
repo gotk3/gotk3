@@ -272,6 +272,18 @@ toGtkSeparator(void *p)
 	return (GTK_SEPARATOR(p));
 }
 
+static GtkScrollbar *
+toGtkScrollbar(void *p)
+{
+	return (GTK_SCROLLBAR(p));
+}
+
+static GtkRange *
+toGtkRange(void *p)
+{
+	return (GTK_RANGE(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
