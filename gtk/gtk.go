@@ -3361,6 +3361,41 @@ func (v *ScrolledWindow) SetPolicy(hScrollbarPolicy, vScrollbarPolicy PolicyType
 }
 
 /*
+ * GtkSearchEntry
+ */
+
+// SearchEntry is a reprensentation of GTK's GtkSearchEntry.
+type SearchEntry struct {
+	Entry
+}
+
+// Native returns a pointer to the underlying GtkSearchEntry.
+func (v *SearchEntry) Native() *C.GtkSearchEntry {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkSearchEntry(p)
+}
+
+func wrapSearchEntry(obj *glib.Object) *SearchEntry {
+	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// SearchEntryNew is a wrapper around gtk_search_entry_new().
+func SearchEntryNew() (*SearchEntry, error) {
+	c := C.gtk_search_entry_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := wrapSearchEntry(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
+}
+
+/*
  * GtkSeparator
  */
 
@@ -4586,6 +4621,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapScrollbar(obj)
 	case "GtkScrolledWindow":
 		g = wrapScrolledWindow(obj)
+	case "GtkSearchEntry":
+		g = wrapSearchEntry(obj)
 	case "GtkSeparator":
 		g = wrapSeparator(obj)
 	case "GtkSeparatorMenuItem":

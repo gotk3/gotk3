@@ -284,6 +284,12 @@ toGtkRange(void *p)
 	return (GTK_RANGE(p));
 }
 
+static GtkSearchEntry *
+toGtkSearchEntry(void *p)
+{
+	return (GTK_SEARCH_ENTRY(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
