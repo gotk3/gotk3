@@ -195,6 +195,16 @@ const (
 	INPUT_PURPOSE_PIN                    = C.GTK_INPUT_PURPOSE_PIN
 )
 
+// Justify is a representation of GTK's GtkJustification.
+type Justification int
+
+const (
+	JUSTIFY_LEFT   Justification = C.GTK_JUSTIFY_LEFT
+	JUSTIFY_RIGHT  Justification = C.GTK_JUSTIFY_RIGHT
+	JUSTIFY_CENTER Justification = C.GTK_JUSTIFY_CENTER
+	JUSTIFY_FILL   Justification = C.GTK_JUSTIFY_FILL
+)
+
 // MessageType is a representation of GTK's GtkMessageType.
 type MessageType int
 
@@ -2403,6 +2413,11 @@ func (v *Label) SetPattern(patern string) {
 	C.gtk_label_set_pattern(v.Native(), (*C.gchar)(cstr))
 }
 
+// SetJustify is a wrapper around gtk_label_set_justify().
+func (v *Label) SetJustify(jtype Justification) {
+	C.gtk_label_set_justify(v.Native(), C.GtkJustification(jtype))
+}
+
 // SetWidthChars() is a wrapper around gtk_label_set_width_chars().
 func (v *Label) SetWidthChars(nChars int) {
 	C.gtk_label_set_width_chars(v.Native(), C.gint(nChars))
@@ -2431,6 +2446,12 @@ func (v *Label) GetText() (string, error) {
 		return "", nilPtrErr
 	}
 	return C.GoString((*C.char)(c)), nil
+}
+
+// GetJustify is a wrapper around gtk_label_get_justify().
+func (v *Label) GetJustify() Justification {
+	c := C.gtk_label_get_justify(v.Native())
+	return Justification(c)
 }
 
 // LabelNewWithMnemonic() is a wrapper around gtk_label_new_with_mnemonic().
