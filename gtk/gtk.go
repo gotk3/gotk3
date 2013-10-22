@@ -267,6 +267,17 @@ const (
 	RESPONSE_HELP                      = C.GTK_RESPONSE_HELP
 )
 
+// ShadowType is a representation of GTK's GtkShadowType.
+type ShadowType int
+
+const (
+	SHADOW_NONE       ShadowType = C.GTK_SHADOW_NONE
+	SHADOW_IN         ShadowType = C.GTK_SHADOW_IN
+	SHADOW_OUT        ShadowType = C.GTK_SHADOW_OUT
+	SHADOW_ETCHED_IN  ShadowType = C.GTK_SHADOW_ETCHED_IN
+	SHADOW_ETCHED_OUT ShadowType = C.GTK_SHADOW_ETCHED_OUT
+)
+
 // TreeModelFlags is a representation of GTK's GtkTreeModelFlags.
 type TreeModelFlags int
 
@@ -1895,6 +1906,98 @@ func (v *EntryCompletion) Native() *C.GtkEntryCompletion {
 
 func wrapEntryCompletion(obj *glib.Object) *EntryCompletion {
 	return &EntryCompletion{obj}
+}
+
+/*
+ * GtkFrame
+ */
+
+// Frame is a representation of GTK's GtkFrame.
+type Frame struct {
+	Bin
+}
+
+// Native returns a pointer to the underlying GtkFrame.
+func (v *Frame) Native() *C.GtkFrame {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFrame(p)
+}
+
+func wrapFrame(obj *glib.Object) *Frame {
+	return &Frame{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// FrameNew is a wrapper around gtk_frame_new().
+func FrameNew(label string) (*Frame, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_frame_new((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	f := wrapFrame(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return f, nil
+}
+
+// SetLabel is a wrapper around gtk_frame_set_label().
+func (v *Frame) SetLabel(label string) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_frame_set_label(v.Native(), (*C.gchar)(cstr))
+}
+
+// SetLabelWidget is a wrapper around gtk_frame_set_label_widget().
+func (v *Frame) SetLabelWidget(labelWidget IWidget) {
+	C.gtk_frame_set_label_widget(v.Native(), labelWidget.toWidget())
+}
+
+// SetLabelAlign is a wrapper around gtk_frame_set_label_align().
+func (v *Frame) SetLabelAlign(xAlign, yAlign float32) {
+	C.gtk_frame_set_label_align(v.Native(), C.gfloat(xAlign),
+		C.gfloat(yAlign))
+}
+
+// SetShadowType is a wrapper around gtk_frame_set_shadow_type().
+func (v *Frame) SetShadowType(t ShadowType) {
+	C.gtk_frame_set_shadow_type(v.Native(), C.GtkShadowType(t))
+}
+
+// GetLabel is a wrapper around gtk_frame_get_label().
+func (v *Frame) GetLabel() string {
+	c := C.gtk_frame_get_label(v.Native())
+	return C.GoString((*C.char)(c))
+}
+
+// GetLabelAlign is a wrapper around gtk_frame_get_label_align().
+func (v *Frame) GetLabelAlign() (xAlign, yAlign float32) {
+	var x, y C.gfloat
+	C.gtk_frame_get_label_align(v.Native(), &x, &y)
+	return float32(x), float32(y)
+}
+
+// GetLabelWidget is a wrapper around gtk_frame_get_label_widget().
+func (v *Frame) GetLabelWidget() (*Widget, error) {
+	c := C.gtk_frame_get_label_widget(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w, nil
+}
+
+// GetShadowType is a wrapper around gtk_frame_get_shadow_type().
+func (v *Frame) GetShadowType() ShadowType {
+	c := C.gtk_frame_get_shadow_type(v.Native())
+	return ShadowType(c)
 }
 
 /*
@@ -4357,6 +4460,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapEntryBuffer(obj)
 	case "GtkEntryCompletion":
 		g = wrapEntryCompletion(obj)
+	case "GtkFrame":
+		g = wrapFrame(obj)
 	case "GtkGrid":
 		g = wrapGrid(obj)
 	case "GtkImage":

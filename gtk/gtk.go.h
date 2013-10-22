@@ -260,6 +260,12 @@ toGtkToggleButton(void *p)
 	return (GTK_TOGGLE_BUTTON(p));
 }
 
+static GtkFrame *
+toGtkFrame(void *p)
+{
+	return (GTK_FRAME(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
