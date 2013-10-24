@@ -4537,6 +4537,17 @@ func (v *Window) SetDefaultGeometry(width, height int) {
 		C.gint(height))
 }
 
+// GetDeletable is a wrapper around gtk_window_set_deletable().
+func (v *Window) GetDeletable() bool {
+	c := C.gtk_window_get_deletable(v.Native())
+	return gobool(c)
+}
+
+// SetDeletable is a wrapper around gtk_window_set_deletable().
+func (v *Window) SetDeletable(setting bool) {
+	C.gtk_window_set_deletable(v.Native(), gbool(setting))
+}
+
 // TODO(jrick) GdkGeometry GdkWindowHints
 /*
 func (v *Window) SetGeometryHints() {
