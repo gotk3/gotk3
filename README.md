@@ -92,6 +92,11 @@ To install gotk3 targeting the latest GTK version:
 $ go get github.com/conformal/gotk3/gtk
 ```
 
+On MacOS (using homebrew) you would likely specify PKG_CONFIG_PATH as such:
+```bash
+$ PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig:`brew --prefix gtk+3`/lib/pkgconfig go get -u -v github.com/conformal/gotk3/gdk
+```
+
 To install gotk3 targeting the older GTK 3.8 release:
 
 ```bash
