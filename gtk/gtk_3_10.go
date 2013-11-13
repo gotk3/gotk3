@@ -19,7 +19,7 @@
 // versions.  To target an older build, such as 3.8, use
 // 'go build -tags gtk_3_8'.  Otherwise, if no build tags are used, GTK 3.10
 // is assumed and this file is built.
-// +build !gtk_3_8
+// +build !gtk_3_6,!gtk_3_8
 
 package gtk
 

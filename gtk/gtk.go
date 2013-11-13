@@ -14,7 +14,7 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-// Go bindings for GTK+ 3.  Supports version 3.8 and later.
+// Go bindings for GTK+ 3.  Supports version 3.6 and later.
 //
 // Functions use the same names as the native C function calls, but use
 // CamelCase.  In cases where native GTK uses pointers to values to
@@ -1210,8 +1210,8 @@ func (v *Dialog) Response(response ResponseType) {
 }
 
 // AddButton() is a wrapper around gtk_dialog_add_button().  text may
-// be either the literal button text, or if using GTK 3.8, a Stock type
-// converted to a string.
+// be either the literal button text, or if using GTK 3.8 or earlier, a
+// Stock type converted to a string.
 func (v *Dialog) AddButton(text string, id ResponseType) (*Button, error) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))

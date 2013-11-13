@@ -14,7 +14,7 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-// Go bindings for GDK 3.  Supports version 3.8 and later.
+// Go bindings for GDK 3.  Supports version 3.6 and later.
 package gdk
 
 // #cgo pkg-config: gdk-3.0
