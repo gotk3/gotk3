@@ -55,7 +55,7 @@ val_list_insert(GValue *valv, int i, GValue *val)
 }
 
 typedef struct {
-	char            *name;
+	char            *detailed_name;
 	int             func_n;
 	void            *target;
 	uintptr_t       *args;
@@ -92,21 +92,32 @@ cbinfo_free(gpointer data, GClosure *closure)
 }
 
 static cbinfo *
-_g_signal_connect(void *obj, gchar *name, int func_n)
+_g_signal_connect(void *obj, gchar *detailed_name, int func_n)
 {
 	GSignalQuery    query;
 	guint           sig_id;
 	cbinfo          *cbi;
+	gchar		**sigv;
+	gchar		*signal;
 
-	sig_id = g_signal_lookup(name, G_OBJECT_TYPE(obj));
+	/*
+	 * g_signal_lookup cannot take a detailed signal.  If
+	 * detailed_name is in the form 'signal::detail', pass
+	 * only the signal name.
+	 */
+	sigv = g_strsplit(detailed_name, "::", 2);
+	signal = (sigv == NULL) ? "" : sigv[0];
+	sig_id = g_signal_lookup(signal, G_OBJECT_TYPE(obj));
 	g_signal_query(sig_id, &query);
+	g_strfreev(sigv);
+
 	cbi = (cbinfo *)malloc(sizeof(cbinfo));
-	cbi->name = g_strdup(name);
+	cbi->detailed_name = g_strdup(detailed_name);
 	cbi->func_n = func_n;
 	cbi->args = NULL;
 	cbi->target = obj;
 	cbi->nargs = query.n_params;
-	cbi->id = g_signal_connect_data((gpointer)obj, name,
+	cbi->id = g_signal_connect_data((gpointer)obj, detailed_name,
 	    G_CALLBACK(_glib_callback), cbi, cbinfo_free, G_CONNECT_SWAPPED);
 	return (cbi);
 }
