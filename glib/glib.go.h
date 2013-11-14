@@ -55,7 +55,6 @@ val_list_insert(GValue *valv, int i, GValue *val)
 }
 
 typedef struct {
-	char            *detailed_name;
 	int             func_n;
 	void            *target;
 	uintptr_t       *args;
@@ -112,7 +111,6 @@ _g_signal_connect(void *obj, gchar *detailed_name, int func_n)
 	g_strfreev(sigv);
 
 	cbi = (cbinfo *)malloc(sizeof(cbinfo));
-	cbi->detailed_name = g_strdup(detailed_name);
 	cbi->func_n = func_n;
 	cbi->args = NULL;
 	cbi->target = obj;
