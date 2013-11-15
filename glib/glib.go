@@ -393,7 +393,7 @@ type Object struct {
 	GObject *C.GObject
 }
 
-// ObjectNew creates a new
+// ObjectNew creates a new Object from a Pointer.
 func ObjectNew(p unsafe.Pointer) *Object {
 	return &Object{(*C.GObject)(p)}
 }
