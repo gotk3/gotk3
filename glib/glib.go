@@ -486,7 +486,9 @@ func (v *Object) Set(name string, value interface{}) error {
 	}
 }
 
-// magic
+// pointerVal attempts to return an unsafe.Pointer for value.
+// Not all types are understood, in which case a nil Pointer
+// is returned.
 func pointerVal(value interface{}) unsafe.Pointer {
 	var p unsafe.Pointer = nil
 	switch v := value.(type) {
