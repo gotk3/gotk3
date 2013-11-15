@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /* GObject Type Casting */
 static GObject *
@@ -52,83 +53,6 @@ static void
 val_list_insert(GValue *valv, int i, GValue *val)
 {
 	valv[i] = *val;
-}
-
-typedef struct {
-	int             func_n;
-	void            *target;
-	uintptr_t       *args;
-	int             nargs;
-	gboolean        ret;
-	gulong          id;
-} cbinfo;
-
-/* Wrapper that runs the Go closure for a given context */
-extern void _go_glib_callback(cbinfo *cbi);
-
-/* Set up the args and call the Go closure wrapper */
-static gboolean
-_glib_callback(void *data, ...) {
-	va_list         ap;
-	cbinfo          *cbi = (cbinfo *)data;
-	int             i;
-
-	cbi->args = calloc(cbi->nargs, sizeof(uintptr_t));
-	va_start(ap, data);
-	for (i = 0; i < cbi->nargs; ++i)
-		cbi->args[i] = va_arg(ap, uintptr_t);
-	va_end(ap);
-
-	_go_glib_callback(cbi);
-	free(cbi->args);
-	return (cbi->ret);
-}
-
-static void
-cbinfo_free(gpointer data, GClosure *closure)
-{
-	free((cbinfo *)data);
-}
-
-static cbinfo *
-_g_signal_connect(void *obj, gchar *detailed_name, int func_n)
-{
-	GSignalQuery    query;
-	guint           sig_id;
-	cbinfo          *cbi;
-	gchar		**sigv;
-	gchar		*signal;
-
-	/*
-	 * g_signal_lookup cannot take a detailed signal.  If
-	 * detailed_name is in the form 'signal::detail', pass
-	 * only the signal name.
-	 */
-	sigv = g_strsplit(detailed_name, "::", 2);
-	signal = (sigv == NULL) ? "" : sigv[0];
-	sig_id = g_signal_lookup(signal, G_OBJECT_TYPE(obj));
-	g_signal_query(sig_id, &query);
-	g_strfreev(sigv);
-
-	cbi = (cbinfo *)malloc(sizeof(cbinfo));
-	cbi->func_n = func_n;
-	cbi->args = NULL;
-	cbi->target = obj;
-	cbi->nargs = query.n_params;
-	cbi->id = g_signal_connect_data((gpointer)obj, detailed_name,
-	    G_CALLBACK(_glib_callback), cbi, cbinfo_free, G_CONNECT_SWAPPED);
-	return (cbi);
-}
-
-static uintptr_t
-cbinfo_get_arg(cbinfo *cbi, int n) {
-	return (cbi->args[n]);
-}
-
-static gulong
-cbinfo_get_id(cbinfo *cbi)
-{
-	return (cbi->id);
 }
 
 typedef struct {
@@ -201,7 +125,46 @@ _g_value_init(GType g_type)
 }
 
 static gboolean
-_g_value_holds_gtype(gpointer val)
+_g_is_value(GValue *val)
 {
-	return (G_VALUE_HOLDS_GTYPE(val));
+	return (G_IS_VALUE(val));
+}
+
+static GType
+_g_value_type(GValue *val)
+{
+	return (G_VALUE_TYPE(val));
+}
+
+static GType
+_g_value_fundamental(GType type)
+{
+	return (G_TYPE_FUNDAMENTAL(type));
+}
+
+/*
+ * Closure support
+ */
+
+extern void	goMarshal(GClosure *, GValue *, guint, GValue *, gpointer, GValue *);//gpointer);
+
+static GClosure *
+_g_closure_new()
+{
+	GClosure	*closure;
+
+	closure = g_closure_new_simple(sizeof(GClosure), NULL);
+	g_closure_set_marshal(closure, (GClosureMarshal)(goMarshal));
+	return closure;
+}
+
+static GClosure *
+_g_closure_new_with_data(gpointer marshal_data)
+{
+	GClosure	*closure;
+
+	closure = g_closure_new_simple(sizeof(GClosure), NULL);
+	g_closure_set_meta_marshal(closure, marshal_data,
+	    (GClosureMarshal)(goMarshal));
+	return closure;
 }

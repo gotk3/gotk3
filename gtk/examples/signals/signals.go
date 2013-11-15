@@ -89,26 +89,12 @@ func windowWidget() *gtk.Widget {
 	grid.AttachNextTo(pb, sb, gtk.POS_RIGHT, 1, 1)
 	label.SetHExpand(true)
 
-	// Pass in a ProgressBar and the target ScrollButton as user data rather
+	// Pass in a ProgressBar and the target SpinButton as user data rather
 	// than using the sb and pb variables scoped to the anonymous func.
 	// This can be useful when passing in a closure that has already been
 	// generated, but when you still wish to connect the callback with some
 	// variables only visible in this scope.
-	//
-	// (*glib.CallbackContext).Target() returns an interface{} which is
-	// actually a *glib.Object, so to use as a gtk.SpinButton, a new
-	// composite literal must be created.
-	sb.ConnectWithData("value-changed", func(ctx *glib.CallbackContext) {
-		obj, ok := ctx.Target().(*glib.Object)
-		if !ok {
-			fmt.Println("here")
-			return
-		}
-		pb, ok := ctx.Data().(*gtk.ProgressBar)
-		if !ok {
-			return
-		}
-
+	sb.Connect("value-changed", func(obj *glib.Object, pb *gtk.ProgressBar) {
 		sb := &gtk.SpinButton{gtk.Entry{gtk.Widget{
 			glib.InitiallyUnowned{obj}}}}
 		pb.SetFraction(sb.GetValue() / 1)
@@ -127,8 +113,7 @@ func windowWidget() *gtk.Widget {
 	// these arguments, pass in a *glib.CallbackContext as an argument, and
 	// access by calling (*glib.CallbackContext).Arg(n) for the nth
 	// argument.
-	label.Connect("activate-link", func(ctx *glib.CallbackContext) {
-		uri := ctx.Arg(0).String()
+	label.Connect("activate-link", func(_ *glib.Object, uri string) {
 		fmt.Println("you clicked a link to:", uri)
 	})
 

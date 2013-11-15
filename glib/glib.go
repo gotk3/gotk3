@@ -25,21 +25,11 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"os"
 	"reflect"
 	"runtime"
 	"sync"
 	"unsafe"
-)
-
-var (
-	callbackContexts = struct {
-		sync.RWMutex
-		s []*CallbackContext
-	}{}
-	idleFnContexts = struct {
-		sync.RWMutex
-		s []*idleFnContext
-	}{}
 )
 
 /*
@@ -63,7 +53,18 @@ func gobool(b C.gboolean) bool {
  * Unexported vars
  */
 
-var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
+var (
+	nilPtrErr = errors.New("cgo returned unexpected nil pointer")
+
+	closures = struct {
+		sync.RWMutex
+		m map[*C.GClosure]reflect.Value
+	}{
+		m: make(map[*C.GClosure]reflect.Value),
+	}
+
+	signals = make(map[SignalHandle]*C.GClosure)
+)
 
 /*
  * Constants
@@ -97,6 +98,21 @@ const (
 	TYPE_VARIANT        = C.G_TYPE_VARIANT
 )
 
+// Name is a wrapper around g_type_name().
+func (t Type) Name() string {
+	return C.GoString((*C.char)(C.g_type_name(C.GType(t))))
+}
+
+// Depth is a wrapper around g_type_depth().
+func (t Type) Depth() uint {
+	return uint(C.g_type_depth(C.GType(t)))
+}
+
+// Parent is a wrapper around g_type_parent().
+func (t Type) Parent() Type {
+	return Type(C.g_type_parent(C.GType(t)))
+}
+
 // UserDirectory is a representation of GLib's GUserDirectory.
 type UserDirectory int
 
@@ -117,154 +133,232 @@ const USER_N_DIRECTORIES int = C.G_USER_N_DIRECTORIES
  * Events
  */
 
-// CallbackContext is a special type used to represent parameters
-// passed to callback functions.  It is in most cases unneeded, due to
-// Connect() supporting closures.
-type CallbackContext struct {
-	f      interface{}
-	cbi    unsafe.Pointer
-	target reflect.Value
-	data   reflect.Value
-}
+type SignalHandle uint
 
-// CallbackArg is a generic type representing individual parameters
-// passed to callback functions.
-type CallbackArg uintptr
+// Connect is a wrapper around g_signal_connect_closure().  f must be
+// a function with a signaure matching the callback signature for
+// detailedSignal.  userData must either 0 or 1 elements which can
+// be optionally passed to f.  If f takes less arguments than it is
+// passed from the GLib runtime, the extra arguments are ignored.
+//
+// Currently, the non userdata arguments to f must be a *Object if
+// the callback calls for any GObject.  Trying to use other GObject
+// types will cause a panic when the callback is run.  This is a bug.
+// The type of the optional user data argument in f may be any type
+// that Go can type convert userData[0] as.  Non-GObject types may
+// always be used as their Go equivalent types (for example, *C.gchar
+// as a Go string).
+func (v *Object) Connect(detailedSignal string, f interface{},
+	userData ...interface{}) (SignalHandle, error) {
 
-// Target() returns the target Object connected to a callback
-// function.  This value should be type asserted as the type of the
-// target.
-func (c *CallbackContext) Target() interface{} {
-	return c.target.Interface()
-}
-
-// Data() returns the optional user data passed to a callback function
-// connected with ConnectWithData().  This value should be type asserted
-// as the type of the data.
-func (c *CallbackContext) Data() interface{} {
-	return c.data.Interface()
-}
-
-// Arg() returns the nth argument passed to the callback function.
-func (c *CallbackContext) Arg(n int) CallbackArg {
-	return CallbackArg(C.cbinfo_get_arg((*C.cbinfo)(c.cbi), C.int(n)))
-}
-
-// String() returns this callback argument as a Go string.  Calling
-// this function results in undefined behavior if the argument for the
-// native C callback function is not a C string.
-func (c CallbackArg) String() string {
-	return C.GoString((*C.char)(unsafe.Pointer(c)))
-}
-
-// Int() returns this callback argument as a Go int.  Calling this
-// function results in undefined behavior if the argument for the native
-// C callback function is not an int.
-func (c CallbackArg) Int() int {
-	return int(C.int(C.uintptr_t(c)))
-}
-
-// UInt() returns this callback argument as a Go uint.  Calling this
-// function results in undefined behavior if the argument for the native
-// C callback function is not an unsigned int.
-func (c CallbackArg) UInt() uint {
-	return uint(C.uint(C.uintptr_t(c)))
-}
-
-//export _go_glib_callback
-func _go_glib_callback(cbi *C.cbinfo) {
-	callbackContexts.RLock()
-	ctx := callbackContexts.s[int(cbi.func_n)]
-	rf := reflect.ValueOf(ctx.f)
-	t := rf.Type()
-	fargs := make([]reflect.Value, t.NumIn())
-	if len(fargs) > 0 {
-		fargs[0] = reflect.ValueOf(ctx)
+	if len(userData) > 1 {
+		return 0, errors.New("userData len must be 0 or 1")
 	}
-	callbackContexts.RUnlock()
-	ret := rf.Call(fargs)
-	if len(ret) > 0 {
-		bret, _ := ret[0].Interface().(bool)
-		cbi.ret = gbool(bret)
+
+	cstr := C.CString(detailedSignal)
+	defer C.free(unsafe.Pointer(cstr))
+
+	closure, err := ClosureNew(f, userData...)
+	if err != nil {
+		return 0, err
 	}
+
+	c := C.g_signal_connect_closure(C.gpointer(v.Native()),
+		(*C.gchar)(cstr), closure, gbool(false))
+	handle := SignalHandle(c)
+
+	// Add closure to internally-maintained signals map.
+	signals[handle] = closure
+
+	return handle, nil
+}
+
+// ClosureNew creates a new GClosure and adds its callback function
+// to the internally-maintained map. It's exported for visibility to other
+// gotk3 packages and shouldn't be used in application code.
+func ClosureNew(f interface{}, marshalData ...interface{}) (*C.GClosure, error) {
+	// Create a reflect.Value from f.  This is called when the
+	// returned GClosure runs.
+	rf := reflect.ValueOf(f)
+
+	// Closures can only be created from funcs.
+	if rf.Type().Kind() != reflect.Func {
+		return nil, errors.New("value is not a func")
+	}
+
+	var c *C.GClosure
+	if len(marshalData) == 0 {
+		c = C._g_closure_new()
+	} else {
+		p, err := reflectGValue(marshalData[0])
+		if err != nil {
+			return nil, err
+		}
+		// TODO: data needs to stay in scope until the source func is gone.
+		c = C._g_closure_new_with_data((C.gpointer)(p))
+	}
+
+	// Associate the GClosure with rf.  rf will be looked up in this
+	// map by the closure when the closure runs.
+	closures.Lock()
+	closures.m[c] = rf
+	closures.Unlock()
+
+	return c, nil
+}
+
+// goMarshal is called by the GLib runtime when a closure needs to be invoked.
+// The closure will be invoked with as many arguments as it can take, from 0 to
+// the full amount provided by the call. If the closure asks for more parameters
+// than there are to give, this method panics.
+//
+//export goMarshal
+func goMarshal(closure *C.GClosure, retValue *C.GValue,
+	nParams C.guint, params *C.GValue,
+	invocationHint C.gpointer, marshalData *C.GValue) {
+
+	// Get number of parameters passed in. If marshaled data was passed
+	// in, increment the total number of parameters.
+	nGLibParams := int(nParams)
+	nTotalParams := nGLibParams
+	if marshalData != nil {
+		nTotalParams++
+	}
+
+	// Get the function associated with this callback closure.
+	closures.RLock()
+	rf := closures.m[closure]
+	closures.RUnlock()
+
+	// Get number of parameters from the callback closure.  If this exceeds
+	// the total number of marshaled parameters, a warning will be printed
+	// to stderr, and the callback will not be run.
+	nCbParams := rf.Type().NumIn()
+	if nCbParams > nTotalParams {
+		fmt.Fprintf(os.Stderr,
+			"too many closure args: have %d, max allowed %d\n",
+			nCbParams, nTotalParams)
+		return
+	}
+
+	// Create a slice of reflect.Values as arguments to call the function.
+	gValues := gValueSlice(params, nCbParams)
+	args := make([]reflect.Value, 0, nCbParams)
+
+	// Fill beginning of args, up to the minimum of the total number of callback
+	// parameters and parameters from the glib runtime.
+	for i := 0; i < nCbParams && i < nGLibParams; i++ {
+		v := &Value{gValues[i]}
+		val, err := v.GoValue()
+		if err != nil {
+			fmt.Fprintf(os.Stderr,
+				"no suitable Go value for arg %d: %v\n", i, err)
+			return
+		}
+		rv := reflect.ValueOf(val)
+		args = append(args, rv.Convert(rf.Type().In(i)))
+	}
+
+	// If non-nil marshaled user data was passed in and not all
+	// args have been set, get and set the reflect.Value directly
+	// from the GValue.
+	if marshalData != nil && len(args) < cap(args) {
+		v := &Value{*marshalData}
+		rv := *v.reflectGoValue()
+		args = append(args, rv.Convert(rf.Type().In(nCbParams-1)))
+	}
+
+	// Call closure with args. If the callback returns one or more
+	// values, save the GValue equivalent of the first.
+	rv := rf.Call(args)
+	if retValue != nil && len(rv) > 0 {
+		if g, err := GValue(rv[0].Interface()); err != nil {
+			fmt.Fprintf(os.Stderr,
+				"cannot save callback return value: %v", err)
+		} else {
+			*retValue = *g.Native()
+		}
+	}
+}
+
+// gValueSlice converts a C array of GValues to a Go slice.
+func gValueSlice(values *C.GValue, nValues int) (slice []C.GValue) {
+	header := (*reflect.SliceHeader)((unsafe.Pointer(&slice)))
+	header.Cap = nValues
+	header.Len = nValues
+	header.Data = uintptr(unsafe.Pointer(values))
+	return
 }
 
 /*
  * Main event loop
  */
 
-type idleFnContext struct {
-	f    interface{}
-	args []reflect.Value
-	idl  *C.idleinfo
+type Source struct {
+	ptr unsafe.Pointer
 }
 
-// IdleAdd() is a wrapper around g_idle_add() and adds the function f,
-// called with the arguments in datas, to run in the context of the GLib
-// event loop.  IdleAdd() returns a uint representing the identifier for
-// this source function, and an error if f is not a function, len(datas)
-// does not match the number of inputs to f, or there is a type mismatch
-// between arguments.
-func IdleAdd(f interface{}, datas ...interface{}) (uint, error) {
+type SourceHandle uint
+
+// Native returns a pointer to the underlying GSource.
+func (v *Source) Native() *C.GSource {
+	if v == nil || v.ptr == nil {
+		return nil
+	}
+	return (*C.GSource)(v.ptr)
+}
+
+// IdleAdd adds an idle source to the default main event loop
+// context.  After running once, the source func will be removed
+// from the main event loop, unless f returns a single bool true.
+//
+// This function will cause a panic when f eventually runs if the
+// types of args do not match those of f.
+func IdleAdd(f interface{}, args ...interface{}) (SourceHandle, error) {
+	// f must be a func with no parameters.
 	rf := reflect.ValueOf(f)
-	if rf.Kind() != reflect.Func {
+	if rf.Type().Kind() != reflect.Func {
 		return 0, errors.New("f is not a function")
 	}
-	t := rf.Type()
-	if t.NumIn() != len(datas) {
-		return 0, errors.New("Number of arguments do not match")
+
+	// Create an idle source func for a main loop context.
+	idleSrc := C.g_idle_source_new()
+	if idleSrc == nil {
+		return 0, nilPtrErr
 	}
 
-	var vals []reflect.Value
-	for i := range datas {
-		ntharg := t.In(i)
-		val := reflect.ValueOf(datas[i])
-		if ntharg.Kind() != val.Kind() {
-			s := fmt.Sprint("Types of arg", i, "do not match")
-			return 0, errors.New(s)
+	// Create a new GClosure from f that invalidates itself when
+	// f returns false.  The error is ignored here, as this will
+	// always be a function.
+	var closure *C.GClosure
+	closure, _ = ClosureNew(func() {
+		// Create a slice of reflect.Values arguments to call the func.
+		rargs := make([]reflect.Value, len(args))
+		for i := range args {
+			rargs[i] = reflect.ValueOf(args[i])
 		}
-		vals = append(vals, val)
-	}
 
-	ctx := &idleFnContext{}
-	ctx.f = f
-	ctx.args = vals
-
-	idleFnContexts.Lock()
-	idleFnContexts.s = append(idleFnContexts.s, ctx)
-	idleFnContexts.Unlock()
-
-	idleFnContexts.RLock()
-	nIdleFns := len(idleFnContexts.s)
-	idleFnContexts.RUnlock()
-	idl := C._g_idle_add(C.int(nIdleFns) - 1)
-
-	ctx.idl = idl
-
-	return uint(idl.id), nil
-}
-
-//export _go_glib_idle_fn
-func _go_glib_idle_fn(idl *C.idleinfo) {
-	idleFnContexts.RLock()
-	ctx := idleFnContexts.s[int(idl.func_n)]
-	idleFnContexts.RUnlock()
-	rf := reflect.ValueOf(ctx.f)
-	rv := rf.Call(ctx.args)
-	if len(rv) == 1 {
-		if rv[0].Kind() == reflect.Bool {
-			idl.ret = gbool(rv[0].Bool())
-			return
+		// Call func with args. The callback will be removed, unless
+		// it returns exactly one return value of true.
+		rv := rf.Call(rargs)
+		if len(rv) == 1 {
+			if rv[0].Kind() == reflect.Bool {
+				if rv[0].Bool() {
+					return
+				}
+			}
 		}
-	}
-	idl.ret = gbool(false)
-}
+		C.g_closure_invalidate(closure)
+		C.g_source_destroy(idleSrc)
+	})
 
-//export _go_nil_unused_idle_ctx
-func _go_nil_unused_idle_ctx(n C.int) {
-	idleFnContexts.Lock()
-	idleFnContexts.s[int(n)] = nil
-	idleFnContexts.Unlock()
+	// Set closure to run as a callback when the idle source runs.
+	C.g_source_set_closure(idleSrc, closure)
+
+	// Attach the idle source func to the default main event loop
+	// context.
+	cid := C.g_source_attach(idleSrc, nil)
+	return SourceHandle(cid), nil
 }
 
 /*
@@ -298,6 +392,11 @@ type Object struct {
 	GObject *C.GObject
 }
 
+// ObjectNew creates a new
+func ObjectNew(p unsafe.Pointer) *Object {
+	return &Object{(*C.GObject)(p)}
+}
+
 // Native() returns a pointer to the underlying GObject.
 func (v *Object) Native() *C.GObject {
 	if v == nil || v.GObject == nil {
@@ -307,6 +406,11 @@ func (v *Object) Native() *C.GObject {
 	return C.toGObject(p)
 }
 
+// IsA is a wrapper around g_type_is_a().
+func (v *Object) IsA(typ Type) bool {
+	return gobool(C.g_type_is_a(C.GType(v.TypeFromInstance()), C.GType(typ)))
+}
+
 func (v *Object) toGObject() *C.GObject {
 	if v == nil {
 		return nil
@@ -314,7 +418,8 @@ func (v *Object) toGObject() *C.GObject {
 	return v.Native()
 }
 
-func (v *Object) typeFromInstance() Type {
+// TypeFromInstance is a wrapper around g_type_from_instance().
+func (v *Object) TypeFromInstance() Type {
 	c := C._g_type_from_instance(C.gpointer(unsafe.Pointer(v.Native())))
 	return Type(c)
 }
@@ -360,45 +465,6 @@ func (v *Object) StopEmission(s string) {
 		(*C.gchar)(cstr))
 }
 
-func (v *Object) connectCtx(ctx *CallbackContext, s string) int {
-	cstr := C.CString(s)
-	defer C.free(unsafe.Pointer(cstr))
-	callbackContexts.RLock()
-	nCbCtxs := len(callbackContexts.s)
-	callbackContexts.RUnlock()
-	ctx.cbi = unsafe.Pointer(C._g_signal_connect(unsafe.Pointer(v.GObject),
-		(*C.gchar)(cstr), C.int(nCbCtxs)))
-	callbackContexts.Lock()
-	callbackContexts.s = append(callbackContexts.s, ctx)
-	callbackContexts.Unlock()
-	return nCbCtxs
-}
-
-// Connect() is a wrapper around g_signal_connect().  Connect()
-// returns an int representing the handler id, and a non-nil error if f
-// is not a function.
-func (v *Object) Connect(s string, f interface{}) (int, error) {
-	rf := reflect.ValueOf(f)
-	if rf.Kind() != reflect.Func {
-		return 0, errors.New("f is not a function")
-	}
-	ctx := &CallbackContext{f, nil, reflect.ValueOf(v),
-		reflect.ValueOf(nil)}
-	return v.connectCtx(ctx, s), nil
-}
-
-// ConnectWithData() is a wrapper around g_signal_connect().  This
-// function differs from Connect() in that it allows passing an
-// additional argument for user data.  This additional argument is
-// usually unneeded since Connect() supports full closures, however, if f
-// was not created with the necessary data in scope, it may be passed in
-// this by connecting with this function.
-func (v *Object) ConnectWithData(s string, f interface{}, data interface{}) int {
-	ctx := &CallbackContext{f, nil, reflect.ValueOf(v),
-		reflect.ValueOf(data)}
-	return v.connectCtx(ctx, s)
-}
-
 // Set() is a wrapper around g_object_set().  However, unlike
 // g_object_set(), this function only sets one name value pair.  Make
 // multiple calls to this function to set multiple properties.
@@ -410,78 +476,98 @@ func (v *Object) Set(name string, value interface{}) error {
 		value = value.(Object).GObject
 	}
 
+	// Can't call g_object_set() as it uses a variable arg list, use a
+	// wrapper instead
+	if p := pointerVal(value); p != nil {
+		C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
+		return nil
+	} else {
+		return errors.New("Unable to perform type conversion")
+	}
+}
+
+// magic
+func pointerVal(value interface{}) unsafe.Pointer {
 	var p unsafe.Pointer = nil
-	switch value.(type) {
+	switch v := value.(type) {
 	case bool:
-		c := gbool(value.(bool))
+		c := gbool(v)
 		p = unsafe.Pointer(&c)
+
 	case int8:
-		c := C.gint8(value.(int8))
+		c := C.gint8(v)
 		p = unsafe.Pointer(&c)
+
 	case int16:
-		c := C.gint16(value.(int16))
+		c := C.gint16(v)
 		p = unsafe.Pointer(&c)
+
 	case int32:
-		c := C.gint32(value.(int32))
+		c := C.gint32(v)
 		p = unsafe.Pointer(&c)
+
 	case int64:
-		c := C.gint64(value.(int64))
+		c := C.gint64(v)
 		p = unsafe.Pointer(&c)
+
 	case int:
-		c := C.gint(value.(int))
+		c := C.gint(v)
 		p = unsafe.Pointer(&c)
+
 	case uint8:
-		c := C.guchar(value.(uint8))
+		c := C.guchar(v)
 		p = unsafe.Pointer(&c)
+
 	case uint16:
-		c := C.guint16(value.(uint16))
+		c := C.guint16(v)
 		p = unsafe.Pointer(&c)
+
 	case uint32:
-		c := C.guint32(value.(uint32))
+		c := C.guint32(v)
 		p = unsafe.Pointer(&c)
+
 	case uint64:
-		c := C.guint64(value.(uint64))
+		c := C.guint64(v)
 		p = unsafe.Pointer(&c)
+
 	case uint:
-		c := C.guint(value.(uint))
+		c := C.guint(v)
 		p = unsafe.Pointer(&c)
+
 	case uintptr:
-		p = unsafe.Pointer(C.gpointer(value.(uintptr)))
+		p = unsafe.Pointer(C.gpointer(v))
+
 	case float32:
-		c := C.gfloat(value.(float32))
+		c := C.gfloat(v)
 		p = unsafe.Pointer(&c)
+
 	case float64:
-		c := C.gdouble(value.(float64))
+		c := C.gdouble(v)
 		p = unsafe.Pointer(&c)
+
 	case string:
-		cstr := C.CString(value.(string))
+		cstr := C.CString(v)
 		defer C.free(unsafe.Pointer(cstr))
 		p = unsafe.Pointer(cstr)
+
 	default:
 		if pv, ok := value.(unsafe.Pointer); ok {
 			p = pv
 		} else {
-			// Constants with separate types are not type asserted
-			// above, so do a runtime check here instead.
 			val := reflect.ValueOf(value)
 			switch val.Kind() {
 			case reflect.Int, reflect.Int8, reflect.Int16,
 				reflect.Int32, reflect.Int64:
 				c := C.int(val.Int())
 				p = unsafe.Pointer(&c)
-			case reflect.Uintptr:
+
+			case reflect.Uintptr, reflect.Ptr, reflect.UnsafePointer:
 				p = unsafe.Pointer(C.gpointer(val.Pointer()))
 			}
 		}
 	}
-	// Can't call g_object_set() as it uses a variable arg list, use a
-	// wrapper instead
-	if p != nil {
-		C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
-		return nil
-	} else {
-		return errors.New("Unable to perform type conversion")
-	}
+
+	return p
 }
 
 /*
@@ -518,7 +604,8 @@ func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
 		C.val_list_insert(valv, C.int(i+1), val.Native())
 	}
 
-	t := v.typeFromInstance()
+	t := v.TypeFromInstance()
+	// TODO: use just the signal name
 	id := C.g_signal_lookup((*C.gchar)(cstr), C.GType(t))
 
 	ret, err := ValueAlloc()
@@ -531,27 +618,21 @@ func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
 }
 
 // HandlerBlock() is a wrapper around g_signal_handler_block().
-func (v *Object) HandlerBlock(callID int) {
-	callbackContexts.RLock()
-	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
-	callbackContexts.RUnlock()
-	C.g_signal_handler_block((C.gpointer)(v.GObject), id)
+func (v *Object) HandlerBlock(handle SignalHandle) {
+	C.g_signal_handler_block(C.gpointer(v.GObject), C.gulong(handle))
 }
 
 // HandlerUnblock() is a wrapper around g_signal_handler_unblock().
-func (v *Object) HandlerUnblock(callID int) {
-	callbackContexts.RLock()
-	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
-	callbackContexts.RUnlock()
-	C.g_signal_handler_unblock((C.gpointer)(v.GObject), id)
+func (v *Object) HandlerUnblock(handle SignalHandle) {
+	C.g_signal_handler_unblock(C.gpointer(v.GObject), C.gulong(handle))
 }
 
 // HandlerDisconnect() is a wrapper around g_signal_handler_disconnect().
-func (v *Object) HandlerDisconnect(callID int) {
-	callbackContexts.RLock()
-	id := C.cbinfo_get_id((*C.cbinfo)(callbackContexts.s[callID].cbi))
-	callbackContexts.RUnlock()
-	C.g_signal_handler_disconnect((C.gpointer)(v.GObject), id)
+func (v *Object) HandlerDisconnect(handle SignalHandle) {
+	C.g_signal_handler_disconnect(C.gpointer(v.GObject), C.gulong(handle))
+	C.g_closure_invalidate(signals[handle])
+	delete(closures.m, signals[handle])
+	delete(signals, handle)
 }
 
 /*
@@ -613,16 +694,16 @@ func (v *Value) unset() {
 	C.g_value_unset(v.Native())
 }
 
-// GetType() is a wrappr around the G_VALUE_HOLDS_GTYPE() macro and
+// Type() is a wrapper around the G_VALUE_HOLDS_GTYPE() macro and
 // the g_value_get_gtype() function.  GetType() returns TYPE_INVALID if v
 // does not hold a Type, or otherwise returns the Type of v.
-func (v *Value) GetType() Type {
-	c := C._g_value_holds_gtype(C.gpointer(unsafe.Pointer(v.Native())))
-	if gobool(c) {
-		c := C.g_value_get_gtype(v.Native())
-		return Type(c)
+func (v *Value) Type() (actual Type, fundamental Type, err error) {
+	if !gobool(C._g_is_value(v.Native())) {
+		return actual, fundamental, errors.New("invalid GValue")
 	}
-	return TYPE_INVALID
+	c_actual := C._g_value_type(v.Native())
+	c_fundamental := C._g_value_fundamental(c_actual)
+	return Type(c_actual), Type(c_fundamental), nil
 }
 
 // GValue() converts a Go type to a comparable GValue.  GValue()
@@ -637,87 +718,96 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 	}
 
-	switch v.(type) {
+	switch e := v.(type) {
 	case bool:
 		val, err := ValueInit(TYPE_BOOLEAN)
 		if err != nil {
 			return nil, err
 		}
-		val.SetBool(v.(bool))
+		val.SetBool(e)
 		return val, nil
+
 	case int8:
 		val, err := ValueInit(TYPE_CHAR)
 		if err != nil {
 			return nil, err
 		}
-		val.SetSChar(v.(int8))
+		val.SetSChar(e)
 		return val, nil
+
 	case int64:
 		val, err := ValueInit(TYPE_INT64)
 		if err != nil {
 			return nil, err
 		}
-		val.SetInt64(v.(int64))
+		val.SetInt64(e)
 		return val, nil
+
 	case int:
 		val, err := ValueInit(TYPE_INT)
 		if err != nil {
 			return nil, err
 		}
-		val.SetInt(v.(int))
+		val.SetInt(e)
 		return val, nil
+
 	case uint8:
 		val, err := ValueInit(TYPE_UCHAR)
 		if err != nil {
 			return nil, err
 		}
-		val.SetUChar(v.(uint8))
+		val.SetUChar(e)
 		return val, nil
+
 	case uint64:
 		val, err := ValueInit(TYPE_UINT64)
 		if err != nil {
 			return nil, err
 		}
-		val.SetUInt64(v.(uint64))
+		val.SetUInt64(e)
 		return val, nil
+
 	case uint:
 		val, err := ValueInit(TYPE_UINT)
 		if err != nil {
 			return nil, err
 		}
-		val.SetUInt(v.(uint))
+		val.SetUInt(e)
 		return val, nil
+
 	case float32:
 		val, err := ValueInit(TYPE_FLOAT)
 		if err != nil {
 			return nil, err
 		}
-		val.SetFloat(v.(float32))
+		val.SetFloat(e)
 		return val, nil
+
 	case float64:
 		val, err := ValueInit(TYPE_DOUBLE)
 		if err != nil {
 			return nil, err
 		}
-		val.SetDouble(v.(float64))
+		val.SetDouble(e)
 		return val, nil
+
 	case string:
 		val, err := ValueInit(TYPE_STRING)
 		if err != nil {
 			return nil, err
 		}
-		val.SetString(v.(string))
+		val.SetString(e)
 		return val, nil
-	default:
-		if obj, ok := v.(*Object); ok {
-			val, err := ValueInit(TYPE_OBJECT)
-			if err != nil {
-				return nil, err
-			}
-			val.SetInstance(uintptr(unsafe.Pointer(obj.GObject)))
-			return val, nil
-		}
 
+	case *Object:
+		val, err := ValueInit(TYPE_OBJECT)
+		if err != nil {
+			return nil, err
+		}
+		val.SetInstance(uintptr(unsafe.Pointer(e.GObject)))
+		return val, nil
+
+	default:
 		/* Try this since above doesn't catch constants under other types */
 		rval := reflect.ValueOf(v)
 		switch rval.Kind() {
@@ -728,10 +818,13 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			}
 			val.SetSChar(int8(rval.Int()))
 			return val, nil
+
 		case reflect.Int16:
 			return nil, errors.New("Type not implemented")
+
 		case reflect.Int32:
 			return nil, errors.New("Type not implemented")
+
 		case reflect.Int64:
 			val, err := ValueInit(TYPE_INT64)
 			if err != nil {
@@ -739,6 +832,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			}
 			val.SetInt64(rval.Int())
 			return val, nil
+
 		case reflect.Int:
 			val, err := ValueInit(TYPE_INT)
 			if err != nil {
@@ -746,7 +840,8 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			}
 			val.SetInt(int(rval.Int()))
 			return val, nil
-		case reflect.Uintptr:
+
+		case reflect.Uintptr, reflect.Ptr:
 			val, err := ValueInit(TYPE_POINTER)
 			if err != nil {
 				return nil, err
@@ -755,6 +850,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			return val, nil
 		}
 	}
+
 	return nil, errors.New("Type not implemented")
 }
 
@@ -766,44 +862,101 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 // This function is a wrapper around the many g_value_get_*()
 // functions, depending on the type of the Value.
 func (v *Value) GoValue() (interface{}, error) {
-	switch v.GetType() {
+	_, fundamental, err := v.Type()
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: verify that all of these cases are indeed fundamental types
+	switch fundamental {
 	case TYPE_INVALID:
-		return nil, errors.New("Invalid type")
+		return nil, errors.New("invalid type")
+
 	case TYPE_NONE:
 		return nil, nil
-	case TYPE_BOOLEAN:
-		c := C.g_value_get_boolean(v.Native())
-		return gobool(c), nil
+
+	case TYPE_INTERFACE:
+		return nil, errors.New("interface conversion not yet implemented")
+
 	case TYPE_CHAR:
 		c := C.g_value_get_schar(v.Native())
 		return int8(c), nil
+
 	case TYPE_UCHAR:
 		c := C.g_value_get_uchar(v.Native())
 		return uint8(c), nil
+
+	case TYPE_BOOLEAN:
+		c := C.g_value_get_boolean(v.Native())
+		return gobool(c), nil
+
+	// TODO: TYPE_INT should probably be a Go int32.
+	case TYPE_INT, TYPE_LONG, TYPE_ENUM:
+		c := C.g_value_get_int(v.Native())
+		return int(c), nil
+
 	case TYPE_INT64:
 		c := C.g_value_get_int64(v.Native())
 		return int64(c), nil
-	case TYPE_INT:
-		c := C.g_value_get_int(v.Native())
-		return int(c), nil
+
+	// TODO: TYPE_UINT should probably be a Go uint32.
+	case TYPE_UINT, TYPE_ULONG, TYPE_FLAGS:
+		c := C.g_value_get_uint(v.Native())
+		return uint(c), nil
+
 	case TYPE_UINT64:
 		c := C.g_value_get_uint64(v.Native())
 		return uint64(c), nil
-	case TYPE_UINT:
-		c := C.g_value_get_uint(v.Native())
-		return uint(c), nil
+
 	case TYPE_FLOAT:
 		c := C.g_value_get_float(v.Native())
 		return float32(c), nil
+
 	case TYPE_DOUBLE:
 		c := C.g_value_get_double(v.Native())
 		return float64(c), nil
+
 	case TYPE_STRING:
 		c := C.g_value_get_string(v.Native())
 		return C.GoString((*C.char)(c)), nil
+
+	case TYPE_POINTER:
+		c := C.g_value_get_pointer(v.Native())
+		return unsafe.Pointer(c), nil
+
+	case TYPE_OBJECT:
+		c := C.g_value_get_object(v.Native())
+		// TODO: need to try and return an actual pointer to the correct object type
+		// this may require an additional cast()-like method for each module
+		return ObjectNew(unsafe.Pointer(c)), nil
+
+	case TYPE_VARIANT:
+		return nil, errors.New("variant conversion not yet implemented")
+
 	default:
-		return nil, errors.New("Type conversion not supported")
+		return nil, errors.New("type conversion not supported")
 	}
+}
+
+// reflectGValue returns a Value but attempts to create one with a
+// Pointer GType that points to a reflect.Value created from v,
+// instead of checking the type of v for a pointer and setting the
+// GValue with that.
+func reflectGValue(v interface{}) (gvalue *Value, err error) {
+	rv := reflect.ValueOf(v)
+	val, err := ValueInit(TYPE_POINTER)
+	if err != nil {
+		return nil, err
+	}
+	val.SetPointer(uintptr(unsafe.Pointer(&rv)))
+	return val, nil
+}
+
+// reflectGoValue returns a pointer to a reflect.Value created as
+// a Pointer GValue with reflectGValue.
+func (v *Value) reflectGoValue() *reflect.Value {
+	rp := unsafe.Pointer(C.g_value_get_pointer(v.Native()))
+	return (*reflect.Value)(rp)
 }
 
 // SetBool() is a wrapper around g_value_set_boolean().
