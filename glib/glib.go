@@ -210,7 +210,8 @@ func ClosureNew(f interface{}, marshalData ...interface{}) (*C.GClosure, error) 
 // goMarshal is called by the GLib runtime when a closure needs to be invoked.
 // The closure will be invoked with as many arguments as it can take, from 0 to
 // the full amount provided by the call. If the closure asks for more parameters
-// than there are to give, this method panics.
+// than there are to give, a warning is printed to stderr and the closure is
+// not run.
 //
 //export goMarshal
 func goMarshal(closure *C.GClosure, retValue *C.GValue,
