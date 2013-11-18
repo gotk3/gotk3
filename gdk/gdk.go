@@ -84,7 +84,7 @@ type Atom uintptr
 
 // Native() returns the underlying GdkAtom.
 func (v Atom) Native() C.GdkAtom {
-	return C.toGdkAtom(unsafe.Pointer(v))
+	return C.toGdkAtom(unsafe.Pointer(uintptr(v)))
 }
 
 /*
