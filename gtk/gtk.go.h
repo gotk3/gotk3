@@ -170,6 +170,24 @@ toGtkListStore(void *p)
 	return (GTK_LIST_STORE(p));
 }
 
+static GtkTextView *
+toGtkTextView(void *p)
+{
+	return (GTK_TEXT_VIEW(p));
+}
+
+static GtkTextTagTable *
+toGtkTextTagTable(void *p)
+{
+	return (GTK_TEXT_TAG_TABLE(p));
+}
+
+static GtkTextBuffer *
+toGtkTextBuffer(void *p)
+{
+	return (GTK_TEXT_BUFFER(p));
+}
+
 static GtkTreeModel *
 toGtkTreeModel(void *p)
 {

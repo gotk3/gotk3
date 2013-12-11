@@ -19,8 +19,13 @@
 package gtk
 
 import (
+	"fmt"
 	"testing"
 )
+
+func init() {
+	Init(nil)
+}
 
 // TestBoolConvs tests the conversion between Go bools and gboolean
 // types.
@@ -70,4 +75,366 @@ func TestBox(t *testing.T) {
 
 	vbox.PackStart(start, true, true, 3)
 	vbox.PackEnd(end, true, true, 3)
+}
+func TestTextBuffer_WhenSetText_ExpectGetTextReturnsSame(t *testing.T) {
+	buffer, err := TextBufferNew(nil)
+	if err != nil {
+		t.Error("Unable to create text buffer")
+	}
+	expected := "Hello, World!"
+	buffer.SetText(expected)
+
+	start, end := buffer.GetBounds()
+
+	actual, err := buffer.GetText(start, end, true)
+	if err != nil {
+		t.Error("Unable to get text from buffer")
+	}
+
+	if actual != expected {
+		t.Errorf("Expected '%s'; Got '%s'", expected, actual)
+	}
+}
+
+func testTextViewEditable(set bool) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	exp := set
+	tv.SetEditable(exp)
+	act := tv.GetEditable()
+	if exp != act {
+		return fmt.Errorf("Expected GetEditable(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetEditableFalse_ExpectGetEditableReturnsFalse(t *testing.T) {
+	if err := testTextViewEditable(false); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetEditableTrue_ExpectGetEditableReturnsTrue(t *testing.T) {
+	if err := testTextViewEditable(true); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewWrapMode(set WrapMode) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	exp := set
+	tv.SetWrapMode(set)
+	act := tv.GetWrapMode()
+	if act != exp {
+		return fmt.Errorf("Expected GetWrapMode(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetWrapModeNone_ExpectGetWrapModeReturnsNone(t *testing.T) {
+	if err := testTextViewWrapMode(WRAP_NONE); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetWrapModeWord_ExpectGetWrapModeReturnsWord(t *testing.T) {
+	if err := testTextViewWrapMode(WRAP_WORD); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewCursorVisible(set bool) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	exp := set
+	tv.SetCursorVisible(set)
+	act := tv.GetCursorVisible()
+	if act != exp {
+		return fmt.Errorf("Expected GetCursorVisible(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetCursorVisibleFalse_ExpectGetCursorVisibleReturnsFalse(t *testing.T) {
+	if err := testTextViewCursorVisible(false); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetCursorVisibleTrue_ExpectGetCursorVisibleReturnsTrue(t *testing.T) {
+	if err := testTextViewCursorVisible(true); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewOverwrite(set bool) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	exp := set
+	tv.SetOverwrite(set)
+	act := tv.GetOverwrite()
+	if act != exp {
+		return fmt.Errorf("Expected GetOverwrite(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetOverwriteFalse_ExpectGetOverwriteReturnsFalse(t *testing.T) {
+	if err := testTextViewOverwrite(false); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetOverwriteTrue_ExpectGetOverwriteReturnsTrue(t *testing.T) {
+	if err := testTextViewOverwrite(true); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewJustification(justify Justification) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	exp := justify
+	tv.SetJustification(justify)
+	act := tv.GetJustification()
+	if act != exp {
+		return fmt.Errorf("Expected GetJustification(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetJustificationLeft_ExpectGetJustificationReturnsLeft(t *testing.T) {
+	if err := testTextViewJustification(JUSTIFY_LEFT); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetJustificationRight_ExpectGetJustificationReturnsRight(t *testing.T) {
+	if err := testTextViewJustification(JUSTIFY_RIGHT); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewAcceptsTab(set bool) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	exp := set
+	tv.SetAcceptsTab(set)
+	if act := tv.GetAcceptsTab(); act != exp {
+		return fmt.Errorf("Expected GetAcceptsTab(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetAcceptsTabFalse_ExpectGetAcceptsTabReturnsFalse(t *testing.T) {
+	if err := testTextViewAcceptsTab(false); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetAcceptsTabTrue_ExpectGetAcceptsTabReturnsTrue(t *testing.T) {
+	if err := testTextViewAcceptsTab(true); err != nil {
+		t.Error(err)
+	}
+}
+
+func testIntProperty(val int, set func(int), get func() int) error {
+	set(val)
+	if exp, act := val, get(); act != exp {
+		return fmt.Errorf("Expected: %d; got: %d", exp, act)
+	}
+	return nil
+}
+
+func testTextViewPixelsAboveLines(px int) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+	return testIntProperty(px, (*tv).SetPixelsAboveLines, (*tv).GetPixelsAboveLines)
+}
+
+func TestTextView_WhenSetPixelsAboveLines10_ExpectGetPixelsAboveLinesReturns10(t *testing.T) {
+	if err := testTextViewPixelsAboveLines(10); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetPixelsAboveLines11_ExpectGetPixelsAboveLinesReturns11(t *testing.T) {
+	if err := testTextViewPixelsAboveLines(11); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewPixelsBelowLines(px int) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+	return testIntProperty(px, (*tv).SetPixelsBelowLines, (*tv).GetPixelsBelowLines)
+}
+
+func TestTextView_WhenSetPixelsBelowLines10_ExpectGetPixelsAboveLinesReturns10(t *testing.T) {
+	if err := testTextViewPixelsBelowLines(10); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetPixelsBelowLines11_ExpectGetPixelsBelowLinesReturns11(t *testing.T) {
+	if err := testTextViewPixelsBelowLines(11); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewPixelsInsideWrap(px int) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	return testIntProperty(px, (*tv).SetPixelsInsideWrap, (*tv).GetPixelsInsideWrap)
+}
+
+func TestTextView_WhenSetPixelsInsideWrap10_ExpectGetPixelsInsideWrapReturns11(t *testing.T) {
+	if err := testTextViewPixelsInsideWrap(10); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetPixelsInsideWrap11_ExpectGetPixelsInsideWrapReturns11(t *testing.T) {
+	if err := testTextViewPixelsInsideWrap(11); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewLeftMargin(margin int) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	return testIntProperty(margin, (*tv).SetLeftMargin, (*tv).GetLeftMargin)
+}
+
+func TestTextView_WhenSetLeftMargin11_ExpectGetLeftMarginReturns11(t *testing.T) {
+	if err := testTextViewLeftMargin(11); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetLeftMargin10_ExpectGetLeftMarginReturns10(t *testing.T) {
+	if err := testTextViewLeftMargin(10); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewRightMargin(margin int) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	return testIntProperty(margin, (*tv).SetRightMargin, (*tv).GetRightMargin)
+}
+
+func TestTextView_WhenSetRightMargin10_ExpectGetRightMarginReturns10(t *testing.T) {
+	if err := testTextViewRightMargin(10); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetRightMargin11_ExpectGetRightMarginReturns11(t *testing.T) {
+	if err := testTextViewRightMargin(11); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewIndent(indent int) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	return testIntProperty(indent, (*tv).SetIndent, (*tv).GetIndent)
+}
+
+func TestTextView_WhenSetIndent10_ExpectGetIndentReturns10(t *testing.T) {
+	if err := testTextViewIndent(10); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetIndent11_ExpectGetIndentReturns11(t *testing.T) {
+	if err := testTextViewIndent(11); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewInputHints(hint InputHints) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	tv.SetInputHints(hint)
+	if exp, act := hint, tv.GetInputHints(); act != exp {
+		return fmt.Errorf("Expected %v; Got %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetInputHintsNone_ExpectGetInputHintsReturnsNone(t *testing.T) {
+	if err := testTextViewInputHints(INPUT_HINT_NONE); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetInputHintsSpellCheck_ExpectGetInputHintsReturnsSpellCheck(t *testing.T) {
+	if err := testTextViewInputHints(INPUT_HINT_SPELLCHECK); err != nil {
+		t.Error(err)
+	}
+}
+
+func testTextViewInputPurpose(purpose InputPurpose) error {
+	tv, err := TextViewNew()
+	if err != nil {
+		return err
+	}
+
+	tv.SetInputPurpose(purpose)
+	if exp, act := purpose, tv.GetInputPurpose(); act != exp {
+		return fmt.Errorf("Expected %v; Got %v", exp, act)
+	}
+	return nil
+}
+
+func TestTextView_WhenSetInputPurposeURL_ExpectGetInputPurposeReturnsURL(t *testing.T) {
+	if err := testTextViewInputPurpose(INPUT_PURPOSE_URL); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestTextView_WhenSetInputPurposeALPHA_ExpectGetInputPurposeReturnsALPHA(t *testing.T) {
+	if err := testTextViewInputPurpose(INPUT_PURPOSE_ALPHA); err != nil {
+		t.Error(err)
+	}
 }

@@ -315,6 +315,16 @@ const (
 	WINDOW_POPUP               = C.GTK_WINDOW_POPUP
 )
 
+// WrapMode is a representation of GTK's GtkWrapMode.
+type WrapMode int
+
+const (
+	WRAP_NONE      = C.GTK_WRAP_NONE
+	WRAP_CHAR      = C.GTK_WRAP_CHAR
+	WRAP_WORD      = C.GTK_WRAP_WORD
+	WRAP_WORD_CHAR = C.GTK_WRAP_WORD_CHAR
+)
+
 /*
  * Init and main event loop
  */
@@ -3626,6 +3636,327 @@ func (v *Statusbar) GetMessageArea() (*Box, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, nil
 }
+
+/*
+ * GtkTextView
+ */
+
+// TextView is a representation of GTK's GtkTextView
+type TextView struct {
+	Container
+}
+
+// Native returns a pointer to the underlying GtkTextView.
+func (v *TextView) Native() *C.GtkTextView {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTextView(p)
+}
+
+func wrapTextView(obj *glib.Object) *TextView {
+	return &TextView{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// TextViewNew is a wrapper around gtk_text_view_new().
+func TextViewNew() (*TextView, error) {
+	c := C.gtk_text_view_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapTextView(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+// TextViewNewWithBuffer is a wrapper around gtk_text_view_new_with_buffer().
+func TextViewNewWithBuffer(buf *TextBuffer) (*TextView, error) {
+	c := C.gtk_text_view_new_with_buffer(buf.Native())
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapTextView(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+// GetBuffer is a wrapper around gtk_text_view_get_buffer().
+func (v *TextView) GetBuffer() (*TextBuffer, error) {
+	c := C.gtk_text_view_get_buffer(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapTextBuffer(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+// SetBuffer is a wrapper around gtk_text_view_set_buffer().
+func (v *TextView) SetBuffer(buffer *TextBuffer) {
+	C.gtk_text_view_set_buffer(v.Native(), buffer.Native())
+}
+
+// SetEditable is a wrapper around gtk_text_view_set_editable().
+func (v *TextView) SetEditable(editable bool) {
+	C.gtk_text_view_set_editable(v.Native(), gbool(editable))
+}
+
+// GetEditable is a wrapper around gtk_text_view_get_editable().
+func (v *TextView) GetEditable() bool {
+	c := C.gtk_text_view_get_editable(v.Native())
+	return gobool(c)
+}
+
+// SetWrapMode is a wrapper around gtk_text_view_set_wrap_mode().
+func (v *TextView) SetWrapMode(wrapMode WrapMode) {
+	C.gtk_text_view_set_wrap_mode(v.Native(), C.GtkWrapMode(wrapMode))
+}
+
+// GetWrapMode is a wrapper around gtk_text_view_get_wrap_mode().
+func (v *TextView) GetWrapMode() WrapMode {
+	return WrapMode(C.gtk_text_view_get_wrap_mode(v.Native()))
+}
+
+// SetCursorVisible is a wrapper around gtk_text_view_set_cursor_visible().
+func (v *TextView) SetCursorVisible(visible bool) {
+	C.gtk_text_view_set_cursor_visible(v.Native(), gbool(visible))
+}
+
+// GetCursorVisible is a wrapper around gtk_text_view_get_cursor_visible().
+func (v *TextView) GetCursorVisible() bool {
+	c := C.gtk_text_view_get_cursor_visible(v.Native())
+	return gobool(c)
+}
+
+// SetOverwrite is a wrapper around gtk_text_view_set_overwrite().
+func (v *TextView) SetOverwrite(overwrite bool) {
+	C.gtk_text_view_set_overwrite(v.Native(), gbool(overwrite))
+}
+
+// GetOverwrite is a wrapper around gtk_text_view_get_overwrite().
+func (v *TextView) GetOverwrite() bool {
+	c := C.gtk_text_view_get_overwrite(v.Native())
+	return gobool(c)
+}
+
+// SetJustification is a wrapper around gtk_text_view_set_justification().
+func (v *TextView) SetJustification(justify Justification) {
+	C.gtk_text_view_set_justification(v.Native(), C.GtkJustification(justify))
+}
+
+// GetJustification is a wrapper around gtk_text_view_get_justification().
+func (v *TextView) GetJustification() Justification {
+	c := C.gtk_text_view_get_justification(v.Native())
+	return Justification(c)
+}
+
+// SetAcceptsTab is a wrapper around gtk_text_view_set_accepts_tab().
+func (v *TextView) SetAcceptsTab(acceptsTab bool) {
+	C.gtk_text_view_set_accepts_tab(v.Native(), gbool(acceptsTab))
+}
+
+// GetAcceptsTab is a wrapper around gtk_text_view_get_accepts_tab().
+func (v *TextView) GetAcceptsTab() bool {
+	c := C.gtk_text_view_get_accepts_tab(v.Native())
+	return gobool(c)
+}
+
+// SetPixelsAboveLines is a wrapper around
+// gtk_text_view_set_pixels_above_lines().
+func (v *TextView) SetPixelsAboveLines(px int) {
+	C.gtk_text_view_set_pixels_above_lines(v.Native(), C.gint(px))
+}
+
+// GetPixelsAboveLines is a wrapper around
+// gtk_text_view_get_pixels_above_lines().
+func (v *TextView) GetPixelsAboveLines() int {
+	c := C.gtk_text_view_get_pixels_above_lines(v.Native())
+	return int(c)
+}
+
+// SetPixelsBelowLines is a wrapper around
+// gtk_text_view_set_pixels_below_lines().
+func (v *TextView) SetPixelsBelowLines(px int) {
+	C.gtk_text_view_set_pixels_below_lines(v.Native(), C.gint(px))
+}
+
+// GetPixelsBelowLines is a wrapper around
+// gtk_text_view_get_pixels_below_lines().
+func (v *TextView) GetPixelsBelowLines() int {
+	c := C.gtk_text_view_get_pixels_below_lines(v.Native())
+	return int(c)
+}
+
+// SetPixelsInsideWrap is a wrapper around
+// gtk_text_view_set_pixels_inside_wrap().
+func (v *TextView) SetPixelsInsideWrap(px int) {
+	C.gtk_text_view_set_pixels_inside_wrap(v.Native(), C.gint(px))
+}
+
+// GetPixelsInsideWrap is a wrapper around
+// gtk_text_view_get_pixels_inside_wrap().
+func (v *TextView) GetPixelsInsideWrap() int {
+	c := C.gtk_text_view_get_pixels_inside_wrap(v.Native())
+	return int(c)
+}
+
+// SetLeftMargin is a wrapper around gtk_text_view_set_left_margin().
+func (v *TextView) SetLeftMargin(margin int) {
+	C.gtk_text_view_set_left_margin(v.Native(), C.gint(margin))
+}
+
+// GetLeftMargin is a wrapper around gtk_text_view_get_left_margin().
+func (v *TextView) GetLeftMargin() int {
+	c := C.gtk_text_view_get_left_margin(v.Native())
+	return int(c)
+}
+
+// SetRightMargin is a wrapper around gtk_text_view_set_right_margin().
+func (v *TextView) SetRightMargin(margin int) {
+	C.gtk_text_view_set_right_margin(v.Native(), C.gint(margin))
+}
+
+// GetRightMargin is a wrapper around gtk_text_view_get_right_margin().
+func (v *TextView) GetRightMargin() int {
+	c := C.gtk_text_view_get_right_margin(v.Native())
+	return int(c)
+}
+
+// SetIndent is a wrapper around gtk_text_view_set_indent().
+func (v *TextView) SetIndent(indent int) {
+	C.gtk_text_view_set_indent(v.Native(), C.gint(indent))
+}
+
+// GetIndent is a wrapper around gtk_text_view_get_indent().
+func (v *TextView) GetIndent() int {
+	c := C.gtk_text_view_get_indent(v.Native())
+	return int(c)
+}
+
+// SetInputHints is a wrapper around gtk_text_view_set_input_hints().
+func (v *TextView) SetInputHints(hints InputHints) {
+	C.gtk_text_view_set_input_hints(v.Native(), C.GtkInputHints(hints))
+}
+
+// GetInputHints is a wrapper around gtk_text_view_get_input_hints().
+func (v *TextView) GetInputHints() InputHints {
+	c := C.gtk_text_view_get_input_hints(v.Native())
+	return InputHints(c)
+}
+
+// SetInputPurpose is a wrapper around gtk_text_view_set_input_purpose().
+func (v *TextView) SetInputPurpose(purpose InputPurpose) {
+	C.gtk_text_view_set_input_purpose(v.Native(),
+		C.GtkInputPurpose(purpose))
+}
+
+// GetInputPurpose is a wrapper around gtk_text_view_get_input_purpose().
+func (v *TextView) GetInputPurpose() InputPurpose {
+	c := C.gtk_text_view_get_input_purpose(v.Native())
+	return InputPurpose(c)
+}
+
+/*
+ * GtkTextTagTable
+ */
+
+type TextTagTable struct {
+	*glib.Object
+}
+
+// Native() returns a pointer to the underlying GObject as a GtkTextTagTable.
+func (v *TextTagTable) Native() *C.GtkTextTagTable {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTextTagTable(p)
+}
+
+func wrapTextTagTable(obj *glib.Object) *TextTagTable {
+	return &TextTagTable{obj}
+}
+
+func TextTagTableNew() (*TextTagTable, error) {
+	c := C.gtk_tree_view_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapTextTagTable(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+/*
+ * GtkTextBuffer
+ */
+
+// TextBuffer is a representation of GTK's GtkTextBuffer.
+type TextBuffer struct {
+	*glib.Object
+}
+
+// Native() returns a pointer to the underlying GtkTextBuffer.
+func (v *TextBuffer) Native() *C.GtkTextBuffer {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTextBuffer(p)
+}
+
+func wrapTextBuffer(obj *glib.Object) *TextBuffer {
+	return &TextBuffer{obj}
+}
+
+// TextBufferNew() is a wrapper around gtk_text_buffer_new().
+func TextBufferNew(table *TextTagTable) (*TextBuffer, error) {
+	c := C.gtk_text_buffer_new(table.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	e := wrapTextBuffer(obj)
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return e, nil
+}
+
+func (v *TextBuffer) GetBounds() (start, end *TextIter) {
+	start, end = new(TextIter), new(TextIter)
+	C.gtk_text_buffer_get_bounds(v.Native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+	return
+}
+
+func (v *TextBuffer) GetText(start, end *TextIter, includeHiddenChars bool) (string, error) {
+	c := C.gtk_text_buffer_get_text(
+		v.Native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end), gbool(includeHiddenChars),
+	)
+	if c == nil {
+		return "", nilPtrErr
+	}
+	return C.GoString((*C.char)(c)), nil
+}
+
+func (v *TextBuffer) SetText(text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_text_buffer_set_text(v.Native(), (*C.gchar)(cstr),
+		C.gint(len(text)))
+}
+
+/*
+ * GtkTextIter
+ */
+
+// TextIter is a representation of GTK's GtkTextIter
+type TextIter C.GtkTextIter
 
 /*
  * GtkToggleButton
