@@ -214,3 +214,9 @@ const (
 	STOCK_ZOOM_IN                       Stock = C.GTK_STOCK_ZOOM_IN
 	STOCK_ZOOM_OUT                      Stock = C.GTK_STOCK_ZOOM_OUT
 )
+
+// ReshowWithInitialSize is a wrapper around
+// gtk_window_reshow_with_initial_size().
+func (v *Window) ReshowWithInitialSize() {
+	C.gtk_window_reshow_with_initial_size(v.Native())
+}

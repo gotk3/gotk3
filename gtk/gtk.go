@@ -5207,12 +5207,6 @@ func (v *Window) Move(x, y int) {
 
 // TODO gtk_window_parse_geometry().
 
-// ReshowWithInitialSize is a wrapper around
-// gtk_window_reshow_with_initial_size().
-func (v *Window) ReshowWithInitialSize() {
-	C.gtk_window_reshow_with_initial_size(v.Native())
-}
-
 // Resize is a wrapper around gtk_window_resize().
 func (v *Window) Resize(width, height int) {
 	C.gtk_window_resize(v.Native(), C.gint(width), C.gint(height))
