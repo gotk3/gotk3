@@ -872,7 +872,7 @@ type ICellRenderer interface {
 	toCellRenderer() *C.GtkCellRenderer
 }
 
-// Native() returns a pointer to the underlying GtkCellRenderer.
+// Native returns a pointer to the underlying GtkCellRenderer.
 func (v *CellRenderer) Native() *C.GtkCellRenderer {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -901,7 +901,7 @@ type CellRendererText struct {
 	CellRenderer
 }
 
-// Native() returns a pointer to the underlying GtkCellRendererText.
+// Native returns a pointer to the underlying GtkCellRendererText.
 func (v *CellRendererText) Native() *C.GtkCellRendererText {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -910,18 +910,11 @@ func (v *CellRendererText) Native() *C.GtkCellRendererText {
 	return C.toGtkCellRendererText(p)
 }
 
-func (v *CellRendererText) toCellRenderer() *C.GtkCellRenderer {
-	if v == nil {
-		return nil
-	}
-	return v.CellRenderer.Native()
-}
-
 func wrapCellRendererText(obj *glib.Object) *CellRendererText {
 	return &CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
-// CellRendererTextNew() is a wrapper around gtk_cell_renderer_text_new().
+// CellRendererTextNew is a wrapper around gtk_cell_renderer_text_new().
 func CellRendererTextNew() (*CellRendererText, error) {
 	c := C.gtk_cell_renderer_text_new()
 	if c == nil {
@@ -932,6 +925,82 @@ func CellRendererTextNew() (*CellRendererText, error) {
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return crt, nil
+}
+
+/*
+ * GtkCellRendererToggle
+ */
+
+// CellRendererToggle is a representation of GTK's GtkCellRendererToggle.
+type CellRendererToggle struct {
+	CellRenderer
+}
+
+// Native returns a pointer to the underlying GtkCellRendererToggle.
+func (v *CellRendererToggle) Native() *C.GtkCellRendererToggle {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellRendererToggle(p)
+}
+
+func (v *CellRendererToggle) toCellRenderer() *C.GtkCellRenderer {
+	if v == nil {
+		return nil
+	}
+	return v.CellRenderer.Native()
+}
+
+func wrapCellRendererToggle(obj *glib.Object) *CellRendererToggle {
+	return &CellRendererToggle{CellRenderer{glib.InitiallyUnowned{obj}}}
+}
+
+// CellRendererToggleNew is a wrapper around gtk_cell_renderer_toggle_new().
+func CellRendererToggleNew() (*CellRendererToggle, error) {
+	c := C.gtk_cell_renderer_toggle_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	crt := wrapCellRendererToggle(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return crt, nil
+}
+
+// SetRadio is a wrapper around gtk_cell_renderer_toggle_set_radio().
+func (v *CellRendererToggle) SetRadio(set bool) {
+	C.gtk_cell_renderer_toggle_set_radio(v.Native(), gbool(set))
+}
+
+// GetRadio is a wrapper around gtk_cell_renderer_toggle_get_radio().
+func (v *CellRendererToggle) GetRadio() bool {
+	c := C.gtk_cell_renderer_toggle_get_radio(v.Native())
+	return gobool(c)
+}
+
+// SetActive is a wrapper arround gtk_cell_renderer_set_active().
+func (v *CellRendererToggle) SetActive(active bool) {
+	C.gtk_cell_renderer_toggle_set_active(v.Native(), gbool(active))
+}
+
+// GetActive is a wrapper around gtk_cell_renderer_get_active().
+func (v *CellRendererToggle) GetActive() bool {
+	c := C.gtk_cell_renderer_toggle_get_active(v.Native())
+	return gobool(c)
+}
+
+// SetActivatable is a wrapper around gtk_cell_renderer_set_activatable().
+func (v *CellRendererToggle) SetActivatable(activatable bool) {
+	C.gtk_cell_renderer_toggle_set_activatable(v.Native(),
+		gbool(activatable))
+}
+
+// GetActivatable is a wrapper around gtk_cell_renderer_get_activatable().
+func (v *CellRendererToggle) GetActivatable() bool {
+	c := C.gtk_cell_renderer_toggle_get_activatable(v.Native())
+	return gobool(c)
 }
 
 /*
@@ -2503,7 +2572,7 @@ type ListStore struct {
 	TreeModel
 }
 
-// Native() returns a pointer to the underlying GtkListStore.
+// Native returns a pointer to the underlying GtkListStore.
 func (v *ListStore) Native() *C.GtkListStore {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -2524,7 +2593,7 @@ func (v *ListStore) toTreeModel() *C.GtkTreeModel {
 	return C.toGtkTreeModel(unsafe.Pointer(v.GObject))
 }
 
-// ListStoreNew() is a wrapper around gtk_list_store_newv().
+// ListStoreNew is a wrapper around gtk_list_store_newv().
 func ListStoreNew(types ...glib.Type) (*ListStore, error) {
 	gtypes := C.alloc_types(C.int(len(types)))
 	for n, val := range types {
@@ -2540,6 +2609,12 @@ func ListStoreNew(types ...glib.Type) (*ListStore, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return ls, nil
+}
+
+// Remove is a wrapper around gtk_list_store_remove().
+func (v *ListStore) Remove(iter *TreeIter) bool {
+	c := C.gtk_list_store_remove(v.Native(), iter.Native())
+	return gobool(c)
 }
 
 // TODO(jrick)
@@ -3674,7 +3749,8 @@ func TextViewNew() (*TextView, error) {
 
 // TextViewNewWithBuffer is a wrapper around gtk_text_view_new_with_buffer().
 func TextViewNewWithBuffer(buf *TextBuffer) (*TextView, error) {
-	c := C.gtk_text_view_new_with_buffer(buf.Native())
+	cbuf := buf.Native()
+	c := C.gtk_text_view_new_with_buffer(cbuf)
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	t := wrapTextView(obj)
 	obj.RefSink()
@@ -3765,40 +3841,34 @@ func (v *TextView) GetAcceptsTab() bool {
 	return gobool(c)
 }
 
-// SetPixelsAboveLines is a wrapper around
-// gtk_text_view_set_pixels_above_lines().
+// SetPixelsAboveLines is a wrapper around gtk_text_view_set_pixels_above_lines().
 func (v *TextView) SetPixelsAboveLines(px int) {
 	C.gtk_text_view_set_pixels_above_lines(v.Native(), C.gint(px))
 }
 
-// GetPixelsAboveLines is a wrapper around
-// gtk_text_view_get_pixels_above_lines().
+// GetPixelsAboveLines is a wrapper around gtk_text_view_get_pixels_above_lines().
 func (v *TextView) GetPixelsAboveLines() int {
 	c := C.gtk_text_view_get_pixels_above_lines(v.Native())
 	return int(c)
 }
 
-// SetPixelsBelowLines is a wrapper around
-// gtk_text_view_set_pixels_below_lines().
+// SetPixelsBelowLines is a wrapper around gtk_text_view_set_pixels_below_lines().
 func (v *TextView) SetPixelsBelowLines(px int) {
 	C.gtk_text_view_set_pixels_below_lines(v.Native(), C.gint(px))
 }
 
-// GetPixelsBelowLines is a wrapper around
-// gtk_text_view_get_pixels_below_lines().
+// GetPixelsBelowLines is a wrapper around gtk_text_view_get_pixels_below_lines().
 func (v *TextView) GetPixelsBelowLines() int {
 	c := C.gtk_text_view_get_pixels_below_lines(v.Native())
 	return int(c)
 }
 
-// SetPixelsInsideWrap is a wrapper around
-// gtk_text_view_set_pixels_inside_wrap().
+// SetPixelsInsideWrap is a wrapper around gtk_text_view_set_pixels_inside_wrap().
 func (v *TextView) SetPixelsInsideWrap(px int) {
 	C.gtk_text_view_set_pixels_inside_wrap(v.Native(), C.gint(px))
 }
 
-// GetPixelsInsideWrap is a wrapper around
-// gtk_text_view_get_pixels_inside_wrap().
+// GetPixelsInsideWrap is a wrapper around gtk_text_view_get_pixels_inside_wrap().
 func (v *TextView) GetPixelsInsideWrap() int {
 	c := C.gtk_text_view_get_pixels_inside_wrap(v.Native())
 	return int(c)
@@ -4195,7 +4265,7 @@ type TreePath struct {
 	GtkTreePath *C.GtkTreePath
 }
 
-// Native() returns a pointer to the underlying GtkTreePath.
+// Native returns a pointer to the underlying GtkTreePath.
 func (v *TreePath) Native() *C.GtkTreePath {
 	if v == nil {
 		return nil
@@ -4205,6 +4275,12 @@ func (v *TreePath) Native() *C.GtkTreePath {
 
 func (v *TreePath) free() {
 	C.gtk_tree_path_free(v.Native())
+}
+
+// String is a wrapper around gtk_tree_path_to_string().
+func (v *TreePath) String() string {
+	c := C.gtk_tree_path_to_string(v.Native())
+	return C.GoString((*C.char)(c))
 }
 
 /*
@@ -5313,6 +5389,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapCellRenderer(obj)
 	case "GtkCellRendererText":
 		g = wrapCellRendererText(obj)
+	case "GtkCellRendererToggle":
+		g = wrapCellRendererToggle(obj)
 	case "GtkCheckButton":
 		g = wrapCheckButton(obj)
 	case "GtkClipboard":
@@ -5373,6 +5451,12 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapSpinButton(obj)
 	case "GtkStatusbar":
 		g = wrapStatusbar(obj)
+	case "GtkTextView":
+		g = wrapTextView(obj)
+	case "GtkTextBuffer":
+		g = wrapTextBuffer(obj)
+	case "GtkTextTagTable":
+		g = wrapTextTagTable(obj)
 	case "GtkToggleButton":
 		g = wrapToggleButton(obj)
 	case "GtkTreeModel":

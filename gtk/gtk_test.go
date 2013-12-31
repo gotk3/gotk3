@@ -20,6 +20,7 @@ package gtk
 
 import (
 	"fmt"
+	"github.com/conformal/gotk3/glib"
 	"testing"
 )
 
@@ -436,5 +437,99 @@ func TestTextView_WhenSetInputPurposeURL_ExpectGetInputPurposeReturnsURL(t *test
 func TestTextView_WhenSetInputPurposeALPHA_ExpectGetInputPurposeReturnsALPHA(t *testing.T) {
 	if err := testTextViewInputPurpose(INPUT_PURPOSE_ALPHA); err != nil {
 		t.Error(err)
+	}
+}
+
+func testCellRendererToggleSetRadio(set bool) error {
+	renderer, err := CellRendererToggleNew()
+	if err != nil {
+		return err
+	}
+
+	renderer.SetRadio(set)
+	if exp, act := set, renderer.GetRadio(); act != exp {
+		return fmt.Errorf("Expected GetRadio(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestCellRendererToggle_WhenSetRadioFalse_ExpectGetRadioReturnsFalse(t *testing.T) {
+	if err := testCellRendererToggleSetRadio(false); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCellRendererToggle_WhenSetRadioTrue_ExpectGetRadioReturnsTrue(t *testing.T) {
+	if err := testCellRendererToggleSetRadio(true); err != nil {
+		t.Error(err)
+	}
+}
+
+func testCellRendererToggleSetActive(set bool) error {
+	renderer, err := CellRendererToggleNew()
+	if err != nil {
+		return err
+	}
+
+	renderer.SetActive(set)
+	if exp, act := set, renderer.GetActive(); act != exp {
+		return fmt.Errorf("Expected GetActive(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestCellRendererToggle_WhenSetActiveFalse_ExpectGetActiveReturnsFalse(t *testing.T) {
+	if err := testCellRendererToggleSetActive(false); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCellRendererToggle_WhenSetActiveTrue_ExpectGetActiveReturnsTrue(t *testing.T) {
+	if err := testCellRendererToggleSetActive(true); err != nil {
+		t.Error(err)
+	}
+}
+
+func testCellRendererToggleSetActivatable(set bool) error {
+	renderer, err := CellRendererToggleNew()
+	if err != nil {
+		return err
+	}
+
+	renderer.SetActivatable(set)
+	if exp, act := set, renderer.GetActivatable(); act != exp {
+		return fmt.Errorf("Expected GetActivatable(): %v; Got: %v", exp, act)
+	}
+	return nil
+}
+
+func TestCellRendererToggle_WhenSetActivatableFalse_ExpectGetActivatableReturnsFalse(t *testing.T) {
+	if err := testCellRendererToggleSetActivatable(false); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCellRendererToggle_WhenSetActivatableTrue_ExpectGetActivatableReturnsTrue(t *testing.T) {
+	if err := testCellRendererToggleSetActivatable(true); err != nil {
+		t.Error(err)
+	}
+}
+
+// TestListStoreRemoveLastInvalidIterator tests that when a ListStore stores
+// one item and it is removed, the iterator becomes invalid.
+func TestListStoreRemoveLastInvalidIterator(t *testing.T) {
+	ls, err := ListStoreNew(glib.TYPE_BOOLEAN)
+	if err != nil {
+		t.Fatal("Unexpected err:", err)
+	}
+
+	var iter TreeIter
+	ls.Append(&iter)
+	if err := ls.Set(&iter, []int{0}, []interface{}{true}); err != nil {
+		t.Fatal("Unexpected err:", err)
+	}
+
+	if iterValid := ls.Remove(&iter); iterValid {
+		t.Fatal("Remove() returned true (iter valid); expected false (iter invalid)")
 	}
 }

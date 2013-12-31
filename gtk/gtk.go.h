@@ -206,6 +206,12 @@ toGtkCellRendererText(void *p)
 	return (GTK_CELL_RENDERER_TEXT(p));
 }
 
+static GtkCellRendererToggle *
+toGtkCellRendererToggle(void *p)
+{
+	return (GTK_CELL_RENDERER_TOGGLE(p));
+}
+
 static GtkCellLayout *
 toGtkCellLayout(void *p)
 {
