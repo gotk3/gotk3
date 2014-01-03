@@ -5305,7 +5305,18 @@ func (v *Window) ResizeToGeometry(width, height int) {
 
 // TODO gtk_window_set_icon_list().
 
-// TODO gtk_window_set_icon_from_file().
+// SetIconFromFile is a wrapper around gtk_window_set_icon_from_file().
+func (v *Window) SetIconFromFile(file string) error {
+	cstr := C.CString(file)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	res := C.gtk_window_set_icon_from_file(v.Native(), (*C.gchar)(cstr), &err)
+	if res == 0 {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(C.error_get_message(err))))
+	}
+	return nil
+}
 
 // TODO gtk_window_set_icon_name().
 
