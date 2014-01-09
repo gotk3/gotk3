@@ -1,26 +1,55 @@
+============================================================================
+User visible changes for gotk3
+  Go bindings for GTK3
+============================================================================
+
+Changes in 0.1.0 (Thu Jan 09 2014)
+  - Modify signal callback API to remove glib.CallbackContext
+
+  - New support for the following types:
+    - gtk.CellRendererToggle
+    - gtk.HeaderBar
+    - gtk.TextView
+
+  - Additional function support for the following types:
+    - gtk.Window
+
+  - Add examples for gtk.TextView bindings
+
+  - Fix build when building with gccgo
+    (https://github.com/conformal/gotk3/issues/240
+
 Changes in 0.0.2 (Wed Nov 13 2013)
   - Begin GTK 3.10 support
+
   - Add support for targeting GTK 3.6
+
   - Add build tags to target previous GTK releases
+
   - Additional function support for the following types:
-    * gtk.Label
-    * gtk.Misc
-    * gtk.Scrollbar
-    * gtk.SpinButton
-    * gtk.Window
+    - gtk.Label
+    - gtk.Misc
+    - gtk.Scrollbar
+    - gtk.SpinButton
+    - gtk.Window
+
   - New support for the following types:
-    * gtk.Builder
-    * gtk.CheckButton
-    * gtk.Frame
-    * gtk.Range
-    * gtk.Scrollbar
-    * gtk.Separator
-    * gtk.SeparatorMenuItem
-    * gtk.ShadowType
-    * gtk.ToggleButton
+    - gtk.Builder
+    - gtk.CheckButton
+    - gtk.Frame
+    - gtk.Range
+    - gtk.Scrollbar
+    - gtk.Separator
+    - gtk.SeparatorMenuItem
+    - gtk.ShadowType
+    - gtk.ToggleButton
+
   - Add glib.GetUserSpecialDir
+
   - Use C constants directly instead of using iota
+
   - Fix several nil pointer dereferences
+
   - General code cleanup
 
 Initial Release 0.0.1 (Tue Jul 16 2013)
