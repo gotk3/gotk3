@@ -346,6 +346,31 @@ _gtk_message_dialog_new(GtkWindow *parent, GtkDialogFlags flags,
 	return (w);
 }
 
+static GtkWidget *
+_gtk_message_dialog_new_with_markup(GtkWindow *parent, GtkDialogFlags flags,
+    GtkMessageType type, GtkButtonsType buttons, char *msg)
+{
+	GtkWidget		*w;
+
+	w = gtk_message_dialog_new_with_markup(parent, flags, type, buttons,
+	    "%s", msg);
+	return (w);
+}
+
+void
+_gtk_message_dialog_format_secondary_text(GtkMessageDialog *message_dialog,
+    const gchar *msg)
+{
+	gtk_message_dialog_format_secondary_text(message_dialog, "%s", msg);
+}
+
+void
+_gtk_message_dialog_format_secondary_markup(GtkMessageDialog *message_dialog,
+    const gchar *msg)
+{
+	gtk_message_dialog_format_secondary_markup(message_dialog, "%s", msg);
+}
+
 static gchar *
 error_get_message(GError *error)
 {

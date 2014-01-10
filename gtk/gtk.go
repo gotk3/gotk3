@@ -2914,6 +2914,74 @@ func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, butt
 	return m
 }
 
+// MessageDialogNewWithMarkup is a wrapper around
+// gtk_message_dialog_new_with_markup().
+func MessageDialogNewWithMarkup(parent IWindow, flags DialogFlags, mType MessageType, buttons ButtonsType, format string, a ...interface{}) *MessageDialog {
+	s := fmt.Sprintf(format, a...)
+	cstr := C.CString(s)
+	defer C.free(unsafe.Pointer(cstr))
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+	c := C._gtk_message_dialog_new_with_markup(w,
+		C.GtkDialogFlags(flags), C.GtkMessageType(mType),
+		C.GtkButtonsType(buttons), cstr)
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	m := wrapMessageDialog(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return m
+}
+
+// SetMarkup is a wrapper around gtk_message_dialog_set_markup().
+func (v *MessageDialog) SetMarkup(str string) {
+	cstr := C.CString(str)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_message_dialog_set_markup(v.Native(), (*C.gchar)(cstr))
+}
+
+// SetImage is a wrapper around gtk_message_dialog_set_image().
+func (v *MessageDialog) SetImage(image IWidget) {
+	C.gtk_message_dialog_set_image(v.Native(), image.toWidget())
+}
+
+// GetImage is a wrapper around gtk_message_dialog_get_image().
+func (v *MessageDialog) GetImage() (*Widget, error) {
+	c := C.gtk_message_dialog_get_image(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w, nil
+}
+
+// FormatSecondaryText is a wrapper around
+// gtk_message_dialog_format_secondary_text().
+func (v *MessageDialog) FormatSecondaryText(format string, a ...interface{}) {
+	s := fmt.Sprintf(format, a...)
+	cstr := C.CString(s)
+	defer C.free(unsafe.Pointer(cstr))
+	C._gtk_message_dialog_format_secondary_text(v.Native(),
+		(*C.gchar)(cstr))
+}
+
+// FormatSecondaryMarkup is a wrapper around
+// gtk_message_dialog_format_secondary_text().
+func (v *MessageDialog) FormatSecondaryMarkup(format string, a ...interface{}) {
+	s := fmt.Sprintf(format, a...)
+	cstr := C.CString(s)
+	defer C.free(unsafe.Pointer(cstr))
+	C._gtk_message_dialog_format_secondary_markup(v.Native(),
+		(*C.gchar)(cstr))
+}
+
+// GetMessageArea is intentionally unimplemented.  It returns a GtkVBox, which
+// is deprecated since GTK 3.2 and for which gotk3 has no bindings.
+
 /*
  * GtkMisc
  */
