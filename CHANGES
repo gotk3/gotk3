@@ -12,6 +12,7 @@ Changes in 0.1.0 (Thu Jan 09 2014)
     - gtk.TextView
 
   - Additional function support for the following types:
+    - gtk.MessageDialog
     - gtk.Window
 
   - Add examples for gtk.TextView bindings
