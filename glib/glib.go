@@ -169,6 +169,8 @@ func (v *Object) Connect(detailedSignal string, f interface{}, userData ...inter
 		return 0, err
 	}
 
+	C._g_closure_add_finalize_notifier(closure)
+
 	c := C.g_signal_connect_closure(C.gpointer(v.Native()),
 		(*C.gchar)(cstr), closure, gbool(false))
 	handle := SignalHandle(c)
@@ -209,16 +211,23 @@ func ClosureNew(f interface{}, marshalData ...interface{}) (*C.GClosure, error) 
 
 	// Associate the GClosure with rf.  rf will be looked up in this
 	// map by the closure when the closure runs.
-	//
-	// TODO(jrick): closures for this object must be removed
-	// from closures.m when the underlying object is finally destroyed
-	// (NOT the call to (*Object).Unref).  Otherwise, this leaks both the Go
-	// closure (rf) and any user data passed to Connect.
 	closures.Lock()
 	closures.m[c] = cc
 	closures.Unlock()
 
 	return c, nil
+}
+
+// removeClosure removes a closure from the internal closures map.  This is
+// needed to prevent a leak where Go code can access the closure context
+// (along with rf and userdata) even after an object has been destroyed and
+// the GClosure is invalidated and will never run.
+//
+//export removeClosure
+func removeClosure(_ C.gpointer, closure *C.GClosure) {
+	closures.Lock()
+	delete(closures.m, closure)
+	closures.Unlock()
 }
 
 // goMarshal is called by the GLib runtime when a closure needs to be invoked.
