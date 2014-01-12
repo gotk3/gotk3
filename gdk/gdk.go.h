@@ -43,6 +43,12 @@ toGdkDisplay(void *p)
 	return (GDK_DISPLAY(p));
 }
 
+static GdkPixbuf *
+toGdkPixbuf(void *p)
+{
+	return (GDK_PIXBUF(p));
+}
+
 static GdkScreen *
 toGdkScreen(void *p)
 {

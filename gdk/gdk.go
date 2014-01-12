@@ -55,6 +55,21 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
  * Constants
  */
 
+// Colorspace is a representation of GDK's GdkPixbufAlphaMode.
+type Colorspace int
+
+const (
+	COLORSPACE_RGB Colorspace = C.GDK_COLORSPACE_RGB
+)
+
+// PixbufAlphaMode is a representation of GDK's GdkPixbufAlphaMode.
+type PixbufAlphaMode int
+
+const (
+	GDK_PIXBUF_ALPHA_BILEVEL PixbufAlphaMode = C.GDK_PIXBUF_ALPHA_BILEVEL
+	GDK_PIXBUF_ALPHA_FULL    PixbufAlphaMode = C.GDK_PIXBUF_ALPHA_FULL
+)
+
 // Selections
 const (
 	SELECTION_PRIMARY       Atom = 1
@@ -404,6 +419,93 @@ func (v *Event) Native() *C.GdkEvent {
 
 func (v *Event) free() {
 	C.gdk_event_free(v.Native())
+}
+
+/*
+ * GdkPixbuf
+ */
+
+// Pixbuf is a representation of GDK's GdkPixbuf.
+type Pixbuf struct {
+	*glib.Object
+}
+
+// Native returns a pointer to the underlying GdkPixbuf.
+func (v *Pixbuf) Native() *C.GdkPixbuf {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkPixbuf(p)
+}
+
+// GetColorspace is a wrapper around gdk_pixbuf_get_colorspace().
+func (v *Pixbuf) GetColorspace() Colorspace {
+	c := C.gdk_pixbuf_get_colorspace(v.Native())
+	return Colorspace(c)
+}
+
+// GetNChannels is a wrapper around gdk_pixbuf_get_n_channels().
+func (v *Pixbuf) GetNChannels() int {
+	c := C.gdk_pixbuf_get_n_channels(v.Native())
+	return int(c)
+}
+
+// GetHasAlpha is a wrapper around gdk_pixbuf_get_has_alpha().
+func (v *Pixbuf) GetHasAlpha() bool {
+	c := C.gdk_pixbuf_get_has_alpha(v.Native())
+	return gobool(c)
+}
+
+// GetBitsPerSample is a wrapper around gdk_pixbuf_get_bits_per_sample().
+func (v *Pixbuf) GetBitsPerSample() int {
+	c := C.gdk_pixbuf_get_bits_per_sample(v.Native())
+	return int(c)
+}
+
+// GetPixels is a wrapper around gdk_pixbuf_get_pixels_with_length().
+// A Go slice is used to represent the underlying Pixbuf data array, one
+// byte per channel.
+func (v *Pixbuf) GetPixels() []byte {
+	var length C.guint
+	c := C.gdk_pixbuf_get_pixels_with_length(v.Native(), &length)
+	return C.GoBytes(unsafe.Pointer(c), (C.int)(length))
+}
+
+// GetWidth is a wrapper around gdk_pixbuf_get_width().
+func (v *Pixbuf) GetWidth() int {
+	c := C.gdk_pixbuf_get_width(v.Native())
+	return int(c)
+}
+
+// GetHeight is a wrapper around gdk_pixbuf_get_height().
+func (v *Pixbuf) GetHeight() int {
+	c := C.gdk_pixbuf_get_height(v.Native())
+	return int(c)
+}
+
+// GetRowstride is a wrapper around gdk_pixbuf_get_rowstride().
+func (v *Pixbuf) GetRowstride() int {
+	c := C.gdk_pixbuf_get_rowstride(v.Native())
+	return int(c)
+}
+
+// GetByteLength is a wrapper around gdk_pixbuf_get_byte_length().
+func (v *Pixbuf) GetByteLength() int {
+	c := C.gdk_pixbuf_get_byte_length(v.Native())
+	return int(c)
+}
+
+// GetOption is a wrapper around gdk_pixbuf_get_option().  ok is true if
+// the key has an associated value.
+func (v *Pixbuf) GetOption(key string) (value string, ok bool) {
+	cstr := C.CString(key)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gdk_pixbuf_get_option(v.Native(), (*C.gchar)(cstr))
+	if c == nil {
+		return "", false
+	}
+	return C.GoString((*C.char)(c)), true
 }
 
 /*
