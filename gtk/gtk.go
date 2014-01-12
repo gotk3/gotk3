@@ -105,9 +105,9 @@ type Align int
 
 const (
 	ALIGN_FILL   Align = C.GTK_ALIGN_FILL
-	ALIGN_START        = C.GTK_ALIGN_START
-	ALIGN_END          = C.GTK_ALIGN_END
-	ALIGN_CENTER       = C.GTK_ALIGN_CENTER
+	ALIGN_START  Align = C.GTK_ALIGN_START
+	ALIGN_END    Align = C.GTK_ALIGN_END
+	ALIGN_CENTER Align = C.GTK_ALIGN_CENTER
 )
 
 // ButtonsType is a representation of GTK's GtkButtonsType.
@@ -115,11 +115,11 @@ type ButtonsType int
 
 const (
 	BUTTONS_NONE      ButtonsType = C.GTK_BUTTONS_NONE
-	BUTTONS_OK                    = C.GTK_BUTTONS_OK
-	BUTTONS_CLOSE                 = C.GTK_BUTTONS_CLOSE
-	BUTTONS_CANCEL                = C.GTK_BUTTONS_CANCEL
-	BUTTONS_YES_NO                = C.GTK_BUTTONS_YES_NO
-	BUTTONS_OK_CANCEL             = C.GTK_BUTTONS_OK_CANCEL
+	BUTTONS_OK        ButtonsType = C.GTK_BUTTONS_OK
+	BUTTONS_CLOSE     ButtonsType = C.GTK_BUTTONS_CLOSE
+	BUTTONS_CANCEL    ButtonsType = C.GTK_BUTTONS_CANCEL
+	BUTTONS_YES_NO    ButtonsType = C.GTK_BUTTONS_YES_NO
+	BUTTONS_OK_CANCEL ButtonsType = C.GTK_BUTTONS_OK_CANCEL
 )
 
 // DialogFlags is a representation of GTK's GtkDialogFlags.
@@ -127,7 +127,7 @@ type DialogFlags int
 
 const (
 	DIALOG_MODAL               DialogFlags = C.GTK_DIALOG_MODAL
-	DIALOG_DESTROY_WITH_PARENT             = C.GTK_DIALOG_DESTROY_WITH_PARENT
+	DIALOG_DESTROY_WITH_PARENT DialogFlags = C.GTK_DIALOG_DESTROY_WITH_PARENT
 )
 
 // EntryIconPosition is a representation of GTK's GtkEntryIconPosition.
@@ -135,7 +135,7 @@ type EntryIconPosition int
 
 const (
 	ENTRY_ICON_PRIMARY   EntryIconPosition = C.GTK_ENTRY_ICON_PRIMARY
-	ENTRY_ICON_SECONDARY                   = C.GTK_ENTRY_ICON_SECONDARY
+	ENTRY_ICON_SECONDARY EntryIconPosition = C.GTK_ENTRY_ICON_SECONDARY
 )
 
 // IconSize is a representation of GTK's GtkIconSize.
@@ -143,12 +143,12 @@ type IconSize int
 
 const (
 	ICON_SIZE_INVALID       IconSize = C.GTK_ICON_SIZE_INVALID
-	ICON_SIZE_MENU                   = C.GTK_ICON_SIZE_MENU
-	ICON_SIZE_SMALL_TOOLBAR          = C.GTK_ICON_SIZE_SMALL_TOOLBAR
-	ICON_SIZE_LARGE_TOOLBAR          = C.GTK_ICON_SIZE_LARGE_TOOLBAR
-	ICON_SIZE_BUTTON                 = C.GTK_ICON_SIZE_BUTTON
-	ICON_SIZE_DND                    = C.GTK_ICON_SIZE_DND
-	ICON_SIZE_DIALOG                 = C.GTK_ICON_SIZE_DIALOG
+	ICON_SIZE_MENU          IconSize = C.GTK_ICON_SIZE_MENU
+	ICON_SIZE_SMALL_TOOLBAR IconSize = C.GTK_ICON_SIZE_SMALL_TOOLBAR
+	ICON_SIZE_LARGE_TOOLBAR IconSize = C.GTK_ICON_SIZE_LARGE_TOOLBAR
+	ICON_SIZE_BUTTON        IconSize = C.GTK_ICON_SIZE_BUTTON
+	ICON_SIZE_DND           IconSize = C.GTK_ICON_SIZE_DND
+	ICON_SIZE_DIALOG        IconSize = C.GTK_ICON_SIZE_DIALOG
 )
 
 // ImageType is a representation of GTK's GtkImageType.
@@ -156,12 +156,12 @@ type ImageType int
 
 const (
 	IMAGE_EMPTY     ImageType = C.GTK_IMAGE_EMPTY
-	IMAGE_PIXBUF              = C.GTK_IMAGE_PIXBUF
-	IMAGE_STOCK               = C.GTK_IMAGE_STOCK
-	IMAGE_ICON_SET            = C.GTK_IMAGE_ICON_SET
-	IMAGE_ANIMATION           = C.GTK_IMAGE_ANIMATION
-	IMAGE_ICON_NAME           = C.GTK_IMAGE_ICON_NAME
-	IMAGE_GICON               = C.GTK_IMAGE_GICON
+	IMAGE_PIXBUF    ImageType = C.GTK_IMAGE_PIXBUF
+	IMAGE_STOCK     ImageType = C.GTK_IMAGE_STOCK
+	IMAGE_ICON_SET  ImageType = C.GTK_IMAGE_ICON_SET
+	IMAGE_ANIMATION ImageType = C.GTK_IMAGE_ANIMATION
+	IMAGE_ICON_NAME ImageType = C.GTK_IMAGE_ICON_NAME
+	IMAGE_GICON     ImageType = C.GTK_IMAGE_GICON
 )
 
 // InputHints is a representation of GTK's GtkInputHints.
@@ -169,14 +169,14 @@ type InputHints int
 
 const (
 	INPUT_HINT_NONE                InputHints = C.GTK_INPUT_HINT_NONE
-	INPUT_HINT_SPELLCHECK                     = C.GTK_INPUT_HINT_SPELLCHECK
-	INPUT_HINT_NO_SPELLCHECK                  = C.GTK_INPUT_HINT_NO_SPELLCHECK
-	INPUT_HINT_WORD_COMPLETION                = C.GTK_INPUT_HINT_WORD_COMPLETION
-	INPUT_HINT_LOWERCASE                      = C.GTK_INPUT_HINT_LOWERCASE
-	INPUT_HINT_UPPERCASE_CHARS                = C.GTK_INPUT_HINT_UPPERCASE_CHARS
-	INPUT_HINT_UPPERCASE_WORDS                = C.GTK_INPUT_HINT_UPPERCASE_WORDS
-	INPUT_HINT_UPPERCASE_SENTENCES            = C.GTK_INPUT_HINT_UPPERCASE_SENTENCES
-	INPUT_HINT_INHIBIT_OSK                    = C.GTK_INPUT_HINT_INHIBIT_OSK
+	INPUT_HINT_SPELLCHECK          InputHints = C.GTK_INPUT_HINT_SPELLCHECK
+	INPUT_HINT_NO_SPELLCHECK       InputHints = C.GTK_INPUT_HINT_NO_SPELLCHECK
+	INPUT_HINT_WORD_COMPLETION     InputHints = C.GTK_INPUT_HINT_WORD_COMPLETION
+	INPUT_HINT_LOWERCASE           InputHints = C.GTK_INPUT_HINT_LOWERCASE
+	INPUT_HINT_UPPERCASE_CHARS     InputHints = C.GTK_INPUT_HINT_UPPERCASE_CHARS
+	INPUT_HINT_UPPERCASE_WORDS     InputHints = C.GTK_INPUT_HINT_UPPERCASE_WORDS
+	INPUT_HINT_UPPERCASE_SENTENCES InputHints = C.GTK_INPUT_HINT_UPPERCASE_SENTENCES
+	INPUT_HINT_INHIBIT_OSK         InputHints = C.GTK_INPUT_HINT_INHIBIT_OSK
 )
 
 // InputPurpose is a representation of GTK's GtkInputPurpose.
@@ -184,15 +184,15 @@ type InputPurpose int
 
 const (
 	INPUT_PURPOSE_FREE_FORM InputPurpose = C.GTK_INPUT_PURPOSE_FREE_FORM
-	INPUT_PURPOSE_ALPHA                  = C.GTK_INPUT_PURPOSE_ALPHA
-	INPUT_PURPOSE_DIGITS                 = C.GTK_INPUT_PURPOSE_DIGITS
-	INPUT_PURPOSE_NUMBER                 = C.GTK_INPUT_PURPOSE_NUMBER
-	INPUT_PURPOSE_PHONE                  = C.GTK_INPUT_PURPOSE_PHONE
-	INPUT_PURPOSE_URL                    = C.GTK_INPUT_PURPOSE_URL
-	INPUT_PURPOSE_EMAIL                  = C.GTK_INPUT_PURPOSE_EMAIL
-	INPUT_PURPOSE_NAME                   = C.GTK_INPUT_PURPOSE_NAME
-	INPUT_PURPOSE_PASSWORD               = C.GTK_INPUT_PURPOSE_PASSWORD
-	INPUT_PURPOSE_PIN                    = C.GTK_INPUT_PURPOSE_PIN
+	INPUT_PURPOSE_ALPHA     InputPurpose = C.GTK_INPUT_PURPOSE_ALPHA
+	INPUT_PURPOSE_DIGITS    InputPurpose = C.GTK_INPUT_PURPOSE_DIGITS
+	INPUT_PURPOSE_NUMBER    InputPurpose = C.GTK_INPUT_PURPOSE_NUMBER
+	INPUT_PURPOSE_PHONE     InputPurpose = C.GTK_INPUT_PURPOSE_PHONE
+	INPUT_PURPOSE_URL       InputPurpose = C.GTK_INPUT_PURPOSE_URL
+	INPUT_PURPOSE_EMAIL     InputPurpose = C.GTK_INPUT_PURPOSE_EMAIL
+	INPUT_PURPOSE_NAME      InputPurpose = C.GTK_INPUT_PURPOSE_NAME
+	INPUT_PURPOSE_PASSWORD  InputPurpose = C.GTK_INPUT_PURPOSE_PASSWORD
+	INPUT_PURPOSE_PIN       InputPurpose = C.GTK_INPUT_PURPOSE_PIN
 )
 
 // Justify is a representation of GTK's GtkJustification.
@@ -210,10 +210,10 @@ type MessageType int
 
 const (
 	MESSAGE_INFO     MessageType = C.GTK_MESSAGE_INFO
-	MESSAGE_WARNING              = C.GTK_MESSAGE_WARNING
-	MESSAGE_QUESTION             = C.GTK_MESSAGE_QUESTION
-	MESSAGE_ERROR                = C.GTK_MESSAGE_ERROR
-	MESSAGE_OTHER                = C.GTK_MESSAGE_OTHER
+	MESSAGE_WARNING  MessageType = C.GTK_MESSAGE_WARNING
+	MESSAGE_QUESTION MessageType = C.GTK_MESSAGE_QUESTION
+	MESSAGE_ERROR    MessageType = C.GTK_MESSAGE_ERROR
+	MESSAGE_OTHER    MessageType = C.GTK_MESSAGE_OTHER
 )
 
 // Orientation is a representation of GTK's GtkOrientation.
@@ -221,7 +221,7 @@ type Orientation int
 
 const (
 	ORIENTATION_HORIZONTAL Orientation = C.GTK_ORIENTATION_HORIZONTAL
-	ORIENTATION_VERTICAL               = C.GTK_ORIENTATION_VERTICAL
+	ORIENTATION_VERTICAL   Orientation = C.GTK_ORIENTATION_VERTICAL
 )
 
 // PackType is a representation of GTK's GtkPackType.
@@ -229,7 +229,7 @@ type PackType int
 
 const (
 	PACK_START PackType = C.GTK_PACK_START
-	PACK_END            = C.GTK_PACK_END
+	PACK_END   PackType = C.GTK_PACK_END
 )
 
 // PolicyType is a representation of GTK's GtkPolicyType.
@@ -237,8 +237,8 @@ type PolicyType int
 
 const (
 	POLICY_ALWAYS    PolicyType = C.GTK_POLICY_ALWAYS
-	POLICY_AUTOMATIC            = C.GTK_POLICY_AUTOMATIC
-	POLICY_NEVER                = C.GTK_POLICY_NEVER
+	POLICY_AUTOMATIC PolicyType = C.GTK_POLICY_AUTOMATIC
+	POLICY_NEVER     PolicyType = C.GTK_POLICY_NEVER
 )
 
 // PositionType is a representation of GTK's GtkPositionType.
@@ -246,9 +246,9 @@ type PositionType int
 
 const (
 	POS_LEFT   PositionType = C.GTK_POS_LEFT
-	POS_RIGHT               = C.GTK_POS_RIGHT
-	POS_TOP                 = C.GTK_POS_TOP
-	POS_BOTTOM              = C.GTK_POS_BOTTOM
+	POS_RIGHT  PositionType = C.GTK_POS_RIGHT
+	POS_TOP    PositionType = C.GTK_POS_TOP
+	POS_BOTTOM PositionType = C.GTK_POS_BOTTOM
 )
 
 // ReliefStyle is a representation of GTK's GtkReliefStyle.
@@ -256,8 +256,8 @@ type ReliefStyle int
 
 const (
 	RELIEF_NORMAL ReliefStyle = C.GTK_RELIEF_NORMAL
-	RELIEF_HALF               = C.GTK_RELIEF_HALF
-	RELIEF_NONE               = C.GTK_RELIEF_NONE
+	RELIEF_HALF   ReliefStyle = C.GTK_RELIEF_HALF
+	RELIEF_NONE   ReliefStyle = C.GTK_RELIEF_NONE
 )
 
 // ResponseType is a representation of GTK's GtkResponseType.
@@ -265,16 +265,16 @@ type ResponseType int
 
 const (
 	RESPONSE_NONE         ResponseType = C.GTK_RESPONSE_NONE
-	RESPONSE_REJECT                    = C.GTK_RESPONSE_REJECT
-	RESPONSE_ACCEPT                    = C.GTK_RESPONSE_ACCEPT
-	RESPONSE_DELETE_EVENT              = C.GTK_RESPONSE_DELETE_EVENT
-	RESPONSE_OK                        = C.GTK_RESPONSE_OK
-	RESPONSE_CANCEL                    = C.GTK_RESPONSE_CANCEL
-	RESPONSE_CLOSE                     = C.GTK_RESPONSE_CLOSE
-	RESPONSE_YES                       = C.GTK_RESPONSE_YES
-	RESPONSE_NO                        = C.GTK_RESPONSE_NO
-	RESPONSE_APPLY                     = C.GTK_RESPONSE_APPLY
-	RESPONSE_HELP                      = C.GTK_RESPONSE_HELP
+	RESPONSE_REJECT       ResponseType = C.GTK_RESPONSE_REJECT
+	RESPONSE_ACCEPT       ResponseType = C.GTK_RESPONSE_ACCEPT
+	RESPONSE_DELETE_EVENT ResponseType = C.GTK_RESPONSE_DELETE_EVENT
+	RESPONSE_OK           ResponseType = C.GTK_RESPONSE_OK
+	RESPONSE_CANCEL       ResponseType = C.GTK_RESPONSE_CANCEL
+	RESPONSE_CLOSE        ResponseType = C.GTK_RESPONSE_CLOSE
+	RESPONSE_YES          ResponseType = C.GTK_RESPONSE_YES
+	RESPONSE_NO           ResponseType = C.GTK_RESPONSE_NO
+	RESPONSE_APPLY        ResponseType = C.GTK_RESPONSE_APPLY
+	RESPONSE_HELP         ResponseType = C.GTK_RESPONSE_HELP
 )
 
 // ShadowType is a representation of GTK's GtkShadowType.
@@ -293,7 +293,7 @@ type TreeModelFlags int
 
 const (
 	TREE_MODEL_ITERS_PERSIST TreeModelFlags = C.GTK_TREE_MODEL_ITERS_PERSIST
-	TREE_MODEL_LIST_ONLY                    = C.GTK_TREE_MODEL_LIST_ONLY
+	TREE_MODEL_LIST_ONLY     TreeModelFlags = C.GTK_TREE_MODEL_LIST_ONLY
 )
 
 // WindowPosition is a representation of GTK's GtkWindowPosition.
@@ -301,10 +301,10 @@ type WindowPosition int
 
 const (
 	WIN_POS_NONE             WindowPosition = C.GTK_WIN_POS_NONE
-	WIN_POS_CENTER                          = C.GTK_WIN_POS_CENTER
-	WIN_POS_MOUSE                           = C.GTK_WIN_POS_MOUSE
-	WIN_POS_CENTER_ALWAYS                   = C.GTK_WIN_POS_CENTER_ALWAYS
-	WIN_POS_CENTER_ON_PARENT                = C.GTK_WIN_POS_CENTER_ON_PARENT
+	WIN_POS_CENTER           WindowPosition = C.GTK_WIN_POS_CENTER
+	WIN_POS_MOUSE            WindowPosition = C.GTK_WIN_POS_MOUSE
+	WIN_POS_CENTER_ALWAYS    WindowPosition = C.GTK_WIN_POS_CENTER_ALWAYS
+	WIN_POS_CENTER_ON_PARENT WindowPosition = C.GTK_WIN_POS_CENTER_ON_PARENT
 )
 
 // WindowType is a representation of GTK's GtkWindowType.
@@ -312,17 +312,17 @@ type WindowType int
 
 const (
 	WINDOW_TOPLEVEL WindowType = C.GTK_WINDOW_TOPLEVEL
-	WINDOW_POPUP               = C.GTK_WINDOW_POPUP
+	WINDOW_POPUP    WindowType = C.GTK_WINDOW_POPUP
 )
 
 // WrapMode is a representation of GTK's GtkWrapMode.
 type WrapMode int
 
 const (
-	WRAP_NONE      = C.GTK_WRAP_NONE
-	WRAP_CHAR      = C.GTK_WRAP_CHAR
-	WRAP_WORD      = C.GTK_WRAP_WORD
-	WRAP_WORD_CHAR = C.GTK_WRAP_WORD_CHAR
+	WRAP_NONE      WrapMode = C.GTK_WRAP_NONE
+	WRAP_CHAR      WrapMode = C.GTK_WRAP_CHAR
+	WRAP_WORD      WrapMode = C.GTK_WRAP_WORD
+	WRAP_WORD_CHAR WrapMode = C.GTK_WRAP_WORD_CHAR
 )
 
 /*

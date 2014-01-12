@@ -58,21 +58,21 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 // Selections
 const (
 	SELECTION_PRIMARY       Atom = 1
-	SELECTION_SECONDARY          = 2
-	SELECTION_CLIPBOARD          = 69
-	TARGET_BITMAP                = 5
-	TARGET_COLORMAP              = 7
-	TARGET_DRAWABLE              = 17
-	TARGET_PIXMAP                = 20
-	TARGET_STRING                = 31
-	SELECTION_TYPE_ATOM          = 4
-	SELECTION_TYPE_BITMAP        = 5
-	SELECTION_TYPE_COLORMAP      = 7
-	SELECTION_TYPE_DRAWABLE      = 17
-	SELECTION_TYPE_INTEGER       = 19
-	SELECTION_TYPE_PIXMAP        = 20
-	SELECTION_TYPE_WINDOW        = 33
-	SELECTION_TYPE_STRING        = 31
+	SELECTION_SECONDARY     Atom = 2
+	SELECTION_CLIPBOARD     Atom = 69
+	TARGET_BITMAP           Atom = 5
+	TARGET_COLORMAP         Atom = 7
+	TARGET_DRAWABLE         Atom = 17
+	TARGET_PIXMAP           Atom = 20
+	TARGET_STRING           Atom = 31
+	SELECTION_TYPE_ATOM     Atom = 4
+	SELECTION_TYPE_BITMAP   Atom = 5
+	SELECTION_TYPE_COLORMAP Atom = 7
+	SELECTION_TYPE_DRAWABLE Atom = 17
+	SELECTION_TYPE_INTEGER  Atom = 19
+	SELECTION_TYPE_PIXMAP   Atom = 20
+	SELECTION_TYPE_WINDOW   Atom = 33
+	SELECTION_TYPE_STRING   Atom = 31
 )
 
 /*
