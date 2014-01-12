@@ -1,6 +1,9 @@
 gotk3
 =====
 
+[![Build Status](https://travis-ci.org/conformal/gotk3.png?branch=master)]
+(https://travis-ci.org/conformal/gotk3)
+
 Package gotk3 provides Go bindings for GLib 2, GDK 3, and GTK+3.  Each
 component is given its own subdirectory, which is used as the import
 path for the package.
