@@ -376,6 +376,9 @@ func IdleAdd(f interface{}, args ...interface{}) (SourceHandle, error) {
 		C.g_source_destroy(idleSrc)
 	})
 
+	// Remove closure context when closure is finalized.
+	C._g_closure_add_finalize_notifier(closure)
+
 	// Set closure to run as a callback when the idle source runs.
 	C.g_source_set_closure(idleSrc, closure)
 
