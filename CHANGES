@@ -3,6 +3,20 @@ User visible changes for gotk3
   Go bindings for GTK3
 ============================================================================
 
+Changes in 0.1.1 (Tue Jan 14 2014)
+  - Fix a (*glib.Object).Connect crash where an allocated GValue was
+    prematurely unset
+
+  - Fix memory leaks when adding callbacks with (*glib.Object).Connect and
+    glib.IdleAdd
+
+  - Make all constants typed for increased compile-time type safety
+
+  - Remove a duplicate example file (resulting in two main functions)
+    which broke recursive go get
+
+  - Add ALIGN_BASELINE const (since GTK 3.10)
+
 Changes in 0.1.0 (Thu Jan 09 2014)
   - Modify signal callback API to remove glib.CallbackContext
 
