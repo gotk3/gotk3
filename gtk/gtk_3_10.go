@@ -39,7 +39,7 @@ import (
  */
 
 const (
-        ALIGN_BASELINE Align = C.GTK_ALIGN_BASELINE
+	ALIGN_BASELINE Align = C.GTK_ALIGN_BASELINE
 )
 
 /*

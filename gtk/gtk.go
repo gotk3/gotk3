@@ -51,6 +51,7 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"github.com/conformal/gotk3/cairo"
 	"github.com/conformal/gotk3/gdk"
 	"github.com/conformal/gotk3/glib"
 	"runtime"
@@ -3340,6 +3341,66 @@ func (v *Notebook) GetActionWidget(packType PackType) (*Widget, error) {
 }
 
 /*
+ * GtkOffscreenWindow
+ */
+
+// OffscreenWindow is a representation of GTK's GtkOffscreenWindow.
+type OffscreenWindow struct {
+	Window
+}
+
+// Native returns a pointer to the underlying GtkOffscreenWindow.
+func (v *OffscreenWindow) Native() *C.GtkOffscreenWindow {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkOffscreenWindow(p)
+}
+
+func wrapOffscreenWindow(obj *glib.Object) *OffscreenWindow {
+	return &OffscreenWindow{Window{Bin{Container{Widget
+		glib.InitiallyUnowned{obj}}}}}}
+}
+
+// OffscreenWindowNew is a wrapper around gtk_offscreen_window_new().
+func OffscreenWindowNew() (*OffscreenWindow, error) {
+	c := C.gtk_offscreen_window_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	o := wrapOffscreenWindow(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return o, nil
+}
+
+// GetSurface is a wrapper around gtk_offscreen_window_get_surface().
+// The returned surface is safe to use over window resizes.
+func (v *OffscreenWindow) GetSurface() (*cairo.Surface, error) {
+	c := C.gtk_offscreen_window_get_surface(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	s := cairo.NewSurface(c, true)
+	return s, nil
+}
+
+// GetPixbuf is a wrapper around gtk_offscreen_window_get_pixbuf().
+func (v *OffscreenWindow) GetPixbuf() (*gdk.Pixbuf, error) {
+	c := C.gtk_offscreen_window_get_pixbuf(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	pb := &gdk.Pixbuf{obj}
+	// Pixbuf is returned with ref count of 1, so don't increment.
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return pb, nil
+}
+
+/*
  * GtkOrientable
  */
 
@@ -5510,6 +5571,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapMisc(obj)
 	case "GtkNotebook":
 		g = wrapNotebook(obj)
+	case "GtkOffscreenWindow":
+		g = wrapOffscreenWindow(obj)
 	case "GtkOrientable":
 		g = wrapOrientable(obj)
 	case "GtkProgressBar":

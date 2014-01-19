@@ -314,6 +314,12 @@ toGtkSearchEntry(void *p)
 	return (GTK_SEARCH_ENTRY(p));
 }
 
+static GtkOffscreenWindow *
+toGtkOffscreenWindow(void *p)
+{
+	return (GTK_OFFSCREEN_WINDOW(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));

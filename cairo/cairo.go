@@ -572,6 +572,18 @@ func wrapSurface(surface *C.cairo_surface_t) *Surface {
 	return &Surface{surface}
 }
 
+// NewSurface creates a gotk3 cairo Surface from a pointer to a
+// C cairo_surface_t.  This is primarily designed for use with other
+// gotk3 packages and should be avoided by applications.
+func NewSurface(s *C.cairo_surface_t, needsRef bool) *Surface {
+	surface := wrapSurface(s)
+	if needsRef {
+		surface.reference()
+	}
+	runtime.SetFinalizer(surface, (*Surface).destroy)
+	return surface
+}
+
 // CreateSimilar is a wrapper around cairo_surface_create_similar().
 func (v *Surface) CreateSimilar(content Content, width, height int) *Surface {
 	c := C.cairo_surface_create_similar(v.Native(),
