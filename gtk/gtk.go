@@ -3359,7 +3359,7 @@ func (v *OffscreenWindow) Native() *C.GtkOffscreenWindow {
 }
 
 func wrapOffscreenWindow(obj *glib.Object) *OffscreenWindow {
-	return &OffscreenWindow{Window{Bin{Container{Widget
+	return &OffscreenWindow{Window{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
 
