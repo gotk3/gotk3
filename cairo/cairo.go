@@ -356,7 +356,7 @@ func (v *Context) GetDashCount() int {
 // GetDash is a wrapper around cairo_get_dash().
 func (v *Context) GetDash() (dashes []float64, offset float64) {
 	dashCount := v.GetDashCount()
-	cdashes := (*C.double)(C.calloc(4, C.size_t(dashCount)))
+	cdashes := (*C.double)(C.calloc(8, C.size_t(dashCount)))
 	var coffset C.double
 	C.cairo_get_dash(v.Native(), cdashes, &coffset)
 	header := (*reflect.SliceHeader)((unsafe.Pointer(&dashes)))
