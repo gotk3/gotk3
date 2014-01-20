@@ -4349,15 +4349,15 @@ func (v *TreeModel) GetIterFromString(path string) (*TreeIter, error) {
 }
 
 // GetIterFirst() is a wrapper around gtk_tree_model_get_iter_first().
-func (v *TreeModel) GetIterFirst() (*TreeIter, error) {
+func (v *TreeModel) GetIterFirst() (*TreeIter, bool) {
 	var iter C.GtkTreeIter
 	c := C.gtk_tree_model_get_iter_first(v.Native(), &iter)
 	if !gobool(c) {
-		return nil, errors.New("Unable to set iterator")
+		return nil, false
 	}
 	t := &TreeIter{iter}
 	runtime.SetFinalizer(t, (*TreeIter).free)
-	return t, nil
+	return t, true
 }
 
 // GetPath() is a wrapper around gtk_tree_model_get_path().
