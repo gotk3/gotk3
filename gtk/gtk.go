@@ -2660,14 +2660,36 @@ func (v *ListStore) InsertWithValues(iter *TreeIter, position int, columns []int
 }
 */
 
+// InsertBefore() is a wrapper around gtk_list_store_insert_before().
+func (v *ListStore) InsertBefore(sibling *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_list_store_insert_before(v.Native(), &ti, sibling.Native())
+	iter := &TreeIter{ti}
+	return iter
+}
+
+// InsertAfter() is a wrapper around gtk_list_store_insert_after().
+func (v *ListStore) InsertAfter(sibling *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_list_store_insert_after(v.Native(), &ti, sibling.Native())
+	iter := &TreeIter{ti}
+	return iter
+}
+
 // Prepend() is a wrapper around gtk_list_store_prepend().
-func (v *ListStore) Prepend(iter *TreeIter) {
-	C.gtk_list_store_prepend(v.Native(), iter.Native())
+func (v *ListStore) Prepend() *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_list_store_prepend(v.Native(), &ti)
+	iter := &TreeIter{ti}
+	return iter
 }
 
 // Append() is a wrapper around gtk_list_store_append().
-func (v *ListStore) Append(iter *TreeIter) {
-	C.gtk_list_store_append(v.Native(), iter.Native())
+func (v *ListStore) Append() *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_list_store_append(v.Native(), &ti)
+	iter := &TreeIter{ti}
+	return iter
 }
 
 // Clear() is a wrapper around gtk_list_store_clear().
@@ -4247,6 +4269,9 @@ type TreeIter struct {
 
 // Native() returns a pointer to the underlying GtkTreeIter.
 func (v *TreeIter) Native() *C.GtkTreeIter {
+	if v == nil {
+		return nil
+	}
 	return &v.GtkTreeIter
 }
 
@@ -4328,7 +4353,6 @@ func (v *TreeModel) GetIter(path *TreePath) (*TreeIter, error) {
 		return nil, errors.New("Unable to set iterator")
 	}
 	t := &TreeIter{iter}
-	runtime.SetFinalizer(t, (*TreeIter).free)
 	return t, nil
 }
 
@@ -4344,7 +4368,6 @@ func (v *TreeModel) GetIterFromString(path string) (*TreeIter, error) {
 		return nil, errors.New("Unable to set iterator")
 	}
 	t := &TreeIter{iter}
-	runtime.SetFinalizer(t, (*TreeIter).free)
 	return t, nil
 }
 
@@ -4356,7 +4379,6 @@ func (v *TreeModel) GetIterFirst() (*TreeIter, bool) {
 		return nil, false
 	}
 	t := &TreeIter{iter}
-	runtime.SetFinalizer(t, (*TreeIter).free)
 	return t, true
 }
 

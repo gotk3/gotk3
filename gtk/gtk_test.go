@@ -21,6 +21,7 @@ package gtk
 import (
 	"fmt"
 	"github.com/conformal/gotk3/glib"
+	"log"
 	"testing"
 )
 
@@ -515,21 +516,123 @@ func TestCellRendererToggle_WhenSetActivatableTrue_ExpectGetActivatableReturnsTr
 	}
 }
 
+func setupListStore() *ListStore {
+	ls, err := ListStoreNew(glib.TYPE_STRING)
+	if err != nil {
+		log.Fatal("Unexpected err:", err)
+	}
+	return ls
+}
+
+func getLastIter(ls *ListStore) (*TreeIter, bool) {
+	iter, listIsntEmpty := ls.GetIterFirst()
+	if !listIsntEmpty {
+		return iter, listIsntEmpty
+	}
+
+	for {
+		temp := *iter
+		last := &temp
+		if !ls.IterNext(iter) {
+			return last, true
+		}
+	}
+
+	panic("Shouldn't get here")
+}
+
 // TestListStoreRemoveLastInvalidIterator tests that when a ListStore stores
 // one item and it is removed, the iterator becomes invalid.
 func TestListStoreRemoveLastInvalidIterator(t *testing.T) {
-	ls, err := ListStoreNew(glib.TYPE_BOOLEAN)
-	if err != nil {
-		t.Fatal("Unexpected err:", err)
-	}
+	ls := setupListStore()
 
-	var iter TreeIter
-	ls.Append(&iter)
-	if err := ls.Set(&iter, []int{0}, []interface{}{true}); err != nil {
-		t.Fatal("Unexpected err:", err)
-	}
+	iter := ls.Append()
 
-	if iterValid := ls.Remove(&iter); iterValid {
+	if iterValid := ls.Remove(iter); iterValid {
 		t.Fatal("Remove() returned true (iter valid); expected false (iter invalid)")
+	}
+}
+
+func TestListStoreInsertBefore(t *testing.T) {
+	ls := setupListStore()
+
+	// Given 1 iter is already in the liststore
+	initialIter := ls.Append()
+
+	// When another iter is inserted before it
+	newIter := ls.InsertBefore(initialIter)
+
+	// Expect the newly-inserted iter is first iter in list
+	firstIter, listIsntEmpty := ls.GetIterFirst()
+	if !listIsntEmpty {
+		t.Fatal("Unexpected: liststore is empty")
+	}
+
+	if *firstIter != *newIter {
+		t.Fatal("Expected the new iter added to front of list")
+	}
+}
+
+// When 'sibling' parameter is nil, the new iter should be appended to the liststore
+func TestListStoreInsertBefore_WhenNilSibling(t *testing.T) {
+	ls := setupListStore()
+
+	// Given 2 iters in liststore
+	ls.Append()
+	ls.Append()
+
+	// When 'sibling' parameter of InsertBefore() is nil...
+	newIter := ls.InsertBefore(nil)
+
+	// Then expect newly-inserted iter is the first iter in list
+	lastIter, listIsntEmpty := getLastIter(ls)
+	if !listIsntEmpty {
+		t.Fatal("Unexpected: liststore is empty")
+	}
+
+	if *lastIter != *newIter {
+		t.Fatal("Expected the new iter added to end of list")
+	}
+}
+
+func TestListStoreInsertAfter(t *testing.T) {
+	ls := setupListStore()
+
+	// Given 1 iter in liststore
+	sibling := ls.Append()
+
+	// When InsertAfter(sibling)
+	newIter := ls.InsertAfter(sibling)
+
+	// Then expect newly-inserted iter is the last iter in list
+	lastIter, listIsntEmpty := getLastIter(ls)
+	if !listIsntEmpty {
+		t.Fatal("Unexpected: liststore is empty")
+	}
+
+	if *lastIter != *newIter {
+		t.Fatal("Expected the new iter added to end of list")
+	}
+}
+
+// When 'sibling' parameter is nil, the new iter should be prepended to the liststore
+func TestListStoreInsertAfter_WhenNilSibling(t *testing.T) {
+	ls := setupListStore()
+
+	// Given 2 iters in liststore
+	ls.Append()
+	ls.Append()
+
+	// When InsertAfter(nil)
+	newIter := ls.InsertAfter(nil)
+
+	// Then expect newly-inserted iter is the first iter in the list
+	first, listIsntEmpty := ls.GetIterFirst()
+	if !listIsntEmpty {
+		t.Fatal("Unexpected: liststore is empty")
+	}
+
+	if *first != *newIter {
+		t.Fatal("Expected the new iter was prepended to liststore")
 	}
 }
