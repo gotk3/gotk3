@@ -4103,7 +4103,7 @@ func wrapTextTagTable(obj *glib.Object) *TextTagTable {
 }
 
 func TextTagTableNew() (*TextTagTable, error) {
-	c := C.gtk_tree_view_new()
+	c := C.gtk_text_tag_table_new()
 	if c == nil {
 		return nil, nilPtrErr
 	}
