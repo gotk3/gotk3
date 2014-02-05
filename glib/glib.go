@@ -345,10 +345,47 @@ func IdleAdd(f interface{}, args ...interface{}) (SourceHandle, error) {
 		return 0, errors.New("f is not a function")
 	}
 
-	// Create an idle source func for a main loop context.
+	// Create an idle source func to be added to the main loop context.
 	idleSrc := C.g_idle_source_new()
 	if idleSrc == nil {
 		return 0, nilPtrErr
+	}
+	return sourceAttach(idleSrc, rf, args...)
+}
+
+// TimeoutAdd adds an timeout source to the default main event loop
+// context.  After running once, the source func will be removed
+// from the main event loop, unless f returns a single bool true.
+//
+// This function will cause a panic when f eventually runs if the
+// types of args do not match those of f.
+// timeout is in milliseconds
+func TimeoutAdd(timeout uint, f interface{}, args ...interface{}) (SourceHandle, error) {
+	// f must be a func with no parameters.
+	rf := reflect.ValueOf(f)
+	if rf.Type().Kind() != reflect.Func {
+		return 0, errors.New("f is not a function")
+	}
+
+	// Create a timeout source func to be added to the main loop context.
+	timeoutSrc := C.g_timeout_source_new(C.guint(timeout))
+	if timeoutSrc == nil {
+		return 0, nilPtrErr
+	}
+
+	return sourceAttach(timeoutSrc, rf, args...)
+}
+
+// sourceAttach attaches a source to the default main loop context.
+func sourceAttach(src *C.GSource, rf reflect.Value, args ...interface{}) (SourceHandle, error) {
+	if src == nil {
+		return 0, nilPtrErr
+	}
+
+	// rf must be a func with no parameters.
+	if rf.Type().Kind() != reflect.Func {
+		C.g_source_destroy(src)
+		return 0, errors.New("rf is not a function")
 	}
 
 	// Create a new GClosure from f that invalidates itself when
@@ -373,18 +410,18 @@ func IdleAdd(f interface{}, args ...interface{}) (SourceHandle, error) {
 			}
 		}
 		C.g_closure_invalidate(closure)
-		C.g_source_destroy(idleSrc)
+		C.g_source_destroy(src)
 	})
 
 	// Remove closure context when closure is finalized.
 	C._g_closure_add_finalize_notifier(closure)
 
 	// Set closure to run as a callback when the idle source runs.
-	C.g_source_set_closure(idleSrc, closure)
+	C.g_source_set_closure(src, closure)
 
 	// Attach the idle source func to the default main event loop
 	// context.
-	cid := C.g_source_attach(idleSrc, nil)
+	cid := C.g_source_attach(src, nil)
 	return SourceHandle(cid), nil
 }
 
@@ -919,11 +956,17 @@ func (v *Value) GoValue() (interface{}, error) {
 		c := C.g_value_get_boolean(v.Native())
 		return gobool(c), nil
 
-	// TODO: TYPE_INT should probably be a Go int32.
-	case TYPE_INT, TYPE_LONG:
+	// todo: TYPE_INT should probably be a go int32.
+	case TYPE_INT:
 		c := C.g_value_get_int(v.Native())
 		return int(c), nil
 
+	// todo: TYPE_LONG should probably be a go int32.
+	case TYPE_LONG:
+		c := C.g_value_get_long(v.Native())
+		return int(c), nil
+
+	// todo: TYPE_ENUM should probably be a go int32.
 	case TYPE_ENUM:
 		c := C.g_value_get_enum(v.Native())
 		return int(c), nil
@@ -933,8 +976,18 @@ func (v *Value) GoValue() (interface{}, error) {
 		return int64(c), nil
 
 	// TODO: TYPE_UINT should probably be a Go uint32.
-	case TYPE_UINT, TYPE_ULONG, TYPE_FLAGS:
+	case TYPE_UINT:
 		c := C.g_value_get_uint(v.Native())
+		return uint(c), nil
+
+	// TODO: TYPE_ULONG should probably be a Go uint32.
+	case TYPE_ULONG:
+		c := C.g_value_get_ulong(v.Native())
+		return uint(c), nil
+
+	// TODO: TYPE_FLAGS should probably be a Go uint32.
+	case TYPE_FLAGS:
+		c := C.g_value_get_flags(v.Native())
 		return uint(c), nil
 
 	case TYPE_UINT64:
