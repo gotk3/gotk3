@@ -145,6 +145,11 @@ func (v *HeaderBar) GetShowCloseButton() bool {
  * GtkWindow
  */
 
+// SetTitlebar is a wrapper around gtk_window_set_titlebar().
+func (v *Window) SetTitlebar(titlebar IWidget) {
+	C.gtk_window_set_titlebar(v.Native(), titlebar.toWidget())
+}
+
 // Close is a wrapper around gtk_window_close().
 func (v *Window) Close() {
 	C.gtk_window_close(v.Native())
