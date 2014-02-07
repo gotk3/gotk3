@@ -20,6 +20,42 @@
 #include <stdlib.h>
 #include <string.h>
 
+static GtkAboutDialog *
+toGtkAboutDialog(void *p)
+{
+	return (GTK_ABOUT_DIALOG(p));
+}
+
+static GtkAlignment *
+toGtkAlignment(void *p)
+{
+	return (GTK_ALIGNMENT(p));
+}
+
+static GtkArrow *
+toGtkArrow(void *p)
+{
+	return (GTK_ARROW(p));
+}
+
+static GtkCalendar *
+toGtkCalendar(void *p)
+{
+	return (GTK_CALENDAR(p));
+}
+
+static GtkDrawingArea *
+toGtkDrawingArea(void *p)
+{
+	return (GTK_DRAWING_AREA(p));
+}
+
+static GtkEventBox *
+toGtkEventBox(void *p)
+{
+	return (GTK_EVENT_BOX(p));
+}
+
 static GtkGrid *
 toGtkGrid(void *p)
 {
@@ -158,6 +194,12 @@ toGtkSpinButton(void *p)
 	return (GTK_SPIN_BUTTON(p));
 }
 
+static GtkSpinner *
+toGtkSpinner(void *p)
+{
+	return (GTK_SPINNER(p));
+}
+
 static GtkComboBox *
 toGtkComboBox(void *p)
 {
@@ -168,6 +210,12 @@ static GtkListStore *
 toGtkListStore(void *p)
 {
 	return (GTK_LIST_STORE(p));
+}
+
+static GtkSwitch *
+toGtkSwitch(void *p)
+{
+	return (GTK_SWITCH(p));
 }
 
 static GtkTextView *
