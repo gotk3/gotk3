@@ -1,8 +1,8 @@
 package glib_test
 
 import (
-	"github.com/visionect/gotk3/glib"
-	"github.com/visionect/gotk3/gtk"
+	"github.com/conformal/gotk3/glib"
+	"github.com/conformal/gotk3/gtk"
 	"runtime"
 	"testing"
 )
