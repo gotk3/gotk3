@@ -6473,6 +6473,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapSpinner(obj)
 	case "GtkStatusbar":
 		g = wrapStatusbar(obj)
+	case "GtkSwitch":
+		g = wrapSwitch(obj)
 	case "GtkTextView":
 		g = wrapTextView(obj)
 	case "GtkTextBuffer":
