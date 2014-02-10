@@ -3,6 +3,36 @@ User visible changes for gotk3
   Go bindings for GTK3
 ============================================================================
 
+Changes in 0.2.0 (Mon Feb 10 2014)
+  - API BREAK: Modify function signatures for ListStore bindings so unset
+    iterators need not be created and passed as pointers to be set
+
+  - Add cairo package (currently targeting cairo 1.10) and add initial binding
+    support for cairo Surface and Context
+
+  - Add new binding support for the following GTK classes:
+    - GdkPixbuf (https://github.com/conformal/gotk3/issues/40)
+    - GtkAboutDialog
+    - GtkAlignment
+    - GtkArrow
+    - GtkCalendar
+    - GtkDrawingArea
+    - GtkEventBox
+    - GtkOffscreenWindow (https://github.com/conformal/gotk3/issues/33)
+    - GtkSpinner
+    - GtkSwitch
+
+  - Add additional bindings for gtk.Label
+
+  - Add glib.TimeoutAdd (https://github.com/conformal/gotk3/issues/41)
+
+  - Call correct C function to create a new TextTagTable
+    (https://github.com/conformal/gotk3/issues/40)
+
+  - Create correct go values from glib values
+    (https://github.com/conformal/gotk3/issues/39 and
+    https://github.com/conformal/gotk3/issues/41)
+
 Changes in 0.1.1 (Tue Jan 14 2014)
   - Fix a (*glib.Object).Connect crash where an allocated GValue was
     prematurely unset
