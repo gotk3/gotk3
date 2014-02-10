@@ -5645,12 +5645,6 @@ func (v *Widget) GetVisible() bool {
 	return gobool(c)
 }
 
-// IsVisible is a wrapper around gtk_widget_is_visible().
-func (v *Widget) IsVisible() bool {
-	c := C.gtk_widget_is_visible(v.Native())
-	return gobool(c)
-}
-
 // SetVisible is a wrapper around gtk_widget_set_visible().
 func (v *Widget) SetVisible(visible bool) {
 	C.gtk_widget_set_visible(v.Native(), gbool(visible))
