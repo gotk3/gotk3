@@ -33,6 +33,6 @@ import "C"
 
 // IsVisible is a wrapper around gtk_widget_is_visible().
 func (v *Widget) IsVisible() bool {
-        c := C.gtk_widget_is_visible(v.Native())
-        return gobool(c)
+	c := C.gtk_widget_is_visible(v.Native())
+	return gobool(c)
 }
