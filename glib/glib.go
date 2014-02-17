@@ -318,19 +318,7 @@ func gValueSlice(values *C.GValue, nValues int) (slice []C.GValue) {
  * Main event loop
  */
 
-type Source struct {
-	ptr unsafe.Pointer
-}
-
 type SourceHandle uint
-
-// Native returns a pointer to the underlying GSource.
-func (v *Source) Native() *C.GSource {
-	if v == nil || v.ptr == nil {
-		return nil
-	}
-	return (*C.GSource)(v.ptr)
-}
 
 // IdleAdd adds an idle source to the default main event loop
 // context.  After running once, the source func will be removed
