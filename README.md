@@ -85,7 +85,7 @@ http://localhost:6060/pkg/github.com/conformal/gotk3
 ## Installation
 
 gotk3 currently requires GTK 3.6, 3.8, or 3.10, GLib 2.36 or 2.38, and
-Cairo 1.10 or 1.12.
+Cairo 1.10 or 1.12.  A recent Go (1.2 or newer) is also required.
 
 The gtk package requires the cairo, glib, and gdk packages as
 dependencies, so only one `go get` is necessary for complete
