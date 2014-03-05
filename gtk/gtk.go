@@ -179,6 +179,16 @@ const (
 	ENTRY_ICON_SECONDARY EntryIconPosition = C.GTK_ENTRY_ICON_SECONDARY
 )
 
+// FileChooserAction is a representation of GTK's GtkFileChooserAction.
+type FileChooserAction int
+
+const (
+	FILE_CHOOSER_ACTION_OPEN          FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_OPEN
+	FILE_CHOOSER_ACTION_SAVE          FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_SAVE
+	FILE_CHOOSER_ACTION_SELECT_FOLDER FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
+	FILE_CHOOSER_ACTION_CREATE_FOLDER FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER
+)
+
 // IconSize is a representation of GTK's GtkIconSize.
 type IconSize int
 
@@ -2528,6 +2538,75 @@ func (v *EventBox) SetVisibleWindow(visibleWindow bool) {
 func (v *EventBox) GetVisibleWindow() bool {
 	c := C.gtk_event_box_get_visible_window(v.Native())
 	return gobool(c)
+}
+
+/*
+ * GtkFileChooser
+ */
+
+// FileChoser is a representation of GTK's GtkFileChooser GInterface.
+type FileChooser struct {
+	*glib.Object
+}
+
+// Native returns a pointer to the underlying GObject as a GtkFileChooser.
+func (v *FileChooser) Native() *C.GtkFileChooser {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFileChooser(p)
+}
+
+func wrapFileChooser(obj *glib.Object) *FileChooser {
+	return &FileChooser{obj}
+}
+
+// GetFilename is a wrapper around gtk_file_chooser_get_filename().
+func (v *FileChooser) GetFilename() string {
+	c := C.gtk_file_chooser_get_filename(v.Native())
+	s := C.GoString((*C.char)(c))
+	defer C.g_free((C.gpointer)(c))
+	return s
+}
+
+/*
+ * GtkFileChooserWidget
+ */
+
+// FileChooserWidget is a representation of GTK's GtkFileChooserWidget.
+type FileChooserWidget struct {
+	Box
+
+	// Interfaces
+	FileChooser
+}
+
+// Native returns a pointer to the underlying GtkFileChooserWidget.
+func (v *FileChooserWidget) Native() *C.GtkFileChooserWidget {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFileChooserWidget(p)
+}
+
+func wrapFileChooserWidget(obj *glib.Object) *FileChooserWidget {
+	fc := wrapFileChooser(obj)
+	return &FileChooserWidget{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
+}
+
+// FileChooserWidgetNew is a wrapper around gtk_gtk_file_chooser_widget_new().
+func FileChooserWidgetNew(action FileChooserAction) (*FileChooserWidget, error) {
+	c := C.gtk_file_chooser_widget_new((C.GtkFileChooserAction)(action))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	f := wrapFileChooserWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return f, nil
 }
 
 /*

@@ -368,6 +368,18 @@ toGtkOffscreenWindow(void *p)
 	return (GTK_OFFSCREEN_WINDOW(p));
 }
 
+static GtkFileChooser *
+toGtkFileChooser(void *p)
+{
+	return (GTK_FILE_CHOOSER(p));
+}
+
+static GtkFileChooserWidget *
+toGtkFileChooserWidget(void *p)
+{
+	return (GTK_FILE_CHOOSER_WIDGET(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
