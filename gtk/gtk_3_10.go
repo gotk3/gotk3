@@ -422,7 +422,7 @@ func wrapRevealer(obj *glib.Object) *Revealer {
 
 // RevealerNew is a wrapper around gtk_revealer_new()
 func RevealerNew() (*Revealer, error) {
-	c := C.gtk_search_bar_new()
+	c := C.gtk_revealer_new()
 	if c == nil {
 		return nil, nilPtrErr
 	}
