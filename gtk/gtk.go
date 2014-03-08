@@ -5954,6 +5954,50 @@ func (v *Widget) SetVAlign(align Align) {
 	C.gtk_widget_set_valign(v.Native(), C.GtkAlign(align))
 }
 
+// GetMarginLeft is a wrapper around gtk_widget_get_margin_left().
+func (v *Widget) GetMarginLeft() int {
+	c := C.gtk_widget_get_margin_left(v.Native())
+	return int(c)
+}
+
+// SetMarginLeft is a wrapper around gtk_widget_set_margin_left().
+func (v *Widget) SetMarginLeft(margin int) {
+	C.gtk_widget_set_margin_left(v.Native(), C.gint(margin))
+}
+
+// GetMarginRight is a wrapper around gtk_widget_get_margin_right().
+func (v *Widget) GetMarginRight() int {
+	c := C.gtk_widget_get_margin_right(v.Native())
+	return int(c)
+}
+
+// SetMarginRight is a wrapper around gtk_widget_set_margin_right().
+func (v *Widget) SetMarginRight(margin int) {
+	C.gtk_widget_set_margin_right(v.Native(), C.gint(margin))
+}
+
+// GetMarginTop is a wrapper around gtk_widget_get_margin_top().
+func (v *Widget) GetMarginTop() int {
+	c := C.gtk_widget_get_margin_top(v.Native())
+	return int(c)
+}
+
+// SetMarginTop is a wrapper around gtk_widget_set_margin_top().
+func (v *Widget) SetMarginTop(margin int) {
+	C.gtk_widget_set_margin_top(v.Native(), C.gint(margin))
+}
+
+// GetMarginBottom is a wrapper around gtk_widget_get_margin_bottom().
+func (v *Widget) GetMarginBottom() int {
+	c := C.gtk_widget_get_margin_bottom(v.Native())
+	return int(c)
+}
+
+// SetMarginBottom is a wrapper around gtk_widget_set_margin_bottom().
+func (v *Widget) SetMarginBottom(margin int) {
+	C.gtk_widget_set_margin_bottom(v.Native(), C.gint(margin))
+}
+
 // GetHExpand is a wrapper around gtk_widget_get_hexpand().
 func (v *Widget) GetHExpand() bool {
 	c := C.gtk_widget_get_hexpand(v.Native())
