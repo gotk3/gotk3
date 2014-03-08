@@ -28,6 +28,15 @@ package gtk
 import "C"
 
 /*
+ * Constants
+ */
+
+const (
+	STATE_FLAG_DIR_LTR StateFlags = C.GTK_STATE_FLAG_DIR_LTR
+	STATE_FLAG_DIR_RTL StateFlags = C.GTK_STATE_FLAG_DIR_RTL
+)
+
+/*
  * GtkWidget
  */
 

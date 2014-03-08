@@ -352,6 +352,30 @@ const (
 	RESPONSE_HELP         ResponseType = C.GTK_RESPONSE_HELP
 )
 
+// SelectionMode is a representation of GTK's GtkSelectionMode.
+type SelectionMode int
+
+const (
+	SELECTION_NONE     SelectionMode = C.GTK_SELECTION_NONE
+	SELECTION_SINGLE   SelectionMode = C.GTK_SELECTION_SINGLE
+	SELECTION_BROWSE   SelectionMode = C.GTK_SELECTION_BROWSE
+	SELECTION_MULTIPLE SelectionMode = C.GTK_SELECTION_MULTIPLE
+)
+
+// StateFlags is a representation of GTK's GtkStateFlags.
+type StateFlags int
+
+const (
+	STATE_FLAG_NORMAL       StateFlags = C.GTK_STATE_FLAG_NORMAL
+	STATE_FLAG_ACTIVE       StateFlags = C.GTK_STATE_FLAG_ACTIVE
+	STATE_FLAG_PRELIGHT     StateFlags = C.GTK_STATE_FLAG_PRELIGHT
+	STATE_FLAG_SELECTED     StateFlags = C.GTK_STATE_FLAG_SELECTED
+	STATE_FLAG_INSENSITIVE  StateFlags = C.GTK_STATE_FLAG_INSENSITIVE
+	STATE_FLAG_INCONSISTENT StateFlags = C.GTK_STATE_FLAG_INCONSISTENT
+	STATE_FLAG_FOCUSED      StateFlags = C.GTK_STATE_FLAG_FOCUSED
+	STATE_FLAG_BACKDROP     StateFlags = C.GTK_STATE_FLAG_BACKDROP
+)
+
 // ShadowType is a representation of GTK's GtkShadowType.
 type ShadowType int
 
@@ -1876,6 +1900,14 @@ func DrawingAreaNew() (*DrawingArea, error) {
 // Entry is a representation of GTK's GtkEntry.
 type Entry struct {
 	Widget
+}
+
+type IEntry interface {
+	toEntry() *C.GtkEntry
+}
+
+func (v *Entry) toEntry() *C.GtkEntry {
+	return v.Native()
 }
 
 // Native() returns a pointer to the underlying GtkEntry.
@@ -6506,6 +6538,10 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapImage(obj)
 	case "GtkLabel":
 		g = wrapLabel(obj)
+	case "GtkListBox":
+		g = wrapListBox(obj)
+	case "GtkListBoxRow":
+		g = wrapListBoxRow(obj)
 	case "GtkListStore":
 		g = wrapListStore(obj)
 	case "GtkMenu":
@@ -6534,6 +6570,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapScrollbar(obj)
 	case "GtkScrolledWindow":
 		g = wrapScrolledWindow(obj)
+	case "SearchBar":
+		g = wrapSearchBar(obj)
 	case "GtkSearchEntry":
 		g = wrapSearchEntry(obj)
 	case "GtkSeparator":
@@ -6544,6 +6582,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapSpinButton(obj)
 	case "GtkSpinner":
 		g = wrapSpinner(obj)
+	case "Stack":
+		g = wrapStack(obj)
 	case "GtkStatusbar":
 		g = wrapStatusbar(obj)
 	case "GtkSwitch":

@@ -21,3 +21,33 @@ toGtkHeaderBar(void *p)
 {
 	return (GTK_HEADER_BAR(p));
 }
+
+static GtkListBox *
+toGtkListBox(void *p)
+{
+	return (GTK_LIST_BOX(p));
+}
+
+static GtkListBoxRow *
+toGtkListBoxRow(void *p)
+{
+	return (GTK_LIST_BOX_ROW(p));
+}
+
+static GtkSearchBar *
+toGtkSearchBar(void *p)
+{
+	return (GTK_SEARCH_BAR(p));
+}
+
+static GtkStack *
+toGtkStack(void *p)
+{
+	return (GTK_STACK(p));
+}
+
+static GtkStackSwitcher *
+toGtkStackSwitcher(void *p)
+{
+	return (GTK_STACK_SWITCHER(p));
+}
