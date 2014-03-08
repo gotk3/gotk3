@@ -6477,6 +6477,8 @@ func (v *Window) ResizeGripIsVisible() bool {
 
 // TODO gtk_window_get_application().
 
+var cast_3_10_func func(string, *glib.Object) glib.IObject
+
 // cast takes a native GObject and casts it to the appropriate Go struct.
 func cast(c *C.GObject) (glib.IObject, error) {
 	var (
@@ -6538,10 +6540,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapImage(obj)
 	case "GtkLabel":
 		g = wrapLabel(obj)
-	case "GtkListBox":
-		g = wrapListBox(obj)
-	case "GtkListBoxRow":
-		g = wrapListBoxRow(obj)
 	case "GtkListStore":
 		g = wrapListStore(obj)
 	case "GtkMenu":
@@ -6570,8 +6568,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapScrollbar(obj)
 	case "GtkScrolledWindow":
 		g = wrapScrolledWindow(obj)
-	case "SearchBar":
-		g = wrapSearchBar(obj)
 	case "GtkSearchEntry":
 		g = wrapSearchEntry(obj)
 	case "GtkSeparator":
@@ -6582,8 +6578,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapSpinButton(obj)
 	case "GtkSpinner":
 		g = wrapSpinner(obj)
-	case "Stack":
-		g = wrapStack(obj)
 	case "GtkStatusbar":
 		g = wrapStatusbar(obj)
 	case "GtkSwitch":
@@ -6609,6 +6603,13 @@ func cast(c *C.GObject) (glib.IObject, error) {
 	case "GtkWindow":
 		g = wrapWindow(obj)
 	default:
+		switch {
+		case cast_3_10_func != nil:
+			g = cast_3_10(className, obj)
+			if g != nil {
+				return g, nil
+			}
+		}
 		return nil, errors.New("unrecognized class name '" + className + "'")
 	}
 	return g, nil

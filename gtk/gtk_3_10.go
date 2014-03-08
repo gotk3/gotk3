@@ -644,3 +644,22 @@ func (v *Window) SetTitlebar(titlebar IWidget) {
 func (v *Window) Close() {
 	C.gtk_window_close(v.Native())
 }
+
+func cast_3_10(class string, o *glib.Object) glib.IObject {
+	var g glib.IObject
+	switch class {
+	case "GtkListBox":
+		g = wrapListBox(o)
+	case "GtkListBoxRow":
+		g = wrapListBoxRow(o)
+	case "GtkSearchBar":
+		g = wrapSearchBar(o)
+	case "GtkStack":
+		g = wrapStack(o)
+	}
+	return g
+}
+
+func init() {
+	cast_3_10_func = cast_3_10
+}
