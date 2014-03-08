@@ -6605,7 +6605,7 @@ func cast(c *C.GObject) (glib.IObject, error) {
 	default:
 		switch {
 		case cast_3_10_func != nil:
-			g = cast_3_10(className, obj)
+			g = cast_3_10_func(className, obj)
 			if g != nil {
 				return g, nil
 			}
