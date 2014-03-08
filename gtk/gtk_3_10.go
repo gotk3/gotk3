@@ -43,6 +43,18 @@ const (
 	ALIGN_BASELINE Align = C.GTK_ALIGN_BASELINE
 )
 
+// RevealerTransitionType is a representation of GTK's GtkRevealerTransitionType.
+type RevealerTransitionType int
+
+const (
+	REVEALER_TRANSITION_TYPE_NONE        RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_NONE
+	REVEALER_TRANSITION_TYPE_CROSSFADE   RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_CROSSFADE
+	REVEALER_TRANSITION_TYPE_SLIDE_RIGHT RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT
+	REVEALER_TRANSITION_TYPE_SLIDE_LEFT  RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT
+	REVEALER_TRANSITION_TYPE_SLIDE_UP    RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_UP
+	REVEALER_TRANSITION_TYPE_SLIDE_DOWN  RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN
+)
+
 // StackTransitionType is a representation of GTK's GtkStackTransitionType.
 type StackTransitionType int
 
@@ -387,6 +399,81 @@ func (v *ListBoxRow) GetIndex() int {
 }
 
 /*
+ * GtkRevealer
+ */
+
+// Revealer is a representation of GTK's GtkRevealer
+type Revealer struct {
+	Bin
+}
+
+// Native returns a pointer to the underlying GtkRevealer.
+func (v *Revealer) Native() *C.GtkRevealer {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkRevealer(p)
+}
+
+func wrapRevealer(obj *glib.Object) *Revealer {
+	return &Revealer{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// RevealerNew is a wrapper around gtk_revealer_new()
+func RevealerNew() (*Revealer, error) {
+	c := C.gtk_search_bar_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRevealer(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// GetRevealChild is a wrapper around gtk_revealer_get_reveal_child().
+func (v *Revealer) GetRevealChild() bool {
+	c := C.gtk_revealer_get_reveal_child(v.Native())
+	return gobool(c)
+}
+
+// SetRevealChild is a wrapper around gtk_revealer_set_reveal_child().
+func (v *Revealer) SetRevealChild(revealChild bool) {
+	C.gtk_revealer_set_reveal_child(v.Native(), gbool(revealChild))
+}
+
+// GetChildRevealed is a wrapper around gtk_revealer_get_child_revealed().
+func (v *Revealer) GetChildRevealed() bool {
+	c := C.gtk_revealer_get_child_revealed(v.Native())
+	return gobool(c)
+}
+
+// GetTransitionDuration is a wrapper around gtk_revealer_get_transition_duration()
+func (v *Revealer) GetTransitionDuration() uint {
+	c := C.gtk_revealer_get_transition_duration(v.Native())
+	return uint(c)
+}
+
+// SetTransitionDuration is a wrapper around gtk_revealer_set_transition_duration().
+func (v *Revealer) SetTransitionDuration(duration uint) {
+	C.gtk_revealer_set_transition_duration(v.Native(), C.guint(duration))
+}
+
+// GetTransitionType is a wrapper around gtk_revealer_get_transition_type()
+func (v *Revealer) GetTransitionType() RevealerTransitionType {
+	c := C.gtk_revealer_get_transition_type(v.Native())
+	return RevealerTransitionType(c)
+}
+
+// SetTransitionType is a wrapper around gtk_revealer_set_transition_type()
+func (v *Revealer) SetTransitionType(transition RevealerTransitionType) {
+	t := C.GtkRevealerTransitionType(transition)
+	C.gtk_revealer_set_transition_type(v.Native(), t)
+}
+
+/*
  * GtkSearchBar
  */
 
@@ -652,6 +739,8 @@ func cast_3_10(class string, o *glib.Object) glib.IObject {
 		g = wrapListBox(o)
 	case "GtkListBoxRow":
 		g = wrapListBoxRow(o)
+	case "GtkRevealer":
+		g = wrapRevealer(o)
 	case "GtkSearchBar":
 		g = wrapSearchBar(o)
 	case "GtkStack":

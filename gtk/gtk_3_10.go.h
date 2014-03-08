@@ -34,6 +34,12 @@ toGtkListBoxRow(void *p)
 	return (GTK_LIST_BOX_ROW(p));
 }
 
+static GtkRevealer *
+toGtkRevealer(void *p)
+{
+	return (GTK_REVEALER(p));
+}
+
 static GtkSearchBar *
 toGtkSearchBar(void *p)
 {
