@@ -140,6 +140,18 @@ const (
 	ARROW_NONE  ArrowType = C.GTK_ARROW_NONE
 )
 
+// AssistantPageType is a representation of GTK's GtkAssistantPageType.
+type AssistantPageType int
+
+const (
+	ASSISTANT_PAGE_CONTENT  AssistantPageType = C.GTK_ASSISTANT_PAGE_CONTENT
+	ASSISTANT_PAGE_INTRO    AssistantPageType = C.GTK_ASSISTANT_PAGE_INTRO
+	ASSISTANT_PAGE_CONFIRM  AssistantPageType = C.GTK_ASSISTANT_PAGE_CONFIRM
+	ASSISTANT_PAGE_SUMMARY  AssistantPageType = C.GTK_ASSISTANT_PAGE_SUMMARY
+	ASSISTANT_PAGE_PROGRESS AssistantPageType = C.GTK_ASSISTANT_PAGE_PROGRESS
+	ASSISTANT_PAGE_CUSTOM   AssistantPageType = C.GTK_ASSISTANT_PAGE_CUSTOM
+)
+
 // ButtonsType is a representation of GTK's GtkButtonsType.
 type ButtonsType int
 
@@ -663,6 +675,165 @@ func (v *Adjustment) Native() *C.GtkAdjustment {
 
 func wrapAdjustment(obj *glib.Object) *Adjustment {
 	return &Adjustment{glib.InitiallyUnowned{obj}}
+}
+
+/*
+ * GtkAssistant
+ */
+
+// Assistant is a representation of GTK's GtkAssistant.
+type Assistant struct {
+	Window
+}
+
+// Native returns a pointer to the underlying GtkAssistant.
+func (v *Assistant) Native() *C.GtkAssistant {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkAssistant(p)
+}
+
+func wrapAssistant(obj *glib.Object) *Assistant {
+	return &Assistant{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+}
+
+// AssistantNew is a wrapper around gtk_assistant_new().
+func AssistantNew() (*Assistant, error) {
+	c := C.gtk_assistant_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAssistant(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
+}
+
+// GetCurrentPage is a wrapper around gtk_assistant_get_current_page().
+func (v *Assistant) GetCurrentPage() int {
+	c := C.gtk_assistant_get_current_page(v.Native())
+	return int(c)
+}
+
+// SetCurrentPage is a wrapper around gtk_assistant_set_current_page().
+func (v *Assistant) SetCurrentPage(pageNum int) {
+	C.gtk_assistant_set_current_page(v.Native(), C.gint(pageNum))
+}
+
+// GetNPages is a wrapper around gtk_assistant_get_n_pages().
+func (v *Assistant) GetNPages() int {
+	c := C.gtk_assistant_get_n_pages(v.Native())
+	return int(c)
+}
+
+// GetNthPage is a wrapper around gtk_assistant_get_nth_page().
+func (v *Assistant) GetNthPage(pageNum int) *Widget {
+	c := C.gtk_assistant_get_nth_page(v.Native(), C.gint(pageNum))
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w
+}
+
+// PrependPage is a wrapper around gtk_assistant_prepend_page().
+func (v *Assistant) PrependPage(page IWidget) int {
+	c := C.gtk_assistant_prepend_page(v.Native(), page.toWidget())
+	return int(c)
+}
+
+// AppendPage is a wrapper around gtk_assistant_append_page().
+func (v *Assistant) AppendPage(page IWidget) int {
+	c := C.gtk_assistant_append_page(v.Native(), page.toWidget())
+	return int(c)
+}
+
+// InsertPage is a wrapper around gtk_assistant_insert_page().
+func (v *Assistant) InsertPage(page IWidget, position int) int {
+	c := C.gtk_assistant_insert_page(v.Native(), page.toWidget(),
+		C.gint(position))
+	return int(c)
+}
+
+// RemovePage is a wrapper around gtk_assistant_remove_page().
+func (v *Assistant) RemovePage(pageNum int) {
+	C.gtk_assistant_remove_page(v.Native(), C.gint(pageNum))
+}
+
+// TODO: gtk_assistant_set_forward_page_func
+
+// SetPageType is a wrapper around gtk_assistant_set_page_type().
+func (v *Assistant) SetPageType(page IWidget, ptype AssistantPageType) {
+	C.gtk_assistant_set_page_type(v.Native(), page.toWidget(),
+		C.GtkAssistantPageType(ptype))
+}
+
+// GetPageType is a wrapper around gtk_assistant_get_page_type().
+func (v *Assistant) GetPageType(page IWidget) AssistantPageType {
+	c := C.gtk_assistant_get_page_type(v.Native(), page.toWidget())
+	return AssistantPageType(c)
+}
+
+// SetPageTitle is a wrapper around gtk_assistant_set_page_title().
+func (v *Assistant) SetPageTitle(page IWidget, title string) {
+	cstr := C.CString(title)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_assistant_set_page_title(v.Native(), page.toWidget(),
+		(*C.gchar)(cstr))
+}
+
+// GetPageTitle is a wrapper around gtk_assistant_get_page_title().
+func (v *Assistant) GetPageTitle(page IWidget) string {
+	c := C.gtk_assistant_get_page_title(v.Native(), page.toWidget())
+	return C.GoString((*C.char)(c))
+}
+
+// SetPageComplete is a wrapper around gtk_assistant_set_page_complete().
+func (v *Assistant) SetPageComplete(page IWidget, complete bool) {
+	C.gtk_assistant_set_page_complete(v.Native(), page.toWidget(),
+		gbool(complete))
+}
+
+// GetPageComplete is a wrapper around gtk_assistant_get_page_complete().
+func (v *Assistant) GetPageComplete(page IWidget) bool {
+	c := C.gtk_assistant_get_page_complete(v.Native(), page.toWidget())
+	return gobool(c)
+}
+
+// AddActionWidget is a wrapper around gtk_assistant_add_action_widget().
+func (v *Assistant) AddActionWidget(child IWidget) {
+	C.gtk_assistant_add_action_widget(v.Native(), child.toWidget())
+}
+
+// RemoveActionWidget is a wrapper around gtk_assistant_remove_action_widget().
+func (v *Assistant) RemoveActionWidget(child IWidget) {
+	C.gtk_assistant_remove_action_widget(v.Native(), child.toWidget())
+}
+
+// UpdateButtonsState is a wrapper around gtk_assistant_update_buttons_state().
+func (v *Assistant) UpdateButtonsState() {
+	C.gtk_assistant_update_buttons_state(v.Native())
+}
+
+// Commit is a wrapper around gtk_assistant_commit().
+func (v *Assistant) Commit() {
+	C.gtk_assistant_commit(v.Native())
+}
+
+// NextPage is a wrapper around gtk_assistant_next_page().
+func (v *Assistant) NextPage() {
+	C.gtk_assistant_next_page(v.Native())
+}
+
+// PreviousPage is a wrapper around gtk_assistant_previous_page().
+func (v *Assistant) PreviousPage() {
+	C.gtk_assistant_previous_page(v.Native())
 }
 
 /*

@@ -38,6 +38,12 @@ toGtkArrow(void *p)
 	return (GTK_ARROW(p));
 }
 
+static GtkAssistant *
+toGtkAssistant(void *p)
+{
+	return (GTK_ASSISTANT(p));
+}
+
 static GtkCalendar *
 toGtkCalendar(void *p)
 {
