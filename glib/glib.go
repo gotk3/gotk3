@@ -1025,7 +1025,10 @@ func marshalPointer(p uintptr) (interface{}, error) {
 
 func marshalObject(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return newObject((*C.GObject)(c)), nil
+	obj := newObject((*C.GObject)(c))
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*Object).Unref)
+	return obj, nil
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {
