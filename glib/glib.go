@@ -445,9 +445,9 @@ type Object struct {
 	GObject *C.GObject
 }
 
-// ObjectNew creates a new Object from a Pointer.
-func ObjectNew(p unsafe.Pointer) *Object {
-	return &Object{GObject: (*C.GObject)(p)}
+// newObject creates a new Object from a GObject pointer.
+func newObject(p *C.GObject) *Object {
+	return &Object{GObject: p}
 }
 
 // Native returns a pointer to the underlying GObject.
@@ -1025,7 +1025,7 @@ func marshalPointer(p uintptr) (interface{}, error) {
 
 func marshalObject(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return ObjectNew(unsafe.Pointer(c)), nil
+	return newObject((*C.GObject)(c)), nil
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {
