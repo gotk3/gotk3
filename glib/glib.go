@@ -768,7 +768,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		if err != nil {
 			return nil, err
 		}
-		val.SetPointer(uintptr(0)) // technically not portable
+		val.SetPointer(uintptr(unsafe.Pointer(nil)))
 		return val, nil
 	}
 
@@ -908,6 +908,130 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 	return nil, errors.New("Type not implemented")
 }
 
+type gValueMarshaler func(uintptr) (interface{}, error)
+
+// gValueMarshalers maintains a map of Glib types to functions
+// to marshal a GValue to a native Go type.  It is used by
+
+var gValueMarshalers = map[Type]gValueMarshaler{
+	TYPE_INVALID:   marshalInvalid,
+	TYPE_NONE:      marshalNone,
+	TYPE_INTERFACE: marshalInterface,
+	TYPE_CHAR:      marshalChar,
+	TYPE_UCHAR:     marshalUchar,
+	TYPE_BOOLEAN:   marshalBoolean,
+	TYPE_INT:       marshalInt,
+	TYPE_LONG:      marshalLong,
+	TYPE_ENUM:      marshalEnum,
+	TYPE_INT64:     marshalInt64,
+	TYPE_UINT:      marshalUint,
+	TYPE_ULONG:     marshalUlong,
+	TYPE_FLAGS:     marshalFlags,
+	TYPE_UINT64:    marshalUint64,
+	TYPE_FLOAT:     marshalFloat,
+	TYPE_DOUBLE:    marshalDouble,
+	TYPE_STRING:    marshalString,
+	TYPE_POINTER:   marshalPointer,
+	TYPE_OBJECT:    marshalObject,
+	TYPE_VARIANT:   marshalVariant,
+}
+
+func marshalInvalid(uintptr) (interface{}, error) {
+	return nil, errors.New("invalid type")
+}
+
+func marshalNone(uintptr) (interface{}, error) {
+	return nil, nil
+}
+
+func marshalInterface(uintptr) (interface{}, error) {
+	return nil, errors.New("interface conversion not yet implemented")
+}
+
+func marshalChar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_schar((*C.GValue)(unsafe.Pointer(p)))
+	return int8(c), nil
+}
+
+func marshalUchar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_uchar((*C.GValue)(unsafe.Pointer(p)))
+	return uint8(c), nil
+}
+
+func marshalBoolean(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boolean((*C.GValue)(unsafe.Pointer(p)))
+	return gobool(c), nil
+}
+
+func marshalInt(p uintptr) (interface{}, error) {
+	c := C.g_value_get_int((*C.GValue)(unsafe.Pointer(p)))
+	return int(c), nil
+}
+
+func marshalLong(p uintptr) (interface{}, error) {
+	c := C.g_value_get_long((*C.GValue)(unsafe.Pointer(p)))
+	return int(c), nil
+}
+
+func marshalEnum(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return int(c), nil
+}
+
+func marshalInt64(p uintptr) (interface{}, error) {
+	c := C.g_value_get_int64((*C.GValue)(unsafe.Pointer(p)))
+	return int64(c), nil
+}
+
+func marshalUint(p uintptr) (interface{}, error) {
+	c := C.g_value_get_uint((*C.GValue)(unsafe.Pointer(p)))
+	return uint(c), nil
+}
+
+func marshalUlong(p uintptr) (interface{}, error) {
+	c := C.g_value_get_ulong((*C.GValue)(unsafe.Pointer(p)))
+	return uint(c), nil
+}
+
+func marshalFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_flags((*C.GValue)(unsafe.Pointer(p)))
+	return uint(c), nil
+}
+
+func marshalUint64(p uintptr) (interface{}, error) {
+	c := C.g_value_get_uint64((*C.GValue)(unsafe.Pointer(p)))
+	return uint64(c), nil
+}
+
+func marshalFloat(p uintptr) (interface{}, error) {
+	c := C.g_value_get_float((*C.GValue)(unsafe.Pointer(p)))
+	return float32(c), nil
+}
+
+func marshalDouble(p uintptr) (interface{}, error) {
+	c := C.g_value_get_double((*C.GValue)(unsafe.Pointer(p)))
+	return float64(c), nil
+}
+
+func marshalString(p uintptr) (interface{}, error) {
+	c := C.g_value_get_string((*C.GValue)(unsafe.Pointer(p)))
+	return C.GoString((*C.char)(c)), nil
+}
+
+func marshalPointer(p uintptr) (interface{}, error) {
+	c := C.g_value_get_pointer((*C.GValue)(unsafe.Pointer(p)))
+	return unsafe.Pointer(c), nil
+}
+
+func marshalObject(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	return ObjectNew(unsafe.Pointer(c)), nil
+}
+
+func marshalVariant(p uintptr) (interface{}, error) {
+	return nil, errors.New("variant conversion not yet implemented")
+}
+
 // GoValue() converts a Value to comparable Go type.  GoValue()
 // returns a non-nil error if the conversion was unsuccessful.  The
 // returned interface{} must be type asserted as the actual Go
@@ -921,95 +1045,11 @@ func (v *Value) GoValue() (interface{}, error) {
 		return nil, err
 	}
 
-	// TODO: verify that all of these cases are indeed fundamental types
-	switch fundamental {
-	case TYPE_INVALID:
-		return nil, errors.New("invalid type")
-
-	case TYPE_NONE:
-		return nil, nil
-
-	case TYPE_INTERFACE:
-		return nil, errors.New("interface conversion not yet implemented")
-
-	case TYPE_CHAR:
-		c := C.g_value_get_schar(v.Native())
-		return int8(c), nil
-
-	case TYPE_UCHAR:
-		c := C.g_value_get_uchar(v.Native())
-		return uint8(c), nil
-
-	case TYPE_BOOLEAN:
-		c := C.g_value_get_boolean(v.Native())
-		return gobool(c), nil
-
-	// todo: TYPE_INT should probably be a go int32.
-	case TYPE_INT:
-		c := C.g_value_get_int(v.Native())
-		return int(c), nil
-
-	// todo: TYPE_LONG should probably be a go int32.
-	case TYPE_LONG:
-		c := C.g_value_get_long(v.Native())
-		return int(c), nil
-
-	// todo: TYPE_ENUM should probably be a go int32.
-	case TYPE_ENUM:
-		c := C.g_value_get_enum(v.Native())
-		return int(c), nil
-
-	case TYPE_INT64:
-		c := C.g_value_get_int64(v.Native())
-		return int64(c), nil
-
-	// TODO: TYPE_UINT should probably be a Go uint32.
-	case TYPE_UINT:
-		c := C.g_value_get_uint(v.Native())
-		return uint(c), nil
-
-	// TODO: TYPE_ULONG should probably be a Go uint32.
-	case TYPE_ULONG:
-		c := C.g_value_get_ulong(v.Native())
-		return uint(c), nil
-
-	// TODO: TYPE_FLAGS should probably be a Go uint32.
-	case TYPE_FLAGS:
-		c := C.g_value_get_flags(v.Native())
-		return uint(c), nil
-
-	case TYPE_UINT64:
-		c := C.g_value_get_uint64(v.Native())
-		return uint64(c), nil
-
-	case TYPE_FLOAT:
-		c := C.g_value_get_float(v.Native())
-		return float32(c), nil
-
-	case TYPE_DOUBLE:
-		c := C.g_value_get_double(v.Native())
-		return float64(c), nil
-
-	case TYPE_STRING:
-		c := C.g_value_get_string(v.Native())
-		return C.GoString((*C.char)(c)), nil
-
-	case TYPE_POINTER:
-		c := C.g_value_get_pointer(v.Native())
-		return unsafe.Pointer(c), nil
-
-	case TYPE_OBJECT:
-		c := C.g_value_get_object(v.Native())
-		// TODO: need to try and return an actual pointer to the correct object type
-		// this may require an additional cast()-like method for each module
-		return ObjectNew(unsafe.Pointer(c)), nil
-
-	case TYPE_VARIANT:
-		return nil, errors.New("variant conversion not yet implemented")
-
-	default:
-		return nil, errors.New("type conversion not supported")
+	m, ok := gValueMarshalers[fundamental]
+	if !ok {
+		return nil, errors.New("missing marshaler for type")
 	}
+	return m(uintptr(unsafe.Pointer(v.Native())))
 }
 
 // reflectGValue returns a Value but attempts to create one with a
