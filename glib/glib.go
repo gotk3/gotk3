@@ -438,11 +438,23 @@ func GetUserSpecialDir(directory UserDirectory) (string, error) {
 // require GObjects or any subclasses thereof.
 type IObject interface {
 	toGObject() *C.GObject
+	toObject() *Object
 }
 
 // Object is a representation of GLib's GObject.
 type Object struct {
 	GObject *C.GObject
+}
+
+func (v *Object) toGObject() *C.GObject {
+	if v == nil {
+		return nil
+	}
+	return v.Native()
+}
+
+func (v *Object) toObject() *Object {
+	return v
 }
 
 // newObject creates a new Object from a GObject pointer.
@@ -462,13 +474,6 @@ func (v *Object) Native() *C.GObject {
 // IsA is a wrapper around g_type_is_a().
 func (v *Object) IsA(typ Type) bool {
 	return gobool(C.g_type_is_a(C.GType(v.TypeFromInstance()), C.GType(typ)))
-}
-
-func (v *Object) toGObject() *C.GObject {
-	if v == nil {
-		return nil
-	}
-	return v.Native()
 }
 
 // TypeFromInstance is a wrapper around g_type_from_instance().
@@ -1025,10 +1030,7 @@ func marshalPointer(p uintptr) (interface{}, error) {
 
 func marshalObject(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := newObject((*C.GObject)(c))
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*Object).Unref)
-	return obj, nil
+	return newObject((*C.GObject)(c)), nil
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {
@@ -1048,11 +1050,17 @@ func (v *Value) GoValue() (interface{}, error) {
 		return nil, err
 	}
 
-	m, ok := gValueMarshalers[fundamental]
+	f, ok := gValueMarshalers[fundamental]
 	if !ok {
 		return nil, errors.New("missing marshaler for type")
 	}
-	return m(uintptr(unsafe.Pointer(v.Native())))
+	rv, err := f(uintptr(unsafe.Pointer(v.Native())))
+	if obj, ok := rv.(IObject); ok {
+		o := obj.toObject()
+		o.RefSink()
+		runtime.SetFinalizer(o, (*Object).Unref)
+	}
+	return f(uintptr(unsafe.Pointer(v.Native())))
 }
 
 // reflectGValue returns a Value but attempts to create one with a
