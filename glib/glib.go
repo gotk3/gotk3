@@ -1060,7 +1060,7 @@ func (v *Value) GoValue() (interface{}, error) {
 		o.RefSink()
 		runtime.SetFinalizer(o, (*Object).Unref)
 	}
-	return f(uintptr(unsafe.Pointer(v.Native())))
+	return rv, err
 }
 
 // reflectGValue returns a Value but attempts to create one with a
