@@ -910,9 +910,8 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 
 type gValueMarshaler func(uintptr) (interface{}, error)
 
-// gValueMarshalers maintains a map of Glib types to functions
-// to marshal a GValue to a native Go type.  It is used by
-
+// gValueMarshalers is a map of Glib types to functions to marshal a
+// GValue to a native Go type.
 var gValueMarshalers = map[Type]gValueMarshaler{
 	TYPE_INVALID:   marshalInvalid,
 	TYPE_NONE:      marshalNone,
