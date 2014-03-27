@@ -575,8 +575,9 @@ func wrapSurface(surface *C.cairo_surface_t) *Surface {
 // NewSurface creates a gotk3 cairo Surface from a pointer to a
 // C cairo_surface_t.  This is primarily designed for use with other
 // gotk3 packages and should be avoided by applications.
-func NewSurface(s *C.cairo_surface_t, needsRef bool) *Surface {
-	surface := wrapSurface(s)
+func NewSurface(s uintptr, needsRef bool) *Surface {
+	ptr := (*C.cairo_surface_t)(unsafe.Pointer(s))
+	surface := wrapSurface(ptr)
 	if needsRef {
 		surface.reference()
 	}

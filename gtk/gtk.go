@@ -1755,7 +1755,8 @@ func ClipboardGet(atom gdk.Atom) (*Clipboard, error) {
 
 // ClipboardGetForDisplay() is a wrapper around gtk_clipboard_get_for_display().
 func ClipboardGetForDisplay(display *gdk.Display, atom gdk.Atom) (*Clipboard, error) {
-	c := C.gtk_clipboard_get_for_display(display.Native(), atom.Native())
+	displayPtr := (*C.GdkDisplay)(unsafe.Pointer(display.Native()))
+	c := C.gtk_clipboard_get_for_display(displayPtr, atom.Native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -4323,7 +4324,8 @@ func (v *OffscreenWindow) GetSurface() (*cairo.Surface, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	s := cairo.NewSurface(c, true)
+	cairoPtr := (uintptr)(unsafe.Pointer(c))
+	s := cairo.NewSurface(cairoPtr, true)
 	return s, nil
 }
 
