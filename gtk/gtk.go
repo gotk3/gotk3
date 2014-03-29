@@ -3942,11 +3942,19 @@ func ImageNewFromResource(resourcePath string) (*Image, error) {
 	return i, nil
 }
 
-// TODO(jrick) GdkPixbuf
-/*
-func ImageNewFromPixbuf() {
+// ImageNewFromPixbuf is a wrapper around gtk_image_new_from_pixbuf().
+func ImageNewFromPixbuf(pixbuf *gdk.Pixbuf) (*Image, error) {
+	ptr := (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
+	c := C.gtk_image_new_from_pixbuf(ptr)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	i := wrapImage(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return i, nil
 }
-*/
 
 // TODO(jrick) GtkIconSet
 /*
@@ -4044,11 +4052,18 @@ func (v *Image) GetStorageType() ImageType {
 	return ImageType(c)
 }
 
-// TODO(jrick) GdkPixbuf
-/*
-func (v *Image) GetPixbuf() {
+// GetPixbuf() is a wrapper around gtk_image_get_pixbuf().
+func (v *Image) GetPixbuf() *gdk.Pixbuf {
+	c := C.gtk_image_get_pixbuf(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	pb := &gdk.Pixbuf{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return pb
 }
-*/
 
 // TODO(jrick) GtkIconSet
 /*
