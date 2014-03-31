@@ -386,6 +386,12 @@ toGtkFileChooserWidget(void *p)
 	return (GTK_FILE_CHOOSER_WIDGET(p));
 }
 
+static GtkMenuButton *
+toGtkMenuButton(void *p)
+{
+	return (GTK_MENU_BUTTON(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));

@@ -3642,6 +3642,14 @@ type Menu struct {
 	MenuShell
 }
 
+// IMenu is an interface type implemented by all structs embedding
+// a Menu.  It is meant to be used as an argument type for wrapper
+// functions that wrap around a C GTK function taking a
+// GtkMenu.
+type IMenu interface {
+	toMenu() *C.GtkMenu
+}
+
 // Native() returns a pointer to the underlying GtkMenu.
 func (v *Menu) Native() *C.GtkMenu {
 	if v == nil || v.GObject == nil {
@@ -3649,6 +3657,13 @@ func (v *Menu) Native() *C.GtkMenu {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkMenu(p)
+}
+
+func (v *Menu) toMenu() *C.GtkMenu {
+	if v == nil {
+		return nil
+	}
+	return v.Native()
 }
 
 func wrapMenu(obj *glib.Object) *Menu {
@@ -3701,6 +3716,93 @@ func MenuBarNew() (*MenuBar, error) {
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return m, nil
+}
+
+/*
+ * GtkMenuButton
+ */
+
+// MenuButton is a representation of GTK's GtkMenuButton.
+type MenuButton struct {
+	ToggleButton
+}
+
+// Native returns a pointer to the underlying GtkMenuButton.
+func (v *MenuButton) Native() *C.GtkMenuButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkMenuButton(p)
+}
+
+func wrapMenuButton(obj *glib.Object) *MenuButton {
+	return &MenuButton{ToggleButton{Button{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}}
+}
+
+// MenuButtonNew is a wrapper around gtk_menu_button_new().
+func MenuButtonNew() (*MenuButton, error) {
+	c := C.gtk_menu_button_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	m := wrapMenuButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return m, nil
+}
+
+// SetPopup is a wrapper around gtk_menu_button_set_popup().
+func (v *MenuButton) SetPopup(menu IMenu) {
+	wp := (*C.GtkWidget)(unsafe.Pointer(menu.toMenu()))
+	C.gtk_menu_button_set_popup(v.Native(), wp)
+}
+
+// GetPopup is a wrapper around gtk_menu_button_get_popup().
+func (v *MenuButton) GetPopup() *Menu {
+	c := C.gtk_menu_button_get_popup(v.Native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	m := wrapMenu(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return m
+}
+
+// TODO: gtk_menu_button_set_menu_model
+// TODO: gtk_menu_button_get_menu_model
+
+// SetDirection is a wrapper around gtk_menu_button_set_direction().
+func (v *MenuButton) SetDirection(direction ArrowType) {
+	C.gtk_menu_button_set_direction(v.Native(), C.GtkArrowType(direction))
+}
+
+// GetDirection is a wrapper around gtk_menu_button_get_direction().
+func (v *MenuButton) GetDirection() ArrowType {
+	c := C.gtk_menu_button_get_direction(v.Native())
+	return ArrowType(c)
+}
+
+// SetAlignWidget is a wrapper around gtk_menu_button_set_align_widget().
+func (v *MenuButton) SetAlignWidget(alignWidget IWidget) {
+	C.gtk_menu_button_set_align_widget(v.Native(), alignWidget.toWidget())
+}
+
+// GetAlignWidget is a wrapper around gtk_menu_button_get_align_widget().
+func (v *MenuButton) GetAlignWidget() *Widget {
+	c := C.gtk_menu_button_get_align_widget(v.Native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w
 }
 
 /*
@@ -6763,6 +6865,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapMenu(obj)
 	case "GtkMenuBar":
 		g = wrapMenuBar(obj)
+	case "GtkMenuButton":
+		g = wrapMenuButton(obj)
 	case "GtkMenuItem":
 		g = wrapMenuItem(obj)
 	case "GtkMenuShell":
