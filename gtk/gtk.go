@@ -3648,6 +3648,7 @@ type Menu struct {
 // GtkMenu.
 type IMenu interface {
 	toMenu() *C.GtkMenu
+	toWidget() *C.GtkWidget
 }
 
 // Native() returns a pointer to the underlying GtkMenu.
@@ -3756,8 +3757,7 @@ func MenuButtonNew() (*MenuButton, error) {
 
 // SetPopup is a wrapper around gtk_menu_button_set_popup().
 func (v *MenuButton) SetPopup(menu IMenu) {
-	wp := (*C.GtkWidget)(unsafe.Pointer(menu.toMenu()))
-	C.gtk_menu_button_set_popup(v.Native(), wp)
+	C.gtk_menu_button_set_popup(v.Native(), menu.toWidget())
 }
 
 // GetPopup is a wrapper around gtk_menu_button_get_popup().
@@ -3820,6 +3820,7 @@ type MenuItem struct {
 // GtkMenuItem.
 type IMenuItem interface {
 	toMenuItem() *C.GtkMenuItem
+	toWidget() *C.GtkWidget
 }
 
 // Native() returns a pointer to the underlying GtkMenuItem.
@@ -3915,8 +3916,7 @@ func wrapMenuShell(obj *glib.Object) *MenuShell {
 
 // Append is a wrapper around gtk_menu_shell_append().
 func (v *MenuShell) Append(child IMenuItem) {
-	wp := (*C.GtkWidget)(unsafe.Pointer(child.toMenuItem()))
-	C.gtk_menu_shell_append(v.Native(), wp)
+	C.gtk_menu_shell_append(v.Native(), child.toWidget())
 }
 
 /*
