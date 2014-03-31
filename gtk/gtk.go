@@ -3814,6 +3814,14 @@ type MenuItem struct {
 	Bin
 }
 
+// IMenuItem is an interface type implemented by all structs
+// embedding a MenuItem.  It is meant to be used as an argument type
+// for wrapper functions that wrap around a C GTK function taking a
+// GtkMenuItem.
+type IMenuItem interface {
+	toMenuItem() *C.GtkMenuItem
+}
+
 // Native() returns a pointer to the underlying GtkMenuItem.
 func (v *MenuItem) Native() *C.GtkMenuItem {
 	if v == nil || v.GObject == nil {
@@ -3821,6 +3829,13 @@ func (v *MenuItem) Native() *C.GtkMenuItem {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkMenuItem(p)
+}
+
+func (v *MenuItem) toMenuItem() *C.GtkMenuItem {
+	if v == nil {
+		return nil
+	}
+	return v.Native()
 }
 
 func wrapMenuItem(obj *glib.Object) *MenuItem {
@@ -3885,7 +3900,7 @@ type MenuShell struct {
 	Container
 }
 
-// Native() returns a pointer to the underlying GtkMenuShell.
+// Native returns a pointer to the underlying GtkMenuShell.
 func (v *MenuShell) Native() *C.GtkMenuShell {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -3898,9 +3913,10 @@ func wrapMenuShell(obj *glib.Object) *MenuShell {
 	return &MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
-// Append() is a wrapper around gtk_menu_shell_append().
-func (v *MenuShell) Append(child IWidget) {
-	C.gtk_menu_shell_append(v.Native(), child.toWidget())
+// Append is a wrapper around gtk_menu_shell_append().
+func (v *MenuShell) Append(child IMenuItem) {
+	wp := (*C.GtkWidget)(unsafe.Pointer(child.toMenuItem()))
+	C.gtk_menu_shell_append(v.Native(), wp)
 }
 
 /*
