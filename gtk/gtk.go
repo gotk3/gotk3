@@ -4556,6 +4556,145 @@ func (v *ProgressBar) SetText(text string) {
 }
 
 /*
+ * GtkRadioButton
+ */
+
+// RadioButton is a representation of GTK's GtkRadioButton.
+type RadioButton struct {
+	CheckButton
+}
+
+// Native returns a pointer to the underlying GtkRadioButton.
+func (v *RadioButton) Native() *C.GtkRadioButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkRadioButton(p)
+}
+
+func wrapRadioButton(obj *glib.Object) *RadioButton {
+	return &RadioButton{CheckButton{ToggleButton{Button{Bin{Container{
+		Widget{glib.InitiallyUnowned{obj}}}}}}}}
+}
+
+// RadioButtonNew is a wrapper around gtk_radio_button_new().
+func RadioButtonNew(group *glib.SList) (*RadioButton, error) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	c := C.gtk_radio_button_new(gslist)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioButtonNewFromWidget is a wrapper around
+// gtk_radio_button_new_from_widget().
+func RadioButtonNewFromWidget(radioGroupMember *RadioButton) (*RadioButton, error) {
+	c := C.gtk_radio_button_new_from_widget(radioGroupMember.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioButtonNewWithLabel is a wrapper around
+// gtk_radio_button_new_with_label().
+func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, error) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_button_new_with_label(gslist, (*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioButtonNewWithLabelFromWidget is a wrapper around
+// gtk_radio_button_new_with_label_from_widget().
+func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label string) (*RadioButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_button_new_with_label_from_widget(radioGroupMember.Native(),
+		(*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioButtonNewWithMnemonic is a wrapper around
+// gtk_radio_button_new_with_mnemonic()
+func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, error) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_button_new_with_mnemonic(gslist, (*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioButtonNewWithMnemonicFromWidget is a wrapper around
+// gtk_radio_button_new_with_mnemonic_from_widget().
+func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label string) (*RadioButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_button_new_with_mnemonic_from_widget(radioGroupMember.Native(),
+		(*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// SetGroup is a wrapper around gtk_radio_button_set_group().
+func (v *RadioButton) SetGroup(group *glib.SList) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	C.gtk_radio_button_set_group(v.Native(), gslist)
+}
+
+// GetGroup is a wrapper around gtk_radio_button_set_group().
+func (v *RadioButton) GetGroup() (*glib.SList, error) {
+	c := C.gtk_radio_button_get_group(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return (*glib.SList)(unsafe.Pointer(c)), nil
+}
+
+// JoinGroup is a wrapper around gtk_radio_button_join_group().
+func (v *RadioButton) JoinGroup(groupSource *RadioButton) {
+	C.gtk_radio_button_join_group(v.Native(), groupSource.Native())
+}
+
+/*
  * GtkRange
  */
 

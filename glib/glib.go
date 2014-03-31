@@ -705,6 +705,16 @@ type InitiallyUnowned struct {
 }
 
 /*
+ * GSList
+ */
+
+// SList is a representation of Glib's GSList.
+type SList struct {
+	Data uintptr
+	Next *SList
+}
+
+/*
  * GValue
  */
 

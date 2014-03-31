@@ -392,6 +392,12 @@ toGtkMenuButton(void *p)
 	return (GTK_MENU_BUTTON(p));
 }
 
+static GtkRadioButton *
+toGtkRadioButton(void *p)
+{
+	return (GTK_RADIO_BUTTON(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
