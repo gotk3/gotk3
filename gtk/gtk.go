@@ -109,6 +109,7 @@ func init() {
 		{glib.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
 		{glib.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
 		{glib.Type(C.gtk_check_button_get_type()), marshalCheckButton},
+		{glib.Type(C.gtk_check_menu_item_get_type()), marshalCheckMenuItem},
 		{glib.Type(C.gtk_clipboard_get_type()), marshalClipboard},
 		{glib.Type(C.gtk_combo_box_get_type()), marshalComboBox},
 		{glib.Type(C.gtk_container_get_type()), marshalContainer},
@@ -137,6 +138,7 @@ func init() {
 		{glib.Type(C.gtk_orientable_get_type()), marshalOrientable},
 		{glib.Type(C.gtk_progress_bar_get_type()), marshalProgressBar},
 		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
+		{glib.Type(C.gtk_radio_menu_item_get_type()), marshalRadioMenuItem},
 		{glib.Type(C.gtk_range_get_type()), marshalRange},
 		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
 		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
@@ -2070,6 +2072,117 @@ func CheckButtonNewWithMnemonic(label string) (*CheckButton, error) {
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return cb, nil
+}
+
+/*
+ * GtkCheckMenuItem
+ */
+
+type CheckMenuItem struct {
+	MenuItem
+}
+
+// Native returns a pointer to the underlying GtkCheckMenuItem.
+func (v *CheckMenuItem) Native() *C.GtkCheckMenuItem {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCheckMenuItem(p)
+}
+
+func marshalCheckMenuItem(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCheckMenuItem(obj), nil
+}
+
+func wrapCheckMenuItem(obj *glib.Object) *CheckMenuItem {
+	return &CheckMenuItem{MenuItem{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}
+}
+
+// CheckMenuItemNew is a wrapper around gtk_check_menu_item_new().
+func CheckMenuItemNew() (*CheckMenuItem, error) {
+	c := C.gtk_check_menu_item_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	cm := wrapCheckMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return cm, nil
+}
+
+// CheckMenuItemNewWithLabel is a wrapper around
+// gtk_check_menu_item_new_with_label().
+func CheckMenuItemNewWithLabel(label string) (*CheckMenuItem, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_check_menu_item_new_with_label((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	cm := wrapCheckMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return cm, nil
+}
+
+// CheckMenuItemNewWithMnemonic is a wrapper around
+// gtk_check_menu_item_new_with_mnemonic().
+func CheckMenuItemNewWithMnemonic(label string) (*CheckMenuItem, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_check_menu_item_new_with_mnemonic((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	cm := wrapCheckMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return cm, nil
+}
+
+// GetActive is a wrapper around gtk_check_menu_item_get_active().
+func (v *CheckMenuItem) GetActive() bool {
+	c := C.gtk_check_menu_item_get_active(v.Native())
+	return gobool(c)
+}
+
+// SetActive is a wrapper around gtk_check_menu_item_set_active().
+func (v *CheckMenuItem) SetActive(isActive bool) {
+	C.gtk_check_menu_item_set_active(v.Native(), gbool(isActive))
+}
+
+// Toggled is a wrapper around gtk_check_menu_item_toggled().
+func (v *CheckMenuItem) Toggled() {
+	C.gtk_check_menu_item_toggled(v.Native())
+}
+
+// GetInconsistent is a wrapper around gtk_check_menu_item_get_inconsistent().
+func (v *CheckMenuItem) GetInconsistent() bool {
+	c := C.gtk_check_menu_item_get_inconsistent(v.Native())
+	return gobool(c)
+}
+
+// SetInconsistent is a wrapper around gtk_check_menu_item_set_inconsistent().
+func (v *CheckMenuItem) SetInconsistent(setting bool) {
+	C.gtk_check_menu_item_set_inconsistent(v.Native(), gbool(setting))
+}
+
+// SetDrawAsRadio is a wrapper around gtk_check_menu_item_set_draw_as_radio().
+func (v *CheckMenuItem) SetDrawAsRadio(drawAsRadio bool) {
+	C.gtk_check_menu_item_set_draw_as_radio(v.Native(), gbool(drawAsRadio))
+}
+
+// GetDrawAsRadio is a wrapper around gtk_check_menu_item_get_draw_as_radio().
+func (v *CheckMenuItem) GetDrawAsRadio() bool {
+	c := C.gtk_check_menu_item_get_draw_as_radio(v.Native())
+	return gobool(c)
 }
 
 /*
@@ -5218,6 +5331,146 @@ func (v *RadioButton) JoinGroup(groupSource *RadioButton) {
 }
 
 /*
+ * GtkRadioMenuItem
+ */
+
+// RadioMenuItem is a representation of GTK's GtkRadioMenuItem.
+type RadioMenuItem struct {
+	CheckMenuItem
+}
+
+// Native returns a pointer to the underlying GtkRadioMenuItem.
+func (v *RadioMenuItem) Native() *C.GtkRadioMenuItem {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkRadioMenuItem(p)
+}
+
+func marshalRadioMenuItem(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapRadioMenuItem(obj), nil
+}
+
+func wrapRadioMenuItem(obj *glib.Object) *RadioMenuItem {
+	return &RadioMenuItem{CheckMenuItem{MenuItem{Bin{Container{
+		Widget{glib.InitiallyUnowned{obj}}}}}}}
+}
+
+// RadioMenuItemNew is a wrapper around gtk_radio_menu_item_new().
+func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	c := C.gtk_radio_menu_item_new(gslist)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioMenuItemNewWithLabel is a wrapper around
+// gtk_radio_menu_item_new_with_label().
+func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem, error) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_menu_item_new_with_label(gslist, (*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioMenuItemNewWithMnemonic is a wrapper around
+// gtk_radio_menu_item_new_with_mnemonic().
+func RadioMenuItemNewWithMnemonic(group *glib.SList, label string) (*RadioMenuItem, error) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_menu_item_new_with_mnemonic(gslist, (*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioMenuItemNewFromWidget is a wrapper around
+// gtk_radio_menu_item_new_from_widget().
+func RadioMenuItemNewFromWidget(group *RadioMenuItem) (*RadioMenuItem, error) {
+	c := C.gtk_radio_menu_item_new_from_widget(group.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioMenuItemNewWithLabelFromWidget is a wrapper around
+// gtk_radio_menu_item_new_with_label_from_widget().
+func RadioMenuItemNewWithLabelFromWidget(group *RadioMenuItem, label string) (*RadioMenuItem, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_menu_item_new_with_label_from_widget(group.Native(),
+		(*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// RadioMenuItemNewWithMnemonicFromWidget is a wrapper around
+// gtk_radio_menu_item_new_with_mnemonic_from_widget().
+func RadioMenuItemNewWithMnemonicFromWidget(group *RadioMenuItem, label string) (*RadioMenuItem, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_radio_menu_item_new_with_mnemonic_from_widget(group.Native(),
+		(*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	r := wrapRadioMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return r, nil
+}
+
+// SetGroup is a wrapper around gtk_radio_menu_item_set_group().
+func (v *RadioMenuItem) SetGroup(group *glib.SList) {
+	gslist := (*C.GSList)(unsafe.Pointer(group))
+	C.gtk_radio_menu_item_set_group(v.Native(), gslist)
+}
+
+// GetGroup is a wrapper around gtk_radio_menu_item_get_group().
+func (v *RadioMenuItem) GetGroup() (*glib.SList, error) {
+	c := C.gtk_radio_menu_item_get_group(v.Native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return (*glib.SList)(unsafe.Pointer(c)), nil
+}
+
+/*
  * GtkRange
  */
 
@@ -7646,6 +7899,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapCellRendererToggle(obj)
 	case "GtkCheckButton":
 		g = wrapCheckButton(obj)
+	case "GtkCheckMenuItem":
+		g = wrapCheckMenuItem(obj)
 	case "GtkClipboard":
 		g = wrapClipboard(obj)
 	case "GtkComboBox":
@@ -7698,6 +7953,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapProgressBar(obj)
 	case "GtkRadioButton":
 		g = wrapRadioButton(obj)
+	case "GtkRadioMenuItem":
+		g = wrapRadioMenuItem(obj)
 	case "GtkRange":
 		g = wrapRange(obj)
 	case "GtkScrollbar":

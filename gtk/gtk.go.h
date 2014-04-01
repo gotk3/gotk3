@@ -398,6 +398,18 @@ toGtkRadioButton(void *p)
 	return (GTK_RADIO_BUTTON(p));
 }
 
+static GtkCheckMenuItem *
+toGtkCheckMenuItem(void *p)
+{
+	return (GTK_CHECK_MENU_ITEM(p));
+}
+
+static GtkRadioMenuItem *
+toGtkRadioMenuItem(void *p)
+{
+	return (GTK_RADIO_MENU_ITEM(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
