@@ -147,13 +147,10 @@ type SignalHandle uint
 // be optionally passed to f.  If f takes less arguments than it is
 // passed from the GLib runtime, the extra arguments are ignored.
 //
-// Currently, the non userdata arguments to f must be a *Object if
-// the callback calls for any GObject.  Trying to use other GObject
-// types will cause a panic when the callback is run.  This is a bug.
-// The type of the optional user data argument in f may be any type
-// that Go can type convert userData[0] as.  Non-GObject types may
-// always be used as their Go equivalent types (for example, *C.gchar
-// as a Go string).
+// Arguments for f must be a matching Go equivalent type for the
+// C callback, or an interface type which the value may be packed in.
+// If the type is not suitable, a runtime panic will occur when the
+// signal is emitted.
 func (v *Object) Connect(detailedSignal string, f interface{}, userData ...interface{}) (SignalHandle, error) {
 	if len(userData) > 1 {
 		return 0, errors.New("userData len must be 0 or 1")
@@ -913,11 +910,29 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 	return nil, errors.New("Type not implemented")
 }
 
-type gValueMarshaler func(uintptr) (interface{}, error)
+// GValueMarshaler is a marshal function to convert a GValue into an
+// appropiate Go type.  The uintptr parameter is a *C.GValue.
+type GValueMarshaler func(uintptr) (interface{}, error)
+
+// TypeMarshaler represents an actual type and it's associated marshaler.
+type TypeMarshaler struct {
+	T Type
+	F GValueMarshaler
+}
+
+// RegisterGValueMarshalers adds marshalers for several types to the
+// internal marshalers map.  Once registered, calling GoValue on any
+// Value witha registered type will return the data returned by the
+// marshaler.
+func RegisterGValueMarshalers(tm []TypeMarshaler) {
+	gValueMarshalers.register(tm)
+}
+
+type marshalMap map[Type]GValueMarshaler
 
 // gValueMarshalers is a map of Glib types to functions to marshal a
 // GValue to a native Go type.
-var gValueMarshalers = map[Type]gValueMarshaler{
+var gValueMarshalers = marshalMap{
 	TYPE_INVALID:   marshalInvalid,
 	TYPE_NONE:      marshalNone,
 	TYPE_INTERFACE: marshalInterface,
@@ -936,8 +951,30 @@ var gValueMarshalers = map[Type]gValueMarshaler{
 	TYPE_DOUBLE:    marshalDouble,
 	TYPE_STRING:    marshalString,
 	TYPE_POINTER:   marshalPointer,
+	TYPE_BOXED:     marshalBoxed,
 	TYPE_OBJECT:    marshalObject,
 	TYPE_VARIANT:   marshalVariant,
+}
+
+func (m marshalMap) register(tm []TypeMarshaler) {
+	for i := range tm {
+		m[tm[i].T] = tm[i].F
+	}
+}
+
+func (m marshalMap) lookup(v *Value) (GValueMarshaler, error) {
+	actual, fundamental, err := v.Type()
+	if err != nil {
+		return nil, err
+	}
+
+	if f, ok := m[actual]; ok {
+		return f, nil
+	}
+	if f, ok := m[fundamental]; ok {
+		return f, nil
+	}
+	return nil, errors.New("missing marshaler for type")
 }
 
 func marshalInvalid(uintptr) (interface{}, error) {
@@ -1022,6 +1059,11 @@ func marshalString(p uintptr) (interface{}, error) {
 	return C.GoString((*C.char)(c)), nil
 }
 
+func marshalBoxed(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return uintptr(unsafe.Pointer(c)), nil
+}
+
 func marshalPointer(p uintptr) (interface{}, error) {
 	c := C.g_value_get_pointer((*C.GValue)(unsafe.Pointer(p)))
 	return unsafe.Pointer(c), nil
@@ -1044,15 +1086,11 @@ func marshalVariant(p uintptr) (interface{}, error) {
 // This function is a wrapper around the many g_value_get_*()
 // functions, depending on the type of the Value.
 func (v *Value) GoValue() (interface{}, error) {
-	_, fundamental, err := v.Type()
+	f, err := gValueMarshalers.lookup(v)
 	if err != nil {
 		return nil, err
 	}
 
-	f, ok := gValueMarshalers[fundamental]
-	if !ok {
-		return nil, errors.New("missing marshaler for type")
-	}
 	rv, err := f(uintptr(unsafe.Pointer(v.Native())))
 	if obj, ok := rv.(IObject); ok {
 		o := obj.toObject()

@@ -20,7 +20,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/conformal/gotk3/glib"
 	"github.com/conformal/gotk3/gtk"
 	"log"
 )
@@ -94,9 +93,7 @@ func windowWidget() *gtk.Widget {
 	// This can be useful when passing in a closure that has already been
 	// generated, but when you still wish to connect the callback with some
 	// variables only visible in this scope.
-	sb.Connect("value-changed", func(obj *glib.Object, pb *gtk.ProgressBar) {
-		sb := &gtk.SpinButton{gtk.Entry{gtk.Widget{
-			glib.InitiallyUnowned{obj}}}}
+	sb.Connect("value-changed", func(sb *gtk.SpinButton, pb *gtk.ProgressBar) {
 		pb.SetFraction(sb.GetValue() / 1)
 	}, pb)
 
@@ -109,11 +106,10 @@ func windowWidget() *gtk.Widget {
 	grid.AttachNextTo(label, sb, gtk.POS_BOTTOM, 2, 1)
 
 	// Some GTK callback functions require arguments, such as the
-	// 'gchar *uri' argument of GtkLabel's "activate-link" signal.  To use
-	// these arguments, pass in a *glib.CallbackContext as an argument, and
-	// access by calling (*glib.CallbackContext).Arg(n) for the nth
-	// argument.
-	label.Connect("activate-link", func(_ *glib.Object, uri string) {
+	// 'gchar *uri' argument of GtkLabel's "activate-link" signal.
+	// These can be used by using the equivalent go type (in this case,
+	// a string) as a closure argument.
+	label.Connect("activate-link", func(_ *gtk.Label, uri string) {
 		fmt.Println("you clicked a link to:", uri)
 	})
 

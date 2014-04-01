@@ -18,15 +18,37 @@
 // later.
 package cairo
 
-// #cgo pkg-config: cairo
+// #cgo pkg-config: cairo cairo-gobject
 // #include <stdlib.h>
 // #include <cairo.h>
+// #include <cairo-gobject.h>
 import "C"
 import (
 	"reflect"
 	"runtime"
 	"unsafe"
+
+	"github.com/conformal/gotk3/glib"
 )
+
+func init() {
+	tm := []glib.TypeMarshaler{
+		// Enums
+		{glib.Type(C.cairo_gobject_antialias_get_type()), marshalAntialias},
+		{glib.Type(C.cairo_gobject_content_get_type()), marshalContent},
+		{glib.Type(C.cairo_gobject_fill_rule_get_type()), marshalFillRule},
+		{glib.Type(C.cairo_gobject_line_cap_get_type()), marshalLineCap},
+		{glib.Type(C.cairo_gobject_line_join_get_type()), marshalLineJoin},
+		{glib.Type(C.cairo_gobject_operator_get_type()), marshalOperator},
+		{glib.Type(C.cairo_gobject_status_get_type()), marshalStatus},
+		{glib.Type(C.cairo_gobject_surface_type_get_type()), marshalSurfaceType},
+
+		// Boxed
+		{glib.Type(C.cairo_gobject_context_get_type()), marshalContext},
+		{glib.Type(C.cairo_gobject_surface_get_type()), marshalSurface},
+	}
+	glib.RegisterGValueMarshalers(tm)
+}
 
 // Type conversions
 
@@ -59,6 +81,11 @@ const (
 	// ANTIALIAS_BEST     Antialias = C.CAIRO_ANTIALIAS_BEST (since 1.12)
 )
 
+func marshalAntialias(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Antialias(c), nil
+}
+
 // Content is a representation of Cairo's cairo_content_t.
 type Content int
 
@@ -68,6 +95,11 @@ const (
 	CONTENT_COLOR_ALPHA Content = C.CAIRO_CONTENT_COLOR_ALPHA
 )
 
+func marshalContent(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Content(c), nil
+}
+
 // FillRule is a representation of Cairo's cairo_fill_rule_t.
 type FillRule int
 
@@ -75,6 +107,11 @@ const (
 	FILL_RULE_WINDING  FillRule = C.CAIRO_FILL_RULE_WINDING
 	FILL_RULE_EVEN_ODD FillRule = C.CAIRO_FILL_RULE_EVEN_ODD
 )
+
+func marshalFillRule(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return FillRule(c), nil
+}
 
 // LineCap is a representation of Cairo's cairo_line_cap_t.
 type LineCap int
@@ -85,6 +122,11 @@ const (
 	LINE_CAP_SQUARE LineCap = C.CAIRO_LINE_CAP_SQUARE
 )
 
+func marshalLineCap(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return LineCap(c), nil
+}
+
 // LineJoin is a representation of Cairo's cairo_line_join_t.
 type LineJoin int
 
@@ -93,6 +135,11 @@ const (
 	LINE_JOIN_ROUND LineJoin = C.CAIRO_LINE_JOIN_ROUND
 	LINE_JOIN_BEVEL LineJoin = C.CAIRO_LINE_JOIN_BEVEL
 )
+
+func marshalLineJoin(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return LineJoin(c), nil
+}
 
 // MimeType is a representation of Cairo's CAIRO_MIME_TYPE_*
 // preprocessor constants.
@@ -141,6 +188,11 @@ const (
 	OPERATOR_HSL_LUMINOSITY Operator = C.CAIRO_OPERATOR_HSL_LUMINOSITY
 )
 
+func marshalOperator(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Operator(c), nil
+}
+
 // Status is a representation of Cairo's cairo_status_t.
 type Status int
 
@@ -185,6 +237,11 @@ const (
 	// STATUS_DEVICE_FINISHED           Status = C.CAIRO_STATUS_DEVICE_FINISHED (since 1.12)
 )
 
+func marshalStatus(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Status(c), nil
+}
+
 // SurfaceType is a representation of Cairo's cairo_surface_type_t.
 type SurfaceType int
 
@@ -216,6 +273,11 @@ const (
 	// SURFACE_TYPE_COGL           SurfaceType = C.CAIRO_SURFACE_TYPE_COGL (since 1.12)
 )
 
+func marshalSurfaceType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SurfaceType(c), nil
+}
+
 /*
  * cairo_t
  */
@@ -231,6 +293,12 @@ func (v *Context) Native() *C.cairo_t {
 		return nil
 	}
 	return v.context
+}
+
+func marshalContext(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	context := (*C.cairo_t)(unsafe.Pointer(c))
+	return wrapContext(context), nil
 }
 
 func wrapContext(context *C.cairo_t) *Context {
@@ -566,6 +634,12 @@ func (v *Surface) Native() *C.cairo_surface_t {
 		return nil
 	}
 	return v.surface
+}
+
+func marshalSurface(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	surface := (*C.cairo_surface_t)(unsafe.Pointer(c))
+	return wrapSurface(surface), nil
 }
 
 func wrapSurface(surface *C.cairo_surface_t) *Surface {

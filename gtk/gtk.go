@@ -58,6 +58,114 @@ import (
 	"unsafe"
 )
 
+func init() {
+	tm := []glib.TypeMarshaler{
+		// Enums
+		{glib.Type(C.gtk_align_get_type()), marshalAlign},
+		{glib.Type(C.gtk_accel_flags_get_type()), marshalAccelFlags},
+		{glib.Type(C.gtk_arrow_placement_get_type()), marshalArrowPlacement},
+		{glib.Type(C.gtk_arrow_type_get_type()), marshalArrowType},
+		{glib.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
+		{glib.Type(C.gtk_buttons_type_get_type()), marshalButtonsType},
+		{glib.Type(C.gtk_calendar_display_options_get_type()), marshalCalendarDisplayOptions},
+		{glib.Type(C.gtk_dialog_flags_get_type()), marshalDialogFlags},
+		{glib.Type(C.gtk_entry_icon_position_get_type()), marshalEntryIconPosition},
+		{glib.Type(C.gtk_file_chooser_action_get_type()), marshalFileChooserAction},
+		{glib.Type(C.gtk_icon_size_get_type()), marshalIconSize},
+		{glib.Type(C.gtk_image_type_get_type()), marshalImageType},
+		{glib.Type(C.gtk_input_hints_get_type()), marshalInputHints},
+		{glib.Type(C.gtk_input_purpose_get_type()), marshalInputPurpose},
+		{glib.Type(C.gtk_justification_get_type()), marshalJustification},
+		{glib.Type(C.gtk_license_get_type()), marshalLicense},
+		{glib.Type(C.gtk_message_type_get_type()), marshalMessageType},
+		{glib.Type(C.gtk_orientation_get_type()), marshalOrientation},
+		{glib.Type(C.gtk_pack_type_get_type()), marshalPackType},
+		{glib.Type(C.gtk_path_type_get_type()), marshalPathType},
+		{glib.Type(C.gtk_policy_type_get_type()), marshalPolicyType},
+		{glib.Type(C.gtk_position_type_get_type()), marshalPositionType},
+		{glib.Type(C.gtk_relief_style_get_type()), marshalReliefStyle},
+		{glib.Type(C.gtk_response_type_get_type()), marshalResponseType},
+		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
+		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
+		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
+		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
+		{glib.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
+		{glib.Type(C.gtk_window_type_get_type()), marshalWindowType},
+		{glib.Type(C.gtk_wrap_mode_get_type()), marshalWrapMode},
+
+		// Objects/Interfaces
+		{glib.Type(C.gtk_about_dialog_get_type()), marshalAboutDialog},
+		{glib.Type(C.gtk_adjustment_get_type()), marshalAdjustment},
+		{glib.Type(C.gtk_alignment_get_type()), marshalAlignment},
+		{glib.Type(C.gtk_arrow_get_type()), marshalArrow},
+		{glib.Type(C.gtk_assistant_get_type()), marshalAssistant},
+		{glib.Type(C.gtk_bin_get_type()), marshalBin},
+		{glib.Type(C.gtk_builder_get_type()), marshalBuilder},
+		{glib.Type(C.gtk_button_get_type()), marshalButton},
+		{glib.Type(C.gtk_box_get_type()), marshalBox},
+		{glib.Type(C.gtk_calendar_get_type()), marshalCalendar},
+		{glib.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},
+		{glib.Type(C.gtk_cell_renderer_get_type()), marshalCellRenderer},
+		{glib.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
+		{glib.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
+		{glib.Type(C.gtk_check_button_get_type()), marshalCheckButton},
+		{glib.Type(C.gtk_clipboard_get_type()), marshalClipboard},
+		{glib.Type(C.gtk_combo_box_get_type()), marshalComboBox},
+		{glib.Type(C.gtk_container_get_type()), marshalContainer},
+		{glib.Type(C.gtk_dialog_get_type()), marshalDialog},
+		{glib.Type(C.gtk_drawing_area_get_type()), marshalDrawingArea},
+		{glib.Type(C.gtk_entry_get_type()), marshalEntry},
+		{glib.Type(C.gtk_entry_buffer_get_type()), marshalEntryBuffer},
+		{glib.Type(C.gtk_entry_completion_get_type()), marshalEntryCompletion},
+		{glib.Type(C.gtk_event_box_get_type()), marshalEventBox},
+		{glib.Type(C.gtk_file_chooser_get_type()), marshalFileChooser},
+		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
+		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
+		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
+		{glib.Type(C.gtk_image_get_type()), marshalImage},
+		{glib.Type(C.gtk_label_get_type()), marshalLabel},
+		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
+		{glib.Type(C.gtk_menu_get_type()), marshalMenu},
+		{glib.Type(C.gtk_menu_bar_get_type()), marshalMenuBar},
+		{glib.Type(C.gtk_menu_button_get_type()), marshalMenuButton},
+		{glib.Type(C.gtk_menu_item_get_type()), marshalMenuItem},
+		{glib.Type(C.gtk_menu_shell_get_type()), marshalMenuShell},
+		{glib.Type(C.gtk_message_dialog_get_type()), marshalMessageDialog},
+		{glib.Type(C.gtk_misc_get_type()), marshalMisc},
+		{glib.Type(C.gtk_notebook_get_type()), marshalNotebook},
+		{glib.Type(C.gtk_offscreen_window_get_type()), marshalOffscreenWindow},
+		{glib.Type(C.gtk_orientable_get_type()), marshalOrientable},
+		{glib.Type(C.gtk_progress_bar_get_type()), marshalProgressBar},
+		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
+		{glib.Type(C.gtk_range_get_type()), marshalRange},
+		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
+		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
+		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
+		{glib.Type(C.gtk_separator_get_type()), marshalSeparator},
+		{glib.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
+		{glib.Type(C.gtk_spin_button_get_type()), marshalSpinButton},
+		{glib.Type(C.gtk_spinner_get_type()), marshalSpinner},
+		{glib.Type(C.gtk_statusbar_get_type()), marshalStatusbar},
+		{glib.Type(C.gtk_switch_get_type()), marshalSwitch},
+		{glib.Type(C.gtk_text_view_get_type()), marshalTextView},
+		{glib.Type(C.gtk_text_tag_table_get_type()), marshalTextTagTable},
+		{glib.Type(C.gtk_text_buffer_get_type()), marshalTextBuffer},
+		{glib.Type(C.gtk_toggle_button_get_type()), marshalToggleButton},
+		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
+		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
+		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
+		{glib.Type(C.gtk_tree_view_column_get_type()), marshalTreeViewColumn},
+		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
+		{glib.Type(C.gtk_window_get_type()), marshalWindow},
+
+		// Boxed
+		{glib.Type(C.gtk_text_iter_get_type()), marshalTextIter},
+		{glib.Type(C.gtk_tree_iter_get_type()), marshalTreeIter},
+		{glib.Type(C.gtk_tree_path_get_type()), marshalTreePath},
+	}
+	glib.RegisterGValueMarshalers(tm)
+}
+
 /*
  * Type conversions
  */
@@ -111,6 +219,11 @@ const (
 	ALIGN_CENTER Align = C.GTK_ALIGN_CENTER
 )
 
+func marshalAlign(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Align(c), nil
+}
+
 // AccelFlags is a representation of GTK's GtkAccelFlags
 type AccelFlags int
 
@@ -120,6 +233,11 @@ const (
 	ACCEL_MASK    AccelFlags = C.GTK_ACCEL_MASK
 )
 
+func marshalAccelFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return AccelFlags(c), nil
+}
+
 // ArrowPlacement is a representation of GTK's GtkArrowPlacement.
 type ArrowPlacement int
 
@@ -128,6 +246,11 @@ const (
 	ARROWS_START ArrowPlacement = C.GTK_ARROWS_START
 	ARROWS_END   ArrowPlacement = C.GTK_ARROWS_END
 )
+
+func marshalArrowPlacement(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ArrowPlacement(c), nil
+}
 
 // ArrowType is a representation of GTK's GtkArrowType.
 type ArrowType int
@@ -139,6 +262,11 @@ const (
 	ARROW_RIGHT ArrowType = C.GTK_ARROW_RIGHT
 	ARROW_NONE  ArrowType = C.GTK_ARROW_NONE
 )
+
+func marshalArrowType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ArrowType(c), nil
+}
 
 // AssistantPageType is a representation of GTK's GtkAssistantPageType.
 type AssistantPageType int
@@ -152,6 +280,11 @@ const (
 	ASSISTANT_PAGE_CUSTOM   AssistantPageType = C.GTK_ASSISTANT_PAGE_CUSTOM
 )
 
+func marshalAssistantPageType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return AssistantPageType(c), nil
+}
+
 // ButtonsType is a representation of GTK's GtkButtonsType.
 type ButtonsType int
 
@@ -164,6 +297,11 @@ const (
 	BUTTONS_OK_CANCEL ButtonsType = C.GTK_BUTTONS_OK_CANCEL
 )
 
+func marshalButtonsType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ButtonsType(c), nil
+}
+
 // CalendarDisplayOptions is a representation of GTK's GtkCalendarDisplayOptions
 type CalendarDisplayOptions int
 
@@ -175,6 +313,11 @@ const (
 	CALENDAR_SHOW_DETAILS      CalendarDisplayOptions = C.GTK_CALENDAR_SHOW_DETAILS
 )
 
+func marshalCalendarDisplayOptions(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return CalendarDisplayOptions(c), nil
+}
+
 // DialogFlags is a representation of GTK's GtkDialogFlags.
 type DialogFlags int
 
@@ -183,6 +326,11 @@ const (
 	DIALOG_DESTROY_WITH_PARENT DialogFlags = C.GTK_DIALOG_DESTROY_WITH_PARENT
 )
 
+func marshalDialogFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return DialogFlags(c), nil
+}
+
 // EntryIconPosition is a representation of GTK's GtkEntryIconPosition.
 type EntryIconPosition int
 
@@ -190,6 +338,11 @@ const (
 	ENTRY_ICON_PRIMARY   EntryIconPosition = C.GTK_ENTRY_ICON_PRIMARY
 	ENTRY_ICON_SECONDARY EntryIconPosition = C.GTK_ENTRY_ICON_SECONDARY
 )
+
+func marshalEntryIconPosition(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return EntryIconPosition(c), nil
+}
 
 // FileChooserAction is a representation of GTK's GtkFileChooserAction.
 type FileChooserAction int
@@ -200,6 +353,11 @@ const (
 	FILE_CHOOSER_ACTION_SELECT_FOLDER FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
 	FILE_CHOOSER_ACTION_CREATE_FOLDER FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER
 )
+
+func marshalFileChooserAction(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return FileChooserAction(c), nil
+}
 
 // IconSize is a representation of GTK's GtkIconSize.
 type IconSize int
@@ -214,6 +372,11 @@ const (
 	ICON_SIZE_DIALOG        IconSize = C.GTK_ICON_SIZE_DIALOG
 )
 
+func marshalIconSize(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return IconSize(c), nil
+}
+
 // ImageType is a representation of GTK's GtkImageType.
 type ImageType int
 
@@ -226,6 +389,11 @@ const (
 	IMAGE_ICON_NAME ImageType = C.GTK_IMAGE_ICON_NAME
 	IMAGE_GICON     ImageType = C.GTK_IMAGE_GICON
 )
+
+func marshalImageType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ImageType(c), nil
+}
 
 // InputHints is a representation of GTK's GtkInputHints.
 type InputHints int
@@ -241,6 +409,11 @@ const (
 	INPUT_HINT_UPPERCASE_SENTENCES InputHints = C.GTK_INPUT_HINT_UPPERCASE_SENTENCES
 	INPUT_HINT_INHIBIT_OSK         InputHints = C.GTK_INPUT_HINT_INHIBIT_OSK
 )
+
+func marshalInputHints(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return InputHints(c), nil
+}
 
 // InputPurpose is a representation of GTK's GtkInputPurpose.
 type InputPurpose int
@@ -258,6 +431,11 @@ const (
 	INPUT_PURPOSE_PIN       InputPurpose = C.GTK_INPUT_PURPOSE_PIN
 )
 
+func marshalInputPurpose(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return InputPurpose(c), nil
+}
+
 // Justify is a representation of GTK's GtkJustification.
 type Justification int
 
@@ -267,6 +445,11 @@ const (
 	JUSTIFY_CENTER Justification = C.GTK_JUSTIFY_CENTER
 	JUSTIFY_FILL   Justification = C.GTK_JUSTIFY_FILL
 )
+
+func marshalJustification(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Justification(c), nil
+}
 
 // License is a representation of GTK's GtkLicense.
 type License int
@@ -283,6 +466,11 @@ const (
 	LICENSE_GTK_ARTISTIC License = C.GTK_LICENSE_ARTISTIC
 )
 
+func marshalLicense(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return License(c), nil
+}
+
 // MessageType is a representation of GTK's GtkMessageType.
 type MessageType int
 
@@ -294,6 +482,11 @@ const (
 	MESSAGE_OTHER    MessageType = C.GTK_MESSAGE_OTHER
 )
 
+func marshalMessageType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return MessageType(c), nil
+}
+
 // Orientation is a representation of GTK's GtkOrientation.
 type Orientation int
 
@@ -302,6 +495,11 @@ const (
 	ORIENTATION_VERTICAL   Orientation = C.GTK_ORIENTATION_VERTICAL
 )
 
+func marshalOrientation(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Orientation(c), nil
+}
+
 // PackType is a representation of GTK's GtkPackType.
 type PackType int
 
@@ -309,6 +507,11 @@ const (
 	PACK_START PackType = C.GTK_PACK_START
 	PACK_END   PackType = C.GTK_PACK_END
 )
+
+func marshalPackType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PackType(c), nil
+}
 
 // PathType is a representation of GTK's GtkPathType.
 type PathType int
@@ -319,6 +522,11 @@ const (
 	PATH_CLASS        PathType = C.GTK_PATH_CLASS
 )
 
+func marshalPathType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PathType(c), nil
+}
+
 // PolicyType is a representation of GTK's GtkPolicyType.
 type PolicyType int
 
@@ -327,6 +535,11 @@ const (
 	POLICY_AUTOMATIC PolicyType = C.GTK_POLICY_AUTOMATIC
 	POLICY_NEVER     PolicyType = C.GTK_POLICY_NEVER
 )
+
+func marshalPolicyType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PolicyType(c), nil
+}
 
 // PositionType is a representation of GTK's GtkPositionType.
 type PositionType int
@@ -338,6 +551,11 @@ const (
 	POS_BOTTOM PositionType = C.GTK_POS_BOTTOM
 )
 
+func marshalPositionType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PositionType(c), nil
+}
+
 // ReliefStyle is a representation of GTK's GtkReliefStyle.
 type ReliefStyle int
 
@@ -346,6 +564,11 @@ const (
 	RELIEF_HALF   ReliefStyle = C.GTK_RELIEF_HALF
 	RELIEF_NONE   ReliefStyle = C.GTK_RELIEF_NONE
 )
+
+func marshalReliefStyle(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ReliefStyle(c), nil
+}
 
 // ResponseType is a representation of GTK's GtkResponseType.
 type ResponseType int
@@ -364,6 +587,11 @@ const (
 	RESPONSE_HELP         ResponseType = C.GTK_RESPONSE_HELP
 )
 
+func marshalResponseType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ResponseType(c), nil
+}
+
 // SelectionMode is a representation of GTK's GtkSelectionMode.
 type SelectionMode int
 
@@ -373,6 +601,27 @@ const (
 	SELECTION_BROWSE   SelectionMode = C.GTK_SELECTION_BROWSE
 	SELECTION_MULTIPLE SelectionMode = C.GTK_SELECTION_MULTIPLE
 )
+
+func marshalSelectionMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SelectionMode(c), nil
+}
+
+// ShadowType is a representation of GTK's GtkShadowType.
+type ShadowType int
+
+const (
+	SHADOW_NONE       ShadowType = C.GTK_SHADOW_NONE
+	SHADOW_IN         ShadowType = C.GTK_SHADOW_IN
+	SHADOW_OUT        ShadowType = C.GTK_SHADOW_OUT
+	SHADOW_ETCHED_IN  ShadowType = C.GTK_SHADOW_ETCHED_IN
+	SHADOW_ETCHED_OUT ShadowType = C.GTK_SHADOW_ETCHED_OUT
+)
+
+func marshalShadowType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ShadowType(c), nil
+}
 
 // StateFlags is a representation of GTK's GtkStateFlags.
 type StateFlags int
@@ -388,16 +637,10 @@ const (
 	STATE_FLAG_BACKDROP     StateFlags = C.GTK_STATE_FLAG_BACKDROP
 )
 
-// ShadowType is a representation of GTK's GtkShadowType.
-type ShadowType int
-
-const (
-	SHADOW_NONE       ShadowType = C.GTK_SHADOW_NONE
-	SHADOW_IN         ShadowType = C.GTK_SHADOW_IN
-	SHADOW_OUT        ShadowType = C.GTK_SHADOW_OUT
-	SHADOW_ETCHED_IN  ShadowType = C.GTK_SHADOW_ETCHED_IN
-	SHADOW_ETCHED_OUT ShadowType = C.GTK_SHADOW_ETCHED_OUT
-)
+func marshalStateFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return StateFlags(c), nil
+}
 
 // TreeModelFlags is a representation of GTK's GtkTreeModelFlags.
 type TreeModelFlags int
@@ -406,6 +649,11 @@ const (
 	TREE_MODEL_ITERS_PERSIST TreeModelFlags = C.GTK_TREE_MODEL_ITERS_PERSIST
 	TREE_MODEL_LIST_ONLY     TreeModelFlags = C.GTK_TREE_MODEL_LIST_ONLY
 )
+
+func marshalTreeModelFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TreeModelFlags(c), nil
+}
 
 // WindowPosition is a representation of GTK's GtkWindowPosition.
 type WindowPosition int
@@ -418,6 +666,11 @@ const (
 	WIN_POS_CENTER_ON_PARENT WindowPosition = C.GTK_WIN_POS_CENTER_ON_PARENT
 )
 
+func marshalWindowPosition(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return WindowPosition(c), nil
+}
+
 // WindowType is a representation of GTK's GtkWindowType.
 type WindowType int
 
@@ -425,6 +678,11 @@ const (
 	WINDOW_TOPLEVEL WindowType = C.GTK_WINDOW_TOPLEVEL
 	WINDOW_POPUP    WindowType = C.GTK_WINDOW_POPUP
 )
+
+func marshalWindowType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return WindowType(c), nil
+}
 
 // WrapMode is a representation of GTK's GtkWrapMode.
 type WrapMode int
@@ -435,6 +693,11 @@ const (
 	WRAP_WORD      WrapMode = C.GTK_WRAP_WORD
 	WRAP_WORD_CHAR WrapMode = C.GTK_WRAP_WORD_CHAR
 )
+
+func marshalWrapMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return WrapMode(c), nil
+}
 
 /*
  * Init and main event loop
@@ -498,6 +761,12 @@ func (v *AboutDialog) Native() *C.GtkAboutDialog {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkAboutDialog(p)
+}
+
+func marshalAboutDialog(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapAboutDialog(obj), nil
 }
 
 func wrapAboutDialog(obj *glib.Object) *AboutDialog {
@@ -673,8 +942,122 @@ func (v *Adjustment) Native() *C.GtkAdjustment {
 	return C.toGtkAdjustment(p)
 }
 
+func marshalAdjustment(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapAdjustment(obj), nil
+}
+
 func wrapAdjustment(obj *glib.Object) *Adjustment {
 	return &Adjustment{glib.InitiallyUnowned{obj}}
+}
+
+/*
+ * GtkAlignment
+ */
+
+type Alignment struct {
+	Bin
+}
+
+// Native returns a pointer to the underlying GtkAlignment.
+func (v *Alignment) Native() *C.GtkAlignment {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkAlignment(p)
+}
+
+func marshalAlignment(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapAlignment(obj), nil
+}
+
+func wrapAlignment(obj *glib.Object) *Alignment {
+	return &Alignment{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// AlignmentNew is a wrapper around gtk_alignment_new().
+func AlignmentNew(xalign, yalign, xscale, yscale float32) (*Alignment, error) {
+	c := C.gtk_alignment_new(C.gfloat(xalign), C.gfloat(yalign), C.gfloat(xscale),
+		C.gfloat(yscale))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAlignment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
+}
+
+// Set is a wrapper around gtk_alignment_set().
+func (v *Alignment) Set(xalign, yalign, xscale, yscale float32) {
+	C.gtk_alignment_set(v.Native(), C.gfloat(xalign), C.gfloat(yalign),
+		C.gfloat(xscale), C.gfloat(yscale))
+}
+
+// GetPadding is a wrapper around gtk_alignment_get_padding().
+func (v *Alignment) GetPadding() (top, bottom, left, right uint) {
+	var ctop, cbottom, cleft, cright C.guint
+	C.gtk_alignment_get_padding(v.Native(), &ctop, &cbottom, &cleft,
+		&cright)
+	return uint(ctop), uint(cbottom), uint(cleft), uint(cright)
+}
+
+// SetPadding is a wrapper around gtk_alignment_set_padding().
+func (v *Alignment) SetPadding(top, bottom, left, right uint) {
+	C.gtk_alignment_set_padding(v.Native(), C.guint(top), C.guint(bottom),
+		C.guint(left), C.guint(right))
+}
+
+/*
+ * GtkArrow
+ */
+
+// Arrow is a representation of GTK's GtkArrow.
+type Arrow struct {
+	Misc
+}
+
+// Native returns a pointer to the underlying GtkButton.
+func (v *Arrow) Native() *C.GtkArrow {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkArrow(p)
+}
+
+func marshalArrow(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapArrow(obj), nil
+}
+
+func wrapArrow(obj *glib.Object) *Arrow {
+	return &Arrow{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// ArrowNew is a wrapper around gtk_arrow_new().
+func ArrowNew(arrowType ArrowType, shadowType ShadowType) (*Arrow, error) {
+	c := C.gtk_arrow_new(C.GtkArrowType(arrowType),
+		C.GtkShadowType(shadowType))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapArrow(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
+}
+
+// Set is a wrapper around gtk_arrow_set().
+func (v *Arrow) Set(arrowType ArrowType, shadowType ShadowType) {
+	C.gtk_arrow_set(v.Native(), C.GtkArrowType(arrowType), C.GtkShadowType(shadowType))
 }
 
 /*
@@ -693,6 +1076,12 @@ func (v *Assistant) Native() *C.GtkAssistant {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkAssistant(p)
+}
+
+func marshalAssistant(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapAssistant(obj), nil
 }
 
 func wrapAssistant(obj *glib.Object) *Assistant {
@@ -854,6 +1243,12 @@ func (v *Bin) Native() *C.GtkBin {
 	return C.toGtkBin(p)
 }
 
+func marshalBin(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapBin(obj), nil
+}
+
 func wrapBin(obj *glib.Object) *Bin {
 	return &Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
@@ -887,6 +1282,12 @@ func (b *Builder) Native() *C.GtkBuilder {
 	}
 	p := unsafe.Pointer(b.GObject)
 	return C.toGtkBuilder(p)
+}
+
+func marshalBuilder(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Builder{obj}, nil
 }
 
 // BuilderNew is a wrapper around gtk_builder_new().
@@ -972,101 +1373,6 @@ func (b *Builder) GetObject(name string) (glib.IObject, error) {
 }
 
 /*
- * GtkAlignment
- */
-
-type Alignment struct {
-	Bin
-}
-
-// Native returns a pointer to the underlying GtkAlignment.
-func (v *Alignment) Native() *C.GtkAlignment {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkAlignment(p)
-}
-
-func wrapAlignment(obj *glib.Object) *Alignment {
-	return &Alignment{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
-}
-
-// AlignmentNew is a wrapper around gtk_alignment_new().
-func AlignmentNew(xalign, yalign, xscale, yscale float32) (*Alignment, error) {
-	c := C.gtk_alignment_new(C.gfloat(xalign), C.gfloat(yalign), C.gfloat(xscale),
-		C.gfloat(yscale))
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	a := wrapAlignment(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return a, nil
-}
-
-// Set is a wrapper around gtk_alignment_set().
-func (v *Alignment) Set(xalign, yalign, xscale, yscale float32) {
-	C.gtk_alignment_set(v.Native(), C.gfloat(xalign), C.gfloat(yalign),
-		C.gfloat(xscale), C.gfloat(yscale))
-}
-
-// GetPadding is a wrapper around gtk_alignment_get_padding().
-func (v *Alignment) GetPadding() (top, bottom, left, right uint) {
-	var ctop, cbottom, cleft, cright C.guint
-	C.gtk_alignment_get_padding(v.Native(), &ctop, &cbottom, &cleft,
-		&cright)
-	return uint(ctop), uint(cbottom), uint(cleft), uint(cright)
-}
-
-// SetPadding is a wrapper around gtk_alignment_set_padding().
-func (v *Alignment) SetPadding(top, bottom, left, right uint) {
-	C.gtk_alignment_set_padding(v.Native(), C.guint(top), C.guint(bottom),
-		C.guint(left), C.guint(right))
-}
-
-/*
- * GtkArrow
- */
-// Arrow is a representation of GTK's GtkArrow.
-type Arrow struct {
-	Misc
-}
-
-// Native returns a pointer to the underlying GtkButton.
-func (v *Arrow) Native() *C.GtkArrow {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkArrow(p)
-}
-
-func wrapArrow(obj *glib.Object) *Arrow {
-	return &Arrow{Misc{Widget{glib.InitiallyUnowned{obj}}}}
-}
-
-// ArrowNew is a wrapper around gtk_arrow_new().
-func ArrowNew(arrowType ArrowType, shadowType ShadowType) (*Arrow, error) {
-	c := C.gtk_arrow_new(C.GtkArrowType(arrowType),
-		C.GtkShadowType(shadowType))
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	a := wrapArrow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return a, nil
-}
-
-// Set is a wrapper around gtk_arrow_set().
-func (v *Arrow) Set(arrowType ArrowType, shadowType ShadowType) {
-	C.gtk_arrow_set(v.Native(), C.GtkArrowType(arrowType), C.GtkShadowType(shadowType))
-}
-
-/*
  * GtkButton
  */
 
@@ -1082,6 +1388,12 @@ func (v *Button) Native() *C.GtkButton {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkButton(p)
+}
+
+func marshalButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapButton(obj), nil
 }
 
 func wrapButton(obj *glib.Object) *Button {
@@ -1269,6 +1581,12 @@ func (v *Box) Native() *C.GtkBox {
 	return C.toGtkBox(p)
 }
 
+func marshalBox(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapBox(obj), nil
+}
+
 func wrapBox(obj *glib.Object) *Box {
 	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
@@ -1358,6 +1676,12 @@ func (v *Calendar) Native() *C.GtkCalendar {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkCalendar(p)
+}
+
+func marshalCalendar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCalendar(obj), nil
 }
 
 func wrapCalendar(obj *glib.Object) *Calendar {
@@ -1477,6 +1801,12 @@ func (v *CellLayout) Native() *C.GtkCellLayout {
 	return C.toGtkCellLayout(p)
 }
 
+func marshalCellLayout(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCellLayout(obj), nil
+}
+
 func wrapCellLayout(obj *glib.Object) *CellLayout {
 	return &CellLayout{obj}
 }
@@ -1535,6 +1865,12 @@ func (v *CellRenderer) toCellRenderer() *C.GtkCellRenderer {
 	return v.Native()
 }
 
+func marshalCellRenderer(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCellRenderer(obj), nil
+}
+
 func wrapCellRenderer(obj *glib.Object) *CellRenderer {
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
 }
@@ -1555,6 +1891,12 @@ func (v *CellRendererText) Native() *C.GtkCellRendererText {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkCellRendererText(p)
+}
+
+func marshalCellRendererText(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCellRendererText(obj), nil
 }
 
 func wrapCellRendererText(obj *glib.Object) *CellRendererText {
@@ -1597,6 +1939,12 @@ func (v *CellRendererToggle) toCellRenderer() *C.GtkCellRenderer {
 		return nil
 	}
 	return v.CellRenderer.Native()
+}
+
+func marshalCellRendererToggle(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCellRendererToggle(obj), nil
 }
 
 func wrapCellRendererToggle(obj *glib.Object) *CellRendererToggle {
@@ -1668,6 +2016,12 @@ func (v *CheckButton) Native() *C.GtkCheckButton {
 	return C.toGtkCheckButton(p)
 }
 
+func marshalCheckButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCheckButton(obj), nil
+}
+
 func wrapCheckButton(obj *glib.Object) *CheckButton {
 	return &CheckButton{ToggleButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}}
@@ -1736,6 +2090,12 @@ func (v *Clipboard) Native() *C.GtkClipboard {
 	return C.toGtkClipboard(p)
 }
 
+func marshalClipboard(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapClipboard(obj), nil
+}
+
 func wrapClipboard(obj *glib.Object) *Clipboard {
 	return &Clipboard{obj}
 }
@@ -1801,6 +2161,12 @@ func (v *ComboBox) toCellLayout() *C.GtkCellLayout {
 		return nil
 	}
 	return C.toGtkCellLayout(unsafe.Pointer(v.GObject))
+}
+
+func marshalComboBox(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapComboBox(obj), nil
 }
 
 func wrapComboBox(obj *glib.Object) *ComboBox {
@@ -1876,6 +2242,12 @@ func (v *Container) Native() *C.GtkContainer {
 	return C.toGtkContainer(p)
 }
 
+func marshalContainer(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapContainer(obj), nil
+}
+
 func wrapContainer(obj *glib.Object) *Container {
 	return &Container{Widget{glib.InitiallyUnowned{obj}}}
 }
@@ -1906,6 +2278,12 @@ func (v *Dialog) Native() *C.GtkDialog {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkDialog(p)
+}
+
+func marshalDialog(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapDialog(obj), nil
 }
 
 func wrapDialog(obj *glib.Object) *Dialog {
@@ -2034,6 +2412,7 @@ func SetAlternativeButtonOrder(ids ...ResponseType) {
 /*
  * GtkDrawingArea
  */
+
 // DrawingArea is a representation of GTK's GtkDrawingArea.
 type DrawingArea struct {
 	Widget
@@ -2046,6 +2425,12 @@ func (v *DrawingArea) Native() *C.GtkDrawingArea {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkDrawingArea(p)
+}
+
+func marshalDrawingArea(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapDrawingArea(obj), nil
 }
 
 func wrapDrawingArea(obj *glib.Object) *DrawingArea {
@@ -2089,6 +2474,12 @@ func (v *Entry) Native() *C.GtkEntry {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkEntry(p)
+}
+
+func marshalEntry(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapEntry(obj), nil
 }
 
 func wrapEntry(obj *glib.Object) *Entry {
@@ -2574,6 +2965,12 @@ func (v *EntryBuffer) Native() *C.GtkEntryBuffer {
 	return C.toGtkEntryBuffer(p)
 }
 
+func marshalEntryBuffer(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapEntryBuffer(obj), nil
+}
+
 func wrapEntryBuffer(obj *glib.Object) *EntryBuffer {
 	return &EntryBuffer{obj}
 }
@@ -2683,6 +3080,12 @@ func (v *EntryCompletion) Native() *C.GtkEntryCompletion {
 	return C.toGtkEntryCompletion(p)
 }
 
+func marshalEntryCompletion(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapEntryCompletion(obj), nil
+}
+
 func wrapEntryCompletion(obj *glib.Object) *EntryCompletion {
 	return &EntryCompletion{obj}
 }
@@ -2703,6 +3106,12 @@ func (v *EventBox) Native() *C.GtkEventBox {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkEventBox(p)
+}
+
+func marshalEventBox(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapEventBox(obj), nil
 }
 
 func wrapEventBox(obj *glib.Object) *EventBox {
@@ -2762,6 +3171,12 @@ func (v *FileChooser) Native() *C.GtkFileChooser {
 	return C.toGtkFileChooser(p)
 }
 
+func marshalFileChooser(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapFileChooser(obj), nil
+}
+
 func wrapFileChooser(obj *glib.Object) *FileChooser {
 	return &FileChooser{obj}
 }
@@ -2793,6 +3208,12 @@ func (v *FileChooserWidget) Native() *C.GtkFileChooserWidget {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkFileChooserWidget(p)
+}
+
+func marshalFileChooserWidget(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapFileChooserWidget(obj), nil
 }
 
 func wrapFileChooserWidget(obj *glib.Object) *FileChooserWidget {
@@ -2829,6 +3250,12 @@ func (v *Frame) Native() *C.GtkFrame {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkFrame(p)
+}
+
+func marshalFrame(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapFrame(obj), nil
 }
 
 func wrapFrame(obj *glib.Object) *Frame {
@@ -2931,6 +3358,12 @@ func (v *Grid) toOrientable() *C.GtkOrientable {
 		return nil
 	}
 	return C.toGtkOrientable(unsafe.Pointer(v.GObject))
+}
+
+func marshalGrid(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapGrid(obj), nil
 }
 
 func wrapGrid(obj *glib.Object) *Grid {
@@ -3053,6 +3486,12 @@ func (v *Image) Native() *C.GtkImage {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkImage(p)
+}
+
+func marshalImage(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapImage(obj), nil
 }
 
 func wrapImage(obj *glib.Object) *Image {
@@ -3258,6 +3697,12 @@ func (v *Label) Native() *C.GtkLabel {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkLabel(p)
+}
+
+func marshalLabel(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapLabel(obj), nil
 }
 
 func wrapLabel(obj *glib.Object) *Label {
@@ -3489,6 +3934,12 @@ func (v *ListStore) Native() *C.GtkListStore {
 	return C.toGtkListStore(p)
 }
 
+func marshalListStore(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapListStore(obj), nil
+}
+
 func wrapListStore(obj *glib.Object) *ListStore {
 	tm := wrapTreeModel(obj)
 	return &ListStore{obj, *tm}
@@ -3667,6 +4118,12 @@ func (v *Menu) toMenu() *C.GtkMenu {
 	return v.Native()
 }
 
+func marshalMenu(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMenu(obj), nil
+}
+
 func wrapMenu(obj *glib.Object) *Menu {
 	return &Menu{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
@@ -3702,6 +4159,12 @@ func (v *MenuBar) Native() *C.GtkMenuBar {
 	return C.toGtkMenuBar(p)
 }
 
+func marshalMenuBar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMenuBar(obj), nil
+}
+
 func wrapMenuBar(obj *glib.Object) *MenuBar {
 	return &MenuBar{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
@@ -3735,6 +4198,12 @@ func (v *MenuButton) Native() *C.GtkMenuButton {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkMenuButton(p)
+}
+
+func marshalMenuButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMenuButton(obj), nil
 }
 
 func wrapMenuButton(obj *glib.Object) *MenuButton {
@@ -3839,6 +4308,12 @@ func (v *MenuItem) toMenuItem() *C.GtkMenuItem {
 	return v.Native()
 }
 
+func marshalMenuItem(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMenuItem(obj), nil
+}
+
 func wrapMenuItem(obj *glib.Object) *MenuItem {
 	return &MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
@@ -3910,6 +4385,12 @@ func (v *MenuShell) Native() *C.GtkMenuShell {
 	return C.toGtkMenuShell(p)
 }
 
+func marshalMenuShell(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMenuShell(obj), nil
+}
+
 func wrapMenuShell(obj *glib.Object) *MenuShell {
 	return &MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
@@ -3935,6 +4416,12 @@ func (v *MessageDialog) Native() *C.GtkMessageDialog {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkMessageDialog(p)
+}
+
+func marshalMessageDialog(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMessageDialog(obj), nil
 }
 
 func wrapMessageDialog(obj *glib.Object) *MessageDialog {
@@ -4048,6 +4535,12 @@ func (v *Misc) Native() *C.GtkMisc {
 	return C.toGtkMisc(p)
 }
 
+func marshalMisc(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMisc(obj), nil
+}
+
 func wrapMisc(obj *glib.Object) *Misc {
 	return &Misc{Widget{glib.InitiallyUnowned{obj}}}
 }
@@ -4092,6 +4585,12 @@ func (v *Notebook) Native() *C.GtkNotebook {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkNotebook(p)
+}
+
+func marshalNotebook(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapNotebook(obj), nil
 }
 
 func wrapNotebook(obj *glib.Object) *Notebook {
@@ -4417,6 +4916,12 @@ func (v *OffscreenWindow) Native() *C.GtkOffscreenWindow {
 	return C.toGtkOffscreenWindow(p)
 }
 
+func marshalOffscreenWindow(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapOffscreenWindow(obj), nil
+}
+
 func wrapOffscreenWindow(obj *glib.Object) *OffscreenWindow {
 	return &OffscreenWindow{Window{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
@@ -4486,6 +4991,12 @@ func (v *Orientable) Native() *C.GtkOrientable {
 	return C.toGtkOrientable(p)
 }
 
+func marshalOrientable(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapOrientable(obj), nil
+}
+
 func wrapOrientable(obj *glib.Object) *Orientable {
 	return &Orientable{obj}
 }
@@ -4518,6 +5029,12 @@ func (v *ProgressBar) Native() *C.GtkProgressBar {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkProgressBar(p)
+}
+
+func marshalProgressBar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapProgressBar(obj), nil
 }
 
 func wrapProgressBar(obj *glib.Object) *ProgressBar {
@@ -4571,6 +5088,12 @@ func (v *RadioButton) Native() *C.GtkRadioButton {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkRadioButton(p)
+}
+
+func marshalRadioButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapRadioButton(obj), nil
 }
 
 func wrapRadioButton(obj *glib.Object) *RadioButton {
@@ -4712,6 +5235,12 @@ func (v *Range) Native() *C.GtkRange {
 	return C.toGtkRange(p)
 }
 
+func marshalRange(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapRange(obj), nil
+}
+
 func wrapRange(obj *glib.Object) *Range {
 	return &Range{Widget{glib.InitiallyUnowned{obj}}}
 }
@@ -4732,6 +5261,12 @@ func (v *Scrollbar) Native() *C.GtkScrollbar {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkScrollbar(p)
+}
+
+func marshalScrollbar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapScrollbar(obj), nil
 }
 
 func wrapScrollbar(obj *glib.Object) *Scrollbar {
@@ -4767,6 +5302,12 @@ func (v *ScrolledWindow) Native() *C.GtkScrolledWindow {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkScrolledWindow(p)
+}
+
+func marshalScrolledWindow(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapScrolledWindow(obj), nil
 }
 
 func wrapScrolledWindow(obj *glib.Object) *ScrolledWindow {
@@ -4812,6 +5353,12 @@ func (v *SearchEntry) Native() *C.GtkSearchEntry {
 	return C.toGtkSearchEntry(p)
 }
 
+func marshalSearchEntry(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSearchEntry(obj), nil
+}
+
 func wrapSearchEntry(obj *glib.Object) *SearchEntry {
 	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}}}
 }
@@ -4845,6 +5392,12 @@ func (v *Separator) Native() *C.GtkSeparator {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkSeparator(p)
+}
+
+func marshalSeparator(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSeparator(obj), nil
 }
 
 func wrapSeparator(obj *glib.Object) *Separator {
@@ -4882,6 +5435,12 @@ func (v *SeparatorMenuItem) Native() *C.GtkSeparatorMenuItem {
 	return C.toGtkSeparatorMenuItem(p)
 }
 
+func marshalSeparatorMenuItem(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSeparatorMenuItem(obj), nil
+}
+
 func wrapSeparatorMenuItem(obj *glib.Object) *SeparatorMenuItem {
 	return &SeparatorMenuItem{MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
@@ -4915,6 +5474,12 @@ func (v *SpinButton) Native() *C.GtkSpinButton {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkSpinButton(p)
+}
+
+func marshalSpinButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSpinButton(obj), nil
 }
 
 func wrapSpinButton(obj *glib.Object) *SpinButton {
@@ -4991,6 +5556,12 @@ func (v *Spinner) Native() *C.GtkSpinner {
 	return C.toGtkSpinner(p)
 }
 
+func marshalSpinner(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSpinner(obj), nil
+}
+
 func wrapSpinner(obj *glib.Object) *Spinner {
 	return &Spinner{Widget{glib.InitiallyUnowned{obj}}}
 }
@@ -5034,6 +5605,12 @@ func (v *Statusbar) Native() *C.GtkStatusbar {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkStatusbar(p)
+}
+
+func marshalStatusbar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapStatusbar(obj), nil
 }
 
 func wrapStatusbar(obj *glib.Object) *Statusbar {
@@ -5103,6 +5680,12 @@ func (v *Switch) Native() *C.GtkSwitch {
 	return C.toGtkSwitch(p)
 }
 
+func marshalSwitch(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSwitch(obj), nil
+}
+
 func wrapSwitch(obj *glib.Object) *Switch {
 	return &Switch{Widget{glib.InitiallyUnowned{obj}}}
 }
@@ -5147,6 +5730,12 @@ func (v *TextView) Native() *C.GtkTextView {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkTextView(p)
+}
+
+func marshalTextView(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTextView(obj), nil
 }
 
 func wrapTextView(obj *glib.Object) *TextView {
@@ -5366,6 +5955,12 @@ func (v *TextTagTable) Native() *C.GtkTextTagTable {
 	return C.toGtkTextTagTable(p)
 }
 
+func marshalTextTagTable(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTextTagTable(obj), nil
+}
+
 func wrapTextTagTable(obj *glib.Object) *TextTagTable {
 	return &TextTagTable{obj}
 }
@@ -5398,6 +5993,12 @@ func (v *TextBuffer) Native() *C.GtkTextBuffer {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkTextBuffer(p)
+}
+
+func marshalTextBuffer(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTextBuffer(obj), nil
 }
 
 func wrapTextBuffer(obj *glib.Object) *TextBuffer {
@@ -5447,6 +6048,11 @@ func (v *TextBuffer) SetText(text string) {
 // TextIter is a representation of GTK's GtkTextIter
 type TextIter C.GtkTextIter
 
+func marshalTextIter(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return (*TextIter)(unsafe.Pointer(c)), nil
+}
+
 /*
  * GtkToggleButton
  */
@@ -5463,6 +6069,12 @@ func (v *ToggleButton) Native() *C.GtkToggleButton {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkToggleButton(p)
+}
+
+func marshalToggleButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapToggleButton(obj), nil
 }
 
 func wrapToggleButton(obj *glib.Object) *ToggleButton {
@@ -5543,6 +6155,11 @@ func (v *TreeIter) Native() *C.GtkTreeIter {
 	return &v.GtkTreeIter
 }
 
+func marshalTreeIter(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return (*TreeIter)(unsafe.Pointer(c)), nil
+}
+
 func (v *TreeIter) free() {
 	C.gtk_tree_iter_free(v.Native())
 }
@@ -5589,6 +6206,12 @@ func (v *TreeModel) toTreeModel() *C.GtkTreeModel {
 		return nil
 	}
 	return v.Native()
+}
+
+func marshalTreeModel(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTreeModel(obj), nil
 }
 
 func wrapTreeModel(obj *glib.Object) *TreeModel {
@@ -5698,6 +6321,11 @@ func (v *TreePath) Native() *C.GtkTreePath {
 	return v.GtkTreePath
 }
 
+func marshalTreePath(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return &TreePath{(*C.GtkTreePath)(unsafe.Pointer(c))}, nil
+}
+
 func (v *TreePath) free() {
 	C.gtk_tree_path_free(v.Native())
 }
@@ -5724,6 +6352,12 @@ func (v *TreeSelection) Native() *C.GtkTreeSelection {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkTreeSelection(p)
+}
+
+func marshalTreeSelection(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTreeSelection(obj), nil
 }
 
 func wrapTreeSelection(obj *glib.Object) *TreeSelection {
@@ -5760,6 +6394,12 @@ func (v *TreeView) Native() *C.GtkTreeView {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkTreeView(p)
+}
+
+func marshalTreeView(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTreeView(obj), nil
 }
 
 func wrapTreeView(obj *glib.Object) *TreeView {
@@ -5845,6 +6485,12 @@ func (v *TreeViewColumn) Native() *C.GtkTreeViewColumn {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkTreeViewColumn(p)
+}
+
+func marshalTreeViewColumn(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTreeViewColumn(obj), nil
 }
 
 func wrapTreeViewColumn(obj *glib.Object) *TreeViewColumn {
@@ -5945,6 +6591,12 @@ func (v *Widget) toWidget() *C.GtkWidget {
 		return nil
 	}
 	return v.Native()
+}
+
+func marshalWidget(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapWidget(obj), nil
 }
 
 func wrapWidget(obj *glib.Object) *Widget {
@@ -6480,6 +7132,12 @@ func (v *Window) toWindow() *C.GtkWindow {
 		return nil
 	}
 	return v.Native()
+}
+
+func marshalWindow(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapWindow(obj), nil
 }
 
 func wrapWindow(obj *glib.Object) *Window {

@@ -28,6 +28,26 @@ import (
 	"unsafe"
 )
 
+func init() {
+	tm := []glib.TypeMarshaler{
+		// Enums
+		{glib.Type(C.gdk_colorspace_get_type()), marshalColorspace},
+		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
+
+		// Objects/Interfaces
+		{glib.Type(C.gdk_device_get_type()), marshalDevice},
+		{glib.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
+		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
+		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
+		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
+		{glib.Type(C.gdk_window_get_type()), marshalWindow},
+
+		// Boxed
+		{glib.Type(C.gdk_event_get_type()), marshalEvent},
+	}
+	glib.RegisterGValueMarshalers(tm)
+}
+
 /*
  * Type conversions
  */
@@ -55,12 +75,17 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
  * Constants
  */
 
-// Colorspace is a representation of GDK's GdkPixbufAlphaMode.
+// Colorspace is a representation of GDK's GdkColorspace.
 type Colorspace int
 
 const (
 	COLORSPACE_RGB Colorspace = C.GDK_COLORSPACE_RGB
 )
+
+func marshalColorspace(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Colorspace(c), nil
+}
 
 // PixbufAlphaMode is a representation of GDK's GdkPixbufAlphaMode.
 type PixbufAlphaMode int
@@ -69,6 +94,11 @@ const (
 	GDK_PIXBUF_ALPHA_BILEVEL PixbufAlphaMode = C.GDK_PIXBUF_ALPHA_BILEVEL
 	GDK_PIXBUF_ALPHA_FULL    PixbufAlphaMode = C.GDK_PIXBUF_ALPHA_FULL
 )
+
+func marshalPixbufAlphaMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PixbufAlphaMode(c), nil
+}
 
 // Selections
 const (
@@ -120,6 +150,12 @@ func (v *Device) Native() *C.GdkDevice {
 	return C.toGdkDevice(p)
 }
 
+func marshalDevice(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Device{obj}, nil
+}
+
 /*
  * GdkDeviceManager
  */
@@ -138,6 +174,12 @@ func (v *DeviceManager) Native() *C.GdkDeviceManager {
 	return C.toGdkDeviceManager(p)
 }
 
+func marshalDeviceManager(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &DeviceManager{obj}, nil
+}
+
 /*
  * GdkDisplay
  */
@@ -154,6 +196,12 @@ func (v *Display) Native() *C.GdkDisplay {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGdkDisplay(p)
+}
+
+func marshalDisplay(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Display{obj}, nil
 }
 
 // DisplayOpen() is a wrapper around gdk_display_open().
@@ -417,6 +465,11 @@ func (v *Event) Native() *C.GdkEvent {
 	return v.GdkEvent
 }
 
+func marshalEvent(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return &Event{(*C.GdkEvent)(unsafe.Pointer(c))}, nil
+}
+
 func (v *Event) free() {
 	C.gdk_event_free(v.Native())
 }
@@ -437,6 +490,12 @@ func (v *Pixbuf) Native() *C.GdkPixbuf {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGdkPixbuf(p)
+}
+
+func marshalPixbuf(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Pixbuf{obj}, nil
 }
 
 // GetColorspace is a wrapper around gdk_pixbuf_get_colorspace().
@@ -526,6 +585,12 @@ func (v *Screen) Native() *C.GdkScreen {
 	return C.toGdkScreen(p)
 }
 
+func marshalScreen(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Screen{obj}, nil
+}
+
 /*
  * GdkWindow
  */
@@ -542,4 +607,10 @@ func (v *Window) Native() *C.GdkWindow {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGdkWindow(p)
+}
+
+func marshalWindow(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Window{obj}, nil
 }

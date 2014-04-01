@@ -35,6 +35,24 @@ import (
 	"unsafe"
 )
 
+func init() {
+	tm := []glib.TypeMarshaler{
+		// Enums
+		{glib.Type(C.gtk_revealer_transition_type_get_type()), marshalRevealerTransitionType},
+		{glib.Type(C.gtk_stack_transition_type_get_type()), marshalStackTransitionType},
+
+		// Objects/Interfaces
+		{glib.Type(C.gtk_header_bar_get_type()), marshalHeaderBar},
+		{glib.Type(C.gtk_list_box_get_type()), marshalListBox},
+		{glib.Type(C.gtk_list_box_row_get_type()), marshalListBoxRow},
+		{glib.Type(C.gtk_revealer_get_type()), marshalRevealer},
+		{glib.Type(C.gtk_search_bar_get_type()), marshalSearchBar},
+		{glib.Type(C.gtk_stack_get_type()), marshalStack},
+		{glib.Type(C.gtk_stack_switcher_get_type()), marshalStackSwitcher},
+	}
+	glib.RegisterGValueMarshalers(tm)
+}
+
 /*
  * Constants
  */
@@ -55,6 +73,11 @@ const (
 	REVEALER_TRANSITION_TYPE_SLIDE_DOWN  RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN
 )
 
+func marshalRevealerTransitionType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return RevealerTransitionType(c), nil
+}
+
 // StackTransitionType is a representation of GTK's GtkStackTransitionType.
 type StackTransitionType int
 
@@ -68,6 +91,11 @@ const (
 	STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT
 	STACK_TRANSITION_TYPE_SLIDE_UP_DOWN    StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_UP_DOWN
 )
+
+func marshalStackTransitionType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return StackTransitionType(c), nil
+}
 
 /*
  * GtkHeaderBar
@@ -84,6 +112,12 @@ func (v *HeaderBar) Native() *C.GtkHeaderBar {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkHeaderBar(p)
+}
+
+func marshalHeaderBar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapHeaderBar(obj), nil
 }
 
 func wrapHeaderBar(obj *glib.Object) *HeaderBar {
@@ -199,6 +233,12 @@ func (v *ListBox) Native() *C.GtkListBox {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkListBox(p)
+}
+
+func marshalListBox(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapListBox(obj), nil
 }
 
 func wrapListBox(obj *glib.Object) *ListBox {
@@ -353,6 +393,12 @@ func (v *ListBoxRow) Native() *C.GtkListBoxRow {
 	return C.toGtkListBoxRow(p)
 }
 
+func marshalListBoxRow(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapListBoxRow(obj), nil
+}
+
 func wrapListBoxRow(obj *glib.Object) *ListBoxRow {
 	return &ListBoxRow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
@@ -414,6 +460,12 @@ func (v *Revealer) Native() *C.GtkRevealer {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkRevealer(p)
+}
+
+func marshalRevealer(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapRevealer(obj), nil
 }
 
 func wrapRevealer(obj *glib.Object) *Revealer {
@@ -491,6 +543,12 @@ func (v *SearchBar) Native() *C.GtkSearchBar {
 	return C.toGtkSearchBar(p)
 }
 
+func marshalSearchBar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSearchBar(obj), nil
+}
+
 func wrapSearchBar(obj *glib.Object) *SearchBar {
 	return &SearchBar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
@@ -557,6 +615,12 @@ func (v *Stack) Native() *C.GtkStack {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkStack(p)
+}
+
+func marshalStack(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapStack(obj), nil
 }
 
 func wrapStack(obj *glib.Object) *Stack {
@@ -683,6 +747,12 @@ func (v *StackSwitcher) Native() *C.GtkStackSwitcher {
 	return C.toGtkStackSwitcher(p)
 }
 
+func marshalStackSwitcher(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapStackSwitcher(obj), nil
+}
+
 func wrapStackSwitcher(obj *glib.Object) *StackSwitcher {
 	return &StackSwitcher{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
@@ -745,6 +815,8 @@ func cast_3_10(class string, o *glib.Object) glib.IObject {
 		g = wrapSearchBar(o)
 	case "GtkStack":
 		g = wrapStack(o)
+	case "GtkStackSwitcher":
+		g = wrapStackSwitcher(o)
 	}
 	return g
 }
