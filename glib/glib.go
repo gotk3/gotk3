@@ -55,11 +55,8 @@ func gobool(b C.gboolean) bool {
  */
 
 type closureContext struct {
-	rf reflect.Value
-
-	// Never used but must be kept in go scope while the closure is valid
-	// or the finalizer will run.
-	userData *Value
+	rf       reflect.Value
+	userData *reflect.Value
 }
 
 var (
@@ -198,17 +195,12 @@ func ClosureNew(f interface{}, marshalData ...interface{}) (*C.GClosure, error) 
 		return nil, errors.New("value is not a func")
 	}
 
-	var c *C.GClosure
-	if len(marshalData) == 0 {
-		c = C._g_closure_new()
-	} else {
-		p, err := reflectGValue(marshalData[0])
-		if err != nil {
-			return nil, err
-		}
-		cc.userData = p
-		c = C._g_closure_new_with_data((C.gpointer)(p))
+	if len(marshalData) > 0 {
+		rv := reflect.ValueOf(marshalData[0])
+		cc.userData = &rv
 	}
+
+	c := C._g_closure_new()
 
 	// Associate the GClosure with rf.  rf will be looked up in this
 	// map by the closure when the closure runs.
@@ -242,18 +234,18 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 	nParams C.guint, params *C.GValue,
 	invocationHint C.gpointer, marshalData *C.GValue) {
 
-	// Get number of parameters passed in. If marshaled data was passed
-	// in, increment the total number of parameters.
-	nGLibParams := int(nParams)
-	nTotalParams := nGLibParams
-	if marshalData != nil {
-		nTotalParams++
-	}
-
 	// Get the context associated with this callback closure.
 	closures.RLock()
 	cc := closures.m[closure]
 	closures.RUnlock()
+
+	// Get number of parameters passed in.  If user data was saved with the
+	// closure context, increment the total number of parameters.
+	nGLibParams := int(nParams)
+	nTotalParams := nGLibParams
+	if cc.userData != nil {
+		nTotalParams++
+	}
 
 	// Get number of parameters from the callback closure.  If this exceeds
 	// the total number of marshaled parameters, a warning will be printed
@@ -284,13 +276,10 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 		args = append(args, rv.Convert(cc.rf.Type().In(i)))
 	}
 
-	// If non-nil marshaled user data was passed in and not all
-	// args have been set, get and set the reflect.Value directly
-	// from the GValue.
-	if marshalData != nil && len(args) < cap(args) {
-		v := &Value{*marshalData}
-		rv := *v.reflectGoValue()
-		args = append(args, rv.Convert(cc.rf.Type().In(nCbParams-1)))
+	// If non-nil user data was passed in and not all args have been set,
+	// get and set the reflect.Value directly from the GValue.
+	if cc.userData != nil && len(args) < cap(args) {
+		args = append(args, cc.userData.Convert(cc.rf.Type().In(nCbParams-1)))
 	}
 
 	// Call closure with args. If the callback returns one or more
@@ -1071,27 +1060,6 @@ func (v *Value) GoValue() (interface{}, error) {
 		runtime.SetFinalizer(o, (*Object).Unref)
 	}
 	return rv, err
-}
-
-// reflectGValue returns a Value but attempts to create one with a
-// Pointer GType that points to a reflect.Value created from v,
-// instead of checking the type of v for a pointer and setting the
-// GValue with that.
-func reflectGValue(v interface{}) (gvalue *Value, err error) {
-	rv := reflect.ValueOf(v)
-	val, err := ValueInit(TYPE_POINTER)
-	if err != nil {
-		return nil, err
-	}
-	val.SetPointer(uintptr(unsafe.Pointer(&rv)))
-	return val, nil
-}
-
-// reflectGoValue returns a pointer to a reflect.Value created as
-// a Pointer GValue with reflectGValue.
-func (v *Value) reflectGoValue() *reflect.Value {
-	rp := unsafe.Pointer(C.g_value_get_pointer(v.Native()))
-	return (*reflect.Value)(rp)
 }
 
 // SetBool is a wrapper around g_value_set_boolean().

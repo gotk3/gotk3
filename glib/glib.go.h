@@ -108,17 +108,6 @@ _g_closure_new()
 	return (closure);
 }
 
-static GClosure *
-_g_closure_new_with_data(gpointer marshal_data)
-{
-	GClosure	*closure;
-
-	closure = g_closure_new_simple(sizeof(GClosure), NULL);
-	g_closure_set_meta_marshal(closure, marshal_data,
-	    (GClosureMarshal)(goMarshal));
-	return (closure);
-}
-
 extern void	removeClosure(gpointer, GClosure *);
 
 static void
