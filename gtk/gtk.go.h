@@ -410,6 +410,18 @@ toGtkRadioMenuItem(void *p)
 	return (GTK_RADIO_MENU_ITEM(p));
 }
 
+static GtkToolItem *
+toGtkToolItem(void *p)
+{
+	return (GTK_TOOL_ITEM(p));
+}
+
+static GtkToolbar *
+toGtkToolbar(void *p)
+{
+	return (GTK_TOOLBAR(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));

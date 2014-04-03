@@ -88,6 +88,7 @@ func init() {
 		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
 		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
+		{glib.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
 		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
 		{glib.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
 		{glib.Type(C.gtk_window_type_get_type()), marshalWindowType},
@@ -153,6 +154,8 @@ func init() {
 		{glib.Type(C.gtk_text_tag_table_get_type()), marshalTextTagTable},
 		{glib.Type(C.gtk_text_buffer_get_type()), marshalTextBuffer},
 		{glib.Type(C.gtk_toggle_button_get_type()), marshalToggleButton},
+		{glib.Type(C.gtk_toolbar_get_type()), marshalToolbar},
+		{glib.Type(C.gtk_tool_item_get_type()), marshalToolItem},
 		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
 		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
 		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
@@ -642,6 +645,21 @@ const (
 func marshalStateFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return StateFlags(c), nil
+}
+
+// ToolbarStyle is a representation of GTK's GtkToolbarStyle.
+type ToolbarStyle int
+
+const (
+	TOOLBAR_ICONS      ToolbarStyle = C.GTK_TOOLBAR_ICONS
+	TOOLBAR_TEXT       ToolbarStyle = C.GTK_TOOLBAR_TEXT
+	TOOLBAR_BOTH       ToolbarStyle = C.GTK_TOOLBAR_BOTH
+	TOOLBAR_BOTH_HORIZ ToolbarStyle = C.GTK_TOOLBAR_BOTH_HORIZ
+)
+
+func marshalToolbarStyle(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ToolbarStyle(c), nil
 }
 
 // TreeModelFlags is a representation of GTK's GtkTreeModelFlags.
@@ -6395,6 +6413,346 @@ func (v *ToggleButton) SetActive(isActive bool) {
 }
 
 /*
+ * GtkToolbar
+ */
+
+// Toolbar is a representation of GTK's GtkToolbar.
+type Toolbar struct {
+	Container
+}
+
+// Native returns a pointer to the underlying GtkToolbar.
+func (v *Toolbar) Native() *C.GtkToolbar {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkToolbar(p)
+}
+
+func marshalToolbar(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapToolbar(obj), nil
+}
+
+func wrapToolbar(obj *glib.Object) *Toolbar {
+	return &Toolbar{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// ToolbarNew is a wrapper around gtk_toolbar_new().
+func ToolbarNew() (*Toolbar, error) {
+	c := C.gtk_toolbar_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	tb := wrapToolbar(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return tb, nil
+}
+
+// Insert is a wrapper around gtk_toolbar_insert().
+func (v *Toolbar) Insert(item IToolItem, pos int) {
+	C.gtk_toolbar_insert(v.Native(), item.toToolItem(), C.gint(pos))
+}
+
+// GetItemIndex is a wrapper around gtk_toolbar_get_item_index().
+func (v *Toolbar) GetItemIndex(item IToolItem) int {
+	c := C.gtk_toolbar_get_item_index(v.Native(), item.toToolItem())
+	return int(c)
+}
+
+// GetNItems is a wrapper around gtk_toolbar_get_n_items().
+func (v *Toolbar) GetNItems() int {
+	c := C.gtk_toolbar_get_n_items(v.Native())
+	return int(c)
+}
+
+// GetNthItem is a wrapper around gtk_toolbar_get_nth_item().
+func (v *Toolbar) GetNthItem(n int) *ToolItem {
+	c := C.gtk_toolbar_get_nth_item(v.Native(), C.gint(n))
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	ti := wrapToolItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return ti
+}
+
+// GetDropIndex is a wrapper around gtk_toolbar_get_drop_index().
+func (v *Toolbar) GetDropIndex(x, y int) int {
+	c := C.gtk_toolbar_get_drop_index(v.Native(), C.gint(x), C.gint(y))
+	return int(c)
+}
+
+// SetDropHighlightItem is a wrapper around
+// gtk_toolbar_set_drop_highlight_item().
+func (v *Toolbar) SetDropHighlightItem(toolItem IToolItem, index int) {
+	C.gtk_toolbar_set_drop_highlight_item(v.Native(),
+		toolItem.toToolItem(), C.gint(index))
+}
+
+// SetShowArrow is a wrapper around gtk_toolbar_set_show_arrow().
+func (v *Toolbar) SetShowArrow(showArrow bool) {
+	C.gtk_toolbar_set_show_arrow(v.Native(), gbool(showArrow))
+}
+
+// UnsetIconSize is a wrapper around gtk_toolbar_unset_icon_size().
+func (v *Toolbar) UnsetIconSize() {
+	C.gtk_toolbar_unset_icon_size(v.Native())
+}
+
+// GetShowArrow is a wrapper around gtk_toolbar_get_show_arrow().
+func (v *Toolbar) GetShowArrow() bool {
+	c := C.gtk_toolbar_get_show_arrow(v.Native())
+	return gobool(c)
+}
+
+// GetStyle is a wrapper around gtk_toolbar_get_style().
+func (v *Toolbar) GetStyle() ToolbarStyle {
+	c := C.gtk_toolbar_get_style(v.Native())
+	return ToolbarStyle(c)
+}
+
+// GetIconSize is a wrapper around gtk_toolbar_get_icon_size().
+func (v *Toolbar) GetIconSize() IconSize {
+	c := C.gtk_toolbar_get_icon_size(v.Native())
+	return IconSize(c)
+}
+
+// GetReliefStyle is a wrapper around gtk_toolbar_get_relief_style().
+func (v *Toolbar) GetReliefStyle() ReliefStyle {
+	c := C.gtk_toolbar_get_relief_style(v.Native())
+	return ReliefStyle(c)
+}
+
+// SetStyle is a wrapper around gtk_toolbar_set_style().
+func (v *Toolbar) SetStyle(style ToolbarStyle) {
+	C.gtk_toolbar_set_style(v.Native(), C.GtkToolbarStyle(style))
+}
+
+// SetIconSize is a wrapper around gtk_toolbar_set_icon_size().
+func (v *Toolbar) SetIconSize(iconSize IconSize) {
+	C.gtk_toolbar_set_icon_size(v.Native(), C.GtkIconSize(iconSize))
+}
+
+// UnsetStyle is a wrapper around gtk_toolbar_unset_style().
+func (v *Toolbar) UnsetStyle() {
+	C.gtk_toolbar_unset_style(v.Native())
+}
+
+/*
+ * GtkToolItem
+ */
+
+// ToolItem is a representation of GTK's GtkToolItem.
+type ToolItem struct {
+	Bin
+}
+
+// IToolItem is an interface type implemented by all structs embedding
+// a ToolItem.  It is meant to be used as an argument type for wrapper
+// functions that wrap around a C GTK function taking a GtkToolItem.
+type IToolItem interface {
+	toToolItem() *C.GtkToolItem
+}
+
+// Native returns a pointer to the underlying GtkToolItem.
+func (v *ToolItem) Native() *C.GtkToolItem {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkToolItem(p)
+}
+
+func (v *ToolItem) toToolItem() *C.GtkToolItem {
+	return v.Native()
+}
+
+func marshalToolItem(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapToolItem(obj), nil
+}
+
+func wrapToolItem(obj *glib.Object) *ToolItem {
+	return &ToolItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// ToolItemNew is a wrapper around gtk_tool_item_new().
+func ToolItemNew() (*ToolItem, error) {
+	c := C.gtk_tool_item_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	ti := wrapToolItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return ti, nil
+}
+
+// SetHomogeneous is a wrapper around gtk_tool_item_set_homogeneous().
+func (v *ToolItem) SetHomogeneous(homogeneous bool) {
+	C.gtk_tool_item_set_homogeneous(v.Native(), gbool(homogeneous))
+}
+
+// GetHomogeneous is a wrapper around gtk_tool_item_get_homogeneous().
+func (v *ToolItem) GetHomogeneous() bool {
+	c := C.gtk_tool_item_get_homogeneous(v.Native())
+	return gobool(c)
+}
+
+// SetExpand is a wrapper around gtk_tool_item_set_expand().
+func (v *ToolItem) SetExpand(expand bool) {
+	C.gtk_tool_item_set_expand(v.Native(), gbool(expand))
+}
+
+// GetExpand is a wrapper around gtk_tool_item_get_expand().
+func (v *ToolItem) GetExpand() bool {
+	c := C.gtk_tool_item_get_expand(v.Native())
+	return gobool(c)
+}
+
+// SetTooltipText is a wrapper around gtk_tool_item_set_tooltip_text().
+func (v *ToolItem) SetTooltipText(text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_tool_item_set_tooltip_text(v.Native(), (*C.gchar)(cstr))
+}
+
+// SetTooltipMarkup is a wrapper around gtk_tool_item_set_tooltip_markup().
+func (v *ToolItem) SetTooltipMarkup(text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_tool_item_set_tooltip_markup(v.Native(), (*C.gchar)(cstr))
+}
+
+// SetUseDragWindow is a wrapper around gtk_tool_item_set_use_drag_window().
+func (v *ToolItem) SetUseDragWindow(useDragWindow bool) {
+	C.gtk_tool_item_set_use_drag_window(v.Native(), gbool(useDragWindow))
+}
+
+// GetUseDragWindow is a wrapper around gtk_tool_item_get_use_drag_window().
+func (v *ToolItem) GetUseDragWindow() bool {
+	c := C.gtk_tool_item_get_use_drag_window(v.Native())
+	return gobool(c)
+}
+
+// SetVisibleHorizontal is a wrapper around
+// gtk_tool_item_set_visible_horizontal().
+func (v *ToolItem) SetVisibleHorizontal(visibleHorizontal bool) {
+	C.gtk_tool_item_set_visible_horizontal(v.Native(),
+		gbool(visibleHorizontal))
+}
+
+// GetVisibleHorizontal is a wrapper around
+// gtk_tool_item_get_visible_horizontal().
+func (v *ToolItem) GetVisibleHorizontal() bool {
+	c := C.gtk_tool_item_get_visible_horizontal(v.Native())
+	return gobool(c)
+}
+
+// SetVisibleVertical is a wrapper around gtk_tool_item_set_visible_vertical().
+func (v *ToolItem) SetVisibleVertical(visibleVertical bool) {
+	C.gtk_tool_item_set_visible_vertical(v.Native(), gbool(visibleVertical))
+}
+
+// GetVisibleVertical is a wrapper around gtk_tool_item_get_visible_vertical().
+func (v *ToolItem) GetVisibleVertical() bool {
+	c := C.gtk_tool_item_get_visible_vertical(v.Native())
+	return gobool(c)
+}
+
+// SetIsImportant is a wrapper around gtk_tool_item_set_is_important().
+func (v *ToolItem) SetIsImportant(isImportant bool) {
+	C.gtk_tool_item_set_is_important(v.Native(), gbool(isImportant))
+}
+
+// GetIsImportant is a wrapper around gtk_tool_item_get_is_important().
+func (v *ToolItem) GetIsImportant() bool {
+	c := C.gtk_tool_item_get_is_important(v.Native())
+	return gobool(c)
+}
+
+// TODO: gtk_tool_item_get_ellipsize_mode
+
+// GetIconSize is a wrapper around gtk_tool_item_get_icon_size().
+func (v *ToolItem) GetIconSize() IconSize {
+	c := C.gtk_tool_item_get_icon_size(v.Native())
+	return IconSize(c)
+}
+
+// GetOrientation is a wrapper around gtk_tool_item_get_orientation().
+func (v *ToolItem) GetOrientation() Orientation {
+	c := C.gtk_tool_item_get_orientation(v.Native())
+	return Orientation(c)
+}
+
+// GetToolbarStyle is a wrapper around gtk_tool_item_get_toolbar_style().
+func (v *ToolItem) gtk_tool_item_get_toolbar_style() ToolbarStyle {
+	c := C.gtk_tool_item_get_toolbar_style(v.Native())
+	return ToolbarStyle(c)
+}
+
+// GetReliefStyle is a wrapper around gtk_tool_item_get_relief_style().
+func (v *ToolItem) GetReliefStyle() ReliefStyle {
+	c := C.gtk_tool_item_get_relief_style(v.Native())
+	return ReliefStyle(c)
+}
+
+// GetTextAlignment is a wrapper around gtk_tool_item_get_text_alignment().
+func (v *ToolItem) GetTextAlignment() float32 {
+	c := C.gtk_tool_item_get_text_alignment(v.Native())
+	return float32(c)
+}
+
+// GetTextOrientation is a wrapper around gtk_tool_item_get_text_orientation().
+func (v *ToolItem) GetTextOrientation() Orientation {
+	c := C.gtk_tool_item_get_text_orientation(v.Native())
+	return Orientation(c)
+}
+
+// RetrieveProxyMenuItem is a wrapper around
+// gtk_tool_item_retrieve_proxy_menu_item()
+func (v *ToolItem) RetrieveProxyMenuItem() *MenuItem {
+	c := C.gtk_tool_item_retrieve_proxy_menu_item(v.Native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	m := wrapMenuItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return m
+}
+
+// SetProxyMenuItem is a wrapper around gtk_tool_item_set_proxy_menu_item().
+func (v *ToolItem) SetProxyMenuItem(menuItemId string, menuItem IMenuItem) {
+	cstr := C.CString(menuItemId)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_tool_item_set_proxy_menu_item(v.Native(), (*C.gchar)(cstr),
+		C.toGtkWidget(unsafe.Pointer(menuItem.toMenuItem())))
+}
+
+// RebuildMenu is a wrapper around gtk_tool_item_rebuild_menu().
+func (v *ToolItem) RebuildMenu() {
+	C.gtk_tool_item_rebuild_menu(v.Native())
+}
+
+// ToolbarReconfigured is a wrapper around gtk_tool_item_toolbar_reconfigured().
+func (v *ToolItem) ToolbarReconfigured() {
+	C.gtk_tool_item_toolbar_reconfigured(v.Native())
+}
+
+// TODO: gtk_tool_item_get_text_size_group
+
+/*
  * GtkTreeIter
  */
 
@@ -7986,6 +8344,10 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapTextTagTable(obj)
 	case "GtkToggleButton":
 		g = wrapToggleButton(obj)
+	case "GtkToolbar":
+		g = wrapToolbar(obj)
+	case "GtkToolItem":
+		g = wrapToolItem(obj)
 	case "GtkTreeModel":
 		g = wrapTreeModel(obj)
 	case "GtkTreeSelection":
