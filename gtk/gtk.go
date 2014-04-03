@@ -4742,8 +4742,11 @@ func (v *Notebook) AppendPageMenu(child IWidget, tabLabel IWidget, menuLabel IWi
 
 // PrependPage() is a wrapper around gtk_notebook_prepend_page().
 func (v *Notebook) PrependPage(child IWidget, tabLabel IWidget) int {
-	c := C.gtk_notebook_prepend_page(v.Native(), child.toWidget(),
-		tabLabel.toWidget())
+	var cTabLabel *C.GtkWidget
+	if tabLabel != nil {
+		cTabLabel = tabLabel.toWidget()
+	}
+	c := C.gtk_notebook_prepend_page(v.Native(), child.toWidget(), cTabLabel)
 	return int(c)
 }
 
