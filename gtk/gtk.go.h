@@ -422,6 +422,12 @@ toGtkToolbar(void *p)
 	return (GTK_TOOLBAR(p));
 }
 
+static GtkEditable *
+toGtkEditable(void *p)
+{
+	return (GTK_EDITABLE(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));

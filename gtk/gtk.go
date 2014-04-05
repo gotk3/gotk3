@@ -116,6 +116,7 @@ func init() {
 		{glib.Type(C.gtk_container_get_type()), marshalContainer},
 		{glib.Type(C.gtk_dialog_get_type()), marshalDialog},
 		{glib.Type(C.gtk_drawing_area_get_type()), marshalDrawingArea},
+		{glib.Type(C.gtk_editable_get_type()), marshalEditable},
 		{glib.Type(C.gtk_entry_get_type()), marshalEntry},
 		{glib.Type(C.gtk_entry_buffer_get_type()), marshalEntryBuffer},
 		{glib.Type(C.gtk_entry_completion_get_type()), marshalEntryCompletion},
@@ -2722,12 +2723,138 @@ func DrawingAreaNew() (*DrawingArea, error) {
 }
 
 /*
+ * GtkEditable
+ */
+
+// Editable is a representation of GTK's GtkEditable GInterface.
+type Editable struct {
+	*glib.Object
+}
+
+// IEditable is an interface type implemented by all structs
+// embedding an Editable.  It is meant to be used as an argument type
+// for wrapper functions that wrap around a C GTK function taking a
+// GtkEditable.
+type IEditable interface {
+	toEditable() *C.GtkEditable
+}
+
+// native() returns a pointer to the underlying GObject as a GtkEditable.
+func (v *Editable) native() *C.GtkEditable {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkEditable(p)
+}
+
+func marshalEditable(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapEditable(obj), nil
+}
+
+func wrapEditable(obj *glib.Object) *Editable {
+	return &Editable{obj}
+}
+
+func (v *Editable) toEditable() *C.GtkEditable {
+	if v == nil {
+		return nil
+	}
+	return v.native()
+}
+
+// SelectRegion is a wrapper around gtk_editable_select_region().
+func (v *Editable) SelectRegion(startPos, endPos int) {
+	C.gtk_editable_select_region(v.native(), C.gint(startPos),
+		C.gint(endPos))
+}
+
+// GetSelectionBounds is a wrapper around gtk_editable_get_selection_bounds().
+func (v *Editable) GetSelectionBounds() (start, end int, nonEmpty bool) {
+	var cstart, cend C.gint
+	c := C.gtk_editable_get_selection_bounds(v.native(), &cstart, &cend)
+	return int(cstart), int(cend), gobool(c)
+}
+
+// InsertText is a wrapper around gtk_editable_insert_text(). The returned
+// int is the position after the inserted text.
+func (v *Editable) InsertText(newText string, position int) int {
+	cstr := C.CString(newText)
+	defer C.free(unsafe.Pointer(cstr))
+	pos := new(C.gint)
+	*pos = C.gint(position)
+	C.gtk_editable_insert_text(v.native(), (*C.gchar)(cstr),
+		C.gint(len(newText)), pos)
+	return int(*pos)
+}
+
+// DeleteText is a wrapper around gtk_editable_delete_text().
+func (v *Editable) DeleteText(startPos, endPos int) {
+	C.gtk_editable_delete_text(v.native(), C.gint(startPos), C.gint(endPos))
+}
+
+// GetChars is a wrapper around gtk_editable_get_chars().
+func (v *Editable) GetChars(startPos, endPos int) string {
+	c := C.gtk_editable_get_chars(v.native(), C.gint(startPos),
+		C.gint(endPos))
+	defer C.free(unsafe.Pointer(c))
+	return C.GoString((*C.char)(c))
+}
+
+// CutClipboard is a wrapper around gtk_editable_cut_clipboard().
+func (v *Editable) CutClipboard() {
+	C.gtk_editable_cut_clipboard(v.native())
+}
+
+// CopyClipboard is a wrapper around gtk_editable_copy_clipboard().
+func (v *Editable) CopyClipboard() {
+	C.gtk_editable_copy_clipboard(v.native())
+}
+
+// PasteClipboard is a wrapper around gtk_editable_paste_clipboard().
+func (v *Editable) PasteClipboard() {
+	C.gtk_editable_paste_clipboard(v.native())
+}
+
+// DeleteSelection is a wrapper around gtk_editable_delete_selection().
+func (v *Editable) DeleteSelection() {
+	C.gtk_editable_delete_selection(v.native())
+}
+
+// SetPosition is a wrapper around gtk_editable_set_position().
+func (v *Editable) SetPosition(position int) {
+	C.gtk_editable_set_position(v.native(), C.gint(position))
+}
+
+// GetPosition is a wrapper around gtk_editable_get_position().
+func (v *Editable) GetPosition() int {
+	c := C.gtk_editable_get_position(v.native())
+	return int(c)
+}
+
+// SetEditable is a wrapper around gtk_editable_set_editable().
+func (v *Editable) SetEditable(isEditable bool) {
+	C.gtk_editable_set_editable(v.native(), gbool(isEditable))
+}
+
+// GetEditable is a wrapper around gtk_editable_get_editable().
+func (v *Editable) GetEditable() bool {
+	c := C.gtk_editable_get_editable(v.native())
+	return gobool(c)
+}
+
+/*
  * GtkEntry
  */
 
 // Entry is a representation of GTK's GtkEntry.
 type Entry struct {
 	Widget
+
+	// Interfaces
+	Editable
 }
 
 type IEntry interface {
@@ -2754,7 +2881,8 @@ func marshalEntry(p uintptr) (interface{}, error) {
 }
 
 func wrapEntry(obj *glib.Object) *Entry {
-	return &Entry{Widget{glib.InitiallyUnowned{obj}}}
+	e := wrapEditable(obj)
+	return &Entry{Widget{glib.InitiallyUnowned{obj}}, *e}
 }
 
 // EntryNew() is a wrapper around gtk_entry_new().
@@ -5774,7 +5902,8 @@ func marshalSearchEntry(p uintptr) (interface{}, error) {
 }
 
 func wrapSearchEntry(obj *glib.Object) *SearchEntry {
-	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}}}
+	e := wrapEditable(obj)
+	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}, *e}}
 }
 
 // SearchEntryNew is a wrapper around gtk_search_entry_new().
@@ -5897,7 +6026,8 @@ func marshalSpinButton(p uintptr) (interface{}, error) {
 }
 
 func wrapSpinButton(obj *glib.Object) *SpinButton {
-	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}}}
+	e := wrapEditable(obj)
+	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}, *e}}
 }
 
 // Configure() is a wrapper around gtk_spin_button_configure().
@@ -8412,6 +8542,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapDialog(obj)
 	case "GtkDrawingArea":
 		g = wrapDrawingArea(obj)
+	case "GtkEditable":
+		g = wrapEditable(obj)
 	case "GtkEntry":
 		g = wrapEntry(obj)
 	case "GtkEntryBuffer":
