@@ -42,6 +42,6 @@ const (
 
 // IsVisible is a wrapper around gtk_widget_is_visible().
 func (v *Widget) IsVisible() bool {
-	c := C.gtk_widget_is_visible(v.Native())
+	c := C.gtk_widget_is_visible(v.native())
 	return gobool(c)
 }

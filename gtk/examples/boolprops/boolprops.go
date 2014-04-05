@@ -62,7 +62,6 @@ func main() {
 	}
 
 	setupPropertyCheckboxes(tv, box, props)
-	box.PackStart(tv, true, true, 0)
 
 	win.ShowAll()
 

@@ -287,12 +287,17 @@ type Context struct {
 	context *C.cairo_t
 }
 
-// Native returns a pointer to the underlying cairo_t.
-func (v *Context) Native() *C.cairo_t {
+// native returns a pointer to the underlying cairo_t.
+func (v *Context) native() *C.cairo_t {
 	if v == nil {
 		return nil
 	}
 	return v.context
+}
+
+// Native returns a pointer to the underlying cairo_t.
+func (v *Context) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
 }
 
 func marshalContext(p uintptr) (interface{}, error) {
@@ -307,7 +312,7 @@ func wrapContext(context *C.cairo_t) *Context {
 
 // Create is a wrapper around cairo_create().
 func Create(target *Surface) *Context {
-	c := C.cairo_create(target.Native())
+	c := C.cairo_create(target.native())
 	ctx := wrapContext(c)
 	runtime.SetFinalizer(ctx, (*Context).destroy)
 	return ctx
@@ -315,33 +320,33 @@ func Create(target *Surface) *Context {
 
 // reference is a wrapper around cairo_reference().
 func (v *Context) reference() {
-	v.context = C.cairo_reference(v.Native())
+	v.context = C.cairo_reference(v.native())
 }
 
 // destroy is a wrapper around cairo_destroy().
 func (v *Context) destroy() {
-	C.cairo_destroy(v.Native())
+	C.cairo_destroy(v.native())
 }
 
 // Status is a wrapper around cairo_status().
 func (v *Context) Status() Status {
-	c := C.cairo_status(v.Native())
+	c := C.cairo_status(v.native())
 	return Status(c)
 }
 
 // Save is a wrapper around cairo_save().
 func (v *Context) Save() {
-	C.cairo_save(v.Native())
+	C.cairo_save(v.native())
 }
 
 // Restore is a wrapper around cairo_restore().
 func (v *Context) Restore() {
-	C.cairo_restore(v.Native())
+	C.cairo_restore(v.native())
 }
 
 // GetTarget is a wrapper around cairo_get_target().
 func (v *Context) GetTarget() *Surface {
-	c := C.cairo_get_target(v.Native())
+	c := C.cairo_get_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
 	runtime.SetFinalizer(s, (*Surface).destroy)
@@ -350,24 +355,24 @@ func (v *Context) GetTarget() *Surface {
 
 // PushGroup is a wrapper around cairo_push_group().
 func (v *Context) PushGroup() {
-	C.cairo_push_group(v.Native())
+	C.cairo_push_group(v.native())
 }
 
 // PushGroupWithContent is a wrapper around cairo_push_group_with_content().
 func (v *Context) PushGroupWithContent(content Content) {
-	C.cairo_push_group_with_content(v.Native(), C.cairo_content_t(content))
+	C.cairo_push_group_with_content(v.native(), C.cairo_content_t(content))
 }
 
 // TODO(jrick) PopGroup (depends on Pattern)
 
 // PopGroupToSource is a wrapper around cairo_pop_group_to_source().
 func (v *Context) PopGroupToSource() {
-	C.cairo_pop_group_to_source(v.Native())
+	C.cairo_pop_group_to_source(v.native())
 }
 
 // GetGroupTarget is a wrapper around cairo_get_group_target().
 func (v *Context) GetGroupTarget() *Surface {
-	c := C.cairo_get_group_target(v.Native())
+	c := C.cairo_get_group_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
 	runtime.SetFinalizer(s, (*Surface).destroy)
@@ -376,13 +381,13 @@ func (v *Context) GetGroupTarget() *Surface {
 
 // SetSourceRGB is a wrapper around cairo_set_source_rgb().
 func (v *Context) SetSourceRGB(red, green, blue float64) {
-	C.cairo_set_source_rgb(v.Native(), C.double(red), C.double(green),
+	C.cairo_set_source_rgb(v.native(), C.double(red), C.double(green),
 		C.double(blue))
 }
 
 // SetSourceRGBA is a wrapper around cairo_set_source_rgba().
 func (v *Context) SetSourceRGBA(red, green, blue, alpha float64) {
-	C.cairo_set_source_rgba(v.Native(), C.double(red), C.double(green),
+	C.cairo_set_source_rgba(v.native(), C.double(red), C.double(green),
 		C.double(blue), C.double(alpha))
 }
 
@@ -390,7 +395,7 @@ func (v *Context) SetSourceRGBA(red, green, blue, alpha float64) {
 
 // SetSourceSurface is a wrapper around cairo_set_source_surface().
 func (v *Context) SetSourceSurface(surface *Surface, x, y float64) {
-	C.cairo_set_source_surface(v.Native(), surface.Native(), C.double(x),
+	C.cairo_set_source_surface(v.native(), surface.native(), C.double(x),
 		C.double(y))
 }
 
@@ -398,12 +403,12 @@ func (v *Context) SetSourceSurface(surface *Surface, x, y float64) {
 
 // SetAntialias is a wrapper around cairo_set_antialias().
 func (v *Context) SetAntialias(antialias Antialias) {
-	C.cairo_set_antialias(v.Native(), C.cairo_antialias_t(antialias))
+	C.cairo_set_antialias(v.native(), C.cairo_antialias_t(antialias))
 }
 
 // GetAntialias is a wrapper around cairo_get_antialias().
 func (v *Context) GetAntialias() Antialias {
-	c := C.cairo_get_antialias(v.Native())
+	c := C.cairo_get_antialias(v.native())
 	return Antialias(c)
 }
 
@@ -411,13 +416,13 @@ func (v *Context) GetAntialias() Antialias {
 func (v *Context) SetDash(dashes []float64, offset float64) {
 	header := (*reflect.SliceHeader)(unsafe.Pointer(&dashes))
 	cdashes := (*C.double)(unsafe.Pointer(header.Data))
-	C.cairo_set_dash(v.Native(), cdashes, C.int(header.Len),
+	C.cairo_set_dash(v.native(), cdashes, C.int(header.Len),
 		C.double(offset))
 }
 
 // GetDashCount is a wrapper around cairo_get_dash_count().
 func (v *Context) GetDashCount() int {
-	c := C.cairo_get_dash_count(v.Native())
+	c := C.cairo_get_dash_count(v.native())
 	return int(c)
 }
 
@@ -426,7 +431,7 @@ func (v *Context) GetDash() (dashes []float64, offset float64) {
 	dashCount := v.GetDashCount()
 	cdashes := (*C.double)(C.calloc(8, C.size_t(dashCount)))
 	var coffset C.double
-	C.cairo_get_dash(v.Native(), cdashes, &coffset)
+	C.cairo_get_dash(v.native(), cdashes, &coffset)
 	header := (*reflect.SliceHeader)((unsafe.Pointer(&dashes)))
 	header.Data = uintptr(unsafe.Pointer(cdashes))
 	header.Len = dashCount
@@ -436,131 +441,131 @@ func (v *Context) GetDash() (dashes []float64, offset float64) {
 
 // SetFillRule is a wrapper around cairo_set_fill_rule().
 func (v *Context) SetFillRule(fillRule FillRule) {
-	C.cairo_set_fill_rule(v.Native(), C.cairo_fill_rule_t(fillRule))
+	C.cairo_set_fill_rule(v.native(), C.cairo_fill_rule_t(fillRule))
 }
 
 // GetFillRule is a wrapper around cairo_get_fill_rule().
 func (v *Context) GetFillRule() FillRule {
-	c := C.cairo_get_fill_rule(v.Native())
+	c := C.cairo_get_fill_rule(v.native())
 	return FillRule(c)
 }
 
 // SetLineCap is a wrapper around cairo_set_line_cap().
 func (v *Context) SetLineCap(lineCap LineCap) {
-	C.cairo_set_line_cap(v.Native(), C.cairo_line_cap_t(lineCap))
+	C.cairo_set_line_cap(v.native(), C.cairo_line_cap_t(lineCap))
 }
 
 // GetLineCap is a wrapper around cairo_get_line_cap().
 func (v *Context) GetLineCap() LineCap {
-	c := C.cairo_get_line_cap(v.Native())
+	c := C.cairo_get_line_cap(v.native())
 	return LineCap(c)
 }
 
 // SetLineJoin is a wrapper around cairo_set_line_join().
 func (v *Context) SetLineJoin(lineJoin LineJoin) {
-	C.cairo_set_line_join(v.Native(), C.cairo_line_join_t(lineJoin))
+	C.cairo_set_line_join(v.native(), C.cairo_line_join_t(lineJoin))
 }
 
 // GetLineJoin is a wrapper around cairo_get_line_join().
 func (v *Context) GetLineJoin() LineJoin {
-	c := C.cairo_get_line_join(v.Native())
+	c := C.cairo_get_line_join(v.native())
 	return LineJoin(c)
 }
 
 // SetLineWidth is a wrapper around cairo_set_line_width().
 func (v *Context) SetLineWidth(width float64) {
-	C.cairo_set_line_width(v.Native(), C.double(width))
+	C.cairo_set_line_width(v.native(), C.double(width))
 }
 
 // GetLineWidth is a wrapper cairo_get_line_width().
 func (v *Context) GetLineWidth() float64 {
-	c := C.cairo_get_line_width(v.Native())
+	c := C.cairo_get_line_width(v.native())
 	return float64(c)
 }
 
 // SetMiterLimit is a wrapper around cairo_set_miter_limit().
 func (v *Context) SetMiterLimit(limit float64) {
-	C.cairo_set_miter_limit(v.Native(), C.double(limit))
+	C.cairo_set_miter_limit(v.native(), C.double(limit))
 }
 
 // GetMiterLimit is a wrapper around cairo_get_miter_limit().
 func (v *Context) GetMiterLimit() float64 {
-	c := C.cairo_get_miter_limit(v.Native())
+	c := C.cairo_get_miter_limit(v.native())
 	return float64(c)
 }
 
 // SetOperator is a wrapper around cairo_set_operator().
 func (v *Context) SetOperator(op Operator) {
-	C.cairo_set_operator(v.Native(), C.cairo_operator_t(op))
+	C.cairo_set_operator(v.native(), C.cairo_operator_t(op))
 }
 
 // GetOperator is a wrapper around cairo_get_operator().
 func (v *Context) GetOperator() Operator {
-	c := C.cairo_get_operator(v.Native())
+	c := C.cairo_get_operator(v.native())
 	return Operator(c)
 }
 
 // SetTolerance is a wrapper around cairo_set_tolerance().
 func (v *Context) SetTolerance(tolerance float64) {
-	C.cairo_set_tolerance(v.Native(), C.double(tolerance))
+	C.cairo_set_tolerance(v.native(), C.double(tolerance))
 }
 
 // GetTolerance is a wrapper around cairo_get_tolerance().
 func (v *Context) GetTolerance() float64 {
-	c := C.cairo_get_tolerance(v.Native())
+	c := C.cairo_get_tolerance(v.native())
 	return float64(c)
 }
 
 // Clip is a wrapper around cairo_clip().
 func (v *Context) Clip() {
-	C.cairo_clip(v.Native())
+	C.cairo_clip(v.native())
 }
 
 // ClipPreserve is a wrapper around cairo_clip_preserve().
 func (v *Context) ClipPreserve() {
-	C.cairo_clip_preserve(v.Native())
+	C.cairo_clip_preserve(v.native())
 }
 
 // ClipExtents is a wrapper around cairo_clip_extents().
 func (v *Context) ClipExtents() (x1, y1, x2, y2 float64) {
 	var cx1, cy1, cx2, cy2 C.double
-	C.cairo_clip_extents(v.Native(), &cx1, &cy1, &cx2, &cy2)
+	C.cairo_clip_extents(v.native(), &cx1, &cy1, &cx2, &cy2)
 	return float64(cx1), float64(cy1), float64(cx2), float64(cy2)
 }
 
 // InClip is a wrapper around cairo_in_clip().
 func (v *Context) InClip(x, y float64) bool {
-	c := C.cairo_in_clip(v.Native(), C.double(x), C.double(y))
+	c := C.cairo_in_clip(v.native(), C.double(x), C.double(y))
 	return gobool(c)
 }
 
 // ResetClip is a wrapper around cairo_reset_clip().
 func (v *Context) ResetClip() {
-	C.cairo_reset_clip(v.Native())
+	C.cairo_reset_clip(v.native())
 }
 
 // TODO(jrick) CopyRectangleList (depends on RectangleList)
 
 // Fill is a wrapper around cairo_fill().
 func (v *Context) Fill() {
-	C.cairo_fill(v.Native())
+	C.cairo_fill(v.native())
 }
 
 // FillPreserve is a wrapper around cairo_fill_preserve().
 func (v *Context) FillPreserve() {
-	C.cairo_fill_preserve(v.Native())
+	C.cairo_fill_preserve(v.native())
 }
 
 // FillExtents is a wrapper around cairo_fill_extents().
 func (v *Context) FillExtents() (x1, y1, x2, y2 float64) {
 	var cx1, cy1, cx2, cy2 C.double
-	C.cairo_fill_extents(v.Native(), &cx1, &cy1, &cx2, &cy2)
+	C.cairo_fill_extents(v.native(), &cx1, &cy1, &cx2, &cy2)
 	return float64(cx1), float64(cy1), float64(cx2), float64(cy2)
 }
 
 // InFill is a wrapper around cairo_in_fill().
 func (v *Context) InFill(x, y float64) bool {
-	c := C.cairo_in_fill(v.Native(), C.double(x), C.double(y))
+	c := C.cairo_in_fill(v.native(), C.double(x), C.double(y))
 	return gobool(c)
 }
 
@@ -568,51 +573,51 @@ func (v *Context) InFill(x, y float64) bool {
 
 // MaskSurface is a wrapper around cairo_mask_surface().
 func (v *Context) MaskSurface(surface *Surface, surfaceX, surfaceY float64) {
-	C.cairo_mask_surface(v.Native(), surface.Native(), C.double(surfaceX),
+	C.cairo_mask_surface(v.native(), surface.native(), C.double(surfaceX),
 		C.double(surfaceY))
 }
 
 // Paint is a wrapper around cairo_paint().
 func (v *Context) Paint() {
-	C.cairo_paint(v.Native())
+	C.cairo_paint(v.native())
 }
 
 // PaintWithAlpha is a wrapper around cairo_paint_with_alpha().
 func (v *Context) PaintWithAlpha(alpha float64) {
-	C.cairo_paint_with_alpha(v.Native(), C.double(alpha))
+	C.cairo_paint_with_alpha(v.native(), C.double(alpha))
 }
 
 // Stroke is a wrapper around cairo_stroke().
 func (v *Context) Stroke() {
-	C.cairo_stroke(v.Native())
+	C.cairo_stroke(v.native())
 }
 
 // StrokePreserve is a wrapper around cairo_stroke_preserve().
 func (v *Context) StrokePreserve() {
-	C.cairo_stroke_preserve(v.Native())
+	C.cairo_stroke_preserve(v.native())
 }
 
 // StrokeExtents is a wrapper around cairo_stroke_extents().
 func (v *Context) StrokeExtents() (x1, y1, x2, y2 float64) {
 	var cx1, cy1, cx2, cy2 C.double
-	C.cairo_stroke_extents(v.Native(), &cx1, &cy1, &cx2, &cy2)
+	C.cairo_stroke_extents(v.native(), &cx1, &cy1, &cx2, &cy2)
 	return float64(cx1), float64(cy1), float64(cx2), float64(cy2)
 }
 
 // InStroke is a wrapper around cairo_in_stroke().
 func (v *Context) InStroke(x, y float64) bool {
-	c := C.cairo_in_stroke(v.Native(), C.double(x), C.double(y))
+	c := C.cairo_in_stroke(v.native(), C.double(x), C.double(y))
 	return gobool(c)
 }
 
 // CopyPage is a wrapper around cairo_copy_page().
 func (v *Context) CopyPage() {
-	C.cairo_copy_page(v.Native())
+	C.cairo_copy_page(v.native())
 }
 
 // ShowPage is a wrapper around cairo_show_page().
 func (v *Context) ShowPage() {
-	C.cairo_show_page(v.Native())
+	C.cairo_show_page(v.native())
 }
 
 // TODO(jrick) SetUserData (depends on UserDataKey and DestroyFunc)
@@ -628,12 +633,17 @@ type Surface struct {
 	surface *C.cairo_surface_t
 }
 
-// Native returns a pointer to the underlying cairo_surface_t.
-func (v *Surface) Native() *C.cairo_surface_t {
+// native returns a pointer to the underlying cairo_surface_t.
+func (v *Surface) native() *C.cairo_surface_t {
 	if v == nil {
 		return nil
 	}
 	return v.surface
+}
+
+// Native returns a pointer to the underlying cairo_surface_t.
+func (v *Surface) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
 }
 
 func marshalSurface(p uintptr) (interface{}, error) {
@@ -661,7 +671,7 @@ func NewSurface(s uintptr, needsRef bool) *Surface {
 
 // CreateSimilar is a wrapper around cairo_surface_create_similar().
 func (v *Surface) CreateSimilar(content Content, width, height int) *Surface {
-	c := C.cairo_surface_create_similar(v.Native(),
+	c := C.cairo_surface_create_similar(v.native(),
 		C.cairo_content_t(content), C.int(width), C.int(height))
 	s := wrapSurface(c)
 	runtime.SetFinalizer(s, (*Surface).destroy)
@@ -672,7 +682,7 @@ func (v *Surface) CreateSimilar(content Content, width, height int) *Surface {
 
 // CreateForRectangle is a wrapper around cairo_surface_create_for_rectangle().
 func (v *Surface) CreateForRectangle(x, y, width, height float64) *Surface {
-	c := C.cairo_surface_create_for_rectangle(v.Native(), C.double(x),
+	c := C.cairo_surface_create_for_rectangle(v.native(), C.double(x),
 		C.double(y), C.double(width), C.double(height))
 	s := wrapSurface(c)
 	runtime.SetFinalizer(s, (*Surface).destroy)
@@ -681,23 +691,23 @@ func (v *Surface) CreateForRectangle(x, y, width, height float64) *Surface {
 
 // reference is a wrapper around cairo_surface_reference().
 func (v *Surface) reference() {
-	v.surface = C.cairo_surface_reference(v.Native())
+	v.surface = C.cairo_surface_reference(v.native())
 }
 
 // destroy is a wrapper around cairo_surface_destroy().
 func (v *Surface) destroy() {
-	C.cairo_surface_destroy(v.Native())
+	C.cairo_surface_destroy(v.native())
 }
 
 // Status is a wrapper around cairo_surface_status().
 func (v *Surface) Status() Status {
-	c := C.cairo_surface_status(v.Native())
+	c := C.cairo_surface_status(v.native())
 	return Status(c)
 }
 
 // Flush is a wrapper around cairo_surface_flush().
 func (v *Surface) Flush() {
-	C.cairo_surface_flush(v.Native())
+	C.cairo_surface_flush(v.native())
 }
 
 // TODO(jrick) GetDevice (requires Device bindings)
@@ -708,31 +718,31 @@ func (v *Surface) Flush() {
 
 // MarkDirty is a wrapper around cairo_surface_mark_dirty().
 func (v *Surface) MarkDirty() {
-	C.cairo_surface_mark_dirty(v.Native())
+	C.cairo_surface_mark_dirty(v.native())
 }
 
 // MarkDirtyRectangle is a wrapper around cairo_surface_mark_dirty_rectangle().
 func (v *Surface) MarkDirtyRectangle(x, y, width, height int) {
-	C.cairo_surface_mark_dirty_rectangle(v.Native(), C.int(x), C.int(y),
+	C.cairo_surface_mark_dirty_rectangle(v.native(), C.int(x), C.int(y),
 		C.int(width), C.int(height))
 }
 
 // SetDeviceOffset is a wrapper around cairo_surface_set_device_offset().
 func (v *Surface) SetDeviceOffset(x, y float64) {
-	C.cairo_surface_set_device_offset(v.Native(), C.double(x), C.double(y))
+	C.cairo_surface_set_device_offset(v.native(), C.double(x), C.double(y))
 }
 
 // GetDeviceOffset is a wrapper around cairo_surface_get_device_offset().
 func (v *Surface) GetDeviceOffset() (x, y float64) {
 	var xOffset, yOffset C.double
-	C.cairo_surface_get_device_offset(v.Native(), &xOffset, &yOffset)
+	C.cairo_surface_get_device_offset(v.native(), &xOffset, &yOffset)
 	return float64(xOffset), float64(yOffset)
 }
 
 // SetFallbackResolution is a wrapper around
 // cairo_surface_set_fallback_resolution().
 func (v *Surface) SetFallbackResolution(xPPI, yPPI float64) {
-	C.cairo_surface_set_fallback_resolution(v.Native(), C.double(xPPI),
+	C.cairo_surface_set_fallback_resolution(v.native(), C.double(xPPI),
 		C.double(yPPI))
 }
 
@@ -740,13 +750,13 @@ func (v *Surface) SetFallbackResolution(xPPI, yPPI float64) {
 // cairo_surface_get_fallback_resolution().
 func (v *Surface) GetFallbackResolution() (xPPI, yPPI float64) {
 	var x, y C.double
-	C.cairo_surface_get_fallback_resolution(v.Native(), &x, &y)
+	C.cairo_surface_get_fallback_resolution(v.native(), &x, &y)
 	return float64(x), float64(y)
 }
 
 // GetType is a wrapper around cairo_surface_get_type().
 func (v *Surface) GetType() SurfaceType {
-	c := C.cairo_surface_get_type(v.Native())
+	c := C.cairo_surface_get_type(v.native())
 	return SurfaceType(c)
 }
 
@@ -756,17 +766,17 @@ func (v *Surface) GetType() SurfaceType {
 
 // CopyPage is a wrapper around cairo_surface_copy_page().
 func (v *Surface) CopyPage() {
-	C.cairo_surface_copy_page(v.Native())
+	C.cairo_surface_copy_page(v.native())
 }
 
 // ShowPage is a wrapper around cairo_surface_show_page().
 func (v *Surface) ShowPage() {
-	C.cairo_surface_show_page(v.Native())
+	C.cairo_surface_show_page(v.native())
 }
 
 // HasShowTextGlyphs is a wrapper around cairo_surface_has_show_text_glyphs().
 func (v *Surface) HasShowTextGlyphs() bool {
-	c := C.cairo_surface_has_show_text_glyphs(v.Native())
+	c := C.cairo_surface_has_show_text_glyphs(v.native())
 	return gobool(c)
 }
 
@@ -779,7 +789,7 @@ func (v *Surface) GetMimeData(mimeType MimeType) []byte {
 	defer C.free(unsafe.Pointer(cstr))
 	var data *C.uchar
 	var length C.ulong
-	C.cairo_surface_get_mime_data(v.Native(), cstr, &data, &length)
+	C.cairo_surface_get_mime_data(v.native(), cstr, &data, &length)
 	return C.GoBytes(unsafe.Pointer(data), C.int(length))
 }
 

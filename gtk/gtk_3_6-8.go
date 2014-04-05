@@ -50,18 +50,18 @@ func ButtonNewFromStock(stock Stock) (*Button, error) {
 
 // SetUseStock is a wrapper around gtk_button_set_use_stock().
 func (v *Button) SetUseStock(useStock bool) {
-	C.gtk_button_set_use_stock(v.Native(), gbool(useStock))
+	C.gtk_button_set_use_stock(v.native(), gbool(useStock))
 }
 
 // GetUseStock is a wrapper around gtk_button_get_use_stock().
 func (v *Button) GetUseStock() bool {
-	c := C.gtk_button_get_use_stock(v.Native())
+	c := C.gtk_button_get_use_stock(v.native())
 	return gobool(c)
 }
 
 // GetIconStock is a wrapper around gtk_entry_get_icon_stock().
 func (v *Entry) GetIconStock(iconPos EntryIconPosition) (string, error) {
-	c := C.gtk_entry_get_icon_stock(v.Native(),
+	c := C.gtk_entry_get_icon_stock(v.native(),
 		C.GtkEntryIconPosition(iconPos))
 	if c == nil {
 		return "", nilPtrErr
@@ -73,7 +73,7 @@ func (v *Entry) GetIconStock(iconPos EntryIconPosition) (string, error) {
 func (v *Entry) SetIconFromStock(iconPos EntryIconPosition, stockID string) {
 	cstr := C.CString(stockID)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_entry_set_icon_from_stock(v.Native(),
+	C.gtk_entry_set_icon_from_stock(v.native(),
 		C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
 }
 
@@ -96,7 +96,7 @@ func ImageNewFromStock(stock Stock, size IconSize) (*Image, error) {
 func (v *Image) SetFromStock(stock Stock, size IconSize) {
 	cstr := C.CString(string(stock))
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_image_set_from_stock(v.Native(), (*C.gchar)(cstr),
+	C.gtk_image_set_from_stock(v.native(), (*C.gchar)(cstr),
 		C.GtkIconSize(size))
 }
 
@@ -218,5 +218,5 @@ const (
 // ReshowWithInitialSize is a wrapper around
 // gtk_window_reshow_with_initial_size().
 func (v *Window) ReshowWithInitialSize() {
-	C.gtk_window_reshow_with_initial_size(v.Native())
+	C.gtk_window_reshow_with_initial_size(v.native())
 }
