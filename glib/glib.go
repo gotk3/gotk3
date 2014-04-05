@@ -709,8 +709,36 @@ func (v *InitiallyUnowned) Native() uintptr {
 }
 
 /*
- * GSList
+ * Linked Lists
  */
+
+// List is a representation of Glib's GList.
+type List struct {
+	Data uintptr
+	Next *List
+	Prev *List
+}
+
+// Append is a wrapper around g_list_append.
+func (v *List) Append(data uintptr) *List {
+	glist := (*C.GList)(unsafe.Pointer(v))
+	glist = C.g_list_append(glist, C.gpointer(data))
+	return (*List)(unsafe.Pointer(glist))
+}
+
+// Prepend is a wrapper around g_list_prepend.
+func (v *List) Prepend(data uintptr) *List {
+	glist := (*C.GList)(unsafe.Pointer(v))
+	glist = C.g_list_prepend(glist, C.gpointer(data))
+	return (*List)(unsafe.Pointer(glist))
+}
+
+// Insert is a wrapper around g_list_insert().
+func (v *List) Insert(data uintptr, position int) *List {
+	glist := (*C.GList)(unsafe.Pointer(v))
+	glist = C.g_list_insert(glist, C.gpointer(data), C.gint(position))
+	return (*List)(unsafe.Pointer(glist))
+}
 
 // SList is a representation of Glib's GSList.
 type SList struct {

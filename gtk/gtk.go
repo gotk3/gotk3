@@ -2384,24 +2384,154 @@ func wrapContainer(obj *glib.Object) *Container {
 	return &Container{Widget{glib.InitiallyUnowned{obj}}}
 }
 
-// Add() is a wrapper around gtk_container_add().
+// Add is a wrapper around gtk_container_add().
 func (v *Container) Add(w IWidget) {
 	C.gtk_container_add(v.native(), w.toWidget())
 }
 
-// Remove() is a wrapper around gtk_container_remove().
+// Remove is a wrapper around gtk_container_remove().
 func (v *Container) Remove(w IWidget) {
 	C.gtk_container_remove(v.native(), w.toWidget())
 }
 
-// ...
+// TODO: gtk_container_add_with_properties
+
+// CheckResize is a wrapper around gtk_container_check_resize().
+func (v *Container) CheckResize() {
+	C.gtk_container_check_resize(v.native())
+}
+
+// TODO: gtk_container_foreach
+// TODO: gtk_container_get_children
+// TODO: gtk_container_get_path_for_child
+
+// SetReallocateRedraws is a wrapper around
+// gtk_container_set_reallocate_redraws().
+func (v *Container) SetReallocateRedraws(needsRedraws bool) {
+	C.gtk_container_set_reallocate_redraws(v.native(), gbool(needsRedraws))
+}
+
+// GetFocusChild is a wrapper around gtk_container_get_focus_child().
+func (v *Container) GetFocusChild() *Widget {
+	c := C.gtk_container_get_focus_child(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w
+}
 
 // SetFocusChild is a wrapper around gtk_container_set_focus_child().
 func (v *Container) SetFocusChild(child IWidget) {
 	C.gtk_container_set_focus_child(v.native(), child.toWidget())
 }
 
-// ...
+// GetFocusVAdjustment is a wrapper around
+// gtk_container_get_focus_vadjustment().
+func (v *Container) GetFocusVAdjustment() *Adjustment {
+	c := C.gtk_container_get_focus_vadjustment(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAdjustment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a
+}
+
+// SetFocusVAdjustment is a wrapper around
+// gtk_container_set_focus_vadjustment().
+func (v *Container) SetFocusVAdjustment(adjustment *Adjustment) {
+	C.gtk_container_set_focus_vadjustment(v.native(), adjustment.native())
+}
+
+// GetFocusHAdjustment is a wrapper around
+// gtk_container_get_focus_hadjustment().
+func (v *Container) GetFocusHAdjustment() *Adjustment {
+	c := C.gtk_container_get_focus_hadjustment(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAdjustment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a
+}
+
+// SetFocusHAdjustment is a wrapper around
+// gtk_container_set_focus_hadjustment().
+func (v *Container) SetFocusHAdjustment(adjustment *Adjustment) {
+	C.gtk_container_set_focus_hadjustment(v.native(), adjustment.native())
+}
+
+// ChildType is a wrapper around gtk_container_child_type().
+func (v *Container) ChildType() glib.Type {
+	c := C.gtk_container_child_type(v.native())
+	return glib.Type(c)
+}
+
+// TODO: gtk_container_child_get_valist
+// TODO: gtk_container_child_set_valist
+
+// ChildNotify is a wrapper around gtk_container_child_notify().
+func (v *Container) ChildNotify(child IWidget, childProperty string) {
+	cstr := C.CString(childProperty)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_container_child_notify(v.native(), child.toWidget(),
+		(*C.gchar)(cstr))
+}
+
+// TODO: gtk_container_forall
+
+// GetBorderWidth is a wrapper around gtk_container_get_border_width().
+func (v *Container) GetBorderWidth() uint {
+	c := C.gtk_container_get_border_width(v.native())
+	return uint(c)
+}
+
+// SetBorderWidth is a wrapper around gtk_container_set_border_width().
+func (v *Container) SetBorderWidth(borderWidth uint) {
+	C.gtk_container_set_border_width(v.native(), C.guint(borderWidth))
+}
+
+// PropagateDraw is a wrapper around gtk_container_propagate_draw().
+func (v *Container) PropagateDraw(child IWidget, cr *cairo.Context) {
+	context := (*C.cairo_t)(unsafe.Pointer(cr.Native()))
+	C.gtk_container_propagate_draw(v.native(), child.toWidget(), context)
+}
+
+// GetFocusChain is a wrapper around gtk_container_get_focus_chain().
+func (v *Container) GetFocusChain() ([]*Widget, bool) {
+	var cwlist *C.GList
+	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
+
+	var widgets []*Widget
+	wlist := (*glib.List)(unsafe.Pointer(cwlist))
+	for ; wlist.Data != uintptr(unsafe.Pointer(nil)); wlist = wlist.Next {
+		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(wlist.Data))}
+		w := wrapWidget(obj)
+		obj.RefSink()
+		runtime.SetFinalizer(obj, (*glib.Object).Unref)
+		widgets = append(widgets, w)
+	}
+	return widgets, gobool(c)
+}
+
+// SetFocusChain is a wrapper around gtk_container_set_focus_chain().
+func (v *Container) SetFocusChain(focusableWidgets []IWidget) {
+	var list *glib.List
+	for _, w := range focusableWidgets {
+		data := uintptr(unsafe.Pointer(w.toWidget()))
+		list = list.Append(data)
+	}
+	glist := (*C.GList)(unsafe.Pointer(list))
+	C.gtk_container_set_focus_chain(v.native(), glist)
+}
 
 /*
  * GtkDialog
