@@ -29,6 +29,6 @@ import "C"
 
 // GetNScreens is a wrapper around gdk_display_get_n_screens().
 func (v *Display) GetNScreens() int {
-	c := C.gdk_display_get_n_screens(v.Native())
+	c := C.gdk_display_get_n_screens(v.native())
 	return int(c)
 }
