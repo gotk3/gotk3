@@ -156,6 +156,7 @@ func init() {
 		{glib.Type(C.gtk_text_buffer_get_type()), marshalTextBuffer},
 		{glib.Type(C.gtk_toggle_button_get_type()), marshalToggleButton},
 		{glib.Type(C.gtk_toolbar_get_type()), marshalToolbar},
+		{glib.Type(C.gtk_tool_button_get_type()), marshalToolButton},
 		{glib.Type(C.gtk_tool_item_get_type()), marshalToolItem},
 		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
 		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
@@ -6816,6 +6817,123 @@ func (v *Toolbar) UnsetStyle() {
 }
 
 /*
+ * GtkToolButton
+ */
+
+// ToolButton is a representation of GTK's GtkToolButton.
+type ToolButton struct {
+	ToolItem
+}
+
+// native returns a pointer to the underlying GtkToolButton.
+func (v *ToolButton) native() *C.GtkToolButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkToolButton(p)
+}
+
+func marshalToolButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapToolButton(obj), nil
+}
+
+func wrapToolButton(obj *glib.Object) *ToolButton {
+	return &ToolButton{ToolItem{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}
+}
+
+// ToolButtonNew is a wrapper around gtk_tool_button_new().
+func ToolButtonNew(iconWidget IWidget, label string) (*ToolButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_tool_button_new(iconWidget.toWidget(), (*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	tb := wrapToolButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return tb, nil
+}
+
+// SetLabel is a wrapper around gtk_tool_button_set_label().
+func (v *ToolButton) SetLabel(label string) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_tool_button_set_label(v.native(), (*C.gchar)(cstr))
+}
+
+// GetLabel is a wrapper aroud gtk_tool_button_get_label().
+func (v *ToolButton) GetLabel() string {
+	c := C.gtk_tool_button_get_label(v.native())
+	return C.GoString((*C.char)(c))
+}
+
+// SetUseUnderline is a wrapper around gtk_tool_button_set_use_underline().
+func (v *ToolButton) SetGetUnderline(useUnderline bool) {
+	C.gtk_tool_button_set_use_underline(v.native(), gbool(useUnderline))
+}
+
+// GetUseUnderline is a wrapper around gtk_tool_button_get_use_underline().
+func (v *ToolButton) GetuseUnderline() bool {
+	c := C.gtk_tool_button_get_use_underline(v.native())
+	return gobool(c)
+}
+
+// SetIconName is a wrapper around gtk_tool_button_set_icon_name().
+func (v *ToolButton) SetIconName(iconName string) {
+	cstr := C.CString(iconName)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_tool_button_set_icon_name(v.native(), (*C.gchar)(cstr))
+}
+
+// GetIconName is a wrapper around gtk_tool_button_get_icon_name().
+func (v *ToolButton) GetIconName() string {
+	c := C.gtk_tool_button_get_icon_name(v.native())
+	return C.GoString((*C.char)(c))
+}
+
+// SetIconWidget is a wrapper around gtk_tool_button_set_icon_widget().
+func (v *ToolButton) SetIconWidget(iconWidget IWidget) {
+	C.gtk_tool_button_set_icon_widget(v.native(), iconWidget.toWidget())
+}
+
+// GetIconWidget is a wrapper around gtk_tool_button_get_icon_widget().
+func (v *ToolButton) GetIconWidget() *Widget {
+	c := C.gtk_tool_button_get_icon_widget(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w
+}
+
+// SetLabelWidget is a wrapper around gtk_tool_button_set_label_widget().
+func (v *ToolButton) SetLabelWidget(labelWidget IWidget) {
+	C.gtk_tool_button_set_label_widget(v.native(), labelWidget.toWidget())
+}
+
+// GetLabelWidget is a wrapper around gtk_tool_button_get_label_widget().
+func (v *ToolButton) GetLabelWidget() *Widget {
+	c := C.gtk_tool_button_get_label_widget(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w
+}
+
+/*
  * GtkToolItem
  */
 
@@ -8618,6 +8736,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapToggleButton(obj)
 	case "GtkToolbar":
 		g = wrapToolbar(obj)
+	case "GtkToolButton":
+		g = wrapToolButton(obj)
 	case "GtkToolItem":
 		g = wrapToolItem(obj)
 	case "GtkTreeModel":
