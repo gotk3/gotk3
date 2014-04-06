@@ -147,6 +147,7 @@ func init() {
 		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
 		{glib.Type(C.gtk_separator_get_type()), marshalSeparator},
 		{glib.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
+		{glib.Type(C.gtk_separator_tool_item_get_type()), marshalSeparatorToolItem},
 		{glib.Type(C.gtk_spin_button_get_type()), marshalSpinButton},
 		{glib.Type(C.gtk_spinner_get_type()), marshalSpinner},
 		{glib.Type(C.gtk_statusbar_get_type()), marshalStatusbar},
@@ -6003,6 +6004,59 @@ func SeparatorMenuItemNew() (*SeparatorMenuItem, error) {
 }
 
 /*
+ * GtkSeparatorToolItem
+ */
+
+// SeparatorToolItem is a representation of GTK's GtkSeparatorToolItem.
+type SeparatorToolItem struct {
+	ToolItem
+}
+
+// native returns a pointer to the underlying GtkSeparatorToolItem.
+func (v *SeparatorToolItem) native() *C.GtkSeparatorToolItem {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkSeparatorToolItem(p)
+}
+
+func marshalSeparatorToolItem(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapSeparatorToolItem(obj), nil
+}
+
+func wrapSeparatorToolItem(obj *glib.Object) *SeparatorToolItem {
+	return &SeparatorToolItem{ToolItem{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}
+}
+
+// SeparatorToolItemNew is a wrapper around gtk_separator_tool_item_new().
+func SeparatorToolItemNew() (*SeparatorToolItem, error) {
+	c := C.gtk_separator_tool_item_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := wrapSeparatorToolItem(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
+}
+
+// SetDraw is a wrapper around gtk_separator_tool_item_set_draw().
+func (v *SeparatorToolItem) SetDraw(draw bool) {
+	C.gtk_separator_tool_item_set_draw(v.native(), gbool(draw))
+}
+
+// GetDraw is a wrapper around gtk_separator_tool_item_get_draw().
+func (v *SeparatorToolItem) GetDraw() bool {
+	c := C.gtk_separator_tool_item_get_draw(v.native())
+	return gobool(c)
+}
+
+/*
  * GtkSpinButton
  */
 
@@ -8718,6 +8772,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapSeparator(obj)
 	case "GtkSeparatorMenuItem":
 		g = wrapSeparatorMenuItem(obj)
+	case "GtkSeparatorToolItem":
+		g = wrapSeparatorToolItem(obj)
 	case "GtkSpinButton":
 		g = wrapSpinButton(obj)
 	case "GtkSpinner":

@@ -434,6 +434,12 @@ toGtkToolButton(void *p)
 	return (GTK_TOOL_BUTTON(p));
 }
 
+static GtkSeparatorToolItem *
+toGtkSeparatorToolItem(void *p)
+{
+	return (GTK_SEPARATOR_TOOL_ITEM(p));
+}
+
 static GType * 
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
