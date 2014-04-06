@@ -98,6 +98,26 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
 }
 
 /*
+ * GtkButton
+ */
+
+// ButtonNewFromIconName is a wrapper around gtk_button_new_from_icon_name().
+func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
+	cstr := C.CString(iconName)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_button_new_from_icon_name((*C.gchar)(cstr),
+		C.GtkIconSize(size))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return b, nil
+}
+
+/*
  * GtkHeaderBar
  */
 
