@@ -54,6 +54,7 @@ import (
 	"github.com/conformal/gotk3/cairo"
 	"github.com/conformal/gotk3/gdk"
 	"github.com/conformal/gotk3/glib"
+	"github.com/conformal/gotk3/pango"
 	"runtime"
 	"unsafe"
 )
@@ -4174,6 +4175,11 @@ func (v *Label) SetJustify(jtype Justification) {
 	C.gtk_label_set_justify(v.native(), C.GtkJustification(jtype))
 }
 
+// SetEllipsize is a wrapper around gtk_label_set_ellipsize().
+func (v *Label) SetEllipsize(mode pango.EllipsizeMode) {
+	C.gtk_label_set_ellipsize(v.native(), C.PangoEllipsizeMode(mode))
+}
+
 // GetWidthChars is a wrapper around gtk_label_get_width_chars().
 func (v *Label) GetWidthChars() int {
 	c := C.gtk_label_get_width_chars(v.native())
@@ -4207,6 +4213,11 @@ func (v *Label) SetLineWrap(wrap bool) {
 	C.gtk_label_set_line_wrap(v.native(), gbool(wrap))
 }
 
+// SetLineWrapMode is a wrapper around gtk_label_set_line_wrap_mode().
+func (v *Label) SetLineWrapMode(wrapMode pango.WrapMode) {
+	C.gtk_label_set_line_wrap_mode(v.native(), C.PangoWrapMode(wrapMode))
+}
+
 // GetSelectable is a wrapper around gtk_label_get_selectable().
 func (v *Label) GetSelectable() bool {
 	c := C.gtk_label_get_selectable(v.native())
@@ -4226,6 +4237,12 @@ func (v *Label) GetText() (string, error) {
 func (v *Label) GetJustify() Justification {
 	c := C.gtk_label_get_justify(v.native())
 	return Justification(c)
+}
+
+// GetEllipsize is a wrapper around gtk_label_get_ellipsize().
+func (v *Label) GetEllipsize() pango.EllipsizeMode {
+	c := C.gtk_label_get_ellipsize(v.native())
+	return pango.EllipsizeMode(c)
 }
 
 // GetCurrentUri is a wrapper around gtk_label_get_current_uri().
