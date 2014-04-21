@@ -26,6 +26,10 @@ package gtk
 // #cgo pkg-config: gtk+-3.0
 // #include <gtk/gtk.h>
 import "C"
+import (
+	"github.com/conformal/gotk3/glib"
+	"runtime"
+)
 
 /*
  * GtkDialog
