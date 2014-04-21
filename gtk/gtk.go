@@ -2644,19 +2644,6 @@ func (v *Dialog) GetWidgetForResponse(id ResponseType) (*Widget, error) {
 	return w, nil
 }
 
-// GetActionArea() is a wrapper around gtk_dialog_get_action_area().
-func (v *Dialog) GetActionArea() (*Widget, error) {
-	c := C.gtk_dialog_get_action_area(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
-}
-
 // GetContentArea() is a wrapper around gtk_dialog_get_content_area().
 func (v *Dialog) GetContentArea() (*Box, error) {
 	c := C.gtk_dialog_get_content_area(v.native())
@@ -4907,24 +4894,6 @@ func (v *MessageDialog) SetMarkup(str string) {
 	cstr := C.CString(str)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_message_dialog_set_markup(v.native(), (*C.gchar)(cstr))
-}
-
-// SetImage is a wrapper around gtk_message_dialog_set_image().
-func (v *MessageDialog) SetImage(image IWidget) {
-	C.gtk_message_dialog_set_image(v.native(), image.toWidget())
-}
-
-// GetImage is a wrapper around gtk_message_dialog_get_image().
-func (v *MessageDialog) GetImage() (*Widget, error) {
-	c := C.gtk_message_dialog_get_image(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
 }
 
 // FormatSecondaryText is a wrapper around
@@ -8122,28 +8091,6 @@ func (v *Widget) GetVAlign() Align {
 // SetVAlign is a wrapper around gtk_widget_set_valign().
 func (v *Widget) SetVAlign(align Align) {
 	C.gtk_widget_set_valign(v.native(), C.GtkAlign(align))
-}
-
-// GetMarginLeft is a wrapper around gtk_widget_get_margin_left().
-func (v *Widget) GetMarginLeft() int {
-	c := C.gtk_widget_get_margin_left(v.native())
-	return int(c)
-}
-
-// SetMarginLeft is a wrapper around gtk_widget_set_margin_left().
-func (v *Widget) SetMarginLeft(margin int) {
-	C.gtk_widget_set_margin_left(v.native(), C.gint(margin))
-}
-
-// GetMarginRight is a wrapper around gtk_widget_get_margin_right().
-func (v *Widget) GetMarginRight() int {
-	c := C.gtk_widget_get_margin_right(v.native())
-	return int(c)
-}
-
-// SetMarginRight is a wrapper around gtk_widget_set_margin_right().
-func (v *Widget) SetMarginRight(margin int) {
-	C.gtk_widget_set_margin_right(v.native(), C.gint(margin))
 }
 
 // GetMarginTop is a wrapper around gtk_widget_get_margin_top().

@@ -26,7 +26,7 @@ package gtk
 // #cgo pkg-config: gtk+-3.0
 // #include <stdlib.h>
 // #include <gtk/gtk.h>
-// #include "gtk_3_10.go.h"
+// #include "gtk_3_10-12.go.h"
 import "C"
 import (
 	"github.com/conformal/gotk3/gdk"
