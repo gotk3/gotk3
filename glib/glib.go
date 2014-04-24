@@ -56,7 +56,7 @@ func gobool(b C.gboolean) bool {
 
 type closureContext struct {
 	rf       reflect.Value
-	userData *reflect.Value
+	userData reflect.Value
 }
 
 var (
@@ -193,8 +193,7 @@ func ClosureNew(f interface{}, marshalData ...interface{}) (*C.GClosure, error) 
 	}
 
 	if len(marshalData) > 0 {
-		rv := reflect.ValueOf(marshalData[0])
-		cc.userData = &rv
+		cc.userData = reflect.ValueOf(marshalData[0])
 	}
 
 	c := C._g_closure_new()
@@ -240,7 +239,7 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 	// closure context, increment the total number of parameters.
 	nGLibParams := int(nParams)
 	nTotalParams := nGLibParams
-	if cc.userData != nil {
+	if cc.userData.IsValid() {
 		nTotalParams++
 	}
 
@@ -275,7 +274,7 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 
 	// If non-nil user data was passed in and not all args have been set,
 	// get and set the reflect.Value directly from the GValue.
-	if cc.userData != nil && len(args) < cap(args) {
+	if cc.userData.IsValid() && len(args) < cap(args) {
 		args = append(args, cc.userData.Convert(cc.rf.Type().In(nCbParams-1)))
 	}
 
