@@ -380,6 +380,12 @@ toGtkFileChooser(void *p)
 	return (GTK_FILE_CHOOSER(p));
 }
 
+static GtkFileChooserButton *
+toGtkFileChooserButton(void *p)
+{
+	return (GTK_FILE_CHOOSER_BUTTON(p));
+}
+
 static GtkFileChooserWidget *
 toGtkFileChooserWidget(void *p)
 {

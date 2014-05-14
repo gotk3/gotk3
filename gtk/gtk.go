@@ -123,6 +123,7 @@ func init() {
 		{glib.Type(C.gtk_entry_completion_get_type()), marshalEntryCompletion},
 		{glib.Type(C.gtk_event_box_get_type()), marshalEventBox},
 		{glib.Type(C.gtk_file_chooser_get_type()), marshalFileChooser},
+		{glib.Type(C.gtk_file_chooser_button_get_type()), marshalFileChooserButton},
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
 		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
@@ -3576,6 +3577,54 @@ func (v *FileChooser) GetFilename() string {
 	s := C.GoString((*C.char)(c))
 	defer C.g_free((C.gpointer)(c))
 	return s
+}
+
+/*
+ * GtkFileChooserButton
+ */
+
+// FileChooserButton is a representation of GTK's GtkFileChooserButton.
+type FileChooserButton struct {
+	Box
+
+	// Interfaces
+	FileChooser
+}
+
+// native returns a pointer to the underlying GtkFileChooserButton.
+func (v *FileChooserButton) native() *C.GtkFileChooserButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFileChooserButton(p)
+}
+
+func marshalFileChooserButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapFileChooserButton(obj), nil
+}
+
+func wrapFileChooserButton(obj *glib.Object) *FileChooserButton {
+	fc := wrapFileChooser(obj)
+	return &FileChooserButton{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
+}
+
+// FileChooserButtonNew is a wrapper around gtk_file_chooser_button_new().
+func FileChooserButtonNew(title string, action FileChooserAction) (*FileChooserButton, error) {
+	cstr := C.CString(title)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_file_chooser_button_new((*C.gchar)(cstr),
+		(C.GtkFileChooserAction)(action))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	f := wrapFileChooserButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return f, nil
 }
 
 /*
@@ -8705,6 +8754,12 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapEventBox(obj)
 	case "GtkFrame":
 		g = wrapFrame(obj)
+	case "GtkFileChooser":
+		g = wrapFileChooser(obj)
+	case "GtkFileChooserButton":
+		g = wrapFileChooserButton(obj)
+	case "GtkFileChooserWidget":
+		g = wrapFileChooserWidget(obj)
 	case "GtkGrid":
 		g = wrapGrid(obj)
 	case "GtkImage":
