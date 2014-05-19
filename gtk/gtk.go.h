@@ -110,6 +110,12 @@ toGtkStatusbar(void *p)
 	return (GTK_STATUSBAR(p));
 }
 
+static GtkStatusIcon *
+toGtkStatusIcon(void *p)
+{
+	return (GTK_STATUS_ICON(p));
+}
+
 static GtkMisc *
 toGtkMisc(void *p)
 {
