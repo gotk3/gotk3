@@ -33,6 +33,7 @@ func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
 		{glib.Type(C.gdk_colorspace_get_type()), marshalColorspace},
+		{glib.Type(C.gdk_interp_type_get_type()), marshalInterpType},
 		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
 
 		// Objects/Interfaces
@@ -86,6 +87,21 @@ const (
 func marshalColorspace(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Colorspace(c), nil
+}
+
+// InterpType is a representation of GDK's GdkInterpType.
+type InterpType int
+
+const (
+	INTERP_NEAREST  InterpType = C.GDK_INTERP_NEAREST
+	INTERP_TILES    InterpType = C.GDK_INTERP_TILES
+	INTERP_BILINEAR InterpType = C.GDK_INTERP_BILINEAR
+	INTERP_HYPER    InterpType = C.GDK_INTERP_HYPER
+)
+
+func marshalInterpType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return InterpType(c), nil
 }
 
 // PixbufAlphaMode is a representation of GDK's GdkPixbufAlphaMode.
@@ -606,6 +622,20 @@ func (v *Pixbuf) GetOption(key string) (value string, ok bool) {
 func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, height int) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_new(C.GdkColorspace(colorspace), gbool(hasAlpha),
 		C.int(bitsPerSample), C.int(width), C.int(height))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
+// ScaleSimple is a wrapper around gdk_pixbuf_scale_simple().
+func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (*Pixbuf, error) {
+	c := C.gdk_pixbuf_scale_simple(v.native(), C.int(destWidth),
+		C.int(destHeight), C.GdkInterpType(interpType))
 	if c == nil {
 		return nil, nilPtrErr
 	}

@@ -2512,7 +2512,7 @@ func (v *Container) PropagateDraw(child IWidget, cr *cairo.Context) {
 
 // GetFocusChain is a wrapper around gtk_container_get_focus_chain().
 func (v *Container) GetFocusChain() ([]*Widget, bool) {
-	var cwlist *C.GList
+	var cwlist *C.struct__GList
 	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
 
 	var widgets []*Widget
@@ -4046,11 +4046,11 @@ func (v *Image) SetFromResource(resourcePath string) {
 	C.gtk_image_set_from_resource(v.native(), (*C.gchar)(cstr))
 }
 
-// TODO(jrick) GdkPixbuf
-/*
-func (v *Image) SetFromPixbuf() {
+// SetFromFixbuf is a wrapper around gtk_image_set_from_pixbuf().
+func (v *Image) SetFromPixbuf(pixbuf *gdk.Pixbuf) {
+        pbptr := (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
+	C.gtk_image_set_from_pixbuf(v.native(), pbptr)
 }
-*/
 
 // TODO(jrick) GtkIconSet
 /*
