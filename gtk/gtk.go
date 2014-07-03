@@ -51,12 +51,13 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"runtime"
+	"unsafe"
+
 	"github.com/conformal/gotk3/cairo"
 	"github.com/conformal/gotk3/gdk"
 	"github.com/conformal/gotk3/glib"
 	"github.com/conformal/gotk3/pango"
-	"runtime"
-	"unsafe"
 )
 
 func init() {
@@ -4048,7 +4049,7 @@ func (v *Image) SetFromResource(resourcePath string) {
 
 // SetFromFixbuf is a wrapper around gtk_image_set_from_pixbuf().
 func (v *Image) SetFromPixbuf(pixbuf *gdk.Pixbuf) {
-        pbptr := (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
+	pbptr := (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
 	C.gtk_image_set_from_pixbuf(v.native(), pbptr)
 }
 
@@ -7862,6 +7863,16 @@ func (v *Widget) SetAccelPath() {
 func (v *Widget) ListAccelClosures() {
 }
 */
+
+// GetAllocatedWidth() is a wrapper around gtk_widget_get_allocated_width().
+func (v *Widget) GetAllocatedWidth() int {
+	return int(C.gtk_widget_get_allocated_width(v.native()))
+}
+
+// GetAllocatedHeight() is a wrapper around gtk_widget_get_allocated_height().
+func (v *Widget) GetAllocatedHeight() int {
+	return int(C.gtk_widget_get_allocated_height(v.native()))
+}
 
 //gboolean gtk_widget_can_activate_accel(GtkWidget *widget, guint signal_id);
 
