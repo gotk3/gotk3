@@ -2513,7 +2513,7 @@ func (v *Container) PropagateDraw(child IWidget, cr *cairo.Context) {
 
 // GetFocusChain is a wrapper around gtk_container_get_focus_chain().
 func (v *Container) GetFocusChain() ([]*Widget, bool) {
-	var cwlist *C.struct__GList
+	var cwlist *C.GList
 	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
 
 	var widgets []*Widget
