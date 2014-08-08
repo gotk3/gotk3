@@ -509,12 +509,6 @@ _gtk_message_dialog_format_secondary_markup(GtkMessageDialog *message_dialog,
 	gtk_message_dialog_format_secondary_markup(message_dialog, "%s", msg);
 }
 
-static gchar *
-error_get_message(GError *error)
-{
-	return error->message;
-}
-
 static const gchar *
 object_get_class_name(GObject *object)
 {
