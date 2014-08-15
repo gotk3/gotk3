@@ -23,10 +23,11 @@ package gdk
 import "C"
 import (
 	"errors"
-	"github.com/conformal/gotk3/glib"
 	"reflect"
 	"runtime"
 	"unsafe"
+
+	"github.com/conformal/gotk3/glib"
 )
 
 func init() {
@@ -42,6 +43,7 @@ func init() {
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
 		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
 		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
+		{glib.Type(C.gdk_visual_get_type()), marshalVisual},
 		{glib.Type(C.gdk_window_get_type()), marshalWindow},
 
 		// Boxed
@@ -522,6 +524,29 @@ func (v *Event) free() {
 }
 
 /*
+ * GdkEventKey
+ */
+
+// EventKey is a representation of GDK's GdkEventKey.
+type EventKey struct {
+	*Event
+}
+
+// Native returns a pointer to the underlying GdkEventKey.
+func (v *EventKey) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventKey) native() *C.GdkEventKey {
+	return (*C.GdkEventKey)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventKey) KeyVal() uint {
+	c := v.native().keyval
+	return uint(c)
+}
+
+/*
  * GdkPixbuf
  */
 
@@ -713,6 +738,71 @@ func marshalScreen(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	return &Screen{obj}, nil
+}
+
+// GetRGBAVisual is a wrapper around gdk_screen_get_rgba_visual().
+func (v *Screen) GetRGBAVisual() (*Visual, error) {
+	c := C.gdk_screen_get_rgba_visual(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	visual := &Visual{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return visual, nil
+}
+
+// GetSystemVisual is a wrapper around gdk_screen_get_system_visual().
+func (v *Screen) GetSystemVisual() (*Visual, error) {
+	c := C.gdk_screen_get_system_visual(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	visual := &Visual{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return visual, nil
+}
+
+// GetWidth is a wrapper around gdk_screen_get_width().
+func (v *Screen) GetWidth() int {
+	c := C.gdk_screen_get_width(v.native())
+	return int(c)
+}
+
+// GetHeight is a wrapper around gdk_screen_get_height().
+func (v *Screen) GetHeight() int {
+	c := C.gdk_screen_get_height(v.native())
+	return int(c)
+}
+
+/*
+ * GdkVisual
+ */
+
+// Visual is a representation of GDK's GdkVisual.
+type Visual struct {
+	*glib.Object
+}
+
+func (v *Visual) native() *C.GdkVisual {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkVisual(p)
+}
+
+func (v *Visual) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalVisual(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Visual{obj}, nil
 }
 
 /*

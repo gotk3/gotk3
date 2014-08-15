@@ -55,6 +55,12 @@ toGdkScreen(void *p)
 	return (GDK_SCREEN(p));
 }
 
+static GdkVisual *
+toGdkVisual(void *p)
+{
+	return (GDK_VISUAL(p));
+}
+
 static GdkWindow *
 toGdkWindow(void *p)
 {

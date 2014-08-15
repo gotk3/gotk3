@@ -8005,6 +8005,11 @@ func (v *Widget) SetRealized(realized bool) {
 	C.gtk_widget_set_realized(v.native(), gbool(realized))
 }
 
+// SetDoubleBuffered is a wrapper around gtk_widget_set_double_buffered().
+func (v *Widget) SetDoubleBuffered(doubleBuffered bool) {
+	C.gtk_widget_set_double_buffered(v.native(), gbool(doubleBuffered))
+}
+
 // GetDoubleBuffered is a wrapper around gtk_widget_get_double_buffered().
 func (v *Widget) GetDoubleBuffered() bool {
 	c := C.gtk_widget_get_double_buffered(v.native())
@@ -8428,6 +8433,28 @@ func (v *Widget) SetVExpand(expand bool) {
 	C.gtk_widget_set_vexpand(v.native(), gbool(expand))
 }
 
+// SetVisual is a wrapper around gtk_widget_set_visual().
+func (v *Widget) SetVisual(visual *gdk.Visual) {
+	C.gtk_widget_set_visual(v.native(),
+		(*C.GdkVisual)(unsafe.Pointer(visual.Native())))
+}
+
+// SetAppPaintable is a wrapper around gtk_widget_set_app_paintable().
+func (v *Widget) SetAppPaintable(paintable bool) {
+	C.gtk_widget_set_app_paintable(v.native(), gbool(paintable))
+}
+
+// GetAppPaintable is a wrapper around gtk_widget_get_app_paintable().
+func (v *Widget) GetAppPaintable() bool {
+	c := C.gtk_widget_get_app_paintable(v.native())
+	return gobool(c)
+}
+
+// QueueDraw is a wrapper around gtk_widget_queue_draw().
+func (v *Widget) QueueDraw() {
+	C.gtk_widget_queue_draw(v.native())
+}
+
 /*
  * GtkWindow
  */
@@ -8529,6 +8556,19 @@ func (v *Window) SetDefaultSize(width, height int) {
 func (v *Window) SetDefaultGeometry(width, height int) {
 	C.gtk_window_set_default_geometry(v.native(), C.gint(width),
 		C.gint(height))
+}
+
+// GetScreen is a wrapper around gtk_window_get_screen().
+func (v *Window) GetScreen() (*gdk.Screen, error) {
+	c := C.gtk_window_get_screen(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := &gdk.Screen{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
 }
 
 // TODO(jrick) GdkGeometry GdkWindowHints.
