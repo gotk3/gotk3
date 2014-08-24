@@ -4838,6 +4838,13 @@ func (v *MenuItem) SetSubmenu(submenu IWidget) {
 	C.gtk_menu_item_set_submenu(v.native(), submenu.toWidget())
 }
 
+// Sets text on the menu_item label
+func (v *MenuItem) SetLabel(label string) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_menu_item_set_label(v.native(), (*C.gchar)(cstr))
+}
+
 /*
  * GtkMenuShell
  */
