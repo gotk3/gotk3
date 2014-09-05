@@ -113,6 +113,16 @@ To install gotk3 targeting the older GTK 3.10 release:
 $ go get -tags gtk_3_10 github.com/conformal/gotk3/gtk
 ```
 
+Ubuntu 14.04 uses the GTK 3.10 release.  Also, some required packages may be
+missing.  You may need to install the first or all of these packages in Ubuntu
+before gotk3:
+
+```bash
+$ sudo apt-get install libgtk-3-dev
+$ sudo apt-get install libcairo2-dev
+$ sudo apt-get install libglib2.0-dev
+```
+
 ## TODO
 - Add bindings for all of GTK+
 - Add tests for each implemented binding
