@@ -141,6 +141,7 @@ func init() {
 		{glib.Type(C.gtk_notebook_get_type()), marshalNotebook},
 		{glib.Type(C.gtk_offscreen_window_get_type()), marshalOffscreenWindow},
 		{glib.Type(C.gtk_orientable_get_type()), marshalOrientable},
+		{glib.Type(C.gtk_paned_get_type()), marshalPaned},
 		{glib.Type(C.gtk_progress_bar_get_type()), marshalProgressBar},
 		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
 		{glib.Type(C.gtk_radio_menu_item_get_type()), marshalRadioMenuItem},
@@ -5484,6 +5485,72 @@ func (v *Orientable) GetOrientation() Orientation {
 func (v *Orientable) SetOrientation(orientation Orientation) {
 	C.gtk_orientable_set_orientation(v.native(),
 		C.GtkOrientation(orientation))
+}
+
+/*
+ * GtkPaned
+ */
+
+// Paned is a representation of GTK's GtkPaned.
+type Paned struct {
+	Bin
+}
+
+// native returns a pointer to the underlying GtkPaned.
+func (v *Paned) native() *C.GtkPaned {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkPaned(p)
+}
+
+func marshalPaned(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapPaned(obj), nil
+}
+
+func wrapPaned(obj *glib.Object) *Paned {
+	return &Paned{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// PanedNew() is a wrapper around gtk_scrolled_window_new().
+func PanedNew(orientation Orientation) (*Paned, error) {
+	c := C.gtk_paned_new(C.GtkOrientation(orientation))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := wrapPaned(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
+}
+
+// Add1() is a wrapper around gtk_paned_add1().
+func (v *Paned) Add1(child IWidget) {
+	C.gtk_paned_add1(v.native(), child.toWidget())
+}
+
+// Add2() is a wrapper around gtk_paned_add2().
+func (v *Paned) Add2(child IWidget) {
+	C.gtk_paned_add2(v.native(), child.toWidget())
+}
+
+// Pack1() is a wrapper around gtk_paned_pack1().
+func (v *Paned) Pack1(child IWidget, resize, shrink bool) {
+	C.gtk_paned_pack1(v.native(), child.toWidget(), gbool(resize), gbool(shrink))
+}
+
+// Pack2() is a wrapper around gtk_paned_pack2().
+func (v *Paned) Pack2(child IWidget, resize, shrink bool) {
+	C.gtk_paned_pack2(v.native(), child.toWidget(), gbool(resize), gbool(shrink))
+}
+
+// SetPosition() is a wrapper around gtk_paned_set_position().
+func (v *Paned) SetPosition(position int) {
+	C.gtk_paned_set_position(v.native(), C.gint(position))
 }
 
 /*

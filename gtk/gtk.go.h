@@ -80,6 +80,12 @@ toGtkContainer(void *p)
 	return (GTK_CONTAINER(p));
 }
 
+static GtkPaned *
+toGtkPaned(void *p)
+{
+	return (GTK_PANED(p));
+}
+
 static GtkProgressBar *
 toGtkProgressBar(void *p)
 {
