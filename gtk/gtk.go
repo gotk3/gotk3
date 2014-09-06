@@ -6040,6 +6040,32 @@ func (v *ScrolledWindow) SetPolicy(hScrollbarPolicy, vScrollbarPolicy PolicyType
 		C.GtkPolicyType(vScrollbarPolicy))
 }
 
+// GetHAdjustment() is a wrapper around gtk_scrolled_window_get_hadjustment().
+func (v *ScrolledWindow) GetHAdjustment() *Adjustment {
+	c := C.gtk_scrolled_window_get_hadjustment(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAdjustment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a
+}
+
+// GetVAdjustment() is a wrapper around gtk_scrolled_window_get_vadjustment().
+func (v *ScrolledWindow) GetVAdjustment() *Adjustment {
+	c := C.gtk_scrolled_window_get_vadjustment(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAdjustment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a
+}
+
 /*
  * GtkSearchEntry
  */
