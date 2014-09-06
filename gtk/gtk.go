@@ -863,6 +863,12 @@ func (v *AboutDialog) SetLicenseType(license License) {
 	C.gtk_about_dialog_set_license_type(v.native(), C.GtkLicense(license))
 }
 
+// SetLogo is a wrapper around gtk_about_dialog_set_logo().
+func (v *AboutDialog) SetLogo(logo *gdk.Pixbuf) {
+	logoPtr := (*C.GdkPixbuf)(unsafe.Pointer(logo.Native()))
+	C.gtk_about_dialog_set_logo(v.native(), logoPtr)
+}
+
 // GetLogoIconName is a wrapper around gtk_about_dialog_get_logo_icon_name().
 func (v *AboutDialog) GetLogoIconName() string {
 	c := C.gtk_about_dialog_get_logo_icon_name(v.native())
@@ -6217,6 +6223,11 @@ func (v *SpinButton) GetValue() float64 {
 	return float64(c)
 }
 
+// SetRange is a wrapper around gtk_spin_button_set_range().
+func (v *SpinButton) SetRange(min, max float64) {
+	C.gtk_spin_button_set_range(v.native(), C.gdouble(min), C.gdouble(max))
+}
+
 /*
  * GtkSpinner
  */
@@ -7660,6 +7671,19 @@ func (v *TreePath) String() string {
 	return C.GoString((*C.char)(c))
 }
 
+// TreePathNewFromString is a wrapper around gtk_tree_path_new_from_string().
+func TreePathNewFromString(path string) (*TreePath, error) {
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_tree_path_new_from_string((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	t := &TreePath{c}
+	runtime.SetFinalizer(t, (*TreePath).free)
+	return t, nil
+}
+
 /*
  * GtkTreeSelection
  */
@@ -7700,6 +7724,11 @@ func (v *TreeSelection) GetSelected(model *ITreeModel, iter *TreeIter) bool {
 	c := C.gtk_tree_selection_get_selected(v.native(),
 		pcmodel, iter.native())
 	return gobool(c)
+}
+
+// SelectPath is a wrapper around gtk_tree_selection_select_path().
+func (v *TreeSelection) SelectPath(path *TreePath) {
+	C.gtk_tree_selection_select_path(v.native(), path.native())
 }
 
 // GetSelectedRows is a wrapper around gtk_tree_selection_get_selected_rows().
@@ -8580,6 +8609,12 @@ func (v *Window) GetScreen() (*gdk.Screen, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
+}
+
+// SetIcon is a wrapper around gtk_window_set_icon().
+func (v *Window) SetIcon(icon *gdk.Pixbuf) {
+	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.Native()))
+	C.gtk_window_set_icon(v.native(), iconPtr)
 }
 
 // TODO(jrick) GdkGeometry GdkWindowHints.
