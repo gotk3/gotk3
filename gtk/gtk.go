@@ -3677,16 +3677,20 @@ func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
 	return &FileChooserDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}, *fc}
 }
 
-// FileChooserDialogNew is a wrapper around gtk_file_chooser_dialog_new().
+// FileChooserDialogNew1 is a wrapper around gtk_file_chooser_dialog_new() with one button.
 func FileChooserDialogNew1(
 	title string,
 	parent *Window,
 	action FileChooserAction,
 	first_button_text string,
 	first_button_id ResponseType) (*FileChooserDialog, error) {
+	c_title := C.CString(title)
+	defer C.free(unsafe.Pointer(c_title))
+	c_first_button_text := C.CString(first_button_text)
+	defer C.free(unsafe.Pointer(c_first_button_text))
 	c := C.gtk_file_chooser_dialog_new_1(
-		(*C.gchar)(C.CString(title)), parent.native(), C.GtkFileChooserAction(action),
-		(*C.gchar)(C.CString(first_button_text)), C.int(first_button_id))
+		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_first_button_text), C.int(first_button_id))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -3697,7 +3701,7 @@ func FileChooserDialogNew1(
 	return a, nil
 }
 
-// FileChooserDialogNew is a wrapper around gtk_file_chooser_dialog_new().
+// FileChooserDialogNew2 is a wrapper around gtk_file_chooser_dialog_new() with two buttons.
 func FileChooserDialogNew2(
 	title string,
 	parent *Window,
@@ -3706,10 +3710,16 @@ func FileChooserDialogNew2(
 	first_button_id ResponseType,
 	second_button_text string,
 	second_button_id ResponseType) (*FileChooserDialog, error) {
+	c_title := C.CString(title)
+	defer C.free(unsafe.Pointer(c_title))
+	c_first_button_text := C.CString(first_button_text)
+	defer C.free(unsafe.Pointer(c_first_button_text))
+	c_second_button_text := C.CString(second_button_text)
+	defer C.free(unsafe.Pointer(c_second_button_text))
 	c := C.gtk_file_chooser_dialog_new_2(
-		(*C.gchar)(C.CString(title)), parent.native(), C.GtkFileChooserAction(action),
-		(*C.gchar)(C.CString(first_button_text)), C.int(first_button_id),
-		(*C.gchar)(C.CString(second_button_text)), C.int(second_button_id))
+		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_first_button_text), C.int(first_button_id),
+		(*C.gchar)(c_second_button_text), C.int(second_button_id))
 	if c == nil {
 		return nil, nilPtrErr
 	}
