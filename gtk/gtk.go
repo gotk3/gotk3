@@ -5538,6 +5538,17 @@ func (v *ProgressBar) GetFraction() float64 {
 	return float64(c)
 }
 
+// SetShowText is a wrapper around gtk_progress_bar_set_show_text().
+func (v *ProgressBar) SetShowText(showText bool) {
+	C.gtk_progress_bar_set_show_text(v.native(), gbool(showText))
+}
+
+// GetShowText is a wrapper around gtk_progress_bar_get_show_text().
+func (v *ProgressBar) GetShowText() bool {
+	c := C.gtk_progress_bar_get_show_text(v.native())
+	return gobool(c)
+}
+
 // SetText() is a wrapper around gtk_progress_bar_set_text().
 func (v *ProgressBar) SetText(text string) {
 	cstr := C.CString(text)
