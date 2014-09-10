@@ -3677,8 +3677,8 @@ func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
 	return &FileChooserDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}, *fc}
 }
 
-// FileChooserDialogNew1 is a wrapper around gtk_file_chooser_dialog_new() with one button.
-func FileChooserDialogNew1(
+// FileChooserDialogNewWith1Button is a wrapper around gtk_file_chooser_dialog_new() with one button.
+func FileChooserDialogNewWith1Button(
 	title string,
 	parent *Window,
 	action FileChooserAction,
@@ -3701,8 +3701,8 @@ func FileChooserDialogNew1(
 	return a, nil
 }
 
-// FileChooserDialogNew2 is a wrapper around gtk_file_chooser_dialog_new() with two buttons.
-func FileChooserDialogNew2(
+// FileChooserDialogNewWith2Buttons is a wrapper around gtk_file_chooser_dialog_new() with two buttons.
+func FileChooserDialogNewWith2Buttons(
 	title string,
 	parent *Window,
 	action FileChooserAction,
