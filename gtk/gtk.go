@@ -7924,6 +7924,7 @@ type Widget struct {
 // GtkWidget.
 type IWidget interface {
 	toWidget() *C.GtkWidget
+	Set(string, interface{}) error
 }
 
 // native returns a pointer to the underlying GtkWidget.
@@ -8769,6 +8770,15 @@ func (v *Window) SetFocusOnMap(setting bool) {
 // TODO gtk_window_set_startup_id().
 
 // TODO gtk_window_set_role().
+
+// SetWMClass is a wrapper around gtk_window_set_wmclass().
+func (v *Window) SetWMClass(name, class string) {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	cClass := C.CString(class)
+	defer C.free(unsafe.Pointer(cClass))
+	C.gtk_window_set_wmclass(v.native(), (*C.gchar)(cName), (*C.gchar)(cClass))
+}
 
 // GetDecorated is a wrapper around gtk_window_get_decorated().
 func (v *Window) GetDecorated() bool {
