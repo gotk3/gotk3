@@ -3921,6 +3921,89 @@ func (v *Grid) GetColumnSpacing() uint {
 }
 
 /*
+ * GtkIconView
+ */
+
+// IconView is a representation of GTK's GtkIconView.
+type IconView struct {
+	Container
+}
+
+// Native returns a pointer to the underlying GtkIconView.
+func (v *IconView) native() *C.GtkIconView {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkIconView(p)
+}
+
+func marshalIconView(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapIconView(obj), nil
+}
+
+func wrapIconView(obj *glib.Object) *IconView {
+	return &IconView{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// IconViewNew is a wrapper around gtk_icon_view_new().
+func IconViewNew() (*IconView, error) {
+	c := C.gtk_icon_view_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapIconView(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+// IconViewNewWithModel is a wrapper around gtk_icon_view_new_with_model().
+func IconViewNewWithModel(model ITreeModel) (*IconView, error) {
+	c := C.gtk_icon_view_new_with_model(model.toTreeModel())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapIconView(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+// GetModel is a wrapper around gtk_icon_view_get_model().
+func (v *IconView) GetModel() (*TreeModel, error) {
+	c := C.gtk_icon_view_get_model(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapTreeModel(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+// SetModel is a wrapper around gtk_icon_view_set_model().
+func (v *IconView) SetModel(model ITreeModel) {
+	C.gtk_icon_view_set_model(v.native(), model.toTreeModel())
+}
+
+// SelectPath is a wrapper around gtk_icon_view_select_path().
+func (v *IconView) SelectPath(path *TreePath) {
+	C.gtk_icon_view_select_path(v.native(), path.native())
+}
+
+// ScrollToPath() is a wrapper around gtk_icon_view_scroll_to_path().
+func (v *IconView) ScrollToPath(path *TreePath, useAlign bool, rowAlign, colAlign float64) {
+	C.gtk_icon_view_scroll_to_path(v.native(), path.native(), gbool(useAlign),
+		C.gfloat(rowAlign), C.gfloat(colAlign))
+}
+
+/*
  * GtkImage
  */
 
@@ -9055,6 +9138,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapFileChooserWidget(obj)
 	case "GtkGrid":
 		g = wrapGrid(obj)
+	case "GtkIconView":
+		g = wrapIconView(obj)
 	case "GtkImage":
 		g = wrapImage(obj)
 	case "GtkLabel":

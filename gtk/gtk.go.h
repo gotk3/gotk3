@@ -158,6 +158,12 @@ toGtkAdjustment(void *p)
 	return (GTK_ADJUSTMENT(p));
 }
 
+static GtkIconView *
+toGtkIconView(void *p)
+{
+	return (GTK_ICON_VIEW(p));
+}
+
 static GtkImage *
 toGtkImage(void *p)
 {
@@ -472,6 +478,13 @@ _gtk_tree_view_column_new_with_attributes_one(const gchar *title,
 	tvc = gtk_tree_view_column_new_with_attributes(title, renderer,
 	    attribute, column, NULL);
 	return (tvc);
+}
+
+void
+_gtk_list_store_set(GtkListStore *list_store, GtkTreeIter *iter, gint column,
+	void* value)
+{
+	gtk_list_store_set(list_store, iter, column, value, -1);
 }
 
 static GtkWidget *
