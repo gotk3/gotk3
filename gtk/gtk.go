@@ -4463,6 +4463,10 @@ func (v *ListStore) SetColumnTypes(types ...glib.Type) {
 }
 */
 
+func (v *ListStore) SetPixbuf(iter *TreeIter, column int, value *gdk.Pixbuf) {
+	C._gtk_list_store_set(v.native(), iter.native(), C.gint(column), unsafe.Pointer(value.Native()))
+}
+
 // Set() is a wrapper around gtk_list_store_set_value() but provides
 // a function similar to gtk_list_store_set() in that multiple columns
 // may be set by one call.  The length of columns and values slices must
@@ -4477,16 +4481,51 @@ func (v *ListStore) Set(iter *TreeIter, columns []int, values []interface{}) err
 		return errors.New("columns and values lengths do not match")
 	}
 	for i, val := range values {
-		if gv, err := glib.GValue(val); err != nil {
-			return err
-		} else {
-			C.gtk_list_store_set_value(v.native(), iter.native(),
-				C.gint(columns[i]),
-				(*C.GValue)(unsafe.Pointer(gv.Native())))
-		}
+		v.SetValue(iter, columns[i], val)
 	}
 	return nil
 }
+
+// SetValue is a wrapper around gtk_list_store_set_value().
+func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) error {
+	gv, err := glib.GValue(value)
+	if err != nil {
+		return err
+	}
+	C.gtk_list_store_set_value(v.native(), iter.native(),
+		C.gint(column),
+		(*C.GValue)(unsafe.Pointer(gv.Native())))
+
+	return nil
+}
+
+
+// func (v *ListStore) Model(model ITreeModel) {
+// 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(model.toTreeModel()))}
+//	v.TreeModel = *wrapTreeModel(obj)
+//}
+
+
+// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
+func (v *ListStore) SetSortColumnId(column int, order SortType) {
+	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
+	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
+}
+
+
+func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
+	var columns []int
+	var values []interface{}
+	for i, val := range cols {
+		columns = append(columns, i)
+		values = append(values, val)
+	}
+	return v.Set(iter, columns, values)
+}
+
+// Convenient map for Columns and values (See ListStore, TreeStore)
+type Cols map[int]interface{}
+
 
 // TODO(jrick)
 /*
