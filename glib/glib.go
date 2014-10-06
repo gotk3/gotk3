@@ -739,6 +739,24 @@ func (v *List) Insert(data uintptr, position int) *List {
 	return (*List)(unsafe.Pointer(glist))
 }
 
+// Length is a wrapper around g_list_length().
+func (v *List) Length() uint {
+	glist := (*C.GList)(unsafe.Pointer(v))
+	return uint(C.g_list_length(glist))
+}
+
+// NthData is a wrapper around g_list_nth_data().
+func (v *List) NthData(n uint) interface{} {
+	glist := (*C.GList)(unsafe.Pointer(v))
+	return C.g_list_nth_data(glist, C.guint(n))
+}
+
+// Free is a wrapper around g_list_free().
+func (v *List) Free() {
+	glist := (*C.GList)(unsafe.Pointer(v))
+	C.g_list_free(glist)
+}
+
 // SList is a representation of Glib's GSList.
 type SList struct {
 	Data uintptr
@@ -794,6 +812,13 @@ func ValueInit(t Type) (*Value, error) {
 	v := &Value{*c}
 	runtime.SetFinalizer(v, (*Value).unset)
 	return v, nil
+}
+
+// ValueFromNative returns a type-asserted pointer to the Value.
+func ValueFromNative(l unsafe.Pointer) *Value {
+	//	x := C.toValue(l)
+	x := (*C.GValue)(l)
+	return &Value{*x}
 }
 
 func (v *Value) unset() {
