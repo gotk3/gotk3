@@ -89,6 +89,7 @@ func init() {
 		{glib.Type(C.gtk_response_type_get_type()), marshalResponseType},
 		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
 		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
+		{glib.Type(C.gtk_sort_type_get_type()), marshalSortType},
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
 		{glib.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
 		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
@@ -633,6 +634,19 @@ const (
 func marshalShadowType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return ShadowType(c), nil
+}
+
+// SortType is a representation of GTK's GtkSortType.
+type SortType int
+
+const (
+	SORT_ASCENDING  SortType = C.GTK_SORT_ASCENDING
+	SORT_DESCENDING          = C.GTK_SORT_DESCENDING
+)
+
+func marshalSortType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SortType(c), nil
 }
 
 // StateFlags is a representation of GTK's GtkStateFlags.
@@ -4499,19 +4513,16 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 	return nil
 }
 
-
 // func (v *ListStore) Model(model ITreeModel) {
 // 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(model.toTreeModel()))}
 //	v.TreeModel = *wrapTreeModel(obj)
 //}
-
 
 // SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
 func (v *ListStore) SetSortColumnId(column int, order SortType) {
 	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
 	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
 }
-
 
 func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
 	var columns []int
@@ -4525,7 +4536,6 @@ func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
 
 // Convenient map for Columns and values (See ListStore, TreeStore)
 type Cols map[int]interface{}
-
 
 // TODO(jrick)
 /*
