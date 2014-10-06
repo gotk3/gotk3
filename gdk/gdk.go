@@ -684,6 +684,41 @@ func PixbufNewFromFile(filename string) (*Pixbuf, error) {
 	return p, nil
 }
 
+// PixbufNewFromFileAtSize is a wrapper around gdk_pixbuf_new_from_file_at_size().
+func PixbufNewFromFileAtSize(filename string, width, height int) (*Pixbuf, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	res := C.gdk_pixbuf_new_from_file_at_size(cstr, C.int(width), C.int(height), &err)
+	if res == nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
+	p := &Pixbuf{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
+// PixbufNewFromFileAtScale is a wrapper around gdk_pixbuf_new_from_file_at_scale().
+func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspectRatio bool) (*Pixbuf, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	res := C.gdk_pixbuf_new_from_file_at_scale(cstr, C.int(width), C.int(height),
+		gbool(preserveAspectRatio), &err)
+	if res == nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
+	p := &Pixbuf{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
 // ScaleSimple is a wrapper around gdk_pixbuf_scale_simple().
 func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_scale_simple(v.native(), C.int(destWidth),
@@ -709,6 +744,17 @@ func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
+}
+
+// PixbufGetFileInfo is a wrapper around gdk_pixbuf_get_file_info().
+// TODO: need to wrap the returned format to GdkPixbufFormat.
+func PixbufGetFileInfo(filename string) (format interface{}, width, height int) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var cw, ch C.gint
+	format = C.gdk_pixbuf_get_file_info((*C.gchar)(cstr), &cw, &ch)
+	// TODO: need to wrap the returned format to GdkPixbufFormat.
+	return format, int(cw), int(ch)
 }
 
 /*
