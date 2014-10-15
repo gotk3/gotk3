@@ -4477,10 +4477,6 @@ func (v *ListStore) SetColumnTypes(types ...glib.Type) {
 }
 */
 
-func (v *ListStore) SetPixbuf(iter *TreeIter, column int, value *gdk.Pixbuf) {
-	C._gtk_list_store_set(v.native(), iter.native(), C.gint(column), unsafe.Pointer(value.Native()))
-}
-
 // Set() is a wrapper around gtk_list_store_set_value() but provides
 // a function similar to gtk_list_store_set() in that multiple columns
 // may be set by one call.  The length of columns and values slices must
@@ -4502,13 +4498,21 @@ func (v *ListStore) Set(iter *TreeIter, columns []int, values []interface{}) err
 
 // SetValue is a wrapper around gtk_list_store_set_value().
 func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) error {
-	gv, err := glib.GValue(value)
-	if err != nil {
-		return err
+	switch value.(type) {
+	case *gdk.Pixbuf:
+		pix := value.(*gdk.Pixbuf)
+		C._gtk_list_store_set(v.native(), iter.native(), C.gint(column), unsafe.Pointer(pix.Native()))
+
+	default:
+		gv, err := glib.GValue(value)
+		if err != nil {
+			return err
+		}
+
+		C.gtk_list_store_set_value(v.native(), iter.native(),
+			C.gint(column),
+			(*C.GValue)(unsafe.Pointer(gv.Native())))
 	}
-	C.gtk_list_store_set_value(v.native(), iter.native(),
-		C.gint(column),
-		(*C.GValue)(unsafe.Pointer(gv.Native())))
 
 	return nil
 }
@@ -4525,13 +4529,13 @@ func (v *ListStore) SetSortColumnId(column int, order SortType) {
 }
 
 func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
-	var columns []int
-	var values []interface{}
-	for i, val := range cols {
-		columns = append(columns, i)
-		values = append(values, val)
+	for key, value := range cols {
+		err := v.SetValue(iter, key, value)
+		if err != nil {
+			return err
+		}
 	}
-	return v.Set(iter, columns, values)
+	return nil
 }
 
 // Convenient map for Columns and values (See ListStore, TreeStore)
