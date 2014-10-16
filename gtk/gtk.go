@@ -9193,12 +9193,16 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapFileChooserButton(obj)
 	case "GtkFileChooserWidget":
 		g = wrapFileChooserWidget(obj)
+	case "GtkFontButton":
+		g = wrapFontButton(obj)
 	case "GtkGrid":
 		g = wrapGrid(obj)
 	case "GtkImage":
 		g = wrapImage(obj)
 	case "GtkLabel":
 		g = wrapLabel(obj)
+	case "GtkLinkButton":
+		g = wrapLinkButton(obj)
 	case "GtkListStore":
 		g = wrapListStore(obj)
 	case "GtkMenu":
