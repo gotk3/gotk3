@@ -284,6 +284,12 @@ toGtkOrientable(void *p)
 	return (GTK_ORIENTABLE(p));
 }
 
+static GtkTreeStore *
+toGtkTreeStore (void *p)
+{
+	return (GTK_TREE_STORE(p));
+}
+
 static GtkTreeView *
 toGtkTreeView(void *p)
 {

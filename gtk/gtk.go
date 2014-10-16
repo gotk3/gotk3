@@ -165,6 +165,7 @@ func init() {
 		{glib.Type(C.gtk_tool_item_get_type()), marshalToolItem},
 		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
 		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
+		{glib.Type(C.gtk_tree_store_get_type()), marshalTreeStore},
 		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
 		{glib.Type(C.gtk_tree_view_column_get_type()), marshalTreeViewColumn},
 		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
@@ -7728,6 +7729,92 @@ func (v *TreeSelection) CountSelectedRows() int {
 }
 
 /*
+ * GtkTreeStore
+ */
+
+// TreeStore is a representation of GTK's GtkTreeStore.
+type TreeStore struct {
+	*glib.Object
+
+	// Interfaces
+	TreeModel
+}
+
+// native returns a pointer to the underlying GtkTreeStore.
+func (v *TreeStore) native() *C.GtkTreeStore {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTreeStore(p)
+}
+
+func marshalTreeStore(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTreeStore(obj), nil
+}
+
+func wrapTreeStore(obj *glib.Object) *TreeStore {
+	tm := wrapTreeModel(obj)
+	return &TreeStore{obj, *tm}
+}
+
+func (v *TreeStore) toTreeModel() *C.GtkTreeModel {
+	if v == nil {
+		return nil
+	}
+	return C.toGtkTreeModel(unsafe.Pointer(v.GObject))
+}
+
+// TreeStoreNew is a wrapper around gtk_tree_store_newv().
+func TreeStoreNew(types ...glib.Type) (*TreeStore, error) {
+	gtypes := C.alloc_types(C.int(len(types)))
+	for n, val := range types {
+		C.set_type(gtypes, C.int(n), C.GType(val))
+	}
+	defer C.g_free(C.gpointer(gtypes))
+	c := C.gtk_tree_store_newv(C.gint(len(types)), gtypes)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	ts := wrapTreeStore(obj)
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return ts, nil
+}
+
+// Append is a wrapper around gtk_tree_store_append().
+func (v *TreeStore) Append(parent *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	var cParent *C.GtkTreeIter
+	if parent != nil {
+		cParent = parent.native()
+	}
+	C.gtk_tree_store_append(v.native(), &ti, cParent)
+	iter := &TreeIter{ti}
+	return iter
+}
+
+// SetValue is a wrapper around gtk_tree_store_set_value()
+func (v *TreeStore) SetValue(iter *TreeIter, column int, value interface{}) error {
+	gv, err := glib.GValue(value)
+	if err != nil {
+		return err
+	}
+	C.gtk_tree_store_set_value(v.native(), iter.native(),
+		C.gint(column),
+		(*C.GValue)(C.gpointer(gv.Native())))
+	return nil
+}
+
+// Clear is a wrapper around gtk_tree_store_clear().
+func (v *TreeStore) Clear() {
+	C.gtk_tree_store_clear(v.native())
+}
+
+/*
  * GtkTreeView
  */
 
@@ -9127,6 +9214,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapTreeModel(obj)
 	case "GtkTreeSelection":
 		g = wrapTreeSelection(obj)
+	case "GtkTreeStore":
+		g = wrapTreeStore(obj)
 	case "GtkTreeView":
 		g = wrapTreeView(obj)
 	case "GtkTreeViewColumn":
