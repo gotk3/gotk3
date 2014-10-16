@@ -3714,8 +3714,11 @@ func wrapFrame(obj *glib.Object) *Frame {
 
 // FrameNew is a wrapper around gtk_frame_new().
 func FrameNew(label string) (*Frame, error) {
-	cstr := C.CString(label)
-	defer C.free(unsafe.Pointer(cstr))
+	var cstr *C.char
+	if label != "" {
+		cstr = C.CString(label)
+		defer C.free(unsafe.Pointer(cstr))
+	}
 	c := C.gtk_frame_new((*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
@@ -7163,7 +7166,11 @@ func wrapToolButton(obj *glib.Object) *ToolButton {
 func ToolButtonNew(iconWidget IWidget, label string) (*ToolButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_tool_button_new(iconWidget.toWidget(), (*C.gchar)(cstr))
+	var w *C.GtkWidget
+	if iconWidget != nil {
+		w = iconWidget.toWidget()
+	}
+	c := C.gtk_tool_button_new(w, (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
 	}
