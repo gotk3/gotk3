@@ -979,6 +979,36 @@ func wrapAdjustment(obj *glib.Object) *Adjustment {
 	return &Adjustment{glib.InitiallyUnowned{obj}}
 }
 
+// AdjustmentNew is a wrapper around gtk_adjustment_new().
+func AdjustmentNew(value, lower, upper, stepIncrement, pageIncrement, pageSize float64) (*Adjustment, error) {
+	c := C.gtk_adjustment_new(C.gdouble(value), C.gdouble(lower), C.gdouble(upper),
+		C.gdouble(stepIncrement), C.gdouble(pageIncrement), C.gdouble(pageSize))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAdjustment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
+}
+
+// GetValue is a wrapper around gtk_adjustment_get_value().
+func (v *Adjustment) GetValue() float64 {
+	c := C.gtk_adjustment_get_value(v.native())
+	return float64(c)
+}
+
+// SetValue is a wrapper around gtk_adjustment_set_value().
+func (v *Adjustment) SetValue(value float64) {
+	C.gtk_adjustment_set_value(v.native(), C.gdouble(value))
+}
+
+// SetPageIncrement is a wrapper around gtk_adjustment_set_page_increment().
+func (v *Adjustment) SetPageIncrement(inc float64) {
+	C.gtk_adjustment_set_page_increment(v.native(), C.gdouble(inc))
+}
+
 /*
  * GtkAlignment
  */
@@ -2371,6 +2401,36 @@ func (v *ComboBox) GetActive() int {
 // SetActive() is a wrapper around gtk_combo_box_set_active().
 func (v *ComboBox) SetActive(index int) {
 	C.gtk_combo_box_set_active(v.native(), C.gint(index))
+}
+
+// GetActiveIter is a wrapper around gtk_combo_box_get_active_iter().
+func (v *ComboBox) GetActiveIter() (*TreeIter, error) {
+	var cIter C.GtkTreeIter
+	c := C.gtk_combo_box_get_active_iter(v.native(), &cIter)
+	if !gobool(c) {
+		return nil, errors.New("unable to get active iter")
+	}
+	return &TreeIter{cIter}, nil
+}
+
+// SetActiveIter is a wrapper around gtk_combo_box_set_active_iter().
+func (v *ComboBox) SetActiveIter(iter *TreeIter) {
+	var cIter *C.GtkTreeIter
+	if iter != nil {
+		cIter = &iter.GtkTreeIter
+	}
+	C.gtk_combo_box_set_active_iter(v.native(), cIter)
+}
+
+// GetActiveID is a wrapper around gtk_combo_box_get_active_id().
+func (v *ComboBox) GetActiveID() string {
+	c := C.gtk_combo_box_get_active_id(v.native())
+	return C.GoString((*C.char)(c))
+}
+
+// SetModel is a wrapper around gtk_combo_box_set_model().
+func (v *ComboBox) SetModel(model ITreeModel) {
+	C.gtk_combo_box_set_model(v.native(), model.toTreeModel())
 }
 
 /*
@@ -7620,6 +7680,22 @@ func (v *TreeModel) IterNext(iter *TreeIter) bool {
 	return gobool(c)
 }
 
+// IterPrevious is a wrapper around gtk_tree_model_iter_previous().
+func (v *TreeModel) IterPrevious(iter *TreeIter) bool {
+	c := C.gtk_tree_model_iter_previous(v.native(), iter.native())
+	return gobool(c)
+}
+
+// IterNChildren is a wrapper around gtk_tree_model_iter_n_children().
+func (v *TreeModel) IterNChildren(iter *TreeIter) int {
+	var cIter *C.GtkTreeIter
+	if iter != nil {
+		cIter = iter.native()
+	}
+	c := C.gtk_tree_model_iter_n_children(v.native(), cIter)
+	return int(c)
+}
+
 /*
  * GtkTreePath
  */
@@ -7725,6 +7801,11 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 // CountSelectedRows() is a wrapper around gtk_tree_selection_count_selected_rows().
 func (v *TreeSelection) CountSelectedRows() int {
 	return int(C.gtk_tree_selection_count_selected_rows(v.native()))
+}
+
+// SelectIter is a wrapper around gtk_tree_selection_select_iter().
+func (v *TreeSelection) SelectIter(iter *TreeIter) {
+	C.gtk_tree_selection_select_iter(v.native(), iter.native())
 }
 
 /*
