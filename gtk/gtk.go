@@ -128,7 +128,7 @@ func init() {
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
 		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
-		{glib.Type(C.gtk_icon_view_type()), marshalIconView},
+		{glib.Type(C.gtk_icon_view_get_type()), marshalIconView},
 		{glib.Type(C.gtk_image_get_type()), marshalImage},
 		{glib.Type(C.gtk_label_get_type()), marshalLabel},
 		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
