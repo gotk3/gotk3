@@ -218,6 +218,12 @@ toGtkComboBox(void *p)
 	return (GTK_COMBO_BOX(p));
 }
 
+static GtkLinkButton *
+toGtkLinkButton(void *p)
+{
+	return (GTK_LINK_BUTTON(p));
+}
+
 static GtkListStore *
 toGtkListStore(void *p)
 {
@@ -342,6 +348,12 @@ static GtkToggleButton *
 toGtkToggleButton(void *p)
 {
 	return (GTK_TOGGLE_BUTTON(p));
+}
+
+static GtkFontButton *
+toGtkFontButton(void *p)
+{
+	return (GTK_FONT_BUTTON(p));
 }
 
 static GtkFrame *

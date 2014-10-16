@@ -126,10 +126,12 @@ func init() {
 		{glib.Type(C.gtk_file_chooser_get_type()), marshalFileChooser},
 		{glib.Type(C.gtk_file_chooser_button_get_type()), marshalFileChooserButton},
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
+		{glib.Type(C.gtk_font_button_get_type()), marshalFontButton},
 		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
 		{glib.Type(C.gtk_image_get_type()), marshalImage},
 		{glib.Type(C.gtk_label_get_type()), marshalLabel},
+		{glib.Type(C.gtk_link_button_get_type()), marshalLinkButton},
 		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
 		{glib.Type(C.gtk_menu_get_type()), marshalMenu},
 		{glib.Type(C.gtk_menu_bar_get_type()), marshalMenuBar},
@@ -3685,6 +3687,77 @@ func FileChooserWidgetNew(action FileChooserAction) (*FileChooserWidget, error) 
 }
 
 /*
+ * GtkFontButton
+ */
+
+// FontButton is a representation of GTK's GtkFontButton.
+type FontButton struct {
+	Button
+}
+
+// native returns a pointer to the underlying GtkFontButton.
+func (v *FontButton) native() *C.GtkFontButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFontButton(p)
+}
+
+func marshalFontButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapFontButton(obj), nil
+}
+
+func wrapFontButton(obj *glib.Object) *FontButton {
+	return &FontButton{Button{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}
+}
+
+// FontButtonNew is a wrapper around gtk_font_button_new().
+func FontButtonNew() (*FontButton, error) {
+	c := C.gtk_font_button_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	fb := wrapFontButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return fb, nil
+}
+
+// FontButtonNewWithFont is a wrapper around gtk_font_button_new_with_font().
+func FontButtonNewWithFont(fontname string) (*FontButton, error) {
+	cstr := C.CString(fontname)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_font_button_new_with_font((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	fb := wrapFontButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return fb, nil
+}
+
+// GetFontName is a wrapper around gtk_font_button_get_font_name().
+func (v *FontButton) GetFontName() string {
+	c := C.gtk_font_button_get_font_name(v.native())
+	return C.GoString((*C.char)(c))
+}
+
+// SetFontName is a wrapper around gtk_font_button_set_font_name().
+func (v *FontButton) SetFontName(fontname string) bool {
+	cstr := C.CString(fontname)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_font_button_set_font_name(v.native(), (*C.gchar)(cstr))
+	return gobool(c)
+}
+
+/*
  * GtkFrame
  */
 
@@ -4392,6 +4465,73 @@ func (v *Label) SetLabel(str string) {
 	cstr := C.CString(str)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_label_set_label(v.native(), (*C.gchar)(cstr))
+}
+
+/*
+ * GtkLinkButton
+ */
+
+// LinkButton is a representation of GTK's GtkLinkButton.
+type LinkButton struct {
+	Button
+}
+
+// native returns a pointer to the underlying GtkLinkButton.
+func (v *LinkButton) native() *C.GtkLinkButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkLinkButton(p)
+}
+
+func marshalLinkButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapLinkButton(obj), nil
+}
+
+func wrapLinkButton(obj *glib.Object) *LinkButton {
+	return &LinkButton{Button{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}
+}
+
+// LinkButtonNew is a wrapper around gtk_link_button_new().
+func LinkButtonNew(label string) (*LinkButton, error) {
+	cstr := C.CString(label)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_link_button_new((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	lb := wrapLinkButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return lb, nil
+}
+
+// LinkButtonNewWithLabel is a wrapper around gtk_link_button_new_with_label().
+func LinkButtonNewWithLabel(uri, label string) (*LinkButton, error) {
+	curi := C.CString(uri)
+	defer C.free(unsafe.Pointer(curi))
+	clabel := C.CString(label)
+	defer C.free(unsafe.Pointer(clabel))
+	c := C.gtk_link_button_new_with_label((*C.gchar)(curi), (*C.gchar)(clabel))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	lb := wrapLinkButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return lb, nil
+}
+
+// SetUri is a wrapper around gtk_link_button_set_uri().
+func (v *LinkButton) SetUri(uri string) {
+	cstr := C.CString(uri)
+	C.gtk_link_button_set_uri(v.native(), (*C.gchar)(cstr))
 }
 
 /*
