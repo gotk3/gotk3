@@ -218,6 +218,12 @@ toGtkComboBox(void *p)
 	return (GTK_COMBO_BOX(p));
 }
 
+static GtkLinkButton *
+toGtkLinkButton(void *p)
+{
+	return (GTK_LINK_BUTTON(p));
+}
+
 static GtkListStore *
 toGtkListStore(void *p)
 {
@@ -284,6 +290,12 @@ toGtkOrientable(void *p)
 	return (GTK_ORIENTABLE(p));
 }
 
+static GtkTreeStore *
+toGtkTreeStore (void *p)
+{
+	return (GTK_TREE_STORE(p));
+}
+
 static GtkTreeView *
 toGtkTreeView(void *p)
 {
@@ -300,6 +312,12 @@ static GtkTreeSelection *
 toGtkTreeSelection(void *p)
 {
 	return (GTK_TREE_SELECTION(p));
+}
+
+static GtkTreeSortable *
+toGtkTreeSortable(void *p)
+{
+	return (GTK_TREE_SORTABLE(p));
 }
 
 static GtkClipboard *
@@ -344,6 +362,12 @@ toGtkToggleButton(void *p)
 	return (GTK_TOGGLE_BUTTON(p));
 }
 
+static GtkFontButton *
+toGtkFontButton(void *p)
+{
+	return (GTK_FONT_BUTTON(p));
+}
+
 static GtkFrame *
 toGtkFrame(void *p)
 {
@@ -354,6 +378,12 @@ static GtkSeparator *
 toGtkSeparator(void *p)
 {
 	return (GTK_SEPARATOR(p));
+}
+
+static GtkScale*
+toGtkScale(void *p)
+{
+	return (GTK_SCALE(p));
 }
 
 static GtkScrollbar *
@@ -392,10 +422,22 @@ toGtkFileChooserButton(void *p)
 	return (GTK_FILE_CHOOSER_BUTTON(p));
 }
 
+static GtkFileChooserDialog *
+toGtkFileChooserDialog(void *p)
+{
+	return (GTK_FILE_CHOOSER_DIALOG(p));
+}
+
 static GtkFileChooserWidget *
 toGtkFileChooserWidget(void *p)
 {
 	return (GTK_FILE_CHOOSER_WIDGET(p));
+}
+
+static GtkFileFilter *
+toGtkFileFilter(void *p)
+{
+	return (GTK_FILE_FILTER(p));
 }
 
 static GtkMenuButton *
@@ -474,6 +516,13 @@ _gtk_tree_view_column_new_with_attributes_one(const gchar *title,
 	return (tvc);
 }
 
+void
+_gtk_list_store_set(GtkListStore *list_store, GtkTreeIter *iter, gint column,
+	void* value)
+{
+	gtk_list_store_set(list_store, iter, column, value, -1);
+}
+
 static GtkWidget *
 _gtk_message_dialog_new(GtkWindow *parent, GtkDialogFlags flags,
     GtkMessageType type, GtkButtonsType buttons, char *msg)
@@ -513,4 +562,32 @@ static const gchar *
 object_get_class_name(GObject *object)
 {
 	return G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(object));
+}
+
+GtkWidget *
+gtk_file_chooser_dialog_new_1(
+	const gchar *title,
+	GtkWindow *parent,
+	GtkFileChooserAction action,
+	const gchar *first_button_text, int first_button_id
+) {
+	return gtk_file_chooser_dialog_new(
+		title, parent, action,
+		first_button_text, first_button_id,
+		NULL);
+}
+
+GtkWidget *
+gtk_file_chooser_dialog_new_2(
+	const gchar *title,
+	GtkWindow *parent,
+	GtkFileChooserAction action,
+	const gchar *first_button_text, int first_button_id,
+	const gchar *second_button_text, int second_button_id
+) {
+	return gtk_file_chooser_dialog_new(
+		title, parent, action,
+		first_button_text, first_button_id,
+		second_button_text, second_button_id,
+		NULL);
 }
