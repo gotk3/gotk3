@@ -356,6 +356,12 @@ toGtkSeparator(void *p)
 	return (GTK_SEPARATOR(p));
 }
 
+static GtkScale*
+toGtkScale(void *p)
+{
+	return (GTK_SCALE(p));
+}
+
 static GtkScrollbar *
 toGtkScrollbar(void *p)
 {

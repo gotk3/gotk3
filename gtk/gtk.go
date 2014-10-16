@@ -145,6 +145,7 @@ func init() {
 		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
 		{glib.Type(C.gtk_radio_menu_item_get_type()), marshalRadioMenuItem},
 		{glib.Type(C.gtk_range_get_type()), marshalRange},
+		{glib.Type(C.gtk_scale_get_type()), marshalScale},
 		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
 		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
 		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
@@ -5869,6 +5870,73 @@ func wrapRange(obj *glib.Object) *Range {
 	return &Range{Widget{glib.InitiallyUnowned{obj}}}
 }
 
+// GetValue is a wrapper around gtk_range_get_value().
+func (v *Range) GetValue() float64 {
+	c := C.gtk_range_get_value(v.native())
+	return float64(c)
+}
+
+// SetValue is a wrapper around gtk_range_set_value().
+func (v *Range) SetValue(value float64) {
+	C.gtk_range_set_value(v.native(), C.gdouble(value))
+}
+
+/*
+ * GtkScale
+ */
+
+// Scale is a representation of GTK's GtkScale.
+type Scale struct {
+	Range
+}
+
+// native returns a pointer to the underlying GtkScale.
+func (v *Scale) native() *C.GtkScale {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkScale(p)
+}
+
+func marshalScale(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapScale(obj), nil
+}
+
+func wrapScale(obj *glib.Object) *Scale {
+	return &Scale{Range{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// ScaleNew is a wrapper around gtk_scale_new().
+func ScaleNew(orientation Orientation, adjustment *Adjustment) (*Scale, error) {
+	c := C.gtk_scale_new(C.GtkOrientation(orientation), adjustment.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := wrapScale(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
+}
+
+// ScaleNewWithRange is a wrapper around gtk_scale_new_with_range().
+func ScaleNewWithRange(orientation Orientation, min, max, step float64) (*Scale, error) {
+	c := C.gtk_scale_new_with_range(C.GtkOrientation(orientation),
+		C.gdouble(min), C.gdouble(max), C.gdouble(step))
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	s := wrapScale(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return s, nil
+}
+
 /*
  * GtkScrollbar
  */
@@ -9089,6 +9157,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapRadioMenuItem(obj)
 	case "GtkRange":
 		g = wrapRange(obj)
+	case "GtkScale":
+		g = wrapScale(obj)
 	case "GtkScrollbar":
 		g = wrapScrollbar(obj)
 	case "GtkScrolledWindow":
