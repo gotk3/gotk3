@@ -164,6 +164,12 @@ toGtkAdjustment(void *p)
 	return (GTK_ADJUSTMENT(p));
 }
 
+static GtkIconView *
+toGtkIconView(void *p)
+{
+	return (GTK_ICON_VIEW(p));
+}
+
 static GtkImage *
 toGtkImage(void *p)
 {
