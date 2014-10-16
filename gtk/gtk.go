@@ -3592,9 +3592,52 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// SetCurrentFolder is a wrapper around gtk_file_chooser_set_current_folder().
+func (v *FileChooser) SetCurrentFolder(folder string) bool {
+	cstr := C.CString(folder)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_file_chooser_set_current_folder(v.native(), (*C.gchar)(cstr))
+	return gobool(c)
+}
+
+// GetCurrentFolder is a wrapper around gtk_file_chooser_get_current_folder().
+func (v *FileChooser) GetCurrentFolder() (string, error) {
+	c := C.gtk_file_chooser_get_current_folder(v.native())
+	if c == nil {
+		return "", nilPtrErr
+	}
+	defer C.free(unsafe.Pointer(c))
+	return C.GoString((*C.char)(c)), nil
+}
+
+// SetPreviewWidget is a wrapper around gtk_file_chooser_set_preview_widget().
+func (v *FileChooser) SetPreviewWidget(widget IWidget) {
+	C.gtk_file_chooser_set_preview_widget(v.native(), widget.toWidget())
+}
+
+// SetPreviewWidgetActive is a wrapper around gtk_file_chooser_set_preview_widget_active().
+func (v *FileChooser) SetPreviewWidgetActive(active bool) {
+	C.gtk_file_chooser_set_preview_widget_active(v.native(), gbool(active))
+}
+
+// GetPreviewFilename is a wrapper around gtk_file_chooser_get_preview_filename().
+func (v *FileChooser) GetPreviewFilename() string {
+	c := C.gtk_file_chooser_get_preview_filename(v.native())
+	defer C.free(unsafe.Pointer(c))
+	return C.GoString(c)
+}
+
 // AddFilter is a wrapper around gtk_file_chooser_add_filter().
 func (v *FileChooser) AddFilter(filter *FileFilter) {
 	C.gtk_file_chooser_add_filter(v.native(), filter.native())
+}
+
+// AddShortcutFolder is a wrapper around gtk_file_chooser_add_shortcut_folder().
+func (v *FileChooser) AddShortcutFolder(folder string) bool {
+	cstr := C.CString(folder)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_file_chooser_add_shortcut_folder(v.native(), cstr, nil)
+	return gobool(c)
 }
 
 /*
@@ -3828,6 +3871,11 @@ func (v *FileFilter) AddPattern(pattern string) {
 	cstr := C.CString(pattern)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_file_filter_add_pattern(v.native(), (*C.gchar)(cstr))
+}
+
+// AddPixbufFormats is a wrapper around gtk_file_filter_add_pixbuf_formats().
+func (v *FileFilter) AddPixbufFormats() {
+	C.gtk_file_filter_add_pixbuf_formats(v.native())
 }
 
 /*
