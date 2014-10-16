@@ -480,13 +480,6 @@ _gtk_tree_view_column_new_with_attributes_one(const gchar *title,
 	return (tvc);
 }
 
-void
-_gtk_list_store_set(GtkListStore *list_store, GtkTreeIter *iter, gint column,
-	void* value)
-{
-	gtk_list_store_set(list_store, iter, column, value, -1);
-}
-
 static GtkWidget *
 _gtk_message_dialog_new(GtkWindow *parent, GtkDialogFlags flags,
     GtkMessageType type, GtkButtonsType buttons, char *msg)

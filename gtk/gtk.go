@@ -128,6 +128,7 @@ func init() {
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
 		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
+		{glib.Type(C.gtk_icon_view_type()), marshalIconView},
 		{glib.Type(C.gtk_image_get_type()), marshalImage},
 		{glib.Type(C.gtk_label_get_type()), marshalLabel},
 		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
@@ -3929,7 +3930,7 @@ type IconView struct {
 	Container
 }
 
-// Native returns a pointer to the underlying GtkIconView.
+// native returns a pointer to the underlying GtkIconView.
 func (v *IconView) native() *C.GtkIconView {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -3955,10 +3956,10 @@ func IconViewNew() (*IconView, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapIconView(obj)
+	iv := wrapIconView(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return iv, nil
 }
 
 // IconViewNewWithModel is a wrapper around gtk_icon_view_new_with_model().
@@ -3968,10 +3969,10 @@ func IconViewNewWithModel(model ITreeModel) (*IconView, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapIconView(obj)
+	iv := wrapIconView(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return iv, nil
 }
 
 // GetModel is a wrapper around gtk_icon_view_get_model().
@@ -3981,10 +3982,10 @@ func (v *IconView) GetModel() (*TreeModel, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeModel(obj)
+	tm := wrapTreeModel(obj)
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return tm, nil
 }
 
 // SetModel is a wrapper around gtk_icon_view_set_model().
@@ -3997,7 +3998,7 @@ func (v *IconView) SelectPath(path *TreePath) {
 	C.gtk_icon_view_select_path(v.native(), path.native())
 }
 
-// ScrollToPath() is a wrapper around gtk_icon_view_scroll_to_path().
+// ScrollToPath is a wrapper around gtk_icon_view_scroll_to_path().
 func (v *IconView) ScrollToPath(path *TreePath, useAlign bool, rowAlign, colAlign float64) {
 	C.gtk_icon_view_scroll_to_path(v.native(), path.native(), gbool(useAlign),
 		C.gfloat(rowAlign), C.gfloat(colAlign))
