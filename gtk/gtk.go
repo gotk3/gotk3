@@ -73,6 +73,7 @@ func init() {
 		{glib.Type(C.gtk_dialog_flags_get_type()), marshalDialogFlags},
 		{glib.Type(C.gtk_entry_icon_position_get_type()), marshalEntryIconPosition},
 		{glib.Type(C.gtk_file_chooser_action_get_type()), marshalFileChooserAction},
+		{glib.Type(C.gtk_icon_lookup_flags_get_type()), marshalSortType},
 		{glib.Type(C.gtk_icon_size_get_type()), marshalIconSize},
 		{glib.Type(C.gtk_image_type_get_type()), marshalImageType},
 		{glib.Type(C.gtk_input_hints_get_type()), marshalInputHints},
@@ -369,6 +370,22 @@ const (
 func marshalFileChooserAction(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return FileChooserAction(c), nil
+}
+
+// IconLookupFlags is a representation of GTK's GtkIconLookupFlags.
+type IconLookupFlags int
+
+const (
+	ICON_LOOKUP_NO_SVG           IconLookupFlags = C.GTK_ICON_LOOKUP_NO_SVG
+	ICON_LOOKUP_FORCE_SVG                        = C.GTK_ICON_LOOKUP_FORCE_SVG
+	ICON_LOOKUP_USE_BUILTIN                      = C.GTK_ICON_LOOKUP_USE_BUILTIN
+	ICON_LOOKUP_GENERIC_FALLBACK                 = C.GTK_ICON_LOOKUP_GENERIC_FALLBACK
+	ICON_LOOKUP_FORCE_SIZE                       = C.GTK_ICON_LOOKUP_FORCE_SIZE
+)
+
+func marshalIconLookupFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return IconLookupFlags(c), nil
 }
 
 // IconSize is a representation of GTK's GtkIconSize.
@@ -3918,6 +3935,51 @@ func (v *Grid) SetColumnSpacing(spacing uint) {
 func (v *Grid) GetColumnSpacing() uint {
 	c := C.gtk_grid_get_column_spacing(v.native())
 	return uint(c)
+}
+
+/*
+ * GtkIconTheme
+ */
+
+// IconTheme is a representation of GTK's GtkIconTheme
+type IconTheme struct {
+	Theme *C.GtkIconTheme
+}
+
+// IconThemeGetDefault is a wrapper around gtk_icon_theme_get_default().
+func IconThemeGetDefault() (*IconTheme, error) {
+	c := C.gtk_icon_theme_get_default()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return &IconTheme{c}, nil
+}
+
+// IconThemeGetForScreen is a wrapper around gtk_icon_theme_get_for_screen().
+func IconThemeGetForScreen(screen gdk.Screen) (*IconTheme, error) {
+	cScreen := (*C.GdkScreen)(unsafe.Pointer(screen.Native()))
+	c := C.gtk_icon_theme_get_for_screen(cScreen)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return &IconTheme{c}, nil
+}
+
+// LoadIcon is a wrapper around gtk_icon_theme_load_icon().
+func (v *IconTheme) LoadIcon(iconName string, size int, flags IconLookupFlags) (*gdk.Pixbuf, error) {
+	cstr := C.CString(iconName)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	c := C.gtk_icon_theme_load_icon(v.Theme, (*C.gchar)(cstr), C.gint(size), C.GtkIconLookupFlags(flags), &err)
+	if c == nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	pb := &gdk.Pixbuf{obj}
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return pb, nil
 }
 
 /*
