@@ -109,6 +109,7 @@ func init() {
 		{glib.Type(C.gtk_calendar_get_type()), marshalCalendar},
 		{glib.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},
 		{glib.Type(C.gtk_cell_renderer_get_type()), marshalCellRenderer},
+		{glib.Type(C.gtk_cell_renderer_pixbuf_get_type()), marshalCellRendererPixbuf},
 		{glib.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
 		{glib.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
 		{glib.Type(C.gtk_check_button_get_type()), marshalCheckButton},
@@ -1900,6 +1901,47 @@ func marshalCellRenderer(p uintptr) (interface{}, error) {
 
 func wrapCellRenderer(obj *glib.Object) *CellRenderer {
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
+}
+
+/*
+ * GtkCellRendererPixbuf
+ */
+
+// CellRendererPixbuf is a representation of GTK's GtkCellRendererPixbuf.
+type CellRendererPixbuf struct {
+	CellRenderer
+}
+
+// native returns a pointer to the underlying GtkCellRendererPixbuf.
+func (v *CellRendererPixbuf) native() *C.GtkCellRendererPixbuf {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellRendererPixbuf(p)
+}
+
+func marshalCellRendererPixbuf(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCellRendererPixbuf(obj), nil
+}
+
+func wrapCellRendererPixbuf(obj *glib.Object) *CellRendererPixbuf {
+	return &CellRendererPixbuf{CellRenderer{glib.InitiallyUnowned{obj}}}
+}
+
+// CellRendererPixbufNew is a wrapper around gtk_cell_renderer_pixbuf_new().
+func CellRendererPixbufNew() (*CellRendererPixbuf, error) {
+	c := C.gtk_cell_renderer_pixbuf_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	crt := wrapCellRendererPixbuf(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return crt, nil
 }
 
 /*
@@ -9017,6 +9059,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapCellLayout(obj)
 	case "GtkCellRenderer":
 		g = wrapCellRenderer(obj)
+	case "GtkCellRendererPixbuf":
+		g = wrapCellRendererPixbuf(obj)
 	case "GtkCellRendererText":
 		g = wrapCellRendererText(obj)
 	case "GtkCellRendererToggle":

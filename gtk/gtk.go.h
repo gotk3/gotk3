@@ -260,6 +260,12 @@ toGtkCellRenderer(void *p)
 	return (GTK_CELL_RENDERER(p));
 }
 
+static GtkCellRendererPixbuf *
+toGtkCellRendererPixbuf(void *p)
+{
+	return (GTK_CELL_RENDERER_PIXBUF(p));
+}
+
 static GtkCellRendererText *
 toGtkCellRendererText(void *p)
 {
