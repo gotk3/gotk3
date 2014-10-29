@@ -380,6 +380,12 @@ toGtkOffscreenWindow(void *p)
 	return (GTK_OFFSCREEN_WINDOW(p));
 }
 
+static GtkExpander *
+toGtkExpander(void *p)
+{
+	return (GTK_EXPANDER(p));
+}
+
 static GtkFileChooser *
 toGtkFileChooser(void *p)
 {

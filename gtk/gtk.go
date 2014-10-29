@@ -123,6 +123,7 @@ func init() {
 		{glib.Type(C.gtk_entry_buffer_get_type()), marshalEntryBuffer},
 		{glib.Type(C.gtk_entry_completion_get_type()), marshalEntryCompletion},
 		{glib.Type(C.gtk_event_box_get_type()), marshalEventBox},
+		{glib.Type(C.gtk_expander_get_type()), marshalExpander},
 		{glib.Type(C.gtk_file_chooser_get_type()), marshalFileChooser},
 		{glib.Type(C.gtk_file_chooser_button_get_type()), marshalFileChooserButton},
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
@@ -3553,6 +3554,84 @@ func (v *EventBox) SetVisibleWindow(visibleWindow bool) {
 func (v *EventBox) GetVisibleWindow() bool {
 	c := C.gtk_event_box_get_visible_window(v.native())
 	return gobool(c)
+}
+
+/*
+ * GtkExpander
+ */
+
+// Expander is a representation of GTK's GtkExpander.
+type Expander struct {
+	Bin
+}
+
+// native returns a pointer to the underlying GtkExpander.
+func (v *Expander) native() *C.GtkExpander {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkExpander(p)
+}
+
+func marshalExpander(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapExpander(obj), nil
+}
+
+func wrapExpander(obj *glib.Object) *Expander {
+	return &Expander{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// ExpanderNew is a wrapper around gtk_expander_new().
+func ExpanderNew(label string) (*Expander, error) {
+	var cstr *C.gchar
+	if label != "" {
+		cstr := C.CString(label)
+		defer C.free(unsafe.Pointer(cstr))
+	}
+	c := C.gtk_expander_new((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	e := wrapExpander(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return e, nil
+}
+
+// SetExpanded is a wrapper around gtk_expander_set_expanded().
+func (v *Expander) SetExpanded(expanded bool) {
+	C.gtk_expander_set_expanded(v.native(), gbool(expanded))
+}
+
+// GetExpanded is a wrapper around gtk_expander_get_expanded().
+func (v *Expander) GetExpanded() bool {
+	c := C.gtk_expander_get_expanded(v.native())
+	return gobool(c)
+}
+
+// SetLabel is a wrapper around gtk_expander_set_label().
+func (v *Expander) SetLabel(label string) {
+	var cstr *C.char
+	if label != "" {
+		cstr = C.CString(label)
+		defer C.free(unsafe.Pointer(cstr))
+	}
+	C.gtk_expander_set_label(v.native(), (*C.gchar)(cstr))
+}
+
+// GetLabel is a wrapper around gtk_expander_get_label().
+func (v *Expander) GetLabel() string {
+	c := C.gtk_expander_get_label(v.native())
+	return C.GoString((*C.char)(c))
+}
+
+// SetLabelWidget is a wrapper around gtk_expander_set_label_widget().
+func (v *Expander) SetLabelWidget(widget IWidget) {
+	C.gtk_expander_set_label_widget(v.native(), widget.toWidget())
 }
 
 /*
@@ -9045,6 +9124,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapEntryCompletion(obj)
 	case "GtkEventBox":
 		g = wrapEventBox(obj)
+	case "GtkExpander":
+		g = wrapExpander(obj)
 	case "GtkFrame":
 		g = wrapFrame(obj)
 	case "GtkFileChooser":
