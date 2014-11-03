@@ -492,6 +492,56 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 	C.gdk_display_notify_startup_complete(v.native(), (*C.gchar)(cstr))
 }
 
+// EventType is a representation of GDK's GdkEventType.
+// Do not confuse these event types with the signals that GTK+ widgets emit
+type EventType int
+
+const (
+	EVENT_NOTHING             EventType = C.GDK_NOTHING
+	EVENT_DELETE              EventType = C.GDK_DELETE
+	EVENT_DESTROY             EventType = C.GDK_DESTROY
+	EVENT_EXPOSE              EventType = C.GDK_EXPOSE
+	EVENT_MOTION_NOTIFY       EventType = C.GDK_MOTION_NOTIFY
+	EVENT_BUTTON_PRESS        EventType = C.GDK_BUTTON_PRESS
+	EVENT_2BUTTON_PRESS       EventType = C.GDK_2BUTTON_PRESS
+	EVENT_DOUBLE_BUTTON_PRESS EventType = C.GDK_DOUBLE_BUTTON_PRESS
+	EVENT_3BUTTON_PRESS       EventType = C.GDK_3BUTTON_PRESS
+	EVENT_TRIPLE_BUTTON_PRESS EventType = C.GDK_TRIPLE_BUTTON_PRESS
+	EVENT_BUTTON_RELEASE      EventType = C.GDK_BUTTON_RELEASE
+	EVENT_KEY_PRESS           EventType = C.GDK_KEY_PRESS
+	EVENT_KEY_RELEASE         EventType = C.GDK_KEY_RELEASE
+	EVENT_LEAVE_NOTIFY        EventType = C.GDK_ENTER_NOTIFY
+	EVENT_FOCUS_CHANGE        EventType = C.GDK_FOCUS_CHANGE
+	EVENT_CONFIGURE           EventType = C.GDK_CONFIGURE
+	EVENT_MAP                 EventType = C.GDK_MAP
+	EVENT_UNMAP               EventType = C.GDK_UNMAP
+	EVENT_PROPERTY_NOTIFY     EventType = C.GDK_PROPERTY_NOTIFY
+	EVENT_SELECTION_CLEAR     EventType = C.GDK_SELECTION_CLEAR
+	EVENT_SELECTION_REQUEST   EventType = C.GDK_SELECTION_REQUEST
+	EVENT_SELECTION_NOTIFY    EventType = C.GDK_SELECTION_NOTIFY
+	EVENT_PROXIMITY_IN        EventType = C.GDK_PROXIMITY_IN
+	EVENT_PROXIMITY_OUT       EventType = C.GDK_PROXIMITY_OUT
+	EVENT_DRAG_ENTER          EventType = C.GDK_DRAG_ENTER
+	EVENT_DRAG_LEAVE          EventType = C.GDK_DRAG_LEAVE
+	EVENT_DRAG_MOTION         EventType = C.GDK_DRAG_MOTION
+	EVENT_DRAG_STATUS         EventType = C.GDK_DRAG_STATUS
+	EVENT_DROP_START          EventType = C.GDK_DROP_START
+	EVENT_DROP_FINISHED       EventType = C.GDK_DROP_FINISHED
+	EVENT_CLIENT_EVENT        EventType = C.GDK_CLIENT_EVENT
+	EVENT_VISIBILITY_NOTIFY   EventType = C.GDK_VISIBILITY_NOTIFY
+	EVENT_SCROLL              EventType = C.GDK_SCROLL
+	EVENT_WINDOW_STATE        EventType = C.GDK_WINDOW_STATE
+	EVENT_SETTING             EventType = C.GDK_SETTING
+	EVENT_OWNER_CHANGE        EventType = C.GDK_OWNER_CHANGE
+	EVENT_GRAB_BROKEN         EventType = C.GDK_GRAB_BROKEN
+	EVENT_DAMAGE              EventType = C.GDK_DAMAGE
+	EVENT_TOUCH_BEGIN         EventType = C.GDK_TOUCH_BEGIN
+	EVENT_TOUCH_UPDATE        EventType = C.GDK_TOUCH_UPDATE
+	EVENT_TOUCH_END           EventType = C.GDK_TOUCH_END
+	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
+	EVENT_LAST                EventType = C.GDK_EVENT_LAST
+)
+
 /*
  * GdkEvent
  */
@@ -544,6 +594,72 @@ func (v *EventKey) native() *C.GdkEventKey {
 func (v *EventKey) KeyVal() uint {
 	c := v.native().keyval
 	return uint(c)
+}
+
+func (v *EventKey) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+/*
+ * GdkEventButton
+ */
+
+// EventButton is a representation of GDK's GdkEventButton.
+type EventButton struct {
+	*Event
+}
+
+// Native returns a pointer to the underlying GdkEventButton.
+func (v *EventButton) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventButton) native() *C.GdkEventButton {
+	return (*C.GdkEventButton)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventButton) X() float64 {
+	c := v.native().x
+	return float64(c)
+}
+
+func (v *EventButton) Y() float64 {
+	c := v.native().y
+	return float64(c)
+}
+
+// XRoot returns the x coordinate of the pointer relative to the root of the screen.
+func (v *EventButton) XRoot() float64 {
+	c := v.native().x_root
+	return float64(c)
+}
+
+// YRoot returns the y coordinate of the pointer relative to the root of the screen.
+func (v *EventButton) YRoot() float64 {
+	c := v.native().y_root
+	return float64(c)
+}
+
+func (v *EventButton) Button() uint {
+	c := v.native().button
+	return uint(c)
+}
+
+func (v *EventButton) State() uint {
+	c := v.native().state
+	return uint(c)
+}
+
+// Time returns the time of the event in milliseconds.
+func (v *EventButton) Time() uint32 {
+	c := v.native().time
+	return uint32(c)
+}
+
+func (v *EventButton) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
 }
 
 /*
