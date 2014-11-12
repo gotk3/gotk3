@@ -7835,7 +7835,7 @@ func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn
 		pctvcol = nil
 	}
 	
-	test := C.gtk_tree_view_get_path_at_pos(
+	return 0 != C.gtk_tree_view_get_path_at_pos(
 		v.native(),
 		(C.gint)(x),
 		(C.gint)(y),
@@ -7843,12 +7843,6 @@ func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn
 		pctvcol,
 		(*C.gint)(unsafe.Pointer(cellX)),
 		(*C.gint)(unsafe.Pointer(cellY)))
-	
-	if test == 0 {
-		return false
-	} else {
-		return true
-	}
 }
 
 /*
