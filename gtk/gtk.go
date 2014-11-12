@@ -7818,6 +7818,39 @@ func (v *TreeView) AppendColumn(column *TreeViewColumn) int {
 	return int(c)
 }
 
+// GetPathAtPos() is a wrapper around gtk_tree_view_get_path_at_pos().
+func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn, cellX, cellY *int) bool {
+	var ctp **C.GtkTreePath
+	if path != nil {
+		ctp = (**C.GtkTreePath)(unsafe.Pointer(&path.GtkTreePath))
+	} else {
+		ctp = nil
+	}
+	
+	var pctvcol **C.GtkTreeViewColumn
+	if column != nil {
+		ctvcol := column.native()
+		pctvcol = &ctvcol
+	} else {
+		pctvcol = nil
+	}
+	
+	test := C.gtk_tree_view_get_path_at_pos(
+		v.native(),
+		(C.gint)(x),
+		(C.gint)(y),
+		ctp,
+		pctvcol,
+		(*C.gint)(unsafe.Pointer(cellX)),
+		(*C.gint)(unsafe.Pointer(cellY)))
+	
+	if test == 0 {
+		return false
+	} else {
+		return true
+	}
+}
+
 /*
  * GtkTreeViewColumn
  */
