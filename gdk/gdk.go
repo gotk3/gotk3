@@ -34,6 +34,7 @@ func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
 		{glib.Type(C.gdk_colorspace_get_type()), marshalColorspace},
+		{glib.Type(C.gdk_event_type_get_type()), marshalEventType},
 		{glib.Type(C.gdk_interp_type_get_type()), marshalInterpType},
 		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
 
@@ -541,6 +542,11 @@ const (
 	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
 	EVENT_LAST                EventType = C.GDK_EVENT_LAST
 )
+
+func marshalEventType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return EventType(c), nil
+}
 
 /*
  * GdkEvent
