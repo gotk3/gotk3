@@ -29,7 +29,7 @@ package gtk
 // #include "gtk_3_12.go.h"
 import "C"
 import (
-	"github.com/conformal/gotk3/glib"
+	"github.com/MovingtoMars/gotk3/glib"
 	"runtime"
 	"unsafe"
 )

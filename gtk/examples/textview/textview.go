@@ -20,7 +20,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/conformal/gotk3/gtk"
+	"github.com/MovingtoMars/gotk3/gtk"
 	"log"
 )
 

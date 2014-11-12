@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/conformal/gotk3/gtk"
+	"github.com/MovingtoMars/gotk3/gtk"
 )
 
 // Setup the Window.
