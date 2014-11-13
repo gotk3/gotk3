@@ -168,6 +168,7 @@ func init() {
 		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
 		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
 		{glib.Type(C.gtk_tree_view_column_get_type()), marshalTreeViewColumn},
+		{glib.Type(C.gtk_volume_button_get_type()), marshalVolumeButton},
 		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
 		{glib.Type(C.gtk_window_get_type()), marshalWindow},
 
@@ -5923,14 +5924,14 @@ func (v *ScaleButton) native() *C.GtkScaleButton {
 func marshalScaleButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapButton(obj), nil
+	return wrapScaleButton(obj), nil
 }
 
 func wrapScaleButton(obj *glib.Object) *ScaleButton {
 	return &ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
-// ScaleButtonNew() is a wrapper around gtk_button_new().
+// ScaleButtonNew() is a wrapper around gtk_scale_button_new().
 func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*ScaleButton, error) {
 	cicons := make([]*C.gchar, len(icons))
 	for i, icon := range icons {
@@ -5961,7 +5962,7 @@ func (v *ScaleButton) GetAdjustment() *Adjustment {
 	return &Adjustment{glib.InitiallyUnowned{obj}}
 }
 
-// GetPopup is a wrapper around gtk_scale_button_get_popup().
+// GetPopup() is a wrapper around gtk_scale_button_get_popup().
 func (v *ScaleButton) GetPopup() (*Widget, error) {
 	c := C.gtk_scale_button_get_popup(v.native())
 	if c == nil {
@@ -8057,6 +8058,47 @@ func (v *TreeViewColumn) GetMinWidth() int {
 }
 
 /*
+ * GtkVolumeButton
+ */
+
+// VolumeButton is a representation of GTK's GtkVolumeButton.
+type VolumeButton struct {
+	ScaleButton
+}
+
+// native() returns a pointer to the underlying GtkVolumeButton.
+func (v *VolumeButton) native() *C.GtkVolumeButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkVolumeButton(p)
+}
+
+func marshalVolumeButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapVolumeButton(obj), nil
+}
+
+func wrapVolumeButton(obj *glib.Object) *VolumeButton {
+	return &VolumeButton{ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
+}
+
+// VolumeButtonNew() is a wrapper around gtk_button_new().
+func VolumeButtonNew() (*VolumeButton, error) {
+	c := C.gtk_volume_button_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapVolumeButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return b, nil
+}
+
+/*
  * GtkWidget
  */
 
@@ -9280,6 +9322,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapTreeView(obj)
 	case "GtkTreeViewColumn":
 		g = wrapTreeViewColumn(obj)
+	case "GtkVolumeButton":
+		g = wrapVolumeButton(obj)
 	case "GtkWidget":
 		g = wrapWidget(obj)
 	case "GtkWindow":

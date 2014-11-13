@@ -176,6 +176,12 @@ toGtkScaleButton(void *p)
 	return (GTK_SCALE_BUTTON(p));
 }
 
+static GtkVolumeButton *
+toGtkVolumeButton(void *p)
+{
+	return (GTK_VOLUME_BUTTON(p));
+}
+
 static GtkScrolledWindow *
 toGtkScrolledWindow(void *p)
 {
