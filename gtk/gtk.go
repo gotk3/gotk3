@@ -4622,6 +4622,33 @@ func MenuNew() (*Menu, error) {
 	return m, nil
 }
 
+// PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
+func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button int, activateTime uint32) {
+	var wshell *C.GtkWidget = nil
+	if parentMenuShell != nil {
+		wshell = parentMenuShell.toWidget()
+	}
+	var witem *C.GtkWidget = nil
+	if parentMenuItem != nil {
+		witem = parentMenuItem.toWidget()
+	} else {
+		
+	}
+	
+	C.gtk_menu_popup(v.native(),
+		wshell,
+		witem,
+		nil,
+		nil,
+		C.guint(button),
+		C.guint32(activateTime))
+}
+
+// Popdown() is a wrapper around gtk_menu_popdown().
+func (v *Menu) Popdown() {
+	C.gtk_menu_popdown(v.native())
+}
+
 /*
  * GtkMenuBar
  */
