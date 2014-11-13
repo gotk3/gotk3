@@ -493,11 +493,6 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 	C.gdk_display_notify_startup_complete(v.native(), (*C.gchar)(cstr))
 }
 
-func marshalEventType(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return EventType(c), nil
-}
-
 /*
  * GdkEvent
  */
@@ -621,6 +616,11 @@ func (v *EventKey) Type() EventType {
 // EventType is a representation of GDK's GdkEventType.
 // Do not confuse these event types with the signals that GTK+ widgets emit
 type EventType int
+
+func marshalEventType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return EventType(c), nil
+}
 
 const (
 	EVENT_NOTHING             EventType = C.GDK_NOTHING
