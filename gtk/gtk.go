@@ -4649,6 +4649,11 @@ func (v *Menu) Popdown() {
 	C.gtk_menu_popdown(v.native())
 }
 
+// ReorderChild() is a wrapper around gtk_menu_reorder_child().
+func (v *Menu) ReorderChild(child IWidget, position int) {
+	C.gtk_menu_reorder_child(v.native(), child.toWidget(), C.gint(position));
+}
+
 /*
  * GtkMenuBar
  */
