@@ -145,6 +145,7 @@ func init() {
 		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
 		{glib.Type(C.gtk_radio_menu_item_get_type()), marshalRadioMenuItem},
 		{glib.Type(C.gtk_range_get_type()), marshalRange},
+		{glib.Type(C.gtk_scale_button_get_type()), marshalScaleButton},
 		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
 		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
 		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
@@ -5902,6 +5903,93 @@ func wrapRange(obj *glib.Object) *Range {
 }
 
 /*
+ * GtkScaleButton
+ */
+
+// ScaleButton is a representation of GTK's GtkScaleButton.
+type ScaleButton struct {
+	Button
+}
+
+// native() returns a pointer to the underlying GtkScaleButton.
+func (v *ScaleButton) native() *C.GtkScaleButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkScaleButton(p)
+}
+
+func marshalScaleButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapButton(obj), nil
+}
+
+func wrapScaleButton(obj *glib.Object) *ScaleButton {
+	return &ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+}
+
+// ScaleButtonNew() is a wrapper around gtk_button_new().
+func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*ScaleButton, error) {
+	cicons := make([]*C.gchar, len(icons))
+	for i, icon := range icons {
+		cicons[i] = (*C.gchar)(C.CString(icon))
+		defer C.free(unsafe.Pointer(cicons[i]))
+	}
+	cicons = append(cicons, nil)
+	
+	c := C.gtk_scale_button_new(C.GtkIconSize(size),
+		C.gdouble(min),
+		C.gdouble(max),
+		C.gdouble(step),
+		&cicons[0])
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapScaleButton(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return b, nil
+}
+
+// GetAdjustment() is a wrapper around gtk_scale_button_get_adjustment().
+func (v *ScaleButton) GetAdjustment() *Adjustment {
+	c := C.gtk_scale_button_get_adjustment(v.native())
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Adjustment{glib.InitiallyUnowned{obj}}
+}
+
+// GetPopup is a wrapper around gtk_scale_button_get_popup().
+func (v *ScaleButton) GetPopup() (*Widget, error) {
+	c := C.gtk_scale_button_get_popup(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w, nil
+}
+
+// GetValue() is a wrapper around gtk_scale_button_get_value().
+func (v *ScaleButton) GetValue() float64 {
+	return float64(C.gtk_scale_button_get_value(v.native()))
+}
+
+// SetAdjustment() is a wrapper around gtk_scale_button_set_adjustment().
+func (v *ScaleButton) SetAdjustment(adjustment *Adjustment) {
+	C.gtk_scale_button_set_adjustment(v.native(), adjustment.native())
+}
+
+// SetValue() is a wrapper around gtk_scale_button_set_value().
+func (v *ScaleButton) SetValue(value float64) {
+	C.gtk_scale_button_set_value(v.native(), C.gdouble(value))
+}
+
+/*
  * GtkScrollbar
  */
 
@@ -9148,6 +9236,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapRadioMenuItem(obj)
 	case "GtkRange":
 		g = wrapRange(obj)
+	case "GtkScaleButton":
+		g = wrapScaleButton(obj)
 	case "GtkScrollbar":
 		g = wrapScrollbar(obj)
 	case "GtkScrolledWindow":

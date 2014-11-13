@@ -170,6 +170,12 @@ toGtkButton(void *p)
 	return (GTK_BUTTON(p));
 }
 
+static GtkScaleButton *
+toGtkScaleButton(void *p)
+{
+	return (GTK_SCALE_BUTTON(p));
+}
+
 static GtkScrolledWindow *
 toGtkScrolledWindow(void *p)
 {
