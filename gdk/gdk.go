@@ -122,24 +122,24 @@ func marshalInterpType(p uintptr) (interface{}, error) {
 type ModifierType uint
 
 const (
-	GDK_SHIFT_MASK    ModifierType = C.GDK_SHIFT_MASK
-	GDK_LOCK_MASK                  = C.GDK_LOCK_MASK
-	GDK_CONTROL_MASK               = C.GDK_CONTROL_MASK
-	GDK_MOD1_MASK                  = C.GDK_MOD1_MASK
-	GDK_MOD2_MASK                  = C.GDK_MOD2_MASK
-	GDK_MOD3_MASK                  = C.GDK_MOD3_MASK
-	GDK_MOD4_MASK                  = C.GDK_MOD4_MASK
-	GDK_MOD5_MASK                  = C.GDK_MOD5_MASK
-	GDK_BUTTON1_MASK               = C.GDK_BUTTON1_MASK
-	GDK_BUTTON2_MASK               = C.GDK_BUTTON2_MASK
-	GDK_BUTTON3_MASK               = C.GDK_BUTTON3_MASK
-	GDK_BUTTON4_MASK               = C.GDK_BUTTON4_MASK
-	GDK_BUTTON5_MASK               = C.GDK_BUTTON5_MASK
-	GDK_SUPER_MASK                 = C.GDK_SUPER_MASK
-	GDK_HYPER_MASK                 = C.GDK_HYPER_MASK
-	GDK_META_MASK                  = C.GDK_META_MASK
-	GDK_RELEASE_MASK               = C.GDK_RELEASE_MASK
-	GDK_MODIFIER_MASK              = C.GDK_MODIFIER_MASK
+	SHIFT_MASK    ModifierType = C.GDK_SHIFT_MASK
+	LOCK_MASK                  = C.GDK_LOCK_MASK
+	CONTROL_MASK               = C.GDK_CONTROL_MASK
+	MOD1_MASK                  = C.GDK_MOD1_MASK
+	MOD2_MASK                  = C.GDK_MOD2_MASK
+	MOD3_MASK                  = C.GDK_MOD3_MASK
+	MOD4_MASK                  = C.GDK_MOD4_MASK
+	MOD5_MASK                  = C.GDK_MOD5_MASK
+	BUTTON1_MASK               = C.GDK_BUTTON1_MASK
+	BUTTON2_MASK               = C.GDK_BUTTON2_MASK
+	BUTTON3_MASK               = C.GDK_BUTTON3_MASK
+	BUTTON4_MASK               = C.GDK_BUTTON4_MASK
+	BUTTON5_MASK               = C.GDK_BUTTON5_MASK
+	SUPER_MASK                 = C.GDK_SUPER_MASK
+	HYPER_MASK                 = C.GDK_HYPER_MASK
+	META_MASK                  = C.GDK_META_MASK
+	RELEASE_MASK               = C.GDK_RELEASE_MASK
+	MODIFIER_MASK              = C.GDK_MODIFIER_MASK
 )
 
 func marshalModifierType(p uintptr) (interface{}, error) {
