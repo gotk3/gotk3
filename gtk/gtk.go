@@ -98,6 +98,7 @@ func init() {
 
 		// Objects/Interfaces
 		{glib.Type(C.gtk_about_dialog_get_type()), marshalAboutDialog},
+		{glib.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
 		{glib.Type(C.gtk_adjustment_get_type()), marshalAdjustment},
 		{glib.Type(C.gtk_alignment_get_type()), marshalAlignment},
 		{glib.Type(C.gtk_arrow_get_type()), marshalArrow},
@@ -951,6 +952,47 @@ func (v *AboutDialog) GetWrapLicense() bool {
 // SetWrapLicense is a wrapper around gtk_about_dialog_set_wrap_license().
 func (v *AboutDialog) SetWrapLicense(wrapLicense bool) {
 	C.gtk_about_dialog_set_wrap_license(v.native(), gbool(wrapLicense))
+}
+
+/*
+ * GtkAccelGroup
+ */
+
+// AccelGroup is a representation of GTK's GtkAccelGroup.
+type AccelGroup struct {
+	glib.InitiallyUnowned
+}
+
+// native returns a pointer to the underlying GtkAccelGroup.
+func (v *AccelGroup) native() *C.GtkAccelGroup {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkAccelGroup(p)
+}
+
+func marshalAccelGroup(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapAccelGroup(obj), nil
+}
+
+func wrapAccelGroup(obj *glib.Object) *AccelGroup {
+	return &AccelGroup{glib.InitiallyUnowned{obj}}
+}
+
+// AccelGroup is a wrapper around gtk_accel_group_new().
+func AccelGroupNew() (*AccelGroup, error) {
+	c := C.gtk_accel_group_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAccelGroup(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
 }
 
 /*
@@ -8728,7 +8770,16 @@ func (v *Window) GetResizable() bool {
 	return gobool(c)
 }
 
-// TODO gtk_window_add_accel_group().
+// AddAccelGroup() is a wrapper around gtk_window_add_accel_group().
+func (v *Window) AddAccelGroup(accelGroup *AccelGroup) {
+	C.gtk_window_add_accel_group(v.native(), accelGroup.native())
+}
+
+
+// RemoveAccelGroup() is a wrapper around gtk_window_add_accel_group().
+func (v *Window) RemoveAccelGroup(accelGroup *AccelGroup) {
+	C.gtk_window_remove_accel_group(v.native(), accelGroup.native())
+}
 
 // ActivateFocus is a wrapper around gtk_window_activate_focus().
 func (v *Window) ActivateFocus() bool {
@@ -9188,6 +9239,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 	switch className {
 	case "GtkAboutDialog":
 		g = wrapAboutDialog(obj)
+	case "GtkAccelGroup":
+		g = wrapAccelGroup(obj)
 	case "GtkAdjustment":
 		g = wrapAdjustment(obj)
 	case "GtkAlignment":

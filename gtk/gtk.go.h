@@ -158,6 +158,12 @@ toGtkAdjustment(void *p)
 	return (GTK_ADJUSTMENT(p));
 }
 
+static GtkAccelGroup *
+toGtkAccelGroup(void *p)
+{
+	return (GTK_ACCEL_GROUP(p));
+}
+
 static GtkImage *
 toGtkImage(void *p)
 {
