@@ -8336,7 +8336,7 @@ func (v *Widget) SizeAllocate() {
 */
 
 // AddAccelerator() is a wrapper around gtk_widget_add_accelerator().
-func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key gdk.Keyval, mods gdk.ModifierType, flags AccelFlags) {
+func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key uint, mods gdk.ModifierType, flags AccelFlags) {
 	csignal := (*C.gchar)(C.CString(signal))
 	defer C.free(unsafe.Pointer(csignal))
 	
