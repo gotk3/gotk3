@@ -8335,11 +8335,19 @@ func (v *Widget) SizeAllocate() {
 }
 */
 
-// TODO(jrick) GtkAccelGroup GdkModifierType GtkAccelFlags
-/*
-func (v *Widget) AddAccelerator() {
+// AddAccelerator() is a wrapper around gtk_widget_add_accelerator().
+func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key gdk.Keyval, mods gdk.ModifierType, flags AccelFlags) {
+	csignal := (*C.gchar)(C.CString(signal))
+	defer C.free(unsafe.Pointer(csignal))
+	
+	C.gtk_widget_add_accelerator(v.native(),
+		csignal,
+		group.native(),
+		C.guint(key),
+		C.GdkModifierType(mods),
+		C.GtkAccelFlags(flags))
 }
-*/
+
 
 // TODO(jrick) GtkAccelGroup GdkModifierType
 /*

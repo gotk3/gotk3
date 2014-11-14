@@ -633,9 +633,9 @@ func (v *EventKey) native() *C.GdkEventKey {
 	return (*C.GdkEventKey)(unsafe.Pointer(v.Event.native()))
 }
 
-func (v *EventKey) KeyVal() uint {
+func (v *EventKey) KeyVal() Keyval {
 	c := v.native().keyval
-	return uint(c)
+	return Keyval(c)
 }
 
 func (v *EventKey) Type() EventType {
@@ -697,6 +697,43 @@ const (
 	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
 	EVENT_LAST                EventType = C.GDK_EVENT_LAST
 )
+
+/*
+ * GDK Keyval
+ */
+
+type Keyval uint
+
+// KeyvalFromName() is a wrapper around gdk_keyval_from_name().
+func KeyvalFromName(keyvalName string) Keyval {
+	str := (*C.gchar)(C.CString(keyvalName))
+	defer C.free(unsafe.Pointer(str))
+	return Keyval(C.gdk_keyval_from_name(str))
+}
+
+func (v Keyval) ConvertCase() (lower, upper Keyval) {
+	var l, u C.guint
+	l = 0
+	u = 0
+	C.gdk_keyval_convert_case(C.guint(v), &l, &u)
+	return Keyval(l), Keyval(u)
+}
+
+func (v Keyval) IsLower() bool {
+	return gobool(C.gdk_keyval_is_lower(C.guint(v)))
+}
+
+func (v Keyval) IsUpper() bool {
+	return gobool(C.gdk_keyval_is_upper(C.guint(v)))
+}
+
+func (v Keyval) ToLower() Keyval {
+	return Keyval(C.gdk_keyval_to_lower(C.guint(v)))
+}
+
+func (v Keyval) ToUpper() Keyval {
+	return Keyval(C.gdk_keyval_to_upper(C.guint(v)))
+}
 
 /*
  * GdkPixbuf
