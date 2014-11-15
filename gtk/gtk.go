@@ -5580,6 +5580,116 @@ func (v *Orientable) SetOrientation(orientation Orientation) {
 }
 
 /*
+ * GtkPaned
+ */
+
+// Paned is a representation of GTK's GtkPaned.
+type Paned struct {
+	Container
+}
+
+// native returns a pointer to the underlying GtkPaned.
+func (v *Paned) native() *C.GtkPaned {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkPaned(p)
+}
+
+func marshalPaned(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapPaned(obj), nil
+}
+
+func wrapPaned(obj *glib.Object) *Paned {
+	return &Paned{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// PanedNew is a wrapper around gtk_paned_new().
+func PanedNew(orientation Orientation) (*Paned, error) {
+	c := C.gtk_paned_new(C.GtkOrientation(orientation))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	o := wrapPaned(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return o, nil
+}
+
+// Add1() is a wrapper around gtk_paned_add1().
+func (v *Paned) Add1(child IWidget) {
+	C.gtk_paned_add1(v.native(), child.toWidget())
+}
+
+// Add2() is a wrapper around gtk_paned_add2().
+func (v *Paned) Add2(child IWidget) {
+	C.gtk_paned_add2(v.native(), child.toWidget())
+}
+
+// GetChild1() is a wrapper around gtk_paned_get_child1().
+func (v *Paned) GetChild1() (*Widget, error) {
+	c := C.gtk_paned_get_child1(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w, nil
+}
+
+// GetChild2() is a wrapper around gtk_paned_get_child2().
+func (v *Paned) GetChild2() (*Widget, error) {
+	c := C.gtk_paned_get_child2(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWidget(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w, nil
+}
+
+// GetHandleWindow() is a wrapper around gtk_paned_get_handle_window().
+func (v *Paned) GetHandleWindow() (*Window, error) {
+	c := C.gtk_paned_get_handle_window(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapWindow(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w, nil
+}
+
+// GetPosition() is a wrapper around gtk_paned_get_position().
+func (v *Paned) GetPosition() int {
+	return int(C.gtk_paned_get_position(v.native()))
+}
+
+// Pack1() is a wrapper around gtk_paned_pack1().
+func (v *Paned) Pack1(child IWidget, resize, shrink bool) {
+	C.gtk_paned_pack1(v.native(), child.toWidget(), gbool(resize), gbool(shrink))
+}
+
+// Pack2() is a wrapper around gtk_paned_pack2().
+func (v *Paned) Pack2(child IWidget, resize, shrink bool) {
+	C.gtk_paned_pack2(v.native(), child.toWidget(), gbool(resize), gbool(shrink))
+}
+
+// SetPosition() is a wrapper around gtk_paned_set_position().
+func (v *Paned) SetPosition(position int) {
+	C.gtk_paned_set_position(v.native(), C.gint(position))
+}
+
+/*
  * GtkProgressBar
  */
 

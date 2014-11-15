@@ -164,6 +164,12 @@ toGtkAccelGroup(void *p)
 	return (GTK_ACCEL_GROUP(p));
 }
 
+static GtkPaned *
+toGtkPaned(void *p)
+{
+	return (GTK_PANED(p));
+}
+
 static GtkImage *
 toGtkImage(void *p)
 {
