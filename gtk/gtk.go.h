@@ -158,6 +158,12 @@ toGtkAdjustment(void *p)
 	return (GTK_ADJUSTMENT(p));
 }
 
+static GtkTextTag *
+toGtkTextTag(void *p)
+{
+	return (GTK_TEXT_TAG(p));
+}
+
 static GtkAccelGroup *
 toGtkAccelGroup(void *p)
 {

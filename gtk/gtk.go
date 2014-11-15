@@ -142,6 +142,7 @@ func init() {
 		{glib.Type(C.gtk_notebook_get_type()), marshalNotebook},
 		{glib.Type(C.gtk_offscreen_window_get_type()), marshalOffscreenWindow},
 		{glib.Type(C.gtk_orientable_get_type()), marshalOrientable},
+		{glib.Type(C.gtk_paned_get_type()), marshalPaned},
 		{glib.Type(C.gtk_progress_bar_get_type()), marshalProgressBar},
 		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
 		{glib.Type(C.gtk_radio_menu_item_get_type()), marshalRadioMenuItem},
@@ -159,6 +160,7 @@ func init() {
 		{glib.Type(C.gtk_status_icon_get_type()), marshalStatusIcon},
 		{glib.Type(C.gtk_switch_get_type()), marshalSwitch},
 		{glib.Type(C.gtk_text_view_get_type()), marshalTextView},
+		{glib.Type(C.gtk_text_tag_get_type()), marshalTextTag},
 		{glib.Type(C.gtk_text_tag_table_get_type()), marshalTextTagTable},
 		{glib.Type(C.gtk_text_buffer_get_type()), marshalTextBuffer},
 		{glib.Type(C.gtk_toggle_button_get_type()), marshalToggleButton},
@@ -7088,6 +7090,47 @@ func (v *TextView) GetInputPurpose() InputPurpose {
 }
 
 /*
+ * GtkTextTag
+ */
+
+type TextTag struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GObject as a GtkTextTag.
+func (v *TextTag) native() *C.GtkTextTag {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTextTag(p)
+}
+
+func marshalTextTag(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTextTag(obj), nil
+}
+
+func wrapTextTag(obj *glib.Object) *TextTag {
+	return &TextTag{obj}
+}
+
+func TextTagNew(name string) (*TextTag, error) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	c := C.gtk_text_tag_new((*C.gchar)(cname))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	t := wrapTextTag(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return t, nil
+}
+
+/*
  * GtkTextTagTable
  */
 
@@ -7124,6 +7167,32 @@ func TextTagTableNew() (*TextTagTable, error) {
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return t, nil
+}
+
+// Add() is a wrapper around gtk_text_tag_table_add().
+func (v *TextTagTable) Add(tag *TextTag) bool {
+	c := C.gtk_text_tag_table_add(v.native(), tag.native())
+	return gobool(c)
+}
+
+// Lookup() is a wrapper around gtk_text_tag_table_lookup().
+func (v *TextTagTable) Lookup(name string) (*TextTag, error) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	c := C.gtk_text_tag_table_lookup(v.native(), (*C.gchar)(cname))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	w := wrapTextTag(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return w, nil
+}
+
+// Remove() is a wrapper around gtk_text_tag_table_remove().
+func (v *TextTagTable) Remove(tag *TextTag) {
+	C.gtk_text_tag_table_remove(v.native(), tag.native())
 }
 
 /*
@@ -7167,10 +7236,33 @@ func TextBufferNew(table *TextTagTable) (*TextBuffer, error) {
 	return e, nil
 }
 
+// ApplyTag() is a wrapper around gtk_text_buffer_apply_tag().
+func (v *TextBuffer) ApplyTag(tag *TextTag, start, end *TextIter) {
+	C.gtk_text_buffer_apply_tag(v.native(), tag.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+	fmt.Println("\n\n", v.native(), "\n", tag.native(), "\n", (*C.GtkTextIter)(start), "\n", (*C.GtkTextIter)(end), "\n\n")
+}
+
 func (v *TextBuffer) GetBounds() (start, end *TextIter) {
 	start, end = new(TextIter), new(TextIter)
 	C.gtk_text_buffer_get_bounds(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
 	return
+}
+
+// GetIterAtOffset() is a wrapper around gtk_text_buffer_get_iter_at_offset().
+func (v *TextBuffer) GetIterAtOffset(charOffset int) *TextIter {
+	var iter C.GtkTextIter
+	C.gtk_text_buffer_get_iter_at_offset(v.native(), &iter, C.gint(charOffset))
+	return (*TextIter)(&iter)
+}
+
+// GetTagTable() is a wrapper around gtk_text_buffer_get_tag_table().
+func (v *TextBuffer) GetTagTable() (*TextTagTable, error) {
+	c := C.gtk_text_buffer_get_tag_table(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapTextTagTable(obj), nil
 }
 
 func (v *TextBuffer) GetText(start, end *TextIter, includeHiddenChars bool) (string, error) {
@@ -9458,6 +9550,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapOffscreenWindow(obj)
 	case "GtkOrientable":
 		g = wrapOrientable(obj)
+	case "GtkPaned":
+		g = wrapPaned(obj)
 	case "GtkProgressBar":
 		g = wrapProgressBar(obj)
 	case "GtkRadioButton":
@@ -9492,6 +9586,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapTextView(obj)
 	case "GtkTextBuffer":
 		g = wrapTextBuffer(obj)
+	case "GtkTextTag":
+		g = wrapTextTag(obj)
 	case "GtkTextTagTable":
 		g = wrapTextTagTable(obj)
 	case "GtkToggleButton":
