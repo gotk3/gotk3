@@ -7239,7 +7239,6 @@ func TextBufferNew(table *TextTagTable) (*TextBuffer, error) {
 // ApplyTag() is a wrapper around gtk_text_buffer_apply_tag().
 func (v *TextBuffer) ApplyTag(tag *TextTag, start, end *TextIter) {
 	C.gtk_text_buffer_apply_tag(v.native(), tag.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
-	fmt.Println("\n\n", v.native(), "\n", tag.native(), "\n", (*C.GtkTextIter)(start), "\n", (*C.GtkTextIter)(end), "\n\n")
 }
 
 func (v *TextBuffer) GetBounds() (start, end *TextIter) {
