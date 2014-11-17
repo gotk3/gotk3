@@ -206,6 +206,30 @@ func marshalState(p uintptr) (interface{}, error) {
 	return State(c), nil
 }
 
+// SeekFlags is a representation of GstSeekFlags.
+type SeekFlags int
+
+const (
+	SEEK_FLAG_NONE         SeekFlags = C.GST_SEEK_FLAG_NONE
+	SEEK_FLAG_FLUSH        SeekFlags = C.GST_SEEK_FLAG_FLUSH
+	SEEK_FLAG_ACCURATE     SeekFlags = C.GST_SEEK_FLAG_ACCURATE
+	SEEK_FLAG_KEY_UNIT     SeekFlags = C.GST_SEEK_FLAG_KEY_UNIT
+	SEEK_FLAG_SEGMENT      SeekFlags = C.GST_SEEK_FLAG_SEGMENT
+	SEEK_FLAG_SKIP         SeekFlags = C.GST_SEEK_FLAG_SKIP
+	SEEK_FLAG_SNAP_BEFORE  SeekFlags = C.GST_SEEK_FLAG_SNAP_BEFORE
+	SEEK_FLAG_SNAP_AFTER   SeekFlags = C.GST_SEEK_FLAG_SNAP_AFTER
+	SEEK_FLAG_SNAP_NEAREST SeekFlags = C.GST_SEEK_FLAG_SNAP_NEAREST
+)
+
+// SeekType is a representation of GstSeekType.
+type SeekType int
+
+const (
+	SEEK_TYPE_NONE SeekType = C.GST_SEEK_TYPE_NONE
+	SEEK_TYPE_SET  SeekType = C.GST_SEEK_TYPE_SET
+	SEEK_TYPE_END  SeekType = C.GST_SEEK_TYPE_END
+)
+
 // StateChangeReturn is a representation of GstStateChangeReturn.
 type StateChangeReturn int
 
@@ -298,6 +322,25 @@ func (v *Element) GetState(timeout uint64) (state, pending State, change StateCh
 	var cstate, cpending C.GstState
 	c := C.gst_element_get_state(v.native(), &cstate, &cpending, C.GstClockTime(timeout))
 	return State(cstate), State(cpending), StateChangeReturn(c)
+}
+
+// Seek() is a wrapper around gst_element_seek().
+func (v *Element) Seek(rate float64, format Format, flags SeekFlags, startType SeekType, start int64, stopType SeekType, stop int64) bool {
+	c := C.gst_element_seek(v.native(),
+		C.gdouble(rate),
+		C.GstFormat(format),
+		C.GstSeekFlags(flags),
+		C.GstSeekType(startType),
+		C.gint64(start),
+		C.GstSeekType(stopType),
+		C.gint64(stop))
+	return gobool(c)
+}
+
+// SeekSimple() is a wrapper around gst_element_seek_simple().
+func (v *Element) SeekSimple(format Format, flags SeekFlags, pos int64) bool {
+	c := C.gst_element_seek_simple(v.native(), C.GstFormat(format), C.GstSeekFlags(flags), C.gint64(pos))
+	return gobool(c)
 }
 
 // SetState() is a wrapper around gst_element_set_state().
