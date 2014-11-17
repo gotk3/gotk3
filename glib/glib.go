@@ -517,6 +517,8 @@ func (v *Object) StopEmission(s string) {
 // g_object_set(), this function only sets one name value pair.  Make
 // multiple calls to this function to set multiple properties.
 func (v *Object) Set(name string, value interface{}) error {
+	return v.SetProperty(name, value)
+	/*
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -608,7 +610,7 @@ func (v *Object) Set(name string, value interface{}) error {
 		return errors.New("Unable to perform type conversion")
 	}
 	C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
-	return nil
+	return nil*/
 }
 
 // GetPropertyType returns the Type of a property of the underlying GObject.
