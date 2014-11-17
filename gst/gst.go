@@ -6,21 +6,28 @@ package gst
 import "C"
 
 import (
-	"unsafe"
 	"errors"
 	"runtime"
-	
+	"unsafe"
+
 	"github.com/MovingtoMars/gotk3/glib"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
-		//{glib.Type(C.gtk_align_get_type()), marshalAlign},
+		{glib.Type(C.gst_format_get_type()), marshalFormat},
+		{glib.Type(C.gst_message_type_get_type()), marshalMessageType},
+		{glib.Type(C.gst_state_get_type()), marshalState},
+		{glib.Type(C.gst_state_change_return_get_type()), marshalStateChangeReturn},
 
 		// Objects/Interfaces
+		{glib.Type(C.gst_bus_get_type()), marshalBus},
+		{glib.Type(C.gst_element_get_type()), marshalElement},
+		{glib.Type(C.gst_object_get_type()), marshalObject},
 
 		// Boxed
+		{glib.Type(C.gst_message_get_type()), marshalMessage},
 	}
 	glib.RegisterGValueMarshalers(tm)
 }
@@ -97,26 +104,126 @@ const (
 	CLOCK_TIME_NONE uint64 = 18446744073709551615
 )
 
+// Format is a representaion of GstFormat
+type Format int
+
+const (
+	FORMAT_UNDEFINED Format = C.GST_FORMAT_UNDEFINED
+	FORMAT_DEFAULT   Format = C.GST_FORMAT_DEFAULT
+	FORMAT_BYTES     Format = C.GST_FORMAT_BYTES
+	FORMAT_TIME      Format = C.GST_FORMAT_TIME
+	FORMAT_BUFFERS   Format = C.GST_FORMAT_BUFFERS
+	FORMAT_PERCENT   Format = C.GST_FORMAT_PERCENT
+)
+
+func marshalFormat(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Format(c), nil
+}
+
+// MessageType is a representation of GstMessageType
+type MessageType int
+
+const (
+	MESSAGE_UNKNOWN          MessageType = C.GST_MESSAGE_UNKNOWN
+	MESSAGE_EOS              MessageType = C.GST_MESSAGE_EOS
+	MESSAGE_ERROR            MessageType = C.GST_MESSAGE_ERROR
+	MESSAGE_WARNING          MessageType = C.GST_MESSAGE_WARNING
+	MESSAGE_INFO             MessageType = C.GST_MESSAGE_INFO
+	MESSAGE_TAG              MessageType = C.GST_MESSAGE_TAG
+	MESSAGE_BUFFERING        MessageType = C.GST_MESSAGE_BUFFERING
+	MESSAGE_STATE_CHANGED    MessageType = C.GST_MESSAGE_STATE_CHANGED
+	MESSAGE_STATE_DIRTY      MessageType = C.GST_MESSAGE_STATE_DIRTY
+	MESSAGE_STEP_DONE        MessageType = C.GST_MESSAGE_STEP_DONE
+	MESSAGE_CLOCK_LOST       MessageType = C.GST_MESSAGE_CLOCK_LOST
+	MESSAGE_NEW_CLOCK        MessageType = C.GST_MESSAGE_NEW_CLOCK
+	MESSAGE_STRUCTURE_CHANGE MessageType = C.GST_MESSAGE_STRUCTURE_CHANGE
+	MESSAGE_STREAM_STATUS    MessageType = C.GST_MESSAGE_STREAM_STATUS
+	MESSAGE_APPLICATION      MessageType = C.GST_MESSAGE_APPLICATION
+	MESSAGE_ELEMENT          MessageType = C.GST_MESSAGE_ELEMENT
+	MESSAGE_SEGMENT_START    MessageType = C.GST_MESSAGE_SEGMENT_START
+	MESSAGE_SEGMENT_DONE     MessageType = C.GST_MESSAGE_SEGMENT_DONE
+	MESSAGE_DURATION_CHANGED MessageType = C.GST_MESSAGE_DURATION_CHANGED
+	MESSAGE_LATENCY          MessageType = C.GST_MESSAGE_LATENCY
+	MESSAGE_ASYNC_START      MessageType = C.GST_MESSAGE_ASYNC_START
+	MESSAGE_ASYNC_DONE       MessageType = C.GST_MESSAGE_ASYNC_DONE
+	MESSAGE_REQUEST_STATE    MessageType = C.GST_MESSAGE_REQUEST_STATE
+	MESSAGE_STEP_START       MessageType = C.GST_MESSAGE_STEP_START
+	MESSAGE_QOS              MessageType = C.GST_MESSAGE_QOS
+	MESSAGE_PROGRESS         MessageType = C.GST_MESSAGE_PROGRESS
+	MESSAGE_TOC              MessageType = C.GST_MESSAGE_TOC
+	MESSAGE_RESET_TIME       MessageType = C.GST_MESSAGE_RESET_TIME
+	MESSAGE_STREAM_START     MessageType = C.GST_MESSAGE_STREAM_START
+	MESSAGE_ANY MessageType = C.GST_MESSAGE_ANY
+)
+
+func marshalMessageType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return MessageType(c), nil
+}
+
 // State is a representation of GstState
 type State int
 
 const (
 	STATE_VOID_PENDING State = C.GST_STATE_VOID_PENDING
-	STATE_NULL State = C.GST_STATE_NULL
-	STATE_READY State = C.GST_STATE_READY
-	STATE_PAUSED State = C.GST_STATE_PAUSED
-	STATE_PLAYING State = C.GST_STATE_PLAYING
+	STATE_NULL         State = C.GST_STATE_NULL
+	STATE_READY        State = C.GST_STATE_READY
+	STATE_PAUSED       State = C.GST_STATE_PAUSED
+	STATE_PLAYING      State = C.GST_STATE_PLAYING
 )
+
+func marshalState(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return State(c), nil
+}
 
 // StateChangeReturn is a representation of GstStateChangeReturn
 type StateChangeReturn int
 
 const (
-	STATE_CHANGE_FAILURE StateChangeReturn = C.GST_STATE_CHANGE_FAILURE
-	STATE_CHANGE_SUCCESS StateChangeReturn = C.GST_STATE_CHANGE_SUCCESS
-	STATE_CHANGE_ASYNC StateChangeReturn = C.GST_STATE_CHANGE_ASYNC
+	STATE_CHANGE_FAILURE    StateChangeReturn = C.GST_STATE_CHANGE_FAILURE
+	STATE_CHANGE_SUCCESS    StateChangeReturn = C.GST_STATE_CHANGE_SUCCESS
+	STATE_CHANGE_ASYNC      StateChangeReturn = C.GST_STATE_CHANGE_ASYNC
 	STATE_CHANGE_NO_PREROLL StateChangeReturn = C.GST_STATE_CHANGE_NO_PREROLL
 )
+
+func marshalStateChangeReturn(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return StateChangeReturn(c), nil
+}
+
+/*
+ * GstBus
+ */
+
+type Bus struct {
+	Object
+}
+
+// native returns a pointer to the underlying GstBus.
+func (v *Bus) native() *C.GstBus {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGstBus(p)
+}
+
+func marshalBus(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapBus(obj), nil
+}
+
+func wrapBus(obj *glib.Object) *Bus {
+	return &Bus{Object{glib.InitiallyUnowned{obj}}}
+}
+
+// AddSignalWatch() is a wrapper around gst_bus_add_signal_watch().
+func (v *Bus) AddSignalWatch() {
+	C.gst_bus_add_signal_watch(v.native())
+}
 
 /*
  * GstElement
@@ -145,6 +252,19 @@ func wrapElement(obj *glib.Object) *Element {
 	return &Element{Object{glib.InitiallyUnowned{obj}}}
 }
 
+// GetBus() is a wrapper around gst_element_get_bus().
+func (v *Element) GetBus() (*Bus, error) {
+	c := C.gst_element_get_bus(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapBus(obj)
+	b.RefSink()
+	runtime.SetFinalizer(&b.Object, (*Object).Unref)
+	return b, nil
+}
+
 // GetState() is a wrapper around gst_element_get_state().
 func (v *Element) GetState(timeout uint64) (state, pending State, change StateChangeReturn) {
 	var cstate, cpending C.GstState
@@ -156,6 +276,20 @@ func (v *Element) GetState(timeout uint64) (state, pending State, change StateCh
 func (v *Element) SetState(state State) StateChangeReturn {
 	c := C.gst_element_set_state(v.native(), C.GstState(state))
 	return StateChangeReturn(c)
+}
+
+// QueryDuration() is a wrapper around gst_element_query_duration().
+func (v *Element) QueryDuration(format Format) (cur int64, success bool) {
+	var ccur C.gint64
+	c := C.gst_element_query_duration(v.native(), C.GstFormat(format), &ccur)
+	return int64(ccur), gobool(c)
+}
+
+// QueryPosition() is a wrapper around gst_element_query_position().
+func (v *Element) QueryPosition(format Format) (cur int64, success bool) {
+	var ccur C.gint64
+	c := C.gst_element_query_position(v.native(), C.GstFormat(format), &ccur)
+	return int64(ccur), gobool(c)
 }
 
 /*
@@ -177,6 +311,51 @@ func ElementFactoryMake(factoryName, name string) (*Element, error) {
 	b.RefSink()
 	runtime.SetFinalizer(&b.Object, (*Object).Unref)
 	return b, nil
+}
+
+/*
+ * GstMessage
+ */
+
+// Message is a representation of GDK's GstMessage.
+type Message struct {
+	GstMessage *C.GstMessage
+}
+
+// native returns a pointer to the underlying GstMessage.
+func (v *Message) native() *C.GstMessage {
+	if v == nil {
+		return nil
+	}
+	return v.GstMessage
+}
+
+// Native returns a pointer to the underlying GdkEvent.
+func (v *Message) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalMessage(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return &Message{(*C.GstMessage)(unsafe.Pointer(c))}, nil
+}
+
+// GetSeqnum() is a wrapper around GST_MESSAGE_SEQNUM().
+func (v *Message) GetSeqnum() uint64 {
+	c := C.messageSeqnum(unsafe.Pointer(v.native()))
+	return uint64(c)
+}
+
+// GetType() is a wrapper around GST_MESSAGE_TYPE().
+func (v *Message) GetType() MessageType {
+	c := C.toGstMessageType(unsafe.Pointer(v.native()))
+	return MessageType(c)
+}
+
+// Timestamp() is a wrapper around GST_MESSAGE_TIMESTAMP().
+func (v *Message) GetTimestamp() uint64 {
+	c := C.messageTimestamp(unsafe.Pointer(v.native()))
+	return uint64(c)
 }
 
 /*
@@ -214,7 +393,7 @@ func wrapObject(obj *glib.Object) *Object {
 	return &Object{glib.InitiallyUnowned{obj}}
 }
 
-//gst_object_get_name (GstObject *object)
+// GetName() is a wrapper around gst_object_get_name().
 func (v *Object) GetName() string {
 	c := C.gst_object_get_name(v.native())
 	defer C.g_free(C.gpointer(c))
