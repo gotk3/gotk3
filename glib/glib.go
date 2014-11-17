@@ -611,7 +611,55 @@ func (v *Object) Set(name string, value interface{}) error {
 	return nil
 }
 
-// WARNING: This function does not work correctly with strings. To fix this, it has been merged into Set().
+// GetPropertyType returns the Type of a property of the underlying GObject.
+// If the property is missing it will return TYPE_INVALID and an error.
+func (v *Object) GetPropertyType(name string) (Type, error) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	paramSpec := C.g_object_class_find_property(C._g_object_get_class(v.native()), (*C.gchar)(cstr))
+	if paramSpec == nil {
+		return TYPE_INVALID, errors.New("couldn't find Property")
+	}
+	return Type(paramSpec.value_type), nil
+}
+
+// GetProperty is a wrapper around g_object_get_property().
+func (v *Object) GetProperty(name string) (interface{}, error) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	t, err := v.GetPropertyType(name)
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := ValueInit(t)
+	if err != nil {
+		return nil, errors.New("unable to allocate value")
+	}
+	C.g_object_get_property(v.GObject, (*C.gchar)(cstr), p.native())
+	return p.GoValue()
+}
+
+// SetProperty is a wrapper around g_object_set_property().
+func (v *Object) SetProperty(name string, value interface{}) error {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	if _, ok := value.(Object); ok {
+		value = value.(Object).GObject
+	}
+
+	p, err := GValue(value)
+	if err != nil {
+		return errors.New("Unable to perform type conversion")
+	}
+	C.g_object_set_property(v.GObject, (*C.gchar)(cstr), p.native())
+	return nil
+}
+
+>>>>>>> 822bda50745c4e9eff61428251aa8db7a916f7ad
 // pointerVal attempts to return an unsafe.Pointer for value.
 // Not all types are understood, in which case a nil Pointer
 // is returned.
