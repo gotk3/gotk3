@@ -526,7 +526,84 @@ func (v *Object) Set(name string, value interface{}) error {
 
 	// Can't call g_object_set() as it uses a variable arg list, use a
 	// wrapper instead
-	p := pointerVal(value)
+	var p unsafe.Pointer
+	switch v := value.(type) {
+	case bool:
+		c := gbool(v)
+		p = unsafe.Pointer(&c)
+
+	case int8:
+		c := C.gint8(v)
+		p = unsafe.Pointer(&c)
+
+	case int16:
+		c := C.gint16(v)
+		p = unsafe.Pointer(&c)
+
+	case int32:
+		c := C.gint32(v)
+		p = unsafe.Pointer(&c)
+
+	case int64:
+		c := C.gint64(v)
+		p = unsafe.Pointer(&c)
+
+	case int:
+		c := C.gint(v)
+		p = unsafe.Pointer(&c)
+
+	case uint8:
+		c := C.guchar(v)
+		p = unsafe.Pointer(&c)
+
+	case uint16:
+		c := C.guint16(v)
+		p = unsafe.Pointer(&c)
+
+	case uint32:
+		c := C.guint32(v)
+		p = unsafe.Pointer(&c)
+
+	case uint64:
+		c := C.guint64(v)
+		p = unsafe.Pointer(&c)
+
+	case uint:
+		c := C.guint(v)
+		p = unsafe.Pointer(&c)
+
+	case uintptr:
+		p = unsafe.Pointer(C.gpointer(v))
+
+	case float32:
+		c := C.gfloat(v)
+		p = unsafe.Pointer(&c)
+
+	case float64:
+		c := C.gdouble(v)
+		p = unsafe.Pointer(&c)
+
+	case string:
+		cstr := C.CString(v)
+		defer C.g_free(C.gpointer(unsafe.Pointer(cstr)))
+		p = unsafe.Pointer(&cstr)
+
+	default:
+		if pv, ok := value.(unsafe.Pointer); ok {
+			p = pv
+		} else {
+			val := reflect.ValueOf(value)
+			switch val.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16,
+				reflect.Int32, reflect.Int64:
+				c := C.int(val.Int())
+				p = unsafe.Pointer(&c)
+
+			case reflect.Uintptr, reflect.Ptr, reflect.UnsafePointer:
+				p = unsafe.Pointer(C.gpointer(val.Pointer()))
+			}
+		}
+	}
 	if p == nil {
 		return errors.New("Unable to perform type conversion")
 	}
@@ -534,10 +611,11 @@ func (v *Object) Set(name string, value interface{}) error {
 	return nil
 }
 
+// WARNING: This function does not work correctly with strings. To fix this, it has been merged into Set().
 // pointerVal attempts to return an unsafe.Pointer for value.
 // Not all types are understood, in which case a nil Pointer
 // is returned.
-func pointerVal(value interface{}) unsafe.Pointer {
+/*func pointerVal(value interface{}) unsafe.Pointer {
 	var p unsafe.Pointer
 	switch v := value.(type) {
 	case bool:
@@ -618,7 +696,7 @@ func pointerVal(value interface{}) unsafe.Pointer {
 	}
 
 	return p
-}
+}*/
 
 /*
  * GObject Signals
