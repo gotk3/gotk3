@@ -1,3 +1,31 @@
+// Go bindings for gstreamer.  Supports version 1.0 and later.
+//
+// Functions use the same names as the native C function calls, but use
+// CamelCase.  In cases where native gstreamer uses pointers to values to
+// simulate multiple return values, Go's native multiple return values
+// are used instead.  Whenever a native gstreamer call could return an
+// unexpected NULL pointer, an additonal error is returned in the Go
+// binding.
+//
+// gstreamers's C API documentation can be very useful for understanding how the
+// functions in this package work and what each type is for.  This
+// documentation can be found at http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/.
+//
+// In addition to Go versions of the C gstreamer functions, every struct type
+// includes a method named Native (either by direct implementation, or
+// by means of struct embedding).  These methods return a uintptr of the
+// native C object the binding type represents.  These pointers may be
+// type switched to a native C pointer using unsafe and used with cgo
+// function calls outside this package.
+//
+// Memory management is handled in proper Go fashion, using runtime
+// finalizers to properly free memory when it is no longer needed.  Each
+// time a Go type is created with a pointer to a GObject, a reference is
+// added for Go, sinking the floating reference when necessary.  After
+// going out of scope and the next time Go's garbage collector is run, a
+// finalizer is run to remove Go's reference to the GObject.  When this
+// reference count hits zero (when neither Go nor gstreamer holds ownership)
+// the object will be freed internally by gstreamer.
 package gst
 
 // #cgo pkg-config: gstreamer-1.0
@@ -104,7 +132,7 @@ const (
 	CLOCK_TIME_NONE uint64 = 18446744073709551615
 )
 
-// Format is a representaion of GstFormat
+// Format is a representation of GstFormat.
 type Format int
 
 const (
@@ -121,7 +149,7 @@ func marshalFormat(p uintptr) (interface{}, error) {
 	return Format(c), nil
 }
 
-// MessageType is a representation of GstMessageType
+// MessageType is a representation of GstMessageType.
 type MessageType int
 
 const (
@@ -154,7 +182,7 @@ const (
 	MESSAGE_TOC              MessageType = C.GST_MESSAGE_TOC
 	MESSAGE_RESET_TIME       MessageType = C.GST_MESSAGE_RESET_TIME
 	MESSAGE_STREAM_START     MessageType = C.GST_MESSAGE_STREAM_START
-	MESSAGE_ANY MessageType = C.GST_MESSAGE_ANY
+	MESSAGE_ANY              MessageType = C.GST_MESSAGE_ANY
 )
 
 func marshalMessageType(p uintptr) (interface{}, error) {
@@ -162,7 +190,7 @@ func marshalMessageType(p uintptr) (interface{}, error) {
 	return MessageType(c), nil
 }
 
-// State is a representation of GstState
+// State is a representation of GstState.
 type State int
 
 const (
@@ -178,7 +206,7 @@ func marshalState(p uintptr) (interface{}, error) {
 	return State(c), nil
 }
 
-// StateChangeReturn is a representation of GstStateChangeReturn
+// StateChangeReturn is a representation of GstStateChangeReturn.
 type StateChangeReturn int
 
 const (
