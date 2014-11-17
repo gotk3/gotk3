@@ -659,7 +659,7 @@ func (v *Object) SetProperty(name string, value interface{}) error {
 	return nil
 }
 
->>>>>>> 822bda50745c4e9eff61428251aa8db7a916f7ad
+
 // pointerVal attempts to return an unsafe.Pointer for value.
 // Not all types are understood, in which case a nil Pointer
 // is returned.
