@@ -246,6 +246,58 @@ func marshalStateChangeReturn(p uintptr) (interface{}, error) {
 }
 
 /*
+ * GstBin
+ */
+
+type Bin struct {
+	Element
+}
+
+// native returns a pointer to the underlying GstBin.
+func (v *Bin) native() *C.GstBin {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGstBin(p)
+}
+
+func marshalBin(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapBin(obj), nil
+}
+
+func wrapBin(obj *glib.Object) *Bin {
+	return &Bin{Element{Object{glib.InitiallyUnowned{obj}}}}
+}
+
+// BinNew() is a wrapper around gst_bin_new().
+func BinNew(name string) (*Bin, error) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	c := C.gst_bin_new((*C.gchar)(cname))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapBin(obj)
+	b.RefSink()
+	runtime.SetFinalizer(&b.Object, (*Object).Unref)
+	return b, nil
+}
+
+func (v *Bin) Add(e IElement) bool {
+	c := C.gst_bin_add(v.native(), e.toElement())
+	return gobool(c)
+}
+
+func (v *Bin) Remove(e IElement) bool {
+	c := C.gst_bin_remove(v.native(), e.toElement())
+	return gobool(c)
+}
+
+/*
  * GstBus
  */
 
@@ -285,6 +337,21 @@ type Element struct {
 	Object
 }
 
+// IElement is an interface type implemented by all structs
+// embedding a Element.  It is meant to be used as an argument type
+// for wrapper functions that wrap around a C gst function taking a
+// GstElement.
+type IElement interface {
+	toElement() *C.GstElement
+}
+
+func (v *Element) toElement() *C.GstElement {
+	if v == nil {
+		return nil
+	}
+	return v.native()
+}
+
 // native returns a pointer to the underlying GstElement.
 func (v *Element) native() *C.GstElement {
 	if v == nil || v.GObject == nil {
@@ -304,6 +371,11 @@ func wrapElement(obj *glib.Object) *Element {
 	return &Element{Object{glib.InitiallyUnowned{obj}}}
 }
 
+func (v *Element) AddPad(pad IPad) bool {
+	c := C.gst_element_add_pad(v.native(), pad.toPad())
+	return gobool(c)
+}
+
 // GetBus() is a wrapper around gst_element_get_bus().
 func (v *Element) GetBus() (*Bus, error) {
 	c := C.gst_element_get_bus(v.native())
@@ -312,7 +384,7 @@ func (v *Element) GetBus() (*Bus, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	b := wrapBus(obj)
-	b.RefSink()
+	//b.RefSink()
 	runtime.SetFinalizer(&b.Object, (*Object).Unref)
 	return b, nil
 }
@@ -322,6 +394,25 @@ func (v *Element) GetState(timeout uint64) (state, pending State, change StateCh
 	var cstate, cpending C.GstState
 	c := C.gst_element_get_state(v.native(), &cstate, &cpending, C.GstClockTime(timeout))
 	return State(cstate), State(cpending), StateChangeReturn(c)
+}
+
+func (v *Element) GetStaticPad(name string) (*Pad, error) {	
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	c := C.gst_element_get_static_pad(v.native(), (*C.gchar)(cname))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapPad(obj)
+	//b.RefSink()
+	runtime.SetFinalizer(&b.Object, (*Object).Unref)
+	return b, nil
+}
+
+func (v *Element) RemovePad(pad IPad) bool {
+	c := C.gst_element_remove_pad(v.native(), pad.toPad())
+	return gobool(c)
 }
 
 // Seek() is a wrapper around gst_element_seek().
@@ -347,6 +438,11 @@ func (v *Element) SeekSimple(format Format, flags SeekFlags, pos int64) bool {
 func (v *Element) SetState(state State) StateChangeReturn {
 	c := C.gst_element_set_state(v.native(), C.GstState(state))
 	return StateChangeReturn(c)
+}
+
+func (v *Element) SyncStateWithParent() bool {
+	c := C.gst_element_sync_state_with_parent(v.native())
+	return gobool(c)
 }
 
 // QueryDuration() is a wrapper around gst_element_query_duration().
@@ -385,10 +481,52 @@ func ElementFactoryMake(factoryName, name string) (*Element, error) {
 }
 
 /*
+ * GstGhostPad
+ */
+
+type GhostPad struct {
+	Pad
+}
+
+// native returns a pointer to the underlying GstPad.
+func (v *GhostPad) native() *C.GstGhostPad {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGstGhostPad(p)
+}
+
+func marshalGhostPad(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapGhostPad(obj), nil
+}
+
+func wrapGhostPad(obj *glib.Object) *GhostPad {
+	return &GhostPad{Pad{Object{glib.InitiallyUnowned{obj}}}}
+}
+
+// GhostPadNew() is a wrapper around gst_ghost_pad_new().
+func GhostPadNew(name string, pad IPad) (*GhostPad, error) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	c := C.gst_ghost_pad_new((*C.gchar)(cname), pad.toPad())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapGhostPad(obj)
+	b.RefSink()
+	runtime.SetFinalizer(&b.Object, (*Object).Unref)
+	return b, nil
+}
+
+/*
  * GstMessage
  */
 
-// Message is a representation of GDK's GstMessage.
+// Message is a representation of Gst's GstMessage.
 type Message struct {
 	GstMessage *C.GstMessage
 }
@@ -427,6 +565,11 @@ func (v *Message) GetType() MessageType {
 func (v *Message) GetTimestamp() uint64 {
 	c := C.messageTimestamp(unsafe.Pointer(v.native()))
 	return uint64(c)
+}
+
+func (v *Message) GetTypeName() string {
+	c := C.messageTypeName(unsafe.Pointer(v.native()))
+	return C.GoString(c)
 }
 
 /*
@@ -469,4 +612,69 @@ func (v *Object) GetName() string {
 	c := C.gst_object_get_name(v.native())
 	defer C.g_free(C.gpointer(c))
 	return C.GoString((*C.char)(c))
+}
+
+/*
+ * GstPad
+ */
+
+type Pad struct {
+	Object
+}
+
+type IPad interface {
+	toPad() *C.GstPad
+}
+
+// native returns a pointer to the underlying GstPad.
+func (v *Pad) native() *C.GstPad {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGstPad(p)
+}
+
+func (v *Pad) toPad() *C.GstPad {
+	if v == nil {
+		return nil
+	}
+	return v.native()
+}
+
+func marshalPad(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapPad(obj), nil
+}
+
+func wrapPad(obj *glib.Object) *Pad {
+	return &Pad{Object{glib.InitiallyUnowned{obj}}}
+}
+
+func (v *Pad) GetPeer() (*Pad, error) {
+	c := C.gst_pad_get_peer(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapPad(obj)
+	//b.RefSink()
+	runtime.SetFinalizer(&b.Object, (*Object).Unref)
+	return b, nil
+}
+
+// TODO return
+func (v *Pad) Link(sinkPad IPad) {
+	C.gst_pad_link(v.native(), sinkPad.toPad())
+}
+
+func (v *Pad) SetActive(active bool) bool {
+	c := C.gst_pad_set_active(v.native(), gbool(active))
+	return gobool(c)
+}
+
+func (v *Pad) Unlink(sinkPad IPad) bool {
+	c := C.gst_pad_unlink(v.native(), sinkPad.toPad())
+	return gobool(c)
 }
