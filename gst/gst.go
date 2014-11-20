@@ -48,6 +48,8 @@ func init() {
 		{glib.Type(C.gst_message_type_get_type()), marshalMessageType},
 		{glib.Type(C.gst_pad_link_return_get_type()), marshalPadLinkReturn},
 		{glib.Type(C.gst_state_get_type()), marshalState},
+		{glib.Type(C.gst_seek_flags_get_type()), marshalSeekFlags},
+		{glib.Type(C.gst_seek_type_get_type()), marshalSeekType},
 		{glib.Type(C.gst_state_change_return_get_type()), marshalStateChangeReturn},
 
 		// Objects/Interfaces
@@ -245,6 +247,11 @@ const (
 	SEEK_FLAG_SNAP_NEAREST SeekFlags = C.GST_SEEK_FLAG_SNAP_NEAREST
 )
 
+func marshalSeekFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SeekFlags(c), nil
+}
+
 // SeekType is a representation of GstSeekType.
 type SeekType int
 
@@ -253,6 +260,11 @@ const (
 	SEEK_TYPE_SET  SeekType = C.GST_SEEK_TYPE_SET
 	SEEK_TYPE_END  SeekType = C.GST_SEEK_TYPE_END
 )
+
+func marshalSeekType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SeekType(c), nil
+}
 
 // StateChangeReturn is a representation of GstStateChangeReturn.
 type StateChangeReturn int
