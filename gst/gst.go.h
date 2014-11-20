@@ -24,6 +24,18 @@ toGstBin(void *p)
 	return (GST_BIN(p));
 }
 
+static GstPluginFeature *
+toGstPluginFeature(void *p)
+{
+	return (GST_PLUGIN_FEATURE(p));
+}
+
+static GstElementFactory *
+toGstElementFactory(void *p)
+{
+	return (GST_ELEMENT_FACTORY(p));
+}
+
 static GstPad *
 toGstPad(void *p)
 {

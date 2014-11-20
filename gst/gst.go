@@ -463,6 +463,29 @@ func (v *Element) QueryPosition(format Format) (cur int64, success bool) {
  * GstElementFactory
  */
 
+type ElementFactory struct {
+	PluginFeature
+}
+
+// native returns a pointer to the underlying GstElement.
+func (v *ElementFactory) native() *C.GstElementFactory {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGstElementFactory(p)
+}
+
+func marshalElementFactory(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapElementFactory(obj), nil
+}
+
+func wrapElementFactory(obj *glib.Object) *ElementFactory {
+	return &ElementFactory{PluginFeature{Object{glib.InitiallyUnowned{obj}}}}
+}
+
 // ElementFactoryMake() is a wrapper around gst_element_factory_make().
 func ElementFactoryMake(factoryName, name string) (*Element, error) {
 	cname := C.CString(name)
@@ -475,6 +498,20 @@ func ElementFactoryMake(factoryName, name string) (*Element, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	b := wrapElement(obj)
+	b.RefSink()
+	runtime.SetFinalizer(&b.Object, (*Object).Unref)
+	return b, nil
+}
+
+func ElementFactoryFind(name string) (*ElementFactory, error) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	c := C.gst_element_factory_find((*C.gchar)(cname))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	b := wrapElementFactory(obj)
 	b.RefSink()
 	runtime.SetFinalizer(&b.Object, (*Object).Unref)
 	return b, nil
@@ -677,4 +714,31 @@ func (v *Pad) SetActive(active bool) bool {
 func (v *Pad) Unlink(sinkPad IPad) bool {
 	c := C.gst_pad_unlink(v.native(), sinkPad.toPad())
 	return gobool(c)
+}
+
+/*
+ * GstPluginFeature
+ */
+
+type PluginFeature struct {
+	Object
+}
+
+// native returns a pointer to the underlying GstPluginFeature.
+func (v *PluginFeature) native() *C.GstPluginFeature {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGstPluginFeature(p)
+}
+
+func marshalPluginFeature(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapPluginFeature(obj), nil
+}
+
+func wrapPluginFeature(obj *glib.Object) *PluginFeature {
+	return &PluginFeature{Object{glib.InitiallyUnowned{obj}}}
 }
