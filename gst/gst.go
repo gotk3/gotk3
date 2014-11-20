@@ -46,13 +46,19 @@ func init() {
 		// Enums
 		{glib.Type(C.gst_format_get_type()), marshalFormat},
 		{glib.Type(C.gst_message_type_get_type()), marshalMessageType},
+		{glib.Type(C.gst_pad_link_return_get_type()), marshalPadLinkReturn},
 		{glib.Type(C.gst_state_get_type()), marshalState},
 		{glib.Type(C.gst_state_change_return_get_type()), marshalStateChangeReturn},
 
 		// Objects/Interfaces
+		{glib.Type(C.gst_bin_get_type()), marshalBin},
 		{glib.Type(C.gst_bus_get_type()), marshalBus},
 		{glib.Type(C.gst_element_get_type()), marshalElement},
+		{glib.Type(C.gst_element_factory_get_type()), marshalElementFactory},
+		{glib.Type(C.gst_ghost_pad_get_type()), marshalGhostPad},
 		{glib.Type(C.gst_object_get_type()), marshalObject},
+		{glib.Type(C.gst_pad_get_type()), marshalPad},
+		{glib.Type(C.gst_plugin_feature_get_type()), marshalPluginFeature},
 
 		// Boxed
 		{glib.Type(C.gst_message_get_type()), marshalMessage},
@@ -190,6 +196,24 @@ func marshalMessageType(p uintptr) (interface{}, error) {
 	return MessageType(c), nil
 }
 
+// PadLinkReturn os a representation of GstPadLinkReturn.
+type PadLinkReturn int
+
+const (
+	PAD_LINK_OK              PadLinkReturn = C.GST_PAD_LINK_OK
+	PAD_LINK_WRONG_HIERARCHY PadLinkReturn = C.GST_PAD_LINK_WRONG_HIERARCHY
+	PAD_LINK_WAS_LINKED      PadLinkReturn = C.GST_PAD_LINK_WAS_LINKED
+	PAD_LINK_WRONG_DIRECTION PadLinkReturn = C.GST_PAD_LINK_WRONG_DIRECTION
+	PAD_LINK_NOFORMAT        PadLinkReturn = C.GST_PAD_LINK_NOFORMAT
+	PAD_LINK_NOSCHED         PadLinkReturn = C.GST_PAD_LINK_NOSCHED
+	PAD_LINK_REFUSED         PadLinkReturn = C.GST_PAD_LINK_REFUSED
+)
+
+func marshalPadLinkReturn(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PadLinkReturn(c), nil
+}
+
 // State is a representation of GstState.
 type State int
 
@@ -287,11 +311,13 @@ func BinNew(name string) (*Bin, error) {
 	return b, nil
 }
 
+// Add() is a wrapper around gst_bin_add().
 func (v *Bin) Add(e IElement) bool {
 	c := C.gst_bin_add(v.native(), e.toElement())
 	return gobool(c)
 }
 
+// Remove() is a wrapper around gst_bin_remove().
 func (v *Bin) Remove(e IElement) bool {
 	c := C.gst_bin_remove(v.native(), e.toElement())
 	return gobool(c)
@@ -371,6 +397,7 @@ func wrapElement(obj *glib.Object) *Element {
 	return &Element{Object{glib.InitiallyUnowned{obj}}}
 }
 
+// AddPad() is a wrapper around gst_element_add_pad().
 func (v *Element) AddPad(pad IPad) bool {
 	c := C.gst_element_add_pad(v.native(), pad.toPad())
 	return gobool(c)
@@ -396,7 +423,8 @@ func (v *Element) GetState(timeout uint64) (state, pending State, change StateCh
 	return State(cstate), State(cpending), StateChangeReturn(c)
 }
 
-func (v *Element) GetStaticPad(name string) (*Pad, error) {	
+// GetStaticPad() is a wrapper around gst_element_get_static_pad().
+func (v *Element) GetStaticPad(name string) (*Pad, error) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	c := C.gst_element_get_static_pad(v.native(), (*C.gchar)(cname))
@@ -410,6 +438,7 @@ func (v *Element) GetStaticPad(name string) (*Pad, error) {
 	return b, nil
 }
 
+// RemovePad() is a wrapper around gst_element_remove_pad().
 func (v *Element) RemovePad(pad IPad) bool {
 	c := C.gst_element_remove_pad(v.native(), pad.toPad())
 	return gobool(c)
@@ -440,6 +469,7 @@ func (v *Element) SetState(state State) StateChangeReturn {
 	return StateChangeReturn(c)
 }
 
+// SyncStateWithParent() is a wrapper around gst_element_sync_state_with_parent().
 func (v *Element) SyncStateWithParent() bool {
 	c := C.gst_element_sync_state_with_parent(v.native())
 	return gobool(c)
@@ -503,6 +533,7 @@ func ElementFactoryMake(factoryName, name string) (*Element, error) {
 	return b, nil
 }
 
+// ElementFactoryFind() is a wrapper around gst_element_factory_find().
 func ElementFactoryFind(name string) (*ElementFactory, error) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
@@ -604,6 +635,7 @@ func (v *Message) GetTimestamp() uint64 {
 	return uint64(c)
 }
 
+// GetTypeName() is a wrapper around GST_MESSAGE_TYPE_NAME().
 func (v *Message) GetTypeName() string {
 	c := C.messageTypeName(unsafe.Pointer(v.native()))
 	return C.GoString(c)
@@ -689,6 +721,7 @@ func wrapPad(obj *glib.Object) *Pad {
 	return &Pad{Object{glib.InitiallyUnowned{obj}}}
 }
 
+// GetPeer() is a wrapper around gst_pad_get_peer().
 func (v *Pad) GetPeer() (*Pad, error) {
 	c := C.gst_pad_get_peer(v.native())
 	if c == nil {
@@ -701,16 +734,19 @@ func (v *Pad) GetPeer() (*Pad, error) {
 	return b, nil
 }
 
-// TODO return
-func (v *Pad) Link(sinkPad IPad) {
-	C.gst_pad_link(v.native(), sinkPad.toPad())
+// Link is a wrapper around gst_pad_link().
+func (v *Pad) Link(sinkPad IPad) PadLinkReturn {
+	c := C.gst_pad_link(v.native(), sinkPad.toPad())
+	return PadLinkReturn(c)
 }
 
+// SetActive() is a wrapper around gst_pad_set_active().
 func (v *Pad) SetActive(active bool) bool {
 	c := C.gst_pad_set_active(v.native(), gbool(active))
 	return gobool(c)
 }
 
+// Unlink() is a wrapper around gst_pad_unlink().
 func (v *Pad) Unlink(sinkPad IPad) bool {
 	c := C.gst_pad_unlink(v.native(), sinkPad.toPad())
 	return gobool(c)
