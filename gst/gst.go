@@ -44,6 +44,7 @@ import (
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
+		{glib.Type(C.gst_buffering_mode_get_type()), marshalBufferingMode},
 		{glib.Type(C.gst_format_get_type()), marshalFormat},
 		{glib.Type(C.gst_message_type_get_type()), marshalMessageType},
 		{glib.Type(C.gst_pad_link_return_get_type()), marshalPadLinkReturn},
@@ -140,6 +141,21 @@ const (
 	CLOCK_TIME_NONE uint64 = 18446744073709551615
 )
 
+// BufferingMode is a representation of GstBufferingMode
+type BufferingMode int
+
+const (
+	BUFFERING_STREAM    BufferingMode = C.GST_BUFFERING_STREAM
+	BUFFERING_DOWNLOAD  BufferingMode = C.GST_BUFFERING_DOWNLOAD
+	BUFFERING_TIMESHIFT BufferingMode = C.GST_BUFFERING_TIMESHIFT
+	BUFFERING_LIVE      BufferingMode = C.GST_BUFFERING_LIVE
+)
+
+func marshalBufferingMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return BufferingMode(c), nil
+}
+
 // Format is a representation of GstFormat.
 type Format int
 
@@ -230,6 +246,12 @@ const (
 func marshalState(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return State(c), nil
+}
+
+// GetName() is a wrapper around gst_element_state_get_name().
+func (s *State) GetName() string {
+	c := C.gst_element_state_get_name(C.GstState(*s))
+	return C.GoString((*C.char)(c))
 }
 
 // SeekFlags is a representation of GstSeekFlags.
@@ -651,6 +673,96 @@ func (v *Message) GetTimestamp() uint64 {
 func (v *Message) GetTypeName() string {
 	c := C.messageTypeName(unsafe.Pointer(v.native()))
 	return C.GoString(c)
+}
+
+// ParseBuffering() is a wrapper around gst_message_parse_buffering().
+func (v *Message) ParseBuffering() (percent int) {
+	var per C.gint
+	C.gst_message_parse_buffering(v.native(), &per)
+	return int(per)
+}
+
+// ParseBufferingStats() is a wrapper around gst_message_parse_buffering_stats().
+func (v *Message) ParseBufferingStats() (mode BufferingMode, avgIn, avgOut int, bufferingLeft int64) {
+	var cavgIn, cavgOut C.gint
+	var cbmode C.GstBufferingMode
+	var cbleft C.gint64
+	C.gst_message_parse_buffering_stats(v.native(), &cbmode, &cavgIn, &cavgOut, &cbleft)
+	return BufferingMode(cbmode), int(cavgIn), int(cavgOut), int64(cbleft)
+}
+
+// ParseError() is a wrapper around gst_message_parse_error().
+func (v *Message) ParseError() (err error, debug string) {
+	var e *C.GError
+	var d *C.gchar
+	C.gst_message_parse_error(v.native(), &e, &d)
+	eMessage := C.GoString((*C.char)(e.message))
+	defer C.g_error_free(e)
+	debug = C.GoString((*C.char)(d))
+	defer C.g_free((C.gpointer)(d))
+	return errors.New(eMessage), debug
+}
+
+// ParseStateChanged() is a wrapper around gst_message_parse_state_changed().
+func (v *Message) ParseStateChanged() (oldState, newState, pending State) {
+	var o, n, p C.GstState
+	C.gst_message_parse_state_changed(v.native(), &o, &n, &p)
+	return State(o), State(n), State(p)
+}
+
+// ParseStepDone() is a wrapper around gst_message_parse_step_done().
+func (v *Message) ParseStepDone() (format Format, amount uint64, rate float64, flush, intermediate bool, duration uint64, eos bool) {
+	var cformat C.GstFormat
+	var camount, cduration C.guint64
+	var crate C.gdouble
+	var cflush, cintermediate, ceos C.gboolean
+	C.gst_message_parse_step_done(v.native(), &cformat, &camount, &crate, &cflush, &cintermediate, &cduration, &ceos)
+	return Format(cformat), uint64(camount), float64(crate), gobool(cflush), gobool(cintermediate), uint64(cduration), gobool(ceos)
+}
+
+// ParseSegmentStart() is a wrapper around gst_message_parse_segment_start().
+func (v *Message) ParseSegmentStart() (format Format, position int64) {
+	var cformat C.GstFormat
+	var cposition C.gint64
+	C.gst_message_parse_segment_start(v.native(), &cformat, &cposition)
+	return Format(cformat), int64(cposition)
+}
+
+// ParseSegmentDone() is a wrapper around gst_message_parse_segment_done().
+func (v *Message) ParseSegmentDone() (format Format, position int64) {
+	var cformat C.GstFormat
+	var cposition C.gint64
+	C.gst_message_parse_segment_done(v.native(), &cformat, &cposition)
+	return Format(cformat), int64(cposition)
+}
+
+// ParseQosValues() is a wrapper around gst_message_parse_qos_values().
+func (v *Message) ParseQosValues() (jitter int64, proportion float64, quality int) {
+	var cjitter C.gint64
+	var cproportion C.gdouble
+	var cquality C.gint
+	C.gst_message_parse_qos_values(v.native(), &cjitter, &cproportion, &cquality)
+	return int64(cjitter), float64(cproportion), int(cquality)
+}
+
+// ParseQosStats() is a wrapper around gst_message_parse_qos_stats().
+func (v *Message) ParseQosStats() (format Format, processed, dropped uint64) {
+	var cformat C.GstFormat
+	var cprocessed, cdropped C.guint64
+	C.gst_message_parse_qos_stats(v.native(), &cformat, &cprocessed, &cdropped)
+	return Format(cformat), uint64(cprocessed), uint64(cdropped)
+}
+
+// ParseWarning() is a wrapper around gst_message_parse_warning().
+func (v *Message) ParseWarning() (err error, debug string) {
+	var e *C.GError
+	var d *C.gchar
+	C.gst_message_parse_warning(v.native(), &e, &d)
+	eMessage := C.GoString((*C.char)(e.message))
+	defer C.g_error_free(e)
+	debug = C.GoString((*C.char)(d))
+	defer C.g_free((C.gpointer)(d))
+	return errors.New(eMessage), debug
 }
 
 /*
