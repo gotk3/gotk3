@@ -1,4 +1,4 @@
-// Go bindings for gstreamer.  Supports version 1.0 and later.
+// Go bindings for gstreamer1.0.  Supports version 1.0 and later.
 //
 // Functions use the same names as the native C function calls, but use
 // CamelCase.  In cases where native gstreamer uses pointers to values to
@@ -74,7 +74,7 @@ Init() is a wrapper around gst_init() and must be called before any
 other gstreamer calls and is used to initialize everything necessary.
 
 In addition to setting up gstreamer for usage, a pointer to a slice of
-strings may be passed in to parse standard GTK command line arguments.
+strings may be passed in to parse standard gst command line arguments.
 args will be modified to remove any flags that were handled.
 Alternatively, nil may be passed in to not perform any command line
 parsing.
