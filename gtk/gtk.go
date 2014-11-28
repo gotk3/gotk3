@@ -110,6 +110,7 @@ func init() {
 		{glib.Type(C.gtk_calendar_get_type()), marshalCalendar},
 		{glib.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},
 		{glib.Type(C.gtk_cell_renderer_get_type()), marshalCellRenderer},
+		{glib.Type(C.gtk_cell_renderer_spinner_get_type()), marshalCellRendererSpinner},
 		{glib.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
 		{glib.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
 		{glib.Type(C.gtk_check_button_get_type()), marshalCheckButton},
@@ -1963,6 +1964,47 @@ func marshalCellRenderer(p uintptr) (interface{}, error) {
 
 func wrapCellRenderer(obj *glib.Object) *CellRenderer {
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
+}
+
+/*
+ * GtkCellRendererSpinner
+ */
+
+// CellRendererSpinner is a representation of GTK's GtkCellRendererSpinner.
+type CellRendererSpinner struct {
+	CellRenderer
+}
+
+// native returns a pointer to the underlying GtkCellRendererSpinner.
+func (v *CellRendererSpinner) native() *C.GtkCellRendererSpinner {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellRendererSpinner(p)
+}
+
+func marshalCellRendererSpinner(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCellRendererSpinner(obj), nil
+}
+
+func wrapCellRendererSpinner(obj *glib.Object) *CellRendererSpinner {
+	return &CellRendererSpinner{CellRenderer{glib.InitiallyUnowned{obj}}}
+}
+
+// CellRendererSpinnerNew is a wrapper around gtk_cell_renderer_text_new().
+func CellRendererSpinnerNew() (*CellRendererSpinner, error) {
+	c := C.gtk_cell_renderer_spinner_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	crt := wrapCellRendererSpinner(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return crt, nil
 }
 
 /*
@@ -9547,6 +9589,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapCellLayout(obj)
 	case "GtkCellRenderer":
 		g = wrapCellRenderer(obj)
+	case "GtkCellRendererSpinner":
+		g = wrapCellRendererSpinner(obj)
 	case "GtkCellRendererText":
 		g = wrapCellRendererText(obj)
 	case "GtkCellRendererToggle":

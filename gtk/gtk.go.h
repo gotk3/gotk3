@@ -56,6 +56,12 @@ toGtkDrawingArea(void *p)
 	return (GTK_DRAWING_AREA(p));
 }
 
+static GtkCellRendererSpinner *
+toGtkCellRendererSpinner(void *p)
+{
+	return (GTK_CELL_RENDERER_SPINNER(p));
+}
+
 static GtkEventBox *
 toGtkEventBox(void *p)
 {
