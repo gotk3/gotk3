@@ -9505,7 +9505,12 @@ func (v *Window) SetIconFromFile(file string) error {
 	return nil
 }
 
-// TODO gtk_window_set_icon_name().
+// SetIconName is a wrapper around gtk_window_set_icon_name().
+func (v *Window) SetIconName(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_window_set_icon_name(v.native(), (*C.gchar)(cstr))
+}
 
 // SetAutoStartupNotification is a wrapper around
 // gtk_window_set_auto_startup_notification().
