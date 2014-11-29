@@ -7230,9 +7230,9 @@ func TextTagTableNew() (*TextTagTable, error) {
 }
 
 // Add() is a wrapper around gtk_text_tag_table_add().
-func (v *TextTagTable) Add(tag *TextTag) bool {
-	c := C.gtk_text_tag_table_add(v.native(), tag.native())
-	return gobool(c)
+func (v *TextTagTable) Add(tag *TextTag) {
+	C.gtk_text_tag_table_add(v.native(), tag.native())
+	//return gobool(c) // TODO version-separate
 }
 
 // Lookup() is a wrapper around gtk_text_tag_table_lookup().
