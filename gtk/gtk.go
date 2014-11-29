@@ -3696,6 +3696,14 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// GetURI is a wrapper around gtk_file_chooser_get_uri().
+func (v *FileChooser) GetURI() string {
+	c := C.gtk_file_chooser_get_uri(v.native())
+	s := C.GoString((*C.char)(c))
+	defer C.g_free((C.gpointer)(c))
+	return s
+}
+
 /*
  * GtkFileChooserButton
  */

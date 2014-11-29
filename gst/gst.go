@@ -122,12 +122,12 @@ func gobool(b C.gboolean) bool {
 
 var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 
-// Unref is a wrapper around gst_object_unref().
+// Unref is a wrapper around gst_object_unref(). This is for internal use.
 func (v *Object) Unref() {
 	C.gst_object_unref(C.gpointer(v.toObject()))
 }
 
-// RefSink is a wrapper around g_object_ref_sink().
+// RefSink is a wrapper around gst_object_ref_sink(). This is for internal use.
 func (v *Object) RefSink() {
 	C.gst_object_ref_sink(C.gpointer(v.toObject()))
 }
