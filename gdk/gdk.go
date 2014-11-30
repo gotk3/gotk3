@@ -33,6 +33,7 @@ import (
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
+		{glib.Type(C.gdk_drag_action_get_type()), marshalDragAction},
 		{glib.Type(C.gdk_colorspace_get_type()), marshalColorspace},
 		{glib.Type(C.gdk_event_type_get_type()), marshalEventType},
 		{glib.Type(C.gdk_interp_type_get_type()), marshalInterpType},
@@ -43,6 +44,7 @@ func init() {
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
 		{glib.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
+		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
 		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
 		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
 		{glib.Type(C.gdk_visual_get_type()), marshalVisual},
@@ -80,6 +82,23 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 /*
  * Constants
  */
+
+// DragAction is a representation of GDK's GdkDragAction.
+type DragAction int
+
+const (
+	ACTION_DEFAULT DragAction = C.GDK_ACTION_DEFAULT
+	ACTION_COPY    DragAction = C.GDK_ACTION_COPY
+	ACTION_MOVE    DragAction = C.GDK_ACTION_MOVE
+	ACTION_LINK    DragAction = C.GDK_ACTION_LINK
+	ACTION_PRIVATE DragAction = C.GDK_ACTION_PRIVATE
+	ACTION_ASK     DragAction = C.GDK_ACTION_ASK
+)
+
+func marshalDragAction(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return DragAction(c), nil
+}
 
 // Colorspace is a representation of GDK's GdkColorspace.
 type Colorspace int
@@ -190,6 +209,12 @@ type Atom uintptr
 // native returns the underlying GdkAtom.
 func (v Atom) native() C.GdkAtom {
 	return C.toGdkAtom(unsafe.Pointer(uintptr(v)))
+}
+
+func (v Atom) Name() string {
+	c := C.gdk_atom_name(v.native())
+	defer C.g_free(C.gpointer(c))
+	return C.GoString((*C.char)(c))
 }
 
 /*
@@ -524,6 +549,40 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 }
 
 /*
+ * GdkDragContext
+ */
+
+// DragContext is a representation of GDK's GdkDragContext.
+type DragContext struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GdkDragContext.
+func (v *DragContext) native() *C.GdkDragContext {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkDragContext(p)
+}
+
+// Native returns a pointer to the underlying GdkDragContext.
+func (v *DragContext) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalDragContext(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &DragContext{obj}, nil
+}
+
+func (v *DragContext) ListTargets() *glib.List {
+	c := C.gdk_drag_context_list_targets(v.native())
+	return (*glib.List)(unsafe.Pointer(c))
+}
+
+/*
  * GdkEvent
  */
 
@@ -701,7 +760,7 @@ const (
 /*
  * GDK Keyval
  */
- 
+
 // KeyvalFromName() is a wrapper around gdk_keyval_from_name().
 func KeyvalFromName(keyvalName string) uint {
 	str := (*C.gchar)(C.CString(keyvalName))
