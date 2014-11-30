@@ -70,6 +70,7 @@ func init() {
 		{glib.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
 		{glib.Type(C.gtk_buttons_type_get_type()), marshalButtonsType},
 		{glib.Type(C.gtk_calendar_display_options_get_type()), marshalCalendarDisplayOptions},
+		{glib.Type(C.gtk_dest_defaults_get_type()), marshalDestDefaults},
 		{glib.Type(C.gtk_dialog_flags_get_type()), marshalDialogFlags},
 		{glib.Type(C.gtk_entry_icon_position_get_type()), marshalEntryIconPosition},
 		{glib.Type(C.gtk_file_chooser_action_get_type()), marshalFileChooserAction},
@@ -90,6 +91,7 @@ func init() {
 		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
 		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
+		{glib.Type(C.gtk_target_flags_get_type()), marshalTargetFlags},
 		{glib.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
 		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
 		{glib.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
@@ -177,6 +179,7 @@ func init() {
 		{glib.Type(C.gtk_window_get_type()), marshalWindow},
 
 		// Boxed
+		{glib.Type(C.gtk_target_entry_get_type()), marshalTargetEntry},
 		{glib.Type(C.gtk_text_iter_get_type()), marshalTextIter},
 		{glib.Type(C.gtk_tree_iter_get_type()), marshalTreeIter},
 		{glib.Type(C.gtk_tree_path_get_type()), marshalTreePath},
@@ -334,6 +337,21 @@ const (
 func marshalCalendarDisplayOptions(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return CalendarDisplayOptions(c), nil
+}
+
+// DestDefaults is a representation of GTK's GtkDestDefaults.
+type DestDefaults int
+
+const (
+	DEST_DEFAULT_MOTION    DestDefaults = C.GTK_DEST_DEFAULT_MOTION
+	DEST_DEFAULT_HIGHLIGHT DestDefaults = C.GTK_DEST_DEFAULT_HIGHLIGHT
+	DEST_DEFAULT_DROP      DestDefaults = C.GTK_DEST_DEFAULT_DROP
+	DEST_DEFAULT_ALL       DestDefaults = C.GTK_DEST_DEFAULT_ALL
+)
+
+func marshalDestDefaults(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return DestDefaults(c), nil
 }
 
 // DialogFlags is a representation of GTK's GtkDialogFlags.
@@ -658,6 +676,21 @@ const (
 func marshalStateFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return StateFlags(c), nil
+}
+
+// TargetFlags is a representation of GTK's GtkTargetFlags.
+type TargetFlags int
+
+const (
+	TARGET_SAME_APP     TargetFlags = C.GTK_TARGET_SAME_APP
+	TARGET_SAME_WIDGET  TargetFlags = C.GTK_TARGET_SAME_WIDGET
+	TARGET_OTHER_APP    TargetFlags = C.GTK_TARGET_OTHER_APP
+	TARGET_OTHER_WIDGET TargetFlags = C.GTK_TARGET_OTHER_WIDGET
+)
+
+func marshalTargetFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TargetFlags(c), nil
 }
 
 // ToolbarStyle is a representation of GTK's GtkToolbarStyle.
@@ -4745,9 +4778,9 @@ func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuIte
 	if parentMenuItem != nil {
 		witem = parentMenuItem.toWidget()
 	} else {
-		
+
 	}
-	
+
 	C.gtk_menu_popup(v.native(),
 		wshell,
 		witem,
@@ -4764,7 +4797,7 @@ func (v *Menu) Popdown() {
 
 // ReorderChild() is a wrapper around gtk_menu_reorder_child().
 func (v *Menu) ReorderChild(child IWidget, position int) {
-	C.gtk_menu_reorder_child(v.native(), child.toWidget(), C.gint(position));
+	C.gtk_menu_reorder_child(v.native(), child.toWidget(), C.gint(position))
 }
 
 /*
@@ -6160,7 +6193,7 @@ func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*Sca
 		defer C.free(unsafe.Pointer(cicons[i]))
 	}
 	cicons = append(cicons, nil)
-	
+
 	c := C.gtk_scale_button_new(C.GtkIconSize(size),
 		C.gdouble(min),
 		C.gdouble(max),
@@ -6913,6 +6946,39 @@ func (v *Switch) GetActive() bool {
 // SetActive is a wrapper around gtk_switch_set_active().
 func (v *Switch) SetActive(isActive bool) {
 	C.gtk_switch_set_active(v.native(), gbool(isActive))
+}
+
+/*
+ * GtkTargetEntry
+ */
+
+// TargetEntry is a representation of GTK's GtkTargetEntry
+type TargetEntry C.GtkTargetEntry
+
+func marshalTargetEntry(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return (*TargetEntry)(unsafe.Pointer(c)), nil
+}
+
+func (v *TargetEntry) native() *C.GtkTargetEntry {
+	return (*C.GtkTargetEntry)(unsafe.Pointer(v))
+}
+
+// TargetEntryNew is a wrapper aroud gtk_target_entry_new().
+func TargetEntryNew(target string, flags TargetFlags, info uint) (*TargetEntry, error) {
+	cstr := C.CString(target)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_target_entry_new((*C.gchar)(cstr), C.guint(flags), C.guint(info))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	t := (*TargetEntry)(unsafe.Pointer(c))
+	runtime.SetFinalizer(t, (*TargetEntry).free)
+	return t, nil
+}
+
+func (v *TargetEntry) free() {
+	C.gtk_target_entry_free(v.native())
 }
 
 /*
@@ -8319,7 +8385,7 @@ func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn
 	} else {
 		ctp = nil
 	}
-	
+
 	var pctvcol **C.GtkTreeViewColumn
 	if column != nil {
 		ctvcol := column.native()
@@ -8327,7 +8393,7 @@ func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn
 	} else {
 		pctvcol = nil
 	}
-	
+
 	return 0 != C.gtk_tree_view_get_path_at_pos(
 		v.native(),
 		(C.gint)(x),
@@ -8518,6 +8584,11 @@ func (v *Widget) Destroy() {
 	C.gtk_widget_destroy(v.native())
 }
 
+func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions gdk.DragAction) {
+	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]),
+		C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
 // InDestruction is a wrapper around gtk_widget_in_destruction().
 func (v *Widget) InDestruction() bool {
 	return gobool(C.gtk_widget_in_destruction(v.native()))
@@ -8652,7 +8723,7 @@ func (v *Widget) SizeAllocate() {
 func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key uint, mods gdk.ModifierType, flags AccelFlags) {
 	csignal := (*C.gchar)(C.CString(signal))
 	defer C.free(unsafe.Pointer(csignal))
-	
+
 	C.gtk_widget_add_accelerator(v.native(),
 		csignal,
 		group.native(),
@@ -8660,7 +8731,6 @@ func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key uint, mods
 		C.GdkModifierType(mods),
 		C.GtkAccelFlags(flags))
 }
-
 
 // TODO(jrick) GtkAccelGroup GdkModifierType
 /*
@@ -9112,7 +9182,6 @@ func (v *Window) GetResizable() bool {
 func (v *Window) AddAccelGroup(accelGroup *AccelGroup) {
 	C.gtk_window_add_accel_group(v.native(), accelGroup.native())
 }
-
 
 // RemoveAccelGroup() is a wrapper around gtk_window_add_accel_group().
 func (v *Window) RemoveAccelGroup(accelGroup *AccelGroup) {
