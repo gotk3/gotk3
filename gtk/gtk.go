@@ -7541,7 +7541,9 @@ func (v *TextBuffer) GetText(start, end *TextIter, includeHiddenChars bool) (str
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	gostr := C.GoString((*C.char)(c))
+	C.g_free(C.gpointer(c))
+	return gostr, nil
 }
 
 // Insert() is a wrapper around gtk_text_buffer_insert().
