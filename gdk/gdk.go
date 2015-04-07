@@ -36,6 +36,7 @@ func init() {
 		{glib.Type(C.gdk_colorspace_get_type()), marshalColorspace},
 		{glib.Type(C.gdk_interp_type_get_type()), marshalInterpType},
 		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
+		{glib.Type(C.gdk_event_mask_get_type()), marshalEventMask},
 
 		// Objects/Interfaces
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
@@ -148,6 +149,43 @@ const (
 	SELECTION_TYPE_WINDOW   Atom = 33
 	SELECTION_TYPE_STRING   Atom = 31
 )
+
+
+// added by terrak
+// EventMask is a representation of GDK's GdkEventMask. 
+type EventMask int
+
+const (
+	EXPOSURE_MASK            EventMask = C.GDK_EXPOSURE_MASK
+	POINTER_MOTION_MASK      EventMask = C.GDK_POINTER_MOTION_MASK
+	POINTER_MOTION_HINT_MASK EventMask = C.GDK_POINTER_MOTION_HINT_MASK
+	BUTTON_MOTION_MASK       EventMask = C.GDK_BUTTON_MOTION_MASK
+	BUTTON1_MOTION_MASK      EventMask = C.GDK_BUTTON1_MOTION_MASK
+	BUTTON2_MOTION_MASK      EventMask = C.GDK_BUTTON2_MOTION_MASK
+	BUTTON3_MOTION_MASK      EventMask = C.GDK_BUTTON3_MOTION_MASK
+	BUTTON_PRESS_MASK        EventMask = C.GDK_BUTTON_PRESS_MASK
+	BUTTON_RELEASE_MASK      EventMask = C.GDK_BUTTON_RELEASE_MASK
+	KEY_PRESS_MASK           EventMask = C.GDK_KEY_PRESS_MASK
+	KEY_RELEASE_MASK         EventMask = C.GDK_KEY_RELEASE_MASK
+	ENTER_NOTIFY_MASK        EventMask = C.GDK_ENTER_NOTIFY_MASK
+	LEAVE_NOTIFY_MASK        EventMask = C.GDK_LEAVE_NOTIFY_MASK
+	FOCUS_CHANGE_MASK        EventMask = C.GDK_FOCUS_CHANGE_MASK
+	STRUCTURE_MASK           EventMask = C.GDK_STRUCTURE_MASK
+	PROPERTY_CHANGE_MASK     EventMask = C.GDK_PROPERTY_CHANGE_MASK
+	VISIBILITY_NOTIFY_MASK   EventMask = C.GDK_VISIBILITY_NOTIFY_MASK
+	PROXIMITY_IN_MASK        EventMask = C.GDK_PROXIMITY_IN_MASK
+	PROXIMITY_OUT_MASK       EventMask = C.GDK_PROXIMITY_OUT_MASK
+	SUBSTRUCTURE_MASK        EventMask = C.GDK_SUBSTRUCTURE_MASK
+	SCROLL_MASK              EventMask = C.GDK_SCROLL_MASK
+	TOUCH_MASK               EventMask = C.GDK_TOUCH_MASK
+	SMOOTH_SCROLL_MASK       EventMask = C.GDK_SMOOTH_SCROLL_MASK
+	ALL_EVENTS_MASK          EventMask = C.GDK_ALL_EVENTS_MASK
+)
+
+func marshalEventMask(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return EventMask(c), nil
+}
 
 /*
  * GdkAtom
@@ -543,6 +581,71 @@ func (v *EventKey) native() *C.GdkEventKey {
 
 func (v *EventKey) KeyVal() uint {
 	c := v.native().keyval
+	return uint(c)
+}
+
+// added by terrak
+/*
+ * GdkEventMotion 
+ */
+
+type EventMotion struct {
+	*Event
+}
+
+// Native returns a pointer to the underlying GdkEventMotion.
+func (v *EventMotion) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventMotion) native() *C.GdkEventMotion {
+	return (*C.GdkEventMotion)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventMotion) MotionVal() (float64, float64) {
+	x := v.native().x
+	y := v.native().y
+	return float64(x), float64(y)
+}
+
+func (v *EventMotion) MotionValRoot() (float64, float64) {
+	x := v.native().x_root
+	y := v.native().y_root
+	return float64(x), float64(y)
+}
+
+// added by terrak
+/*
+ * GdkEventButton
+ */
+
+type EventButton struct {
+	*Event
+}
+
+// Native returns a pointer to the underlying GdkEventMotion.
+func (v *EventButton) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventButton) native() *C.GdkEventButton {
+	return (*C.GdkEventButton)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventButton) MotionVal() (float64, float64) {
+	x := v.native().x
+	y := v.native().y
+	return float64(x), float64(y)
+}
+
+func (v *EventButton) MotionValRoot() (float64, float64) {
+	x := v.native().x_root
+	y := v.native().y_root
+	return float64(x), float64(y)
+}
+
+func (v *EventButton) ButtonVal() uint {
+	c := v.native().button
 	return uint(c)
 }
 

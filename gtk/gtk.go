@@ -130,6 +130,7 @@ func init() {
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
 		{glib.Type(C.gtk_image_get_type()), marshalImage},
 		{glib.Type(C.gtk_label_get_type()), marshalLabel},
+		{glib.Type(C.gtk_layout_get_type()), marshalLayout}, //added by terrak
 		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
 		{glib.Type(C.gtk_menu_get_type()), marshalMenu},
 		{glib.Type(C.gtk_menu_bar_get_type()), marshalMenuBar},
@@ -977,6 +978,19 @@ func marshalAdjustment(p uintptr) (interface{}, error) {
 
 func wrapAdjustment(obj *glib.Object) *Adjustment {
 	return &Adjustment{glib.InitiallyUnowned{obj}}
+}
+
+// AlignmentNew is a wrapper around gtk_adjustment_new().
+func AdjustmentNew(value, lower, upper, step_increment, page_increment, page_size float64) (*Adjustment, error) {
+	c := C.gtk_adjustment_new(C.gdouble(value), C.gdouble(lower), C.gdouble(upper), C.gdouble(step_increment), C.gdouble(page_increment), C.gdouble(page_size))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAdjustment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
 }
 
 /*
@@ -4392,6 +4406,70 @@ func (v *Label) SetLabel(str string) {
 	cstr := C.CString(str)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_label_set_label(v.native(), (*C.gchar)(cstr))
+}
+
+// added by terrak
+/*
+ * GtkLayout
+ */
+
+// Layout is a representation of GTK's GtkLayout.
+type Layout struct {
+	Container
+}
+
+// native returns a pointer to the underlying GtkDrawingArea.
+func (v *Layout) native() *C.GtkLayout {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkLayout(p)
+}
+
+func marshalLayout(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapLayout(obj), nil
+}
+
+func wrapLayout(obj *glib.Object) *Layout {
+	return &Layout{Container{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+// LayoutNew is a wrapper around gtk_layout_new().
+func LayoutNew(hadjustment, vadjustment *Adjustment) (*Layout, error) {
+	c := C.gtk_layout_new(hadjustment.native(), vadjustment.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	l := wrapLayout(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return l, nil
+}
+
+// Layout.Put is a wrapper around gtk_layout_put().
+func (v *Layout) Put(w IWidget, x, y int) {
+	C.gtk_layout_put(v.native(), w.toWidget(), C.gint(x), C.gint(y))
+}
+
+// Layout.Move is a wrapper around gtk_layout_move().
+func (v *Layout) Move(w IWidget, x, y int) {
+	C.gtk_layout_move(v.native(), w.toWidget(), C.gint(x), C.gint(y))
+}
+
+// Layout.SetSize is a wrapper around gtk_layout_set_size
+func (v *Layout) SetSize(width, height uint) {
+	C.gtk_layout_set_size(v.native(), C.guint(width), C.guint(height))
+}
+
+// Layout.GetSize is a wrapper around gtk_layout_get_size
+func (v *Layout) GetSize() (width, height uint) {
+	var w, h C.guint
+	C.gtk_layout_get_size(v.native(), &w, &h)
+	return uint(w), uint(h)
 }
 
 /*
@@ -9059,6 +9137,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapImage(obj)
 	case "GtkLabel":
 		g = wrapLabel(obj)
+	case "GtkLayout":
+		g = wrapLayout(obj)
 	case "GtkListStore":
 		g = wrapListStore(obj)
 	case "GtkMenu":
