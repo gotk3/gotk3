@@ -623,7 +623,7 @@ type EventButton struct {
 	*Event
 }
 
-// Native returns a pointer to the underlying GdkEventMotion.
+// Native returns a pointer to the underlying GdkEventButton.
 func (v *EventButton) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }

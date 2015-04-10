@@ -24,11 +24,10 @@ package cairo
 // #include <cairo-gobject.h>
 import "C"
 import (
+	"github.com/terrak/gotk3/glib"
 	"reflect"
 	"runtime"
 	"unsafe"
-
-	"github.com/terrak/gotk3/glib"
 )
 
 func init() {

@@ -8200,6 +8200,10 @@ func (v *Widget) GetAllocatedHeight() int {
 }
 
 //gboolean gtk_widget_can_activate_accel(GtkWidget *widget, guint signal_id);
+func (v *Widget) CanActivateAccel(signal_id uint) bool {
+	c := C.gtk_widget_can_activate_accel(v.native(), C.guint(signal_id) )
+	return gobool(c)
+}
 
 // Event() is a wrapper around gtk_widget_event().
 func (v *Widget) Event(event *gdk.Event) bool {
