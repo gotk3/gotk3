@@ -22,8 +22,8 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-//	"github.com/terrak/gotk3/glib"
-//	"github.com/terrak/gotk3/cairo"
+	//	"github.com/terrak/gotk3/glib"
+	//	"github.com/terrak/gotk3/cairo"
 	"unsafe"
 )
 
@@ -50,3 +50,62 @@ func (v *FontDescription) Native() uintptr {
 func (v *FontDescription) native() *C.PangoFontDescription {
 	return (*C.PangoFontDescription)(unsafe.Pointer(v.pangoFontDescription))
 }
+
+type Syle int
+
+const (
+	STYLE_NORMAL  Syle = C.PANGO_PANGO_STYLE_NORMAL
+	STYLE_OBLIQUE Syle = C.PANGO_PANGO_STYLE_OBLIQUE
+	STYLE_ITALIC  Syle = C.PANGO_PANGO_STYLE_ITALIC
+)
+
+type Variant int
+
+const (
+	VARIANT_NORMAL     Variant = C.PANGO_PANGO_VARIANT_NORMAL
+	VARIANT_SMALL_CAPS Variant = C.PANGO_PANGO_VARIANT_SMALL_CAPS
+)
+
+type Weight int
+
+const (
+	WEIGHT_THIN       Weight = C.PANGO_PANGO_WEIGHT_THIN       /* 100 */
+	WEIGHT_ULTRALIGHT Weight = C.PANGO_PANGO_WEIGHT_ULTRALIGHT /* 200 */
+	WEIGHT_LIGHT      Weight = C.PANGO_PANGO_WEIGHT_LIGHT      /* 300 */
+	WEIGHT_SEMILIGHT  Weight = C.PANGO_PANGO_WEIGHT_SEMILIGHT  /* 350 */
+	WEIGHT_BOOK       Weight = C.PANGO_PANGO_WEIGHT_BOOK       /* 380 */
+	WEIGHT_NORMAL     Weight = C.PANGO_PANGO_WEIGHT_NORMAL     /* 400 */
+	WEIGHT_MEDIUM     Weight = C.PANGO_PANGO_WEIGHT_MEDIUM     /* 500 */
+	WEIGHT_SEMIBOLD   Weight = C.PANGO_PANGO_WEIGHT_SEMIBOLD   /* 600 */
+	WEIGHT_BOLD       Weight = C.PANGO_PANGO_WEIGHT_BOLD       /* 700 */
+	WEIGHT_ULTRABOLD  Weight = C.PANGO_PANGO_WEIGHT_ULTRABOLD  /* 800 */
+	WEIGHT_HEAVY      Weight = C.PANGO_PANGO_WEIGHT_HEAVY      /* 900 */
+	WEIGHT_ULTRAHEAVY Weight = C.PANGO_PANGO_WEIGHT_ULTRAHEAVY /* 1000 */
+
+)
+
+type Stretch int
+
+const (
+	STRETCH_ULTRA_CONDENSED        Stretch = C.PANGO_PANGO_STRETCH_ULTRA_CONDENSED
+	STRETCH_EXTRA_CONDENSEDStretch         = C.PANGO_PANGO_STRETCH_EXTRA_CONDENSED
+	STRETCH_CONDENSEDStretch               = C.PANGO_PANGO_STRETCH_CONDENSED
+	STRETCH_SEMI_CONDENSEDStretch          = C.PANGO_PANGO_STRETCH_SEMI_CONDENSED
+	STRETCH_NORMALStretch                  = C.PANGO_PANGO_STRETCH_NORMAL
+	STRETCH_SEMI_EXPANDEDStretch           = C.PANGO_PANGO_STRETCH_SEMI_EXPANDED
+	STRETCH_EXPANDEDStretch                = C.PANGO_PANGO_STRETCH_EXPANDED
+	STRETCH_EXTRA_EXPANDEDStretch          = C.PANGO_PANGO_STRETCH_EXTRA_EXPANDED
+	STRETCH_ULTRA_EXPANDEDStretch          = C.PANGO_PANGO_STRETCH_ULTRA_EXPANDED
+)
+
+type FontMask int
+
+const (
+	FONT_MASK_FAMILY          FontMask = C.PANGO_PANGO_FONT_MASK_FAMILY  /*  1 << 0 */
+	FONT_MASK_STYLEFontMask            = C.PANGO_PANGO_FONT_MASK_STYLE   /*  1 << 1 */
+	FONT_MASK_VARIANTFontMask          = C.PANGO_PANGO_FONT_MASK_VARIANT /*  1 << 2 */
+	FONT_MASK_WEIGHTFontMask           = C.PANGO_PANGO_FONT_MASK_WEIGHT  /*  1 << 3 */
+	FONT_MASK_STRETCHFontMask          = C.PANGO_PANGO_FONT_MASK_STRETCH /*  1 << 4 */
+	FONT_MASK_SIZEFontMask             = C.PANGO_PANGO_FONT_MASK_SIZE    /*  1 << 5 */
+	FONT_MASK_GRAVITYFontMask          = C.PANGO_PANGO_FONT_MASK_GRAVITY /*  1 << 6 */
+)
