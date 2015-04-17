@@ -22,7 +22,7 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	"github.com/terrak/gotk3/glib"
+	"github.com/andre-hub/gotk3/glib"
 	"unsafe"
 )
 
@@ -37,6 +37,34 @@ func init() {
 		//		{glib.Type(C.pango_layout_get_type()), marshalLayout},
 	}
 	glib.RegisterGValueMarshalers(tm)
+}
+
+// Layout is a representation of PangoLayout.
+type Layout struct {
+	pangoLayout *C.PangoLayout
+}
+
+// Native returns a pointer to the underlying PangoLayout.
+func (v *Layout) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *Layout) native() *C.PangoLayout {
+	return (*C.PangoLayout)(unsafe.Pointer(v.pangoLayout))
+}
+
+// LayoutLine is a representation of PangoLayoutLine.
+type LayoutLine struct {
+	pangoLayoutLine *C.PangoLayout
+}
+
+// Native returns a pointer to the underlying PangoLayoutLine.
+func (v *LayoutLine) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *LayoutLine) native() *C.PangoLayoutLine {
+	return (*C.PangoLayoutLine)(unsafe.Pointer(v.pangoLayoutLine))
 }
 
 /*
@@ -84,20 +112,6 @@ const (
 func marshalEllipsizeMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return EllipsizeMode(c), nil
-}
-
-// Layout is a representation of PangoLayout.
-type Layout struct {
-	pangoLayout *C.PangoLayout
-}
-
-// Native returns a pointer to the underlying PangoLayout.
-func (v *Layout) Native() uintptr {
-	return uintptr(unsafe.Pointer(v.native()))
-}
-
-func (v *Layout) native() *C.PangoLayout {
-	return (*C.PangoLayout)(unsafe.Pointer(v.pangoLayout))
 }
 
 /*
@@ -262,22 +276,22 @@ func (v *Layout) GetWrap() WrapMode {
 
 //gboolean       pango_layout_is_wrapped           (PangoLayout                *layout);
 
-func (v *Layout)IsWrapped() bool{
-	c:=C.pango_layout_is_wrapped(v.native())
+func (v *Layout) IsWrapped() bool {
+	c := C.pango_layout_is_wrapped(v.native())
 	return gobool(c)
 }
 
 //void           pango_layout_set_indent           (PangoLayout                *layout,
 //						  int                         indent);
 
-func (v *Layout)SetIndent(indent int){
-	C.pango_layout_set_indent(v.native(), C.int(indent) )
+func (v *Layout) SetIndent(indent int) {
+	C.pango_layout_set_indent(v.native(), C.int(indent))
 }
 
 //int            pango_layout_get_indent           (PangoLayout                *layout);
 
-func (v *Layout)GetIndent() int{
-	c:=C.pango_layout_get_indent(v.native())
+func (v *Layout) GetIndent() int {
+	c := C.pango_layout_get_indent(v.native())
 	return int(c)
 }
 
@@ -350,9 +364,16 @@ func (v *Layout)GetIndent() int{
 //void     pango_layout_get_pixel_extents    (PangoLayout    *layout,
 //					    PangoRectangle *ink_rect,
 //					    PangoRectangle *logical_rect);
+
 //void     pango_layout_get_size             (PangoLayout    *layout,
 //					    int            *width,
 //					    int            *height);
+func (v *Layout) GetSize() (int, int) {
+	var w, h C.int
+	C.pango_layout_get_size(v.native(), &w, &h)
+	return int(w), int(h)
+}
+
 //void     pango_layout_get_pixel_size       (PangoLayout    *layout,
 //					    int            *width,
 //					    int            *height);

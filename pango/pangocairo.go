@@ -19,12 +19,13 @@ package pango
 
 // #cgo pkg-config: pango pangocairo
 // #include <pango/pango.h>
+// #include <cairo.h>
 // #include <pango/pangocairo.h>
 // #include "pango.go.h"
 import "C"
 import (
-	//	"github.com/terrak/gotk3/glib"
-	"github.com/terrak/gotk3/cairo"
+	//	"github.com/andre-hub/gotk3/glib"
+	"github.com/andre-hub/gotk3/cairo"
 	"unsafe"
 )
 
@@ -38,19 +39,23 @@ func init() {
 	//	glib.RegisterGValueMarshalers(tm)
 }
 
+func cairo_context(cr *cairo.Context) *C.cairo_t {
+	return (*C.cairo_t)(cr.GetCContext())
+}
+
 /* Convenience
  */
 //PangoContext *pango_cairo_create_context (cairo_t   *cr);
-func (cr *cairo.Context) CairoCreateContext() *Context {
-	c := C.pango_cairo_create_context(cr.Native())
+func CairoCreateContext(cr *cairo.Context) *Context {
+	c := C.pango_cairo_create_context(cairo_context(cr))
 	context := new(Context)
 	context.pangoContext = (*C.PangoContext)(c)
 	return context
 }
 
 //PangoLayout *pango_cairo_create_layout (cairo_t     *cr);
-func (cr *cairo.Context) CairoCreateLayout() *Layout {
-	c := C.pango_cairo_create_layout(cr.Native())
+func CairoCreateLayout(cr *cairo.Context) *Layout {
+	c := C.pango_cairo_create_layout(cairo_context(cr))
 	layout := new(Layout)
 	layout.pangoLayout = (*C.PangoLayout)(c)
 	return layout
@@ -58,8 +63,8 @@ func (cr *cairo.Context) CairoCreateLayout() *Layout {
 
 //void         pango_cairo_update_layout (cairo_t     *cr,
 //					PangoLayout *layout);
-func (cr *cairo.Context) CairoUpdateLayout(v *Layout) {
-	C.pango_cairo_update_layout(cr.Native(), v.native())
+func CairoUpdateLayout(cr *cairo.Context, v *Layout) {
+	C.pango_cairo_update_layout(cairo_context(cr), v.native())
 }
 
 /*
@@ -68,31 +73,30 @@ func (cr *cairo.Context) CairoUpdateLayout(v *Layout) {
 //void pango_cairo_show_glyph_string (cairo_t          *cr,
 //				    PangoFont        *font,
 //				    PangoGlyphString *glyphs);
-func (cr *cairo.Context) CairoShowGlyphString(font *Font, glyphs *GlyphString) {
-	C.pango_cairo_show_glyph_string(cr.Native(), font.native(), glyphs.native())
+func CairoShowGlyphString(cr *cairo.Context, font *Font, glyphs *GlyphString) {
+	C.pango_cairo_show_glyph_string(cairo_context(cr), font.native(), glyphs.native())
 }
 
 //void pango_cairo_show_glyph_item   (cairo_t          *cr,
 //				    const char       *text,
 //				    PangoGlyphItem   *glyph_item);
-func (cr *cairo.Context) CairoShowGlyphItem(text string, glyph_item *GlyphItem) {
+func CairoShowGlyphItem(cr *cairo.Context, text string, glyph_item *GlyphItem) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
-	C.pango_cairo_show_glyph_item(cr.Native(), (*C.char)(cstr), glyph_item.native() )
+	C.pango_cairo_show_glyph_item(cairo_context(cr), (*C.char)(cstr), glyph_item.native())
 }
 
 //void pango_cairo_show_layout_line  (cairo_t          *cr,
 //				    PangoLayoutLine  *line);
-func (cr *cairo.Context)CairoShowLayoutLine(line *LayoutLine){
-	C.pango_cairo_show_layout_line(cr.Native(), line.native())
+func CairoShowLayoutLine(cr *cairo.Context, line *LayoutLine) {
+	C.pango_cairo_show_layout_line(cairo_context(cr), line.native())
 }
 
 //void pango_cairo_show_layout       (cairo_t          *cr,
 //				    PangoLayout      *layout);
-func (cr *cairo.Context)CairoShowLayout(layout *Layout){
-	C.pango_cairo_show_layout(cr.Native(), layout.native())
+func CairoShowLayout(cr *cairo.Context, layout *Layout) {
+	C.pango_cairo_show_layout(cairo_context(cr), layout.native())
 }
-
 
 //void pango_cairo_show_error_underline (cairo_t       *cr,
 //				       double         x,
@@ -107,20 +111,20 @@ func (cr *cairo.Context)CairoShowLayout(layout *Layout){
 //void pango_cairo_glyph_string_path (cairo_t          *cr,
 //				    PangoFont        *font,
 //				    PangoGlyphString *glyphs);
-func (cr *cairo.Context) CairoGlyphStringPath(font *Font, glyphs *GlyphString) {
-	C.pango_cairo_glyph_string_path(cr.Native(), font.native(), glyphs.native())
+func CairoGlyphStringPath(cr *cairo.Context, font *Font, glyphs *GlyphString) {
+	C.pango_cairo_glyph_string_path(cairo_context(cr), font.native(), glyphs.native())
 }
 
 //void pango_cairo_layout_line_path  (cairo_t          *cr,
 //				    PangoLayoutLine  *line);
-func (cr *cairo.Context)CairoLayoutLinePath(line *LayoutLine){
-	C.pango_cairo_layout_line_path(cr.Native(), line.native())
+func CairoLayoutLinePath(cr *cairo.Context, line *LayoutLine) {
+	C.pango_cairo_layout_line_path(cairo_context(cr), line.native())
 }
 
 //void pango_cairo_layout_path       (cairo_t          *cr,
 //				    PangoLayout      *layout);
-func (cr *cairo.Context)CairoLayoutPath(layout *Layout){
-	C.pango_cairo_layout_path(cr.Native(), layout.native())
+func CairoLayoutPath(cr *cairo.Context, layout *Layout) {
+	C.pango_cairo_layout_path(cairo_context(cr), layout.native())
 }
 
 //void pango_cairo_error_underline_path (cairo_t       *cr,
@@ -128,7 +132,6 @@ func (cr *cairo.Context)CairoLayoutPath(layout *Layout){
 //				       double         y,
 //				       double         width,
 //				       double         height);
-func (cr *cairo.Context)CairoErrorUnderlinePath(x,y,width,height float64){
-	C.pango_cairo_error_underline_path(cr.native(), C.double(x), C.double(y), C.double(width), C.double(height))
+func CairoErrorUnderlinePath(cr *cairo.Context, x, y, width, height float64) {
+	C.pango_cairo_error_underline_path(cairo_context(cr), C.double(x), C.double(y), C.double(width), C.double(height))
 }
-

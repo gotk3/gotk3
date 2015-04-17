@@ -27,7 +27,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/terrak/gotk3/glib"
+	"github.com/andre-hub/gotk3/glib"
 )
 
 func init() {
@@ -150,9 +150,8 @@ const (
 	SELECTION_TYPE_STRING   Atom = 31
 )
 
-
 // added by terrak
-// EventMask is a representation of GDK's GdkEventMask. 
+// EventMask is a representation of GDK's GdkEventMask.
 type EventMask int
 
 const (
@@ -586,7 +585,7 @@ func (v *EventKey) KeyVal() uint {
 
 // added by terrak
 /*
- * GdkEventMotion 
+ * GdkEventMotion
  */
 
 type EventMotion struct {

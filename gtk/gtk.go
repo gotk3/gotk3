@@ -54,10 +54,10 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/terrak/gotk3/cairo"
-	"github.com/terrak/gotk3/gdk"
-	"github.com/terrak/gotk3/glib"
-	"github.com/terrak/gotk3/pango"
+	"github.com/andre-hub/gotk3/cairo"
+	"github.com/andre-hub/gotk3/gdk"
+	"github.com/andre-hub/gotk3/glib"
+	"github.com/andre-hub/gotk3/pango"
 )
 
 func init() {
@@ -8201,7 +8201,7 @@ func (v *Widget) GetAllocatedHeight() int {
 
 //gboolean gtk_widget_can_activate_accel(GtkWidget *widget, guint signal_id);
 func (v *Widget) CanActivateAccel(signal_id uint) bool {
-	c := C.gtk_widget_can_activate_accel(v.native(), C.guint(signal_id) )
+	c := C.gtk_widget_can_activate_accel(v.native(), C.guint(signal_id))
 	return gobool(c)
 }
 

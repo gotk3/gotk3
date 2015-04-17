@@ -22,7 +22,7 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	"github.com/terrak/gotk3/glib"
+	"github.com/andre-hub/gotk3/glib"
 	"unsafe"
 )
 
@@ -103,7 +103,6 @@ func (v *AttrList) Native() uintptr {
 func (v *AttrList) native() *C.PangoAttrList {
 	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
 }
-
 
 // AttrType is a representation of Pango's PangoAttrType.
 type AttrType int

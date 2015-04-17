@@ -27,7 +27,7 @@ import (
 )
 
 func init() {
-	
+
 }
 
 /*
@@ -47,4 +47,10 @@ func gobool(b C.gboolean) bool {
 	return false
 }
 
+/*
+ * Constantes
+ */
 
+const (
+	SCALE int = 1024
+)

@@ -28,7 +28,7 @@ package gtk
 // #include <gtk/gtk.h>
 import "C"
 import (
-	"github.com/terrak/gotk3/glib"
+	"github.com/andre-hub/gotk3/glib"
 	"runtime"
 	"unsafe"
 )

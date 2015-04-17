@@ -19,7 +19,7 @@
 package main
 
 import (
-	"github.com/terrak/gotk3/gtk"
+	"github.com/andre-hub/gotk3/gtk"
 	"log"
 )
 

@@ -24,7 +24,7 @@ package cairo
 // #include <cairo-gobject.h>
 import "C"
 import (
-	"github.com/terrak/gotk3/glib"
+	"github.com/andre-hub/gotk3/glib"
 	"reflect"
 	"runtime"
 	"unsafe"
@@ -288,6 +288,13 @@ type Context struct {
 
 // native returns a pointer to the underlying cairo_t.
 func (v *Context) native() *C.cairo_t {
+	if v == nil {
+		return nil
+	}
+	return v.context
+}
+
+func (v *Context) GetCContext() *C.cairo_t {
 	if v == nil {
 		return nil
 	}
