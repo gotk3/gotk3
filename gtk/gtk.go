@@ -125,6 +125,7 @@ func init() {
 		{glib.Type(C.gtk_event_box_get_type()), marshalEventBox},
 		{glib.Type(C.gtk_file_chooser_get_type()), marshalFileChooser},
 		{glib.Type(C.gtk_file_chooser_button_get_type()), marshalFileChooserButton},
+		{glib.Type(C.gtk_file_chooser_dialog_get_type()), marshalFileChooserDialog},
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
 		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
@@ -3672,6 +3673,11 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// AddFilter is a wrapper around gtk_file_chooser_add_filter().
+func (v *FileChooser) AddFilter(filter *FileFilter) {
+	C.gtk_file_chooser_add_filter(v.native(), filter.native())
+}
+
 /*
  * GtkFileChooserButton
  */
@@ -3721,6 +3727,91 @@ func FileChooserButtonNew(title string, action FileChooserAction) (*FileChooserB
 }
 
 /*
+ * GtkFileChooserDialog
+ */
+
+// FileChooserDialog is a representation of GTK's GtkFileChooserDialog.
+type FileChooserDialog struct {
+	Dialog
+
+	// Interfaces
+	FileChooser
+}
+
+// native returns a pointer to the underlying GtkFileChooserDialog.
+func (v *FileChooserDialog) native() *C.GtkFileChooserDialog {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFileChooserDialog(p)
+}
+
+func marshalFileChooserDialog(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapFileChooserDialog(obj), nil
+}
+
+func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
+	fc := wrapFileChooser(obj)
+	return &FileChooserDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}, *fc}
+}
+
+// FileChooserDialogNewWith1Button is a wrapper around gtk_file_chooser_dialog_new() with one button.
+func FileChooserDialogNewWith1Button(
+	title string,
+	parent *Window,
+	action FileChooserAction,
+	first_button_text string,
+	first_button_id ResponseType) (*FileChooserDialog, error) {
+	c_title := C.CString(title)
+	defer C.free(unsafe.Pointer(c_title))
+	c_first_button_text := C.CString(first_button_text)
+	defer C.free(unsafe.Pointer(c_first_button_text))
+	c := C.gtk_file_chooser_dialog_new_1(
+		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_first_button_text), C.int(first_button_id))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapFileChooserDialog(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
+}
+
+// FileChooserDialogNewWith2Buttons is a wrapper around gtk_file_chooser_dialog_new() with two buttons.
+func FileChooserDialogNewWith2Buttons(
+	title string,
+	parent *Window,
+	action FileChooserAction,
+	first_button_text string,
+	first_button_id ResponseType,
+	second_button_text string,
+	second_button_id ResponseType) (*FileChooserDialog, error) {
+	c_title := C.CString(title)
+	defer C.free(unsafe.Pointer(c_title))
+	c_first_button_text := C.CString(first_button_text)
+	defer C.free(unsafe.Pointer(c_first_button_text))
+	c_second_button_text := C.CString(second_button_text)
+	defer C.free(unsafe.Pointer(c_second_button_text))
+	c := C.gtk_file_chooser_dialog_new_2(
+		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_first_button_text), C.int(first_button_id),
+		(*C.gchar)(c_second_button_text), C.int(second_button_id))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapFileChooserDialog(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a, nil
+}
+
+/*
  * GtkFileChooserWidget
  */
 
@@ -3763,6 +3854,61 @@ func FileChooserWidgetNew(action FileChooserAction) (*FileChooserWidget, error) 
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return f, nil
+}
+
+/*
+ * GtkFileFilter
+ */
+
+// FileChoser is a representation of GTK's GtkFileFilter GInterface.
+type FileFilter struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GObject as a GtkFileFilter.
+func (v *FileFilter) native() *C.GtkFileFilter {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFileFilter(p)
+}
+
+func marshalFileFilter(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapFileFilter(obj), nil
+}
+
+func wrapFileFilter(obj *glib.Object) *FileFilter {
+	return &FileFilter{obj}
+}
+
+// FileFilterNew is a wrapper around gtk_file_filter_new().
+func FileFilterNew() (*FileFilter, error) {
+	c := C.gtk_file_filter_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	f := wrapFileFilter(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return f, nil
+}
+
+// SetName is a wrapper around gtk_file_filter_set_name().
+func (v *FileFilter) SetName(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_filter_set_name(v.native(), (*C.gchar)(cstr))
+}
+
+// AddPattern is a wrapper around gtk_file_filter_add_pattern().
+func (v *FileFilter) AddPattern(pattern string) {
+	cstr := C.CString(pattern)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_filter_add_pattern(v.native(), (*C.gchar)(cstr))
 }
 
 /*

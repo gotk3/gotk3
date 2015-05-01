@@ -392,10 +392,22 @@ toGtkFileChooserButton(void *p)
 	return (GTK_FILE_CHOOSER_BUTTON(p));
 }
 
+static GtkFileChooserDialog *
+toGtkFileChooserDialog(void *p)
+{
+	return (GTK_FILE_CHOOSER_DIALOG(p));
+}
+
 static GtkFileChooserWidget *
 toGtkFileChooserWidget(void *p)
 {
 	return (GTK_FILE_CHOOSER_WIDGET(p));
+}
+
+static GtkFileFilter *
+toGtkFileFilter(void *p)
+{
+	return (GTK_FILE_FILTER(p));
 }
 
 static GtkMenuButton *
@@ -513,4 +525,32 @@ static const gchar *
 object_get_class_name(GObject *object)
 {
 	return G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(object));
+}
+
+GtkWidget *
+gtk_file_chooser_dialog_new_1(
+	const gchar *title,
+	GtkWindow *parent,
+	GtkFileChooserAction action,
+	const gchar *first_button_text, int first_button_id
+) {
+	return gtk_file_chooser_dialog_new(
+		title, parent, action,
+		first_button_text, first_button_id,
+		NULL);
+}
+
+GtkWidget *
+gtk_file_chooser_dialog_new_2(
+	const gchar *title,
+	GtkWindow *parent,
+	GtkFileChooserAction action,
+	const gchar *first_button_text, int first_button_id,
+	const gchar *second_button_text, int second_button_id
+) {
+	return gtk_file_chooser_dialog_new(
+		title, parent, action,
+		first_button_text, first_button_id,
+		second_button_text, second_button_id,
+		NULL);
 }
