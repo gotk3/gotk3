@@ -6324,6 +6324,19 @@ func (v *SpinButton) GetValue() float64 {
 	return float64(c)
 }
 
+// GetAdjustment() is a wrapper around gtk_spin_button_get_adjustment
+func (v *SpinButton) GetAdjustment() *Adjustment {
+	c := C.gtk_spin_button_get_adjustment(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	a := wrapAdjustment(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return a
+}
+
 /*
  * GtkSpinner
  */
