@@ -773,6 +773,23 @@ func MainQuit() {
 	C.gtk_main_quit()
 }
 
+// AcceleratorName is a wrapper around gtk_accelerator_name().
+func AcceleratorName(key uint, mods gdk.ModifierType) string {
+	c := C.gtk_accelerator_name(C.guint(key), C.GdkModifierType(mods))
+	defer C.free(unsafe.Pointer(c))
+	return C.GoString((*C.char)(c))
+}
+
+// AcceleratorValid is a wrapper around gtk_accelerator_valid().
+func AcceleratorValid(key uint, mods gdk.ModifierType) bool {
+	return gobool(C.gtk_accelerator_valid(C.guint(key), C.GdkModifierType(mods)))
+}
+
+// AcceleratorGetDefaultModMask is a wrapper around gtk_accelerator_get_default_mod_mask().
+func AcceleratorGetDefaultModMask() gdk.ModifierType {
+	return gdk.ModifierType(C.gtk_accelerator_get_default_mod_mask())
+}
+
 /*
  * GtkAboutDialog
  */
