@@ -27,7 +27,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/conformal/gotk3/glib"
+	"github.com/geoffholden/gotk3/glib"
 )
 
 func init() {

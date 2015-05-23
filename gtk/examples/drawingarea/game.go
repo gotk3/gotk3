@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/conformal/gotk3/cairo"
-	"github.com/conformal/gotk3/gdk"
-	"github.com/conformal/gotk3/gtk"
+	"github.com/geoffholden/gotk3/cairo"
+	"github.com/geoffholden/gotk3/gdk"
+	"github.com/geoffholden/gotk3/gtk"
 )
 
 const (

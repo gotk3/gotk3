@@ -21,7 +21,7 @@ package main
 import (
 	"container/list"
 	"fmt"
-	"github.com/conformal/gotk3/gtk"
+	"github.com/geoffholden/gotk3/gtk"
 	"log"
 )
 

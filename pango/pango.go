@@ -21,7 +21,7 @@ package pango
 // #include <pango/pango.h>
 import "C"
 import (
-	"github.com/conformal/gotk3/glib"
+	"github.com/geoffholden/gotk3/glib"
 	"unsafe"
 )
 
