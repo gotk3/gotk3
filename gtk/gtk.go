@@ -65,6 +65,7 @@ func init() {
 		// Enums
 		{glib.Type(C.gtk_align_get_type()), marshalAlign},
 		{glib.Type(C.gtk_accel_flags_get_type()), marshalAccelFlags},
+		{glib.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
 		{glib.Type(C.gtk_arrow_placement_get_type()), marshalArrowPlacement},
 		{glib.Type(C.gtk_arrow_type_get_type()), marshalArrowType},
 		{glib.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
@@ -973,6 +974,34 @@ func (v *AboutDialog) GetWrapLicense() bool {
 // SetWrapLicense is a wrapper around gtk_about_dialog_set_wrap_license().
 func (v *AboutDialog) SetWrapLicense(wrapLicense bool) {
 	C.gtk_about_dialog_set_wrap_license(v.native(), gbool(wrapLicense))
+}
+
+/*
+ * GtkAccelGroup
+ */
+
+// Adjustment is a representation of GTK's GtkAdjustment.
+type AccelGroup struct {
+	glib.InitiallyUnowned
+}
+
+// native returns a pointer to the underlying GtkAdjustment.
+func (v *AccelGroup) native() *C.GtkAccelGroup {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkAccelGroup(p)
+}
+
+func marshalAccelGroup(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapAccelGroup(obj), nil
+}
+
+func wrapAccelGroup(obj *glib.Object) *AccelGroup {
+	return &AccelGroup{glib.InitiallyUnowned{obj}}
 }
 
 /*
@@ -8400,10 +8429,11 @@ func (v *Widget) SizeAllocate() {
 */
 
 // TODO(jrick) GtkAccelGroup GdkModifierType GtkAccelFlags
-/*
-func (v *Widget) AddAccelerator() {
+func (v *Widget) AddAccelerator(signal string, accelGroup *AccelGroup, key int, mods gdk.ModifierType, flags AccelFlags) {
+	csignal := C.CString(signal)
+	defer C.free(unsafe.Pointer(csignal))
+	C.gtk_widget_add_accelerator(v.native(), (*C.gchar)(csignal), accelGroup.native(), C.guint(key), C.GdkModifierType(mods), C.GtkAccelFlags(flags))
 }
-*/
 
 // TODO(jrick) GtkAccelGroup GdkModifierType
 /*
@@ -9319,6 +9349,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapAboutDialog(obj)
 	case "GtkAdjustment":
 		g = wrapAdjustment(obj)
+	case "GtkAccelGroup":
+		g = wrapAccelGroup(obj)
 	case "GtkAlignment":
 		g = wrapAlignment(obj)
 	case "GtkArrow":
