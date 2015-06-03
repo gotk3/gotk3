@@ -3818,18 +3818,16 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
-<<<<<<< HEAD
 // AddFilter is a wrapper around gtk_file_chooser_add_filter().
 func (v *FileChooser) AddFilter(filter *FileFilter) {
 	C.gtk_file_chooser_add_filter(v.native(), filter.native())
-=======
+
 // GetURI is a wrapper around gtk_file_chooser_get_uri().
 func (v *FileChooser) GetURI() string {
 	c := C.gtk_file_chooser_get_uri(v.native())
 	s := C.GoString((*C.char)(c))
 	defer C.g_free((C.gpointer)(c))
 	return s
->>>>>>> MovingtoMars/master
 }
 
 /*
@@ -9016,13 +9014,6 @@ func (v *Widget) SizeAllocate() {
 }
 */
 
-<<<<<<< HEAD
-// TODO(jrick) GtkAccelGroup GdkModifierType GtkAccelFlags
-func (v *Widget) AddAccelerator(signal string, accelGroup *AccelGroup, key int, mods gdk.ModifierType, flags AccelFlags) {
-	csignal := C.CString(signal)
-	defer C.free(unsafe.Pointer(csignal))
-	C.gtk_widget_add_accelerator(v.native(), (*C.gchar)(csignal), accelGroup.native(), C.guint(key), C.GdkModifierType(mods), C.GtkAccelFlags(flags))
-=======
 // AddAccelerator() is a wrapper around gtk_widget_add_accelerator().
 func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key uint, mods gdk.ModifierType, flags AccelFlags) {
 	csignal := (*C.gchar)(C.CString(signal))
@@ -9034,7 +9025,6 @@ func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key uint, mods
 		C.guint(key),
 		C.GdkModifierType(mods),
 		C.GtkAccelFlags(flags))
->>>>>>> MovingtoMars/master
 }
 
 // TODO(jrick) GtkAccelGroup GdkModifierType

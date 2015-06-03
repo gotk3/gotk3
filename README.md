@@ -1,8 +1,8 @@
 gotk3
 =====
 
-[![Build Status](https://travis-ci.org/MovingtoMars/gotk3.png?branch=master)]
-(https://travis-ci.org/MovingtoMars/gotk3)
+[![Build Status](https://travis-ci.org/geoffholden/gotk3.png?branch=master)]
+(https://travis-ci.org/geoffholden/gotk3)
 
 The gotk3 project provides Go bindings for GTK+3 and dependent
 projects.  Each component is given its own subdirectory, which is used
@@ -28,7 +28,7 @@ Usage of additional features is also demonstrated in the
 package main
 
 import (
-	"github.com/MovingtoMars/gotk3/gtk"
+	"github.com/geoffholden/gotk3/gtk"
 	"log"
 )
 
@@ -72,15 +72,15 @@ func main() {
 
 Each package's internal `go doc` style documentation can be viewed
 online without installing this package by using the GoDoc site (links
-to [cairo](http://godoc.org/github.com/MovingtoMars/gotk3/cairo),
-[glib](http://godoc.org/github.com/MovingtoMars/gotk3/glib),
-[gdk](http://godoc.org/github.com/MovingtoMars/gotk3/gdk), and
-[gtk](http://godoc.org/github.com/MovingtoMars/gotk3/gtk) documentation).
+to [cairo](http://godoc.org/github.com/geoffholden/gotk3/cairo),
+[glib](http://godoc.org/github.com/geoffholden/gotk3/glib),
+[gdk](http://godoc.org/github.com/geoffholden/gotk3/gdk), and
+[gtk](http://godoc.org/github.com/geoffholden/gotk3/gtk) documentation).
 
 You can also view the documentation locally once the package is
 installed with the `godoc` tool by running `godoc -http=":6060"` and
 pointing your browser to
-http://localhost:6060/pkg/github.com/MovingtoMars/gotk3
+http://localhost:6060/pkg/github.com/geoffholden/gotk3
 
 ## Installation
 
@@ -99,18 +99,18 @@ release (3.12).
 To install gotk3 targeting the latest GTK version:
 
 ```bash
-$ go get github.com/MovingtoMars/gotk3/gtk
+$ go get github.com/geoffholden/gotk3/gtk
 ```
 
 On MacOS (using homebrew) you would likely specify PKG_CONFIG_PATH as such:
 ```bash
-$ PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig:`brew --prefix gtk+3`/lib/pkgconfig go get -u -v github.com/MovingtoMars/gotk3/gdk
+$ PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig:`brew --prefix gtk+3`/lib/pkgconfig go get -u -v github.com/geoffholden/gotk3/gdk
 ```
 
 To install gotk3 targeting the older GTK 3.10 release:
 
 ```bash
-$ go get -tags gtk_3_10 github.com/MovingtoMars/gotk3/gtk
+$ go get -tags gtk_3_10 github.com/geoffholden/gotk3/gtk
 ```
 
 Ubuntu 14.04 uses the GTK 3.10 release.  Also, some required packages may be

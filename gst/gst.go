@@ -38,7 +38,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/MovingtoMars/gotk3/glib"
+	"github.com/geoffholden/gotk3/glib"
 )
 
 func init() {

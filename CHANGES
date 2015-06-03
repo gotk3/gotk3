@@ -11,27 +11,27 @@ Changes in 0.2.0 (Mon Feb 10 2014)
     support for cairo Surface and Context
 
   - Add new binding support for the following GTK classes:
-    - GdkPixbuf (https://github.com/MovingtoMars/gotk3/issues/40)
+    - GdkPixbuf (https://github.com/geoffholden/gotk3/issues/40)
     - GtkAboutDialog
     - GtkAlignment
     - GtkArrow
     - GtkCalendar
     - GtkDrawingArea
     - GtkEventBox
-    - GtkOffscreenWindow (https://github.com/MovingtoMars/gotk3/issues/33)
+    - GtkOffscreenWindow (https://github.com/geoffholden/gotk3/issues/33)
     - GtkSpinner
     - GtkSwitch
 
   - Add additional bindings for gtk.Label
 
-  - Add glib.TimeoutAdd (https://github.com/MovingtoMars/gotk3/issues/41)
+  - Add glib.TimeoutAdd (https://github.com/geoffholden/gotk3/issues/41)
 
   - Call correct C function to create a new TextTagTable
-    (https://github.com/MovingtoMars/gotk3/issues/40)
+    (https://github.com/geoffholden/gotk3/issues/40)
 
   - Create correct go values from glib values
-    (https://github.com/MovingtoMars/gotk3/issues/39 and
-    https://github.com/MovingtoMars/gotk3/issues/41)
+    (https://github.com/geoffholden/gotk3/issues/39 and
+    https://github.com/geoffholden/gotk3/issues/41)
 
 Changes in 0.1.1 (Tue Jan 14 2014)
   - Fix a (*glib.Object).Connect crash where an allocated GValue was
@@ -62,8 +62,8 @@ Changes in 0.1.0 (Thu Jan 09 2014)
   - Add examples for gtk.TextView bindings
 
   - Fix build when building with gccgo
-    (https://github.com/MovingtoMars/gotk3/issues/19 and
-    https://github.com/MovingtoMars/gotk3/issues/20)
+    (https://github.com/geoffholden/gotk3/issues/19 and
+    https://github.com/geoffholden/gotk3/issues/20)
 
 Changes in 0.0.2 (Wed Nov 13 2013)
   - Begin GTK 3.10 support

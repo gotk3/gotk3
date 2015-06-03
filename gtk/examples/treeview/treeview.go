@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/MovingtoMars/gotk3/gtk"
-	"github.com/MovingtoMars/gotk3/glib"
+	"github.com/geoffholden/gotk3/glib"
+	"github.com/geoffholden/gotk3/gtk"
 	"log"
 )
 
@@ -18,12 +18,12 @@ func createColumn(title string, id int) *gtk.TreeViewColumn {
 	if err != nil {
 		log.Fatal("Unable to create text cell renderer:", err)
 	}
-	
+
 	column, err := gtk.TreeViewColumnNewWithAttribute(title, cellRenderer, "text", id)
 	if err != nil {
 		log.Fatal("Unable to create cell column:", err)
 	}
-	
+
 	return column
 }
 
@@ -33,17 +33,17 @@ func setupTreeView() (*gtk.TreeView, *gtk.ListStore) {
 	if err != nil {
 		log.Fatal("Unable to create tree view:", err)
 	}
-	
+
 	treeView.AppendColumn(createColumn("Version", COLUMN_VERSION))
 	treeView.AppendColumn(createColumn("Feature", COLUMN_FEATURE))
-	
+
 	// Creating a list store. This is what holds the data that will be shown on our tree view.
 	listStore, err := gtk.ListStoreNew(glib.TYPE_STRING, glib.TYPE_STRING)
 	if err != nil {
 		log.Fatal("Unable to create list store:", err)
 	}
 	treeView.SetModel(listStore)
-	
+
 	return treeView, listStore
 }
 
@@ -51,12 +51,12 @@ func setupTreeView() (*gtk.TreeView, *gtk.ListStore) {
 func addRow(listStore *gtk.ListStore, version, feature string) {
 	// Get an iterator for a new row at the end of the list store
 	iter := listStore.Append()
-	
+
 	// Set the contents of the list store row that the iterator represents
 	err := listStore.Set(iter,
-		[]int {COLUMN_VERSION, COLUMN_FEATURE},
-		[]interface{} {version, feature})
-	
+		[]int{COLUMN_VERSION, COLUMN_FEATURE},
+		[]interface{}{version, feature})
+
 	if err != nil {
 		log.Fatal("Unable to add row:", err)
 	}
@@ -68,7 +68,7 @@ func setupWindow(title string) *gtk.Window {
 	if err != nil {
 		log.Fatal("Unable to create window:", err)
 	}
-	
+
 	win.SetTitle(title)
 	win.Connect("destroy", func() {
 		gtk.MainQuit()
@@ -80,12 +80,12 @@ func setupWindow(title string) *gtk.Window {
 
 func main() {
 	gtk.Init(nil)
-	
+
 	win := setupWindow("Go Feature Timeline")
-	
+
 	treeView, listStore := setupTreeView()
 	win.Add(treeView)
-	
+
 	// Add some rows to the list store
 	addRow(listStore, "r57", "Gofix command added for rewriting code for new APIs")
 	addRow(listStore, "r60", "URL parsing moved to new \"url\" package")
@@ -93,7 +93,7 @@ func main() {
 	addRow(listStore, "go1.1", "Race detector added to tools")
 	addRow(listStore, "go1.2", "Limit for number of threads added")
 	addRow(listStore, "go1.3", "Support for various BSD's, Plan 9 and Solaris")
-	
+
 	win.ShowAll()
 	gtk.Main()
 }
