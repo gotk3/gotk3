@@ -9959,8 +9959,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapAccelGroup(obj)
 	case "GtkAdjustment":
 		g = wrapAdjustment(obj)
-	case "GtkAccelGroup":
-		g = wrapAccelGroup(obj)
 	case "GtkAlignment":
 		g = wrapAlignment(obj)
 	case "GtkArrow":
