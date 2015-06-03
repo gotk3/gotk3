@@ -29,10 +29,11 @@ package gtk
 // #include "gtk_3_10-12.go.h"
 import "C"
 import (
-	"github.com/geoffholden/gotk3/gdk"
-	"github.com/geoffholden/gotk3/glib"
 	"runtime"
 	"unsafe"
+
+	"github.com/geoffholden/gotk3/gdk"
+	"github.com/geoffholden/gotk3/glib"
 )
 
 func init() {

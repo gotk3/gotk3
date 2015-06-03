@@ -20,8 +20,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/geoffholden/gotk3/gtk"
 	"log"
+
+	"github.com/geoffholden/gotk3/gtk"
 )
 
 func setup_window(title string) *gtk.Window {

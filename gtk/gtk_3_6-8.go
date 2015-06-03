@@ -28,9 +28,10 @@ package gtk
 // #include <gtk/gtk.h>
 import "C"
 import (
-	"github.com/geoffholden/gotk3/glib"
 	"runtime"
 	"unsafe"
+
+	"github.com/geoffholden/gotk3/glib"
 )
 
 // ButtonNewFromStock is a wrapper around gtk_button_new_from_stock().

@@ -92,6 +92,12 @@ _g_value_fundamental(GType type)
 	return (G_TYPE_FUNDAMENTAL(type));
 }
 
+static GObjectClass *
+_g_object_get_class (GObject *object)
+{
+	return (G_OBJECT_GET_CLASS(object));
+}
+
 /*
  * Closure support
  */

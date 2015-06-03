@@ -517,6 +517,135 @@ func (v *Object) StopEmission(s string) {
 // g_object_set(), this function only sets one name value pair.  Make
 // multiple calls to this function to set multiple properties.
 func (v *Object) Set(name string, value interface{}) error {
+	return v.SetProperty(name, value)
+	/*
+		cstr := C.CString(name)
+		defer C.free(unsafe.Pointer(cstr))
+
+		if _, ok := value.(Object); ok {
+			value = value.(Object).GObject
+		}
+
+		// Can't call g_object_set() as it uses a variable arg list, use a
+		// wrapper instead
+		var p unsafe.Pointer
+		switch v := value.(type) {
+		case bool:
+			c := gbool(v)
+			p = unsafe.Pointer(&c)
+
+		case int8:
+			c := C.gint8(v)
+			p = unsafe.Pointer(&c)
+
+		case int16:
+			c := C.gint16(v)
+			p = unsafe.Pointer(&c)
+
+		case int32:
+			c := C.gint32(v)
+			p = unsafe.Pointer(&c)
+
+		case int64:
+			c := C.gint64(v)
+			p = unsafe.Pointer(&c)
+
+		case int:
+			c := C.gint(v)
+			p = unsafe.Pointer(&c)
+
+		case uint8:
+			c := C.guchar(v)
+			p = unsafe.Pointer(&c)
+
+		case uint16:
+			c := C.guint16(v)
+			p = unsafe.Pointer(&c)
+
+		case uint32:
+			c := C.guint32(v)
+			p = unsafe.Pointer(&c)
+
+		case uint64:
+			c := C.guint64(v)
+			p = unsafe.Pointer(&c)
+
+		case uint:
+			c := C.guint(v)
+			p = unsafe.Pointer(&c)
+
+		case uintptr:
+			p = unsafe.Pointer(C.gpointer(v))
+
+		case float32:
+			c := C.gfloat(v)
+			p = unsafe.Pointer(&c)
+
+		case float64:
+			c := C.gdouble(v)
+			p = unsafe.Pointer(&c)
+
+		case string:
+			cstr := C.CString(v)
+			defer C.g_free(C.gpointer(unsafe.Pointer(cstr)))
+			p = unsafe.Pointer(&cstr)
+
+		default:
+			if pv, ok := value.(unsafe.Pointer); ok {
+				p = pv
+			} else {
+				val := reflect.ValueOf(value)
+				switch val.Kind() {
+				case reflect.Int, reflect.Int8, reflect.Int16,
+					reflect.Int32, reflect.Int64:
+					c := C.int(val.Int())
+					p = unsafe.Pointer(&c)
+
+				case reflect.Uintptr, reflect.Ptr, reflect.UnsafePointer:
+					p = unsafe.Pointer(C.gpointer(val.Pointer()))
+				}
+			}
+		}
+		if p == nil {
+			return errors.New("Unable to perform type conversion")
+		}
+		C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
+		return nil*/
+}
+
+// GetPropertyType returns the Type of a property of the underlying GObject.
+// If the property is missing it will return TYPE_INVALID and an error.
+func (v *Object) GetPropertyType(name string) (Type, error) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	paramSpec := C.g_object_class_find_property(C._g_object_get_class(v.native()), (*C.gchar)(cstr))
+	if paramSpec == nil {
+		return TYPE_INVALID, errors.New("couldn't find Property")
+	}
+	return Type(paramSpec.value_type), nil
+}
+
+// GetProperty is a wrapper around g_object_get_property().
+func (v *Object) GetProperty(name string) (interface{}, error) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	t, err := v.GetPropertyType(name)
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := ValueInit(t)
+	if err != nil {
+		return nil, errors.New("unable to allocate value")
+	}
+	C.g_object_get_property(v.GObject, (*C.gchar)(cstr), p.native())
+	return p.GoValue()
+}
+
+// SetProperty is a wrapper around g_object_set_property().
+func (v *Object) SetProperty(name string, value interface{}) error {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -524,20 +653,18 @@ func (v *Object) Set(name string, value interface{}) error {
 		value = value.(Object).GObject
 	}
 
-	// Can't call g_object_set() as it uses a variable arg list, use a
-	// wrapper instead
-	p := pointerVal(value)
-	if p == nil {
+	p, err := GValue(value)
+	if err != nil {
 		return errors.New("Unable to perform type conversion")
 	}
-	C._g_object_set_one(C.gpointer(v.GObject), (*C.gchar)(cstr), p)
+	C.g_object_set_property(v.GObject, (*C.gchar)(cstr), p.native())
 	return nil
 }
 
 // pointerVal attempts to return an unsafe.Pointer for value.
 // Not all types are understood, in which case a nil Pointer
 // is returned.
-func pointerVal(value interface{}) unsafe.Pointer {
+/*func pointerVal(value interface{}) unsafe.Pointer {
 	var p unsafe.Pointer
 	switch v := value.(type) {
 	case bool:
@@ -618,7 +745,7 @@ func pointerVal(value interface{}) unsafe.Pointer {
 	}
 
 	return p
-}
+}*/
 
 /*
  * GObject Signals

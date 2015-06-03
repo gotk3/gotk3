@@ -1,8 +1,8 @@
 gotk3
 =====
 
-[![Build Status](https://travis-ci.org/conformal/gotk3.png?branch=master)]
-(https://travis-ci.org/conformal/gotk3)
+[![Build Status](https://travis-ci.org/MovingtoMars/gotk3.png?branch=master)]
+(https://travis-ci.org/MovingtoMars/gotk3)
 
 The gotk3 project provides Go bindings for GTK+3 and dependent
 projects.  Each component is given its own subdirectory, which is used
@@ -28,7 +28,7 @@ Usage of additional features is also demonstrated in the
 package main
 
 import (
-	"github.com/conformal/gotk3/gtk"
+	"github.com/MovingtoMars/gotk3/gtk"
 	"log"
 )
 
@@ -72,15 +72,15 @@ func main() {
 
 Each package's internal `go doc` style documentation can be viewed
 online without installing this package by using the GoDoc site (links
-to [cairo](http://godoc.org/github.com/conformal/gotk3/cairo),
-[glib](http://godoc.org/github.com/conformal/gotk3/glib),
-[gdk](http://godoc.org/github.com/conformal/gotk3/gdk), and
-[gtk](http://godoc.org/github.com/conformal/gotk3/gtk) documentation).
+to [cairo](http://godoc.org/github.com/MovingtoMars/gotk3/cairo),
+[glib](http://godoc.org/github.com/MovingtoMars/gotk3/glib),
+[gdk](http://godoc.org/github.com/MovingtoMars/gotk3/gdk), and
+[gtk](http://godoc.org/github.com/MovingtoMars/gotk3/gtk) documentation).
 
 You can also view the documentation locally once the package is
 installed with the `godoc` tool by running `godoc -http=":6060"` and
 pointing your browser to
-http://localhost:6060/pkg/github.com/conformal/gotk3
+http://localhost:6060/pkg/github.com/MovingtoMars/gotk3
 
 ## Installation
 
@@ -99,18 +99,18 @@ release (3.12).
 To install gotk3 targeting the latest GTK version:
 
 ```bash
-$ go get github.com/conformal/gotk3/gtk
+$ go get github.com/MovingtoMars/gotk3/gtk
 ```
 
 On MacOS (using homebrew) you would likely specify PKG_CONFIG_PATH as such:
 ```bash
-$ PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig:`brew --prefix gtk+3`/lib/pkgconfig go get -u -v github.com/conformal/gotk3/gdk
+$ PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig:`brew --prefix gtk+3`/lib/pkgconfig go get -u -v github.com/MovingtoMars/gotk3/gdk
 ```
 
 To install gotk3 targeting the older GTK 3.10 release:
 
 ```bash
-$ go get -tags gtk_3_10 github.com/conformal/gotk3/gtk
+$ go get -tags gtk_3_10 github.com/MovingtoMars/gotk3/gtk
 ```
 
 Ubuntu 14.04 uses the GTK 3.10 release.  Also, some required packages may be
@@ -127,26 +127,6 @@ $ sudo apt-get install libglib2.0-dev
 - Add bindings for all of GTK+
 - Add tests for each implemented binding
 - Add examples for intent
-
-## GPG Verification Key
-
-All official release tags are signed by Conformal so users can ensure the code
-has not been tampered with and is coming from Conformal.  To verify the
-signature perform the following:
-
-- Download the public key from the Conformal website at
-  https://opensource.conformal.com/GIT-GPG-KEY-conformal.txt
-
-- Import the public key into your GPG keyring:
-  ```bash
-  gpg --import GIT-GPG-KEY-conformal.txt
-  ```
-
-- Verify the release tag with the following command where `TAG_NAME` is a
-  placeholder for the specific tag:
-  ```bash
-  git tag -v TAG_NAME
-  ```
 
 ## License
 

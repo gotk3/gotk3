@@ -56,6 +56,12 @@ toGtkDrawingArea(void *p)
 	return (GTK_DRAWING_AREA(p));
 }
 
+static GtkCellRendererSpinner *
+toGtkCellRendererSpinner(void *p)
+{
+	return (GTK_CELL_RENDERER_SPINNER(p));
+}
+
 static GtkEventBox *
 toGtkEventBox(void *p)
 {
@@ -164,6 +170,24 @@ toGtkAccelGroup(void *p)
     return (GTK_ACCEL_GROUP(p));
 }
 
+static GtkTextTag *
+toGtkTextTag(void *p)
+{
+	return (GTK_TEXT_TAG(p));
+}
+
+static GtkAccelGroup *
+toGtkAccelGroup(void *p)
+{
+	return (GTK_ACCEL_GROUP(p));
+}
+
+static GtkPaned *
+toGtkPaned(void *p)
+{
+	return (GTK_PANED(p));
+}
+
 static GtkImage *
 toGtkImage(void *p)
 {
@@ -174,6 +198,18 @@ static GtkButton *
 toGtkButton(void *p)
 {
 	return (GTK_BUTTON(p));
+}
+
+static GtkScaleButton *
+toGtkScaleButton(void *p)
+{
+	return (GTK_SCALE_BUTTON(p));
+}
+
+static GtkVolumeButton *
+toGtkVolumeButton(void *p)
+{
+	return (GTK_VOLUME_BUTTON(p));
 }
 
 static GtkScrolledWindow *
@@ -470,7 +506,7 @@ toGtkSeparatorToolItem(void *p)
 	return (GTK_SEPARATOR_TOOL_ITEM(p));
 }
 
-static GType * 
+static GType *
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
 }

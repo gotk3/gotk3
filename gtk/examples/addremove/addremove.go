@@ -21,8 +21,9 @@ package main
 import (
 	"container/list"
 	"fmt"
-	"github.com/geoffholden/gotk3/gtk"
 	"log"
+
+	"github.com/geoffholden/gotk3/gtk"
 )
 
 var labelList = list.New()

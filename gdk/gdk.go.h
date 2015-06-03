@@ -43,6 +43,12 @@ toGdkDisplay(void *p)
 	return (GDK_DISPLAY(p));
 }
 
+static GdkDragContext *
+toGdkDragContext(void *p)
+{
+	return (GDK_DRAG_CONTEXT(p));
+}
+
 static GdkPixbuf *
 toGdkPixbuf(void *p)
 {

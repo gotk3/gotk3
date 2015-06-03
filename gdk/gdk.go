@@ -33,7 +33,9 @@ import (
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
+		{glib.Type(C.gdk_drag_action_get_type()), marshalDragAction},
 		{glib.Type(C.gdk_colorspace_get_type()), marshalColorspace},
+		{glib.Type(C.gdk_event_type_get_type()), marshalEventType},
 		{glib.Type(C.gdk_interp_type_get_type()), marshalInterpType},
 		{glib.Type(C.gdk_modifier_type_get_type()), marshalModifierType},
 		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
@@ -42,6 +44,7 @@ func init() {
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
 		{glib.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
+		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
 		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
 		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
 		{glib.Type(C.gdk_visual_get_type()), marshalVisual},
@@ -79,6 +82,23 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 /*
  * Constants
  */
+
+// DragAction is a representation of GDK's GdkDragAction.
+type DragAction int
+
+const (
+	ACTION_DEFAULT DragAction = C.GDK_ACTION_DEFAULT
+	ACTION_COPY    DragAction = C.GDK_ACTION_COPY
+	ACTION_MOVE    DragAction = C.GDK_ACTION_MOVE
+	ACTION_LINK    DragAction = C.GDK_ACTION_LINK
+	ACTION_PRIVATE DragAction = C.GDK_ACTION_PRIVATE
+	ACTION_ASK     DragAction = C.GDK_ACTION_ASK
+)
+
+func marshalDragAction(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return DragAction(c), nil
+}
 
 // Colorspace is a representation of GDK's GdkColorspace.
 type Colorspace int
@@ -121,24 +141,24 @@ func marshalInterpType(p uintptr) (interface{}, error) {
 type ModifierType uint
 
 const (
-	GDK_SHIFT_MASK    ModifierType = C.GDK_SHIFT_MASK
-	GDK_LOCK_MASK                  = C.GDK_LOCK_MASK
-	GDK_CONTROL_MASK               = C.GDK_CONTROL_MASK
-	GDK_MOD1_MASK                  = C.GDK_MOD1_MASK
-	GDK_MOD2_MASK                  = C.GDK_MOD2_MASK
-	GDK_MOD3_MASK                  = C.GDK_MOD3_MASK
-	GDK_MOD4_MASK                  = C.GDK_MOD4_MASK
-	GDK_MOD5_MASK                  = C.GDK_MOD5_MASK
-	GDK_BUTTON1_MASK               = C.GDK_BUTTON1_MASK
-	GDK_BUTTON2_MASK               = C.GDK_BUTTON2_MASK
-	GDK_BUTTON3_MASK               = C.GDK_BUTTON3_MASK
-	GDK_BUTTON4_MASK               = C.GDK_BUTTON4_MASK
-	GDK_BUTTON5_MASK               = C.GDK_BUTTON5_MASK
-	GDK_SUPER_MASK                 = C.GDK_SUPER_MASK
-	GDK_HYPER_MASK                 = C.GDK_HYPER_MASK
-	GDK_META_MASK                  = C.GDK_META_MASK
-	GDK_RELEASE_MASK               = C.GDK_RELEASE_MASK
-	GDK_MODIFIER_MASK              = C.GDK_MODIFIER_MASK
+	SHIFT_MASK    ModifierType = C.GDK_SHIFT_MASK
+	LOCK_MASK                  = C.GDK_LOCK_MASK
+	CONTROL_MASK               = C.GDK_CONTROL_MASK
+	MOD1_MASK                  = C.GDK_MOD1_MASK
+	MOD2_MASK                  = C.GDK_MOD2_MASK
+	MOD3_MASK                  = C.GDK_MOD3_MASK
+	MOD4_MASK                  = C.GDK_MOD4_MASK
+	MOD5_MASK                  = C.GDK_MOD5_MASK
+	BUTTON1_MASK               = C.GDK_BUTTON1_MASK
+	BUTTON2_MASK               = C.GDK_BUTTON2_MASK
+	BUTTON3_MASK               = C.GDK_BUTTON3_MASK
+	BUTTON4_MASK               = C.GDK_BUTTON4_MASK
+	BUTTON5_MASK               = C.GDK_BUTTON5_MASK
+	SUPER_MASK                 = C.GDK_SUPER_MASK
+	HYPER_MASK                 = C.GDK_HYPER_MASK
+	META_MASK                  = C.GDK_META_MASK
+	RELEASE_MASK               = C.GDK_RELEASE_MASK
+	MODIFIER_MASK              = C.GDK_MODIFIER_MASK
 )
 
 func marshalModifierType(p uintptr) (interface{}, error) {
@@ -189,6 +209,12 @@ type Atom uintptr
 // native returns the underlying GdkAtom.
 func (v Atom) native() C.GdkAtom {
 	return C.toGdkAtom(unsafe.Pointer(uintptr(v)))
+}
+
+func (v Atom) Name() string {
+	c := C.gdk_atom_name(v.native())
+	defer C.g_free(C.gpointer(c))
+	return C.GoString((*C.char)(c))
 }
 
 /*
@@ -523,6 +549,40 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 }
 
 /*
+ * GdkDragContext
+ */
+
+// DragContext is a representation of GDK's GdkDragContext.
+type DragContext struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GdkDragContext.
+func (v *DragContext) native() *C.GdkDragContext {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkDragContext(p)
+}
+
+// Native returns a pointer to the underlying GdkDragContext.
+func (v *DragContext) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalDragContext(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &DragContext{obj}, nil
+}
+
+func (v *DragContext) ListTargets() *glib.List {
+	c := C.gdk_drag_context_list_targets(v.native())
+	return (*glib.List)(unsafe.Pointer(c))
+}
+
+/*
  * GdkEvent
  */
 
@@ -554,6 +614,67 @@ func (v *Event) free() {
 }
 
 /*
+ * GdkEventButton
+ */
+
+// EventButton is a representation of GDK's GdkEventButton.
+type EventButton struct {
+	*Event
+}
+
+// Native returns a pointer to the underlying GdkEventButton.
+func (v *EventButton) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventButton) native() *C.GdkEventButton {
+	return (*C.GdkEventButton)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventButton) X() float64 {
+	c := v.native().x
+	return float64(c)
+}
+
+func (v *EventButton) Y() float64 {
+	c := v.native().y
+	return float64(c)
+}
+
+// XRoot returns the x coordinate of the pointer relative to the root of the screen.
+func (v *EventButton) XRoot() float64 {
+	c := v.native().x_root
+	return float64(c)
+}
+
+// YRoot returns the y coordinate of the pointer relative to the root of the screen.
+func (v *EventButton) YRoot() float64 {
+	c := v.native().y_root
+	return float64(c)
+}
+
+func (v *EventButton) Button() uint {
+	c := v.native().button
+	return uint(c)
+}
+
+func (v *EventButton) State() uint {
+	c := v.native().state
+	return uint(c)
+}
+
+// Time returns the time of the event in milliseconds.
+func (v *EventButton) Time() uint32 {
+	c := v.native().time
+	return uint32(c)
+}
+
+func (v *EventButton) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+/*
  * GdkEventKey
  */
 
@@ -574,6 +695,101 @@ func (v *EventKey) native() *C.GdkEventKey {
 func (v *EventKey) KeyVal() uint {
 	c := v.native().keyval
 	return uint(c)
+}
+
+func (v *EventKey) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+// EventType is a representation of GDK's GdkEventType.
+// Do not confuse these event types with the signals that GTK+ widgets emit
+type EventType int
+
+func marshalEventType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return EventType(c), nil
+}
+
+const (
+	EVENT_NOTHING             EventType = C.GDK_NOTHING
+	EVENT_DELETE              EventType = C.GDK_DELETE
+	EVENT_DESTROY             EventType = C.GDK_DESTROY
+	EVENT_EXPOSE              EventType = C.GDK_EXPOSE
+	EVENT_MOTION_NOTIFY       EventType = C.GDK_MOTION_NOTIFY
+	EVENT_BUTTON_PRESS        EventType = C.GDK_BUTTON_PRESS
+	EVENT_2BUTTON_PRESS       EventType = C.GDK_2BUTTON_PRESS
+	EVENT_DOUBLE_BUTTON_PRESS EventType = C.GDK_DOUBLE_BUTTON_PRESS
+	EVENT_3BUTTON_PRESS       EventType = C.GDK_3BUTTON_PRESS
+	EVENT_TRIPLE_BUTTON_PRESS EventType = C.GDK_TRIPLE_BUTTON_PRESS
+	EVENT_BUTTON_RELEASE      EventType = C.GDK_BUTTON_RELEASE
+	EVENT_KEY_PRESS           EventType = C.GDK_KEY_PRESS
+	EVENT_KEY_RELEASE         EventType = C.GDK_KEY_RELEASE
+	EVENT_LEAVE_NOTIFY        EventType = C.GDK_ENTER_NOTIFY
+	EVENT_FOCUS_CHANGE        EventType = C.GDK_FOCUS_CHANGE
+	EVENT_CONFIGURE           EventType = C.GDK_CONFIGURE
+	EVENT_MAP                 EventType = C.GDK_MAP
+	EVENT_UNMAP               EventType = C.GDK_UNMAP
+	EVENT_PROPERTY_NOTIFY     EventType = C.GDK_PROPERTY_NOTIFY
+	EVENT_SELECTION_CLEAR     EventType = C.GDK_SELECTION_CLEAR
+	EVENT_SELECTION_REQUEST   EventType = C.GDK_SELECTION_REQUEST
+	EVENT_SELECTION_NOTIFY    EventType = C.GDK_SELECTION_NOTIFY
+	EVENT_PROXIMITY_IN        EventType = C.GDK_PROXIMITY_IN
+	EVENT_PROXIMITY_OUT       EventType = C.GDK_PROXIMITY_OUT
+	EVENT_DRAG_ENTER          EventType = C.GDK_DRAG_ENTER
+	EVENT_DRAG_LEAVE          EventType = C.GDK_DRAG_LEAVE
+	EVENT_DRAG_MOTION         EventType = C.GDK_DRAG_MOTION
+	EVENT_DRAG_STATUS         EventType = C.GDK_DRAG_STATUS
+	EVENT_DROP_START          EventType = C.GDK_DROP_START
+	EVENT_DROP_FINISHED       EventType = C.GDK_DROP_FINISHED
+	EVENT_CLIENT_EVENT        EventType = C.GDK_CLIENT_EVENT
+	EVENT_VISIBILITY_NOTIFY   EventType = C.GDK_VISIBILITY_NOTIFY
+	EVENT_SCROLL              EventType = C.GDK_SCROLL
+	EVENT_WINDOW_STATE        EventType = C.GDK_WINDOW_STATE
+	EVENT_SETTING             EventType = C.GDK_SETTING
+	EVENT_OWNER_CHANGE        EventType = C.GDK_OWNER_CHANGE
+	EVENT_GRAB_BROKEN         EventType = C.GDK_GRAB_BROKEN
+	EVENT_DAMAGE              EventType = C.GDK_DAMAGE
+	EVENT_TOUCH_BEGIN         EventType = C.GDK_TOUCH_BEGIN
+	EVENT_TOUCH_UPDATE        EventType = C.GDK_TOUCH_UPDATE
+	EVENT_TOUCH_END           EventType = C.GDK_TOUCH_END
+	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
+	EVENT_LAST                EventType = C.GDK_EVENT_LAST
+)
+
+/*
+ * GDK Keyval
+ */
+
+// KeyvalFromName() is a wrapper around gdk_keyval_from_name().
+func KeyvalFromName(keyvalName string) uint {
+	str := (*C.gchar)(C.CString(keyvalName))
+	defer C.free(unsafe.Pointer(str))
+	return uint(C.gdk_keyval_from_name(str))
+}
+
+func KeyvalConvertCase(v uint) (lower, upper uint) {
+	var l, u C.guint
+	l = 0
+	u = 0
+	C.gdk_keyval_convert_case(C.guint(v), &l, &u)
+	return uint(l), uint(u)
+}
+
+func KeyvalIsLower(v uint) bool {
+	return gobool(C.gdk_keyval_is_lower(C.guint(v)))
+}
+
+func KeyvalIsUpper(v uint) bool {
+	return gobool(C.gdk_keyval_is_upper(C.guint(v)))
+}
+
+func KeyvalToLower(v uint) uint {
+	return uint(C.gdk_keyval_to_lower(C.guint(v)))
+}
+
+func KeyvalToUpper(v uint) uint {
+	return uint(C.gdk_keyval_to_upper(C.guint(v)))
 }
 
 /*
