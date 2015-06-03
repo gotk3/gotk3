@@ -3821,6 +3821,7 @@ func (v *FileChooser) GetFilename() string {
 // AddFilter is a wrapper around gtk_file_chooser_add_filter().
 func (v *FileChooser) AddFilter(filter *FileFilter) {
 	C.gtk_file_chooser_add_filter(v.native(), filter.native())
+}
 
 // GetURI is a wrapper around gtk_file_chooser_get_uri().
 func (v *FileChooser) GetURI() string {
@@ -8879,10 +8880,12 @@ func (v *Widget) Destroy() {
 	C.gtk_widget_destroy(v.native())
 }
 
+/* TODO
 func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions gdk.DragAction) {
 	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]),
 		C.gint(len(targets)), C.GdkDragAction(actions))
 }
+*/
 
 // InDestruction is a wrapper around gtk_widget_in_destruction().
 func (v *Widget) InDestruction() bool {

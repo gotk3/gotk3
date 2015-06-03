@@ -176,12 +176,6 @@ toGtkTextTag(void *p)
 	return (GTK_TEXT_TAG(p));
 }
 
-static GtkAccelGroup *
-toGtkAccelGroup(void *p)
-{
-	return (GTK_ACCEL_GROUP(p));
-}
-
 static GtkPaned *
 toGtkPaned(void *p)
 {
