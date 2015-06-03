@@ -54,10 +54,10 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/geoffholden/gotk3/cairo"
-	"github.com/geoffholden/gotk3/gdk"
-	"github.com/geoffholden/gotk3/glib"
-	"github.com/geoffholden/gotk3/pango"
+	"github.com/andre-hub/gotk3/cairo"
+	"github.com/andre-hub/gotk3/gdk"
+	"github.com/andre-hub/gotk3/glib"
+	"github.com/andre-hub/gotk3/pango"
 )
 
 func init() {

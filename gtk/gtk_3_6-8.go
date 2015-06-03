@@ -31,7 +31,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/geoffholden/gotk3/glib"
+	"github.com/andre-hub/gotk3/glib"
 )
 
 // ButtonNewFromStock is a wrapper around gtk_button_new_from_stock().

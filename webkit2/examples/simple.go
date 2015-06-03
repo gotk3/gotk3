@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/geoffholden/gotk3/gtk"
-	"github.com/geoffholden/gotk3/webkit2"
+	"github.com/andre-hub/gotk3/gtk"
+	"github.com/andre-hub/gotk3/webkit2"
 
 	"log"
 )
