@@ -690,9 +690,12 @@ func PixbufNewFromFileAtSize(filename string, width, height int) (*Pixbuf, error
 	defer C.free(unsafe.Pointer(cstr))
 	var err *C.GError = nil
 	res := C.gdk_pixbuf_new_from_file_at_size(cstr, C.int(width), C.int(height), &err)
-	if res == nil {
+	if err != nil {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+	if res == nil {
+		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
 	p := &Pixbuf{obj}
@@ -708,9 +711,12 @@ func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspect
 	var err *C.GError = nil
 	res := C.gdk_pixbuf_new_from_file_at_scale(cstr, C.int(width), C.int(height),
 		gbool(preserveAspectRatio), &err)
-	if res == nil {
+	if err != nil {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+	if res == nil {
+		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
 	p := &Pixbuf{obj}
