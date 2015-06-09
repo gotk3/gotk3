@@ -604,6 +604,41 @@ const (
 )
 
 /*
+ * GDK Keyval
+ */
+
+// KeyvalFromName() is a wrapper around gdk_keyval_from_name().
+func KeyvalFromName(keyvalName string) uint {
+	str := (*C.gchar)(C.CString(keyvalName))
+	defer C.free(unsafe.Pointer(str))
+	return uint(C.gdk_keyval_from_name(str))
+}
+
+func KeyvalConvertCase(v uint) (lower, upper uint) {
+	var l, u C.guint
+	l = 0
+	u = 0
+	C.gdk_keyval_convert_case(C.guint(v), &l, &u)
+	return uint(l), uint(u)
+}
+
+func KeyvalIsLower(v uint) bool {
+	return gobool(C.gdk_keyval_is_lower(C.guint(v)))
+}
+
+func KeyvalIsUpper(v uint) bool {
+	return gobool(C.gdk_keyval_is_upper(C.guint(v)))
+}
+
+func KeyvalToLower(v uint) uint {
+	return uint(C.gdk_keyval_to_lower(C.guint(v)))
+}
+
+func KeyvalToUpper(v uint) uint {
+	return uint(C.gdk_keyval_to_upper(C.guint(v)))
+}
+
+/*
  * GdkDragContext
  */
 
