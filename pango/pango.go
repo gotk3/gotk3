@@ -22,12 +22,12 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-//	"github.com/terrak/gotk3/glib"
+//	"github.com/andre-hub/gotk3/glib"
 //	"unsafe"
 )
 
 func init() {
-	
+
 }
 
 /*
@@ -54,4 +54,3 @@ func gobool(b C.gboolean) bool {
 const (
 	SCALE int = 1024
 )
-

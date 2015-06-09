@@ -24,8 +24,8 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	//	"github.com/terrak/gotk3/glib"
-	"github.com/terrak/gotk3/cairo"
+	//	"github.com/andre-hub/gotk3/glib"
+	"github.com/andre-hub/gotk3/cairo"
 	"unsafe"
 )
 
@@ -39,7 +39,7 @@ func init() {
 	//	glib.RegisterGValueMarshalers(tm)
 }
 
-func cairo_context(cr *cairo.Context) *C.cairo_t{
+func cairo_context(cr *cairo.Context) *C.cairo_t {
 	return (*C.cairo_t)(cr.GetCContext())
 }
 

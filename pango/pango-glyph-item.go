@@ -23,8 +23,8 @@ package pango
 // #include <stdlib.h>
 import "C"
 import (
-	//	"github.com/terrak/gotk3/glib"
-	//	"github.com/terrak/gotk3/cairo"
+	//	"github.com/andre-hub/gotk3/glib"
+	//	"github.com/andre-hub/gotk3/cairo"
 	"unsafe"
 )
 
@@ -41,4 +41,3 @@ func (v *GlyphItem) Native() uintptr {
 func (v *GlyphItem) native() *C.PangoGlyphItem {
 	return (*C.PangoGlyphItem)(unsafe.Pointer(v.pangoGlyphItem))
 }
-
