@@ -141,24 +141,24 @@ func marshalInterpType(p uintptr) (interface{}, error) {
 type ModifierType uint
 
 const (
-	SHIFT_MASK    ModifierType = C.GDK_SHIFT_MASK
-	LOCK_MASK                  = C.GDK_LOCK_MASK
-	CONTROL_MASK               = C.GDK_CONTROL_MASK
-	MOD1_MASK                  = C.GDK_MOD1_MASK
-	MOD2_MASK                  = C.GDK_MOD2_MASK
-	MOD3_MASK                  = C.GDK_MOD3_MASK
-	MOD4_MASK                  = C.GDK_MOD4_MASK
-	MOD5_MASK                  = C.GDK_MOD5_MASK
-	BUTTON1_MASK               = C.GDK_BUTTON1_MASK
-	BUTTON2_MASK               = C.GDK_BUTTON2_MASK
-	BUTTON3_MASK               = C.GDK_BUTTON3_MASK
-	BUTTON4_MASK               = C.GDK_BUTTON4_MASK
-	BUTTON5_MASK               = C.GDK_BUTTON5_MASK
-	SUPER_MASK                 = C.GDK_SUPER_MASK
-	HYPER_MASK                 = C.GDK_HYPER_MASK
-	META_MASK                  = C.GDK_META_MASK
-	RELEASE_MASK               = C.GDK_RELEASE_MASK
-	MODIFIER_MASK              = C.GDK_MODIFIER_MASK
+	GDK_SHIFT_MASK    ModifierType = C.GDK_SHIFT_MASK
+	GDK_LOCK_MASK                  = C.GDK_LOCK_MASK
+	GDK_CONTROL_MASK               = C.GDK_CONTROL_MASK
+	GDK_MOD1_MASK                  = C.GDK_MOD1_MASK
+	GDK_MOD2_MASK                  = C.GDK_MOD2_MASK
+	GDK_MOD3_MASK                  = C.GDK_MOD3_MASK
+	GDK_MOD4_MASK                  = C.GDK_MOD4_MASK
+	GDK_MOD5_MASK                  = C.GDK_MOD5_MASK
+	GDK_BUTTON1_MASK               = C.GDK_BUTTON1_MASK
+	GDK_BUTTON2_MASK               = C.GDK_BUTTON2_MASK
+	GDK_BUTTON3_MASK               = C.GDK_BUTTON3_MASK
+	GDK_BUTTON4_MASK               = C.GDK_BUTTON4_MASK
+	GDK_BUTTON5_MASK               = C.GDK_BUTTON5_MASK
+	GDK_SUPER_MASK                 = C.GDK_SUPER_MASK
+	GDK_HYPER_MASK                 = C.GDK_HYPER_MASK
+	GDK_META_MASK                  = C.GDK_META_MASK
+	GDK_RELEASE_MASK               = C.GDK_RELEASE_MASK
+	GDK_MODIFIER_MASK              = C.GDK_MODIFIER_MASK
 )
 
 func marshalModifierType(p uintptr) (interface{}, error) {
@@ -548,6 +548,61 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 	C.gdk_display_notify_startup_complete(v.native(), (*C.gchar)(cstr))
 }
 
+// EventType is a representation of GDK's GdkEventType.
+// Do not confuse these event types with the signals that GTK+ widgets emit
+type EventType int
+
+func marshalEventType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return EventType(c), nil
+}
+
+const (
+	EVENT_NOTHING             EventType = C.GDK_NOTHING
+	EVENT_DELETE              EventType = C.GDK_DELETE
+	EVENT_DESTROY             EventType = C.GDK_DESTROY
+	EVENT_EXPOSE              EventType = C.GDK_EXPOSE
+	EVENT_MOTION_NOTIFY       EventType = C.GDK_MOTION_NOTIFY
+	EVENT_BUTTON_PRESS        EventType = C.GDK_BUTTON_PRESS
+	EVENT_2BUTTON_PRESS       EventType = C.GDK_2BUTTON_PRESS
+	EVENT_DOUBLE_BUTTON_PRESS EventType = C.GDK_DOUBLE_BUTTON_PRESS
+	EVENT_3BUTTON_PRESS       EventType = C.GDK_3BUTTON_PRESS
+	EVENT_TRIPLE_BUTTON_PRESS EventType = C.GDK_TRIPLE_BUTTON_PRESS
+	EVENT_BUTTON_RELEASE      EventType = C.GDK_BUTTON_RELEASE
+	EVENT_KEY_PRESS           EventType = C.GDK_KEY_PRESS
+	EVENT_KEY_RELEASE         EventType = C.GDK_KEY_RELEASE
+	EVENT_LEAVE_NOTIFY        EventType = C.GDK_ENTER_NOTIFY
+	EVENT_FOCUS_CHANGE        EventType = C.GDK_FOCUS_CHANGE
+	EVENT_CONFIGURE           EventType = C.GDK_CONFIGURE
+	EVENT_MAP                 EventType = C.GDK_MAP
+	EVENT_UNMAP               EventType = C.GDK_UNMAP
+	EVENT_PROPERTY_NOTIFY     EventType = C.GDK_PROPERTY_NOTIFY
+	EVENT_SELECTION_CLEAR     EventType = C.GDK_SELECTION_CLEAR
+	EVENT_SELECTION_REQUEST   EventType = C.GDK_SELECTION_REQUEST
+	EVENT_SELECTION_NOTIFY    EventType = C.GDK_SELECTION_NOTIFY
+	EVENT_PROXIMITY_IN        EventType = C.GDK_PROXIMITY_IN
+	EVENT_PROXIMITY_OUT       EventType = C.GDK_PROXIMITY_OUT
+	EVENT_DRAG_ENTER          EventType = C.GDK_DRAG_ENTER
+	EVENT_DRAG_LEAVE          EventType = C.GDK_DRAG_LEAVE
+	EVENT_DRAG_MOTION         EventType = C.GDK_DRAG_MOTION
+	EVENT_DRAG_STATUS         EventType = C.GDK_DRAG_STATUS
+	EVENT_DROP_START          EventType = C.GDK_DROP_START
+	EVENT_DROP_FINISHED       EventType = C.GDK_DROP_FINISHED
+	EVENT_CLIENT_EVENT        EventType = C.GDK_CLIENT_EVENT
+	EVENT_VISIBILITY_NOTIFY   EventType = C.GDK_VISIBILITY_NOTIFY
+	EVENT_SCROLL              EventType = C.GDK_SCROLL
+	EVENT_WINDOW_STATE        EventType = C.GDK_WINDOW_STATE
+	EVENT_SETTING             EventType = C.GDK_SETTING
+	EVENT_OWNER_CHANGE        EventType = C.GDK_OWNER_CHANGE
+	EVENT_GRAB_BROKEN         EventType = C.GDK_GRAB_BROKEN
+	EVENT_DAMAGE              EventType = C.GDK_DAMAGE
+	EVENT_TOUCH_BEGIN         EventType = C.GDK_TOUCH_BEGIN
+	EVENT_TOUCH_UPDATE        EventType = C.GDK_TOUCH_UPDATE
+	EVENT_TOUCH_END           EventType = C.GDK_TOUCH_END
+	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
+	EVENT_LAST                EventType = C.GDK_EVENT_LAST
+)
+
 /*
  * GdkDragContext
  */
@@ -702,96 +757,6 @@ func (v *EventKey) Type() EventType {
 	return EventType(c)
 }
 
-// EventType is a representation of GDK's GdkEventType.
-// Do not confuse these event types with the signals that GTK+ widgets emit
-type EventType int
-
-func marshalEventType(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return EventType(c), nil
-}
-
-const (
-	EVENT_NOTHING             EventType = C.GDK_NOTHING
-	EVENT_DELETE              EventType = C.GDK_DELETE
-	EVENT_DESTROY             EventType = C.GDK_DESTROY
-	EVENT_EXPOSE              EventType = C.GDK_EXPOSE
-	EVENT_MOTION_NOTIFY       EventType = C.GDK_MOTION_NOTIFY
-	EVENT_BUTTON_PRESS        EventType = C.GDK_BUTTON_PRESS
-	EVENT_2BUTTON_PRESS       EventType = C.GDK_2BUTTON_PRESS
-	EVENT_DOUBLE_BUTTON_PRESS EventType = C.GDK_DOUBLE_BUTTON_PRESS
-	EVENT_3BUTTON_PRESS       EventType = C.GDK_3BUTTON_PRESS
-	EVENT_TRIPLE_BUTTON_PRESS EventType = C.GDK_TRIPLE_BUTTON_PRESS
-	EVENT_BUTTON_RELEASE      EventType = C.GDK_BUTTON_RELEASE
-	EVENT_KEY_PRESS           EventType = C.GDK_KEY_PRESS
-	EVENT_KEY_RELEASE         EventType = C.GDK_KEY_RELEASE
-	EVENT_LEAVE_NOTIFY        EventType = C.GDK_ENTER_NOTIFY
-	EVENT_FOCUS_CHANGE        EventType = C.GDK_FOCUS_CHANGE
-	EVENT_CONFIGURE           EventType = C.GDK_CONFIGURE
-	EVENT_MAP                 EventType = C.GDK_MAP
-	EVENT_UNMAP               EventType = C.GDK_UNMAP
-	EVENT_PROPERTY_NOTIFY     EventType = C.GDK_PROPERTY_NOTIFY
-	EVENT_SELECTION_CLEAR     EventType = C.GDK_SELECTION_CLEAR
-	EVENT_SELECTION_REQUEST   EventType = C.GDK_SELECTION_REQUEST
-	EVENT_SELECTION_NOTIFY    EventType = C.GDK_SELECTION_NOTIFY
-	EVENT_PROXIMITY_IN        EventType = C.GDK_PROXIMITY_IN
-	EVENT_PROXIMITY_OUT       EventType = C.GDK_PROXIMITY_OUT
-	EVENT_DRAG_ENTER          EventType = C.GDK_DRAG_ENTER
-	EVENT_DRAG_LEAVE          EventType = C.GDK_DRAG_LEAVE
-	EVENT_DRAG_MOTION         EventType = C.GDK_DRAG_MOTION
-	EVENT_DRAG_STATUS         EventType = C.GDK_DRAG_STATUS
-	EVENT_DROP_START          EventType = C.GDK_DROP_START
-	EVENT_DROP_FINISHED       EventType = C.GDK_DROP_FINISHED
-	EVENT_CLIENT_EVENT        EventType = C.GDK_CLIENT_EVENT
-	EVENT_VISIBILITY_NOTIFY   EventType = C.GDK_VISIBILITY_NOTIFY
-	EVENT_SCROLL              EventType = C.GDK_SCROLL
-	EVENT_WINDOW_STATE        EventType = C.GDK_WINDOW_STATE
-	EVENT_SETTING             EventType = C.GDK_SETTING
-	EVENT_OWNER_CHANGE        EventType = C.GDK_OWNER_CHANGE
-	EVENT_GRAB_BROKEN         EventType = C.GDK_GRAB_BROKEN
-	EVENT_DAMAGE              EventType = C.GDK_DAMAGE
-	EVENT_TOUCH_BEGIN         EventType = C.GDK_TOUCH_BEGIN
-	EVENT_TOUCH_UPDATE        EventType = C.GDK_TOUCH_UPDATE
-	EVENT_TOUCH_END           EventType = C.GDK_TOUCH_END
-	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
-	EVENT_LAST                EventType = C.GDK_EVENT_LAST
-)
-
-/*
- * GDK Keyval
- */
-
-// KeyvalFromName() is a wrapper around gdk_keyval_from_name().
-func KeyvalFromName(keyvalName string) uint {
-	str := (*C.gchar)(C.CString(keyvalName))
-	defer C.free(unsafe.Pointer(str))
-	return uint(C.gdk_keyval_from_name(str))
-}
-
-func KeyvalConvertCase(v uint) (lower, upper uint) {
-	var l, u C.guint
-	l = 0
-	u = 0
-	C.gdk_keyval_convert_case(C.guint(v), &l, &u)
-	return uint(l), uint(u)
-}
-
-func KeyvalIsLower(v uint) bool {
-	return gobool(C.gdk_keyval_is_lower(C.guint(v)))
-}
-
-func KeyvalIsUpper(v uint) bool {
-	return gobool(C.gdk_keyval_is_upper(C.guint(v)))
-}
-
-func KeyvalToLower(v uint) uint {
-	return uint(C.gdk_keyval_to_lower(C.guint(v)))
-}
-
-func KeyvalToUpper(v uint) uint {
-	return uint(C.gdk_keyval_to_upper(C.guint(v)))
-}
-
 /*
  * GdkPixbuf
  */
@@ -930,6 +895,47 @@ func PixbufNewFromFile(filename string) (*Pixbuf, error) {
 	return p, nil
 }
 
+// PixbufNewFromFileAtSize is a wrapper around gdk_pixbuf_new_from_file_at_size().
+func PixbufNewFromFileAtSize(filename string, width, height int) (*Pixbuf, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	res := C.gdk_pixbuf_new_from_file_at_size(cstr, C.int(width), C.int(height), &err)
+	if err != nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+	if res == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
+	p := &Pixbuf{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
+// PixbufNewFromFileAtScale is a wrapper around gdk_pixbuf_new_from_file_at_scale().
+func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspectRatio bool) (*Pixbuf, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var err *C.GError = nil
+	res := C.gdk_pixbuf_new_from_file_at_scale(cstr, C.int(width), C.int(height),
+		gbool(preserveAspectRatio), &err)
+	if err != nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+	if res == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
+	p := &Pixbuf{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
 // ScaleSimple is a wrapper around gdk_pixbuf_scale_simple().
 func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_scale_simple(v.native(), C.int(destWidth),
@@ -955,6 +961,17 @@ func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
+}
+
+// PixbufGetFileInfo is a wrapper around gdk_pixbuf_get_file_info().
+// TODO: need to wrap the returned format to GdkPixbufFormat.
+func PixbufGetFileInfo(filename string) (format interface{}, width, height int) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var cw, ch C.gint
+	format = C.gdk_pixbuf_get_file_info((*C.gchar)(cstr), &cw, &ch)
+	// TODO: need to wrap the returned format to GdkPixbufFormat.
+	return format, int(cw), int(ch)
 }
 
 /*

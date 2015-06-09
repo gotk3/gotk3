@@ -86,6 +86,12 @@ toGtkContainer(void *p)
 	return (GTK_CONTAINER(p));
 }
 
+static GtkPaned *
+toGtkPaned(void *p)
+{
+	return (GTK_PANED(p));
+}
+
 static GtkProgressBar *
 toGtkProgressBar(void *p)
 {
@@ -176,10 +182,10 @@ toGtkTextTag(void *p)
 	return (GTK_TEXT_TAG(p));
 }
 
-static GtkPaned *
-toGtkPaned(void *p)
+static GtkIconView *
+toGtkIconView(void *p)
 {
-	return (GTK_PANED(p));
+	return (GTK_ICON_VIEW(p));
 }
 
 static GtkImage *
@@ -254,6 +260,12 @@ toGtkComboBox(void *p)
 	return (GTK_COMBO_BOX(p));
 }
 
+static GtkLinkButton *
+toGtkLinkButton(void *p)
+{
+	return (GTK_LINK_BUTTON(p));
+}
+
 static GtkListStore *
 toGtkListStore(void *p)
 {
@@ -296,6 +308,12 @@ toGtkCellRenderer(void *p)
 	return (GTK_CELL_RENDERER(p));
 }
 
+static GtkCellRendererPixbuf *
+toGtkCellRendererPixbuf(void *p)
+{
+	return (GTK_CELL_RENDERER_PIXBUF(p));
+}
+
 static GtkCellRendererText *
 toGtkCellRendererText(void *p)
 {
@@ -320,6 +338,12 @@ toGtkOrientable(void *p)
 	return (GTK_ORIENTABLE(p));
 }
 
+static GtkTreeStore *
+toGtkTreeStore (void *p)
+{
+	return (GTK_TREE_STORE(p));
+}
+
 static GtkTreeView *
 toGtkTreeView(void *p)
 {
@@ -336,6 +360,12 @@ static GtkTreeSelection *
 toGtkTreeSelection(void *p)
 {
 	return (GTK_TREE_SELECTION(p));
+}
+
+static GtkTreeSortable *
+toGtkTreeSortable(void *p)
+{
+	return (GTK_TREE_SORTABLE(p));
 }
 
 static GtkClipboard *
@@ -380,6 +410,12 @@ toGtkToggleButton(void *p)
 	return (GTK_TOGGLE_BUTTON(p));
 }
 
+static GtkFontButton *
+toGtkFontButton(void *p)
+{
+	return (GTK_FONT_BUTTON(p));
+}
+
 static GtkFrame *
 toGtkFrame(void *p)
 {
@@ -390,6 +426,12 @@ static GtkSeparator *
 toGtkSeparator(void *p)
 {
 	return (GTK_SEPARATOR(p));
+}
+
+static GtkScale*
+toGtkScale(void *p)
+{
+	return (GTK_SCALE(p));
 }
 
 static GtkScrollbar *
@@ -414,6 +456,12 @@ static GtkOffscreenWindow *
 toGtkOffscreenWindow(void *p)
 {
 	return (GTK_OFFSCREEN_WINDOW(p));
+}
+
+static GtkExpander *
+toGtkExpander(void *p)
+{
+	return (GTK_EXPANDER(p));
 }
 
 static GtkFileChooser *
@@ -520,6 +568,13 @@ _gtk_tree_view_column_new_with_attributes_one(const gchar *title,
 	tvc = gtk_tree_view_column_new_with_attributes(title, renderer,
 	    attribute, column, NULL);
 	return (tvc);
+}
+
+void
+_gtk_list_store_set(GtkListStore *list_store, GtkTreeIter *iter, gint column,
+	void* value)
+{
+	gtk_list_store_set(list_store, iter, column, value, -1);
 }
 
 static GtkWidget *
