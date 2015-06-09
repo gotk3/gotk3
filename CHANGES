@@ -3,6 +3,18 @@ User visible changes for gotk3
   Go bindings for GTK3
 ============================================================================
 
+Changes in 0.3.0 (Wed Jun 10 2015)
+  - API Break Waring: function signatures changed
+  - Add new binding support
+  	- GtkBuilder
+  	- GtkButton
+  	- GtkCellRenderer
+  	- GtkStatusIcon
+  	- GtkStatusbar
+  	- GtkTreeView
+  - better and more support for cairo
+  - better and more support for pango
+
 Changes in 0.2.0 (Mon Feb 10 2014)
   - API BREAK: Modify function signatures for ListStore bindings so unset
     iterators need not be created and passed as pointers to be set
