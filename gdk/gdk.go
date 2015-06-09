@@ -801,6 +801,23 @@ func (v *EventButton) Type() EventType {
 	return EventType(c)
 }
 
+func (v *EventButton) MotionVal() (float64, float64) {
+	x := v.native().x
+	y := v.native().y
+	return float64(x), float64(y)
+}
+
+func (v *EventButton) MotionValRoot() (float64, float64) {
+	x := v.native().x_root
+	y := v.native().y_root
+	return float64(x), float64(y)
+}
+
+func (v *EventButton) ButtonVal() uint {
+	c := v.native().button
+	return uint(c)
+}
+
 /*
  * GdkEventKey
  */
@@ -856,41 +873,6 @@ func (v *EventMotion) MotionValRoot() (float64, float64) {
 	x := v.native().x_root
 	y := v.native().y_root
 	return float64(x), float64(y)
-}
-
-// added by terrak
-/*
- * GdkEventButton
- */
-
-type EventButton struct {
-	*Event
-}
-
-// Native returns a pointer to the underlying GdkEventButton.
-func (v *EventButton) Native() uintptr {
-	return uintptr(unsafe.Pointer(v.native()))
-}
-
-func (v *EventButton) native() *C.GdkEventButton {
-	return (*C.GdkEventButton)(unsafe.Pointer(v.Event.native()))
-}
-
-func (v *EventButton) MotionVal() (float64, float64) {
-	x := v.native().x
-	y := v.native().y
-	return float64(x), float64(y)
-}
-
-func (v *EventButton) MotionValRoot() (float64, float64) {
-	x := v.native().x_root
-	y := v.native().y_root
-	return float64(x), float64(y)
-}
-
-func (v *EventButton) ButtonVal() uint {
-	c := v.native().button
-	return uint(c)
 }
 
 /*
