@@ -22,19 +22,19 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	"github.com/andre-hub/gotk3/glib"
+	"github.com/terrak/gotk3/glib"
 	"unsafe"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-	// Enums
-	//		{glib.Type(C.pango_alignment_get_type()), marshalAlignment},
-	//		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
-	//		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
-
-	// Objects/Interfaces
-	//		{glib.Type(C.pango_context_get_type()), marshalContext},
+		// Enums
+//		{glib.Type(C.pango_alignment_get_type()), marshalAlignment},
+//		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
+//		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
+		
+		// Objects/Interfaces
+//		{glib.Type(C.pango_context_get_type()), marshalContext},
 	}
 	glib.RegisterGValueMarshalers(tm)
 }
@@ -66,12 +66,12 @@ func wrapContext(obj *glib.Object) *Context {
 */
 
 //PangoContext *pango_context_new           (void);
-func ContextNew() *Context {
+func ContextNew() *Context{
 	c := C.pango_context_new()
-
-	context := new(Context)
+	
+	context := new (Context)
 	context.pangoContext = (*C.PangoContext)(c)
-
+	
 	return context
 }
 

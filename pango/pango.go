@@ -22,22 +22,13 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	"unsafe"
-
-	"github.com/andre-hub/gotk3/glib"
+//	"github.com/terrak/gotk3/glib"
+//	"unsafe"
 )
 
 func init() {
-	tm := []glib.TypeMarshaler{
-		// Enums
-		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
-		{glib.Type(C.pango_style_get_type()), marshalStyle},
-		{glib.Type(C.pango_weight_get_type()), marshalWeight},
-		{glib.Type(C.pango_underline_get_type()), marshalUnderline},
-		{glib.Type(C.pango_variant_get_type()), marshalVariant},
-		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
-	}
-	glib.RegisterGValueMarshalers(tm)
+	
+}
 
 /*
  * Type conversions
@@ -56,77 +47,11 @@ func gobool(b C.gboolean) bool {
 	return false
 }
 
-// Style is a representation of Pango's PangoStyle
-type Style int
-
-const (
-	STYLE_NORMAL  Style = C.PANGO_STYLE_NORMAL
-	STYLE_OBLIQUE Style = C.PANGO_STYLE_OBLIQUE
-	STYLE_ITALIC  Style = C.PANGO_STYLE_ITALIC
-)
-
-func marshalStyle(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Style(c), nil
-}
-
-// Weight is a representation of Pango's PangoWeight.
-type Weight int
-
-const (
-	//WEIGHT_THIN       Weight = C.PANGO_WEIGHT_THIN
-	WEIGHT_ULTRALIGHT Weight = C.PANGO_WEIGHT_ULTRALIGHT
-	WEIGHT_LIGHT      Weight = C.PANGO_WEIGHT_LIGHT
-	//WEIGHT_SEMILIGHT  Weight = C.PANGO_WEIGHT_SEMILIGHT
-	//WEIGHT_BOOK       Weight = C.PANGO_WEIGHT_BOOK
-	WEIGHT_NORMAL Weight = C.PANGO_WEIGHT_NORMAL
-	//WEIGHT_MEDIUM     Weight = C.PANGO_WEIGHT_MEDIUM
-	WEIGHT_SEMIBOLD  Weight = C.PANGO_WEIGHT_SEMIBOLD
-	WEIGHT_BOLD      Weight = C.PANGO_WEIGHT_BOLD
-	WEIGHT_ULTRABOLD Weight = C.PANGO_WEIGHT_ULTRABOLD
-	WEIGHT_HEAVY     Weight = C.PANGO_WEIGHT_HEAVY
-	//WEIGHT_ULTRAHEAVY Weight = C.PANGO_WEIGHT_ULTRAHEAVY
-)
-
-func marshalWeight(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Weight(c), nil
-}
-
-// Underline is a representation of Pango's PangoUnderline
-type Underline int
-
-const (
-	UNDERLINE_NONE   Underline = C.PANGO_UNDERLINE_NONE
-	UNDERLINE_SINGLE Underline = C.PANGO_UNDERLINE_SINGLE
-	UNDERLINE_DOUBLE Underline = C.PANGO_UNDERLINE_DOUBLE
-	UNDERLINE_LOW    Underline = C.PANGO_UNDERLINE_LOW
-	//UNDERLINE_ERROR  Underline = C.PANGO_UNDERLINE_ERROR
-)
-
-func marshalUnderline(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Underline(c), nil
-}
-
-// Variant is a representation of Pango's PangoVariant
-type Variant int
-
-const (
-	VARIANT_NORMAL     Variant = C.PANGO_VARIANT_NORMAL
-	VARIANT_SMALL_CAPS Variant = C.PANGO_VARIANT_SMALL_CAPS
-)
-
-func marshalVariant(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Variant(c), nil
-}
-
-// WrapMode is a representation of Pango's PangoWrapMode.
-type WrapMode int
 /*
  * Constantes
  */
+
 const (
 	SCALE int = 1024
 )
+

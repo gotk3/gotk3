@@ -23,8 +23,8 @@ package pango
 // #include <stdlib.h>
 import "C"
 import (
-	//	"github.com/andre-hub/gotk3/glib"
-	//	"github.com/andre-hub/gotk3/cairo"
+	//	"github.com/terrak/gotk3/glib"
+	//	"github.com/terrak/gotk3/cairo"
 	"unsafe"
 )
 
@@ -42,6 +42,7 @@ func (v *GlyphGeometry) native() *C.PangoGlyphGeometry {
 	return (*C.PangoGlyphGeometry)(unsafe.Pointer(v.pangoGlyphGeometry))
 }
 
+
 // GlyphVisAttr is a representation of PangoGlyphVisAttr.
 type GlyphVisAttr struct {
 	pangoGlyphVisAttr *C.PangoGlyphGeometry
@@ -56,6 +57,7 @@ func (v *GlyphVisAttr) native() *C.PangoGlyphVisAttr {
 	return (*C.PangoGlyphVisAttr)(unsafe.Pointer(v.pangoGlyphVisAttr))
 }
 
+
 // GlyphInfo is a representation of PangoGlyphInfo.
 type GlyphInfo struct {
 	pangoGlyphInfo *C.PangoGlyphInfo
@@ -69,6 +71,7 @@ func (v *GlyphInfo) Native() uintptr {
 func (v *GlyphInfo) native() *C.PangoGlyphInfo {
 	return (*C.PangoGlyphInfo)(unsafe.Pointer(v.pangoGlyphInfo))
 }
+
 
 // GlyphGeometry is a representation of PangoGlyphString.
 type GlyphString struct {
