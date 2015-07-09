@@ -218,6 +218,12 @@ toGtkComboBox(void *p)
 	return (GTK_COMBO_BOX(p));
 }
 
+static GtkComboBoxText *
+toGtkComboBoxText(void *p)
+{
+	return (GTK_COMBO_BOX_TEXT(p));
+}
+
 static GtkListStore *
 toGtkListStore(void *p)
 {
