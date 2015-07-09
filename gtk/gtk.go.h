@@ -230,6 +230,12 @@ toGtkComboBox(void *p)
 	return (GTK_COMBO_BOX(p));
 }
 
+static GtkComboBoxText *
+toGtkComboBoxText(void *p)
+{
+	return (GTK_COMBO_BOX_TEXT(p));
+}
+
 static GtkLinkButton *
 toGtkLinkButton(void *p)
 {
