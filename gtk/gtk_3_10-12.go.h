@@ -57,3 +57,10 @@ toGtkStackSwitcher(void *p)
 {
 	return (GTK_STACK_SWITCHER(p));
 }
+
+
+static GtkStatusIcon *
+toGtkStatusIcon(void *p)
+{
+	return (GTK_STATUS_ICON(p));
+}
