@@ -51,6 +51,7 @@ import "C"
 import (
 	"errors"
 	"fmt"
+	"reflect"
 	"runtime"
 	"unsafe"
 
@@ -166,6 +167,7 @@ func init() {
 		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
 		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
 		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
+		{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
 		{glib.Type(C.gtk_separator_get_type()), marshalSeparator},
 		{glib.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
 		{glib.Type(C.gtk_separator_tool_item_get_type()), marshalSeparatorToolItem},
@@ -854,6 +856,11 @@ func Init(args *[]string) {
 // blocking until MainQuit() is called.
 func Main() {
 	C.gtk_main()
+}
+
+// MainIterationDo is a wrapper around gtk_main_iteration_do
+func MainIterationDo(blocking bool) bool {
+	return gobool(C.gtk_main_iteration_do(gbool(blocking)))
 }
 
 // MainQuit() is a wrapper around gtk_main_quit() is used to terminate
@@ -2509,6 +2516,11 @@ func wrapClipboard(obj *glib.Object) *Clipboard {
 	return &Clipboard{obj}
 }
 
+// Store is a wrapper around gtk_clipboard_store
+func (v *Clipboard) Store() {
+	C.gtk_clipboard_store(v.native())
+}
+
 // ClipboardGet() is a wrapper around gtk_clipboard_get().
 func ClipboardGet(atom gdk.Atom) (*Clipboard, error) {
 	c := C.gtk_clipboard_get(C.GdkAtom(unsafe.Pointer(atom)))
@@ -2543,6 +2555,35 @@ func (v *Clipboard) SetText(text string) {
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_clipboard_set_text(v.native(), (*C.gchar)(cstr),
 		C.gint(len(text)))
+}
+
+// SetImage is a wrapper around gtk_clipboard_set_image
+func (v *Clipboard) SetImage(pixbuf *gdk.Pixbuf) {
+	C.gtk_clipboard_set_image(v.native(), (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native())))
+}
+
+// WaitForImage is a wrapper around gtk_clipboard_wait_for_image
+func (v *Clipboard) WaitForImage() (*gdk.Pixbuf, error) {
+	c := C.gtk_clipboard_wait_for_image(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &gdk.Pixbuf{obj}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
+// WaitForContents is a wrapper around gtk_clipboard_wait_for_contents
+func (v *Clipboard) WaitForContents(target gdk.Atom) (*SelectionData, error) {
+	c := C.gtk_clipboard_wait_for_contents(v.native(), C.GdkAtom(unsafe.Pointer(target)))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	p := &SelectionData{c}
+	runtime.SetFinalizer(p, (*SelectionData).free)
+	return p, nil
 }
 
 /*
@@ -7219,6 +7260,47 @@ func SearchEntryNew() (*SearchEntry, error) {
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
+}
+
+/*
+* GtkSelectionData
+ */
+type SelectionData struct {
+	GtkSelectionData *C.GtkSelectionData
+}
+
+func marshalSelectionData(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	return (*SelectionData)(unsafe.Pointer(c)), nil
+}
+
+// native returns a pointer to the underlying GtkSelectionData.
+func (v *SelectionData) native() *C.GtkSelectionData {
+	if v == nil {
+		return nil
+	}
+	return v.GtkSelectionData
+}
+
+// GetLength is a wrapper around gtk_selection_data_get_length
+func (v *SelectionData) GetLength() int {
+	return int(C.gtk_selection_data_get_length(v.native()))
+}
+
+// GetData is a wrapper around gtk_selection_data_get_data_with_length.
+// It returns a slice of the correct size with the selection's data.
+func (v *SelectionData) GetData() (data []byte) {
+	var length C.gint
+	c := C.gtk_selection_data_get_data_with_length(v.native(), &length)
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&data))
+	sliceHeader.Data = uintptr(unsafe.Pointer(c))
+	sliceHeader.Len = int(length)
+	sliceHeader.Cap = int(length)
+	return
+}
+
+func (v *SelectionData) free() {
+	C.gtk_selection_data_free(v.native())
 }
 
 /*

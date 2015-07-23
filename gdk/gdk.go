@@ -254,6 +254,14 @@ func (v Atom) Name() string {
 	return C.GoString((*C.char)(c))
 }
 
+// GdkAtomIntern is a wrapper around gdk_atom_intern
+func GdkAtomIntern(atomName string, onlyIfExists bool) Atom {
+	cstr := C.CString(atomName)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gdk_atom_intern((*C.gchar)(cstr), gbool(onlyIfExists))
+	return Atom(uintptr(unsafe.Pointer(c)))
+}
+
 /*
  * GdkDevice
  */
