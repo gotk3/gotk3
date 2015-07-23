@@ -26,18 +26,6 @@ toGtkAboutDialog(void *p)
 	return (GTK_ABOUT_DIALOG(p));
 }
 
-static GtkAlignment *
-toGtkAlignment(void *p)
-{
-	return (GTK_ALIGNMENT(p));
-}
-
-static GtkArrow *
-toGtkArrow(void *p)
-{
-	return (GTK_ARROW(p));
-}
-
 static GtkAssistant *
 toGtkAssistant(void *p)
 {
@@ -120,12 +108,6 @@ static GtkStatusbar *
 toGtkStatusbar(void *p)
 {
 	return (GTK_STATUSBAR(p));
-}
-
-static GtkMisc *
-toGtkMisc(void *p)
-{
-	return (GTK_MISC(p));
 }
 
 static GtkLabel *
@@ -390,6 +372,12 @@ static GtkMessageDialog *
 toGtkMessageDialog(void *p)
 {
 	return (GTK_MESSAGE_DIALOG(p));
+}
+
+static GtkMisc *
+toGtkMisc(void *p)
+{
+	return (GTK_MISC(p));
 }
 
 static GtkBuilder *

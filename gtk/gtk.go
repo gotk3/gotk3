@@ -1225,61 +1225,6 @@ void	gtk_adjustment_configure ()
 */
 
 /*
- * GtkAlignment
- */
-
-type Alignment struct {
-	Bin
-}
-
-// native returns a pointer to the underlying GtkAlignment.
-func (v *Alignment) native() *C.GtkAlignment {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkAlignment(p)
-}
-
-func marshalAlignment(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapAlignment(obj), nil
-}
-
-func wrapAlignment(obj *glib.Object) *Alignment {
-	return &Alignment{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
-}
-
-/*
- * GtkArrow
- */
-
-// Arrow is a representation of GTK's GtkArrow.
-type Arrow struct {
-	Misc
-}
-
-// native returns a pointer to the underlying GtkButton.
-func (v *Arrow) native() *C.GtkArrow {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkArrow(p)
-}
-
-func marshalArrow(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapArrow(obj), nil
-}
-
-func wrapArrow(obj *glib.Object) *Arrow {
-	return &Arrow{Misc{Widget{glib.InitiallyUnowned{obj}}}}
-}
-
-/*
  * GtkAssistant
  */
 
@@ -10440,10 +10385,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapAccelGroup(obj)
 	case "GtkAdjustment":
 		g = wrapAdjustment(obj)
-	case "GtkAlignment":
-		g = wrapAlignment(obj)
-	case "GtkArrow":
-		g = wrapArrow(obj)
 	case "GtkBin":
 		g = wrapBin(obj)
 	case "GtkBox":

@@ -842,6 +842,10 @@ func cast_3_10(class string, o *glib.Object) glib.IObject {
 		g = wrapStack(o)
 	case "GtkStackSwitcher":
 		g = wrapStackSwitcher(o)
+	case "GtkAlignment":
+		g = wrapAlignment(o)
+	case "GtkArrow":
+		g = wrapArrow(o)
 	}
 	return g
 }
@@ -906,6 +910,15 @@ func AlignmentNew(xalign, yalign, xscale, yscale float32) (*Alignment, error) {
 func (v *Alignment) Set(xalign, yalign, xscale, yscale float32) {
 	C.gtk_alignment_set(v.native(), C.gfloat(xalign), C.gfloat(yalign),
 		C.gfloat(xscale), C.gfloat(yscale))
+}
+
+/*
+ * GtkArrow
+ */
+
+// Arrow is a representation of GTK's GtkArrow.
+type Arrow struct {
+	Misc
 }
 
 // ArrowNew is a wrapper around gtk_arrow_new().
@@ -976,6 +989,57 @@ func (v *Widget) SetDoubleBuffered(doubleBuffered bool) {
 func (v *Widget) GetDoubleBuffered() bool {
 	c := C.gtk_widget_get_double_buffered(v.native())
 	return gobool(c)
+}
+
+/*
+ * GtkArrow
+ * deprecated since version 3.14
+ */
+// native returns a pointer to the underlying GtkButton.
+func (v *Arrow) native() *C.GtkArrow {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkArrow(p)
+}
+
+func marshalArrow(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapArrow(obj), nil
+}
+
+func wrapArrow(obj *glib.Object) *Arrow {
+	return &Arrow{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+}
+
+/*
+ * GtkAlignment
+ * deprecated since version 3.14
+ */
+
+type Alignment struct {
+	Bin
+}
+
+// native returns a pointer to the underlying GtkAlignment.
+func (v *Alignment) native() *C.GtkAlignment {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkAlignment(p)
+}
+
+func marshalAlignment(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapAlignment(obj), nil
+}
+
+func wrapAlignment(obj *glib.Object) *Alignment {
+	return &Alignment{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
 /*
