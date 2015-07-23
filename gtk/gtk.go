@@ -123,6 +123,7 @@ func init() {
 		{glib.Type(C.gtk_check_menu_item_get_type()), marshalCheckMenuItem},
 		{glib.Type(C.gtk_clipboard_get_type()), marshalClipboard},
 		{glib.Type(C.gtk_combo_box_get_type()), marshalComboBox},
+		{glib.Type(C.gtk_combo_box_text_get_type()), marshalComboBoxText},
 		{glib.Type(C.gtk_container_get_type()), marshalContainer},
 		{glib.Type(C.gtk_dialog_get_type()), marshalDialog},
 		{glib.Type(C.gtk_drawing_area_get_type()), marshalDrawingArea},
@@ -209,11 +210,20 @@ func gbool(b bool) C.gboolean {
 	}
 	return C.gboolean(0)
 }
+
 func gobool(b C.gboolean) bool {
 	if b != 0 {
 		return true
 	}
 	return false
+}
+
+// Wrapper function for new objects with reference management.
+func wrapObject(ptr unsafe.Pointer) *glib.Object {
+	obj := &glib.Object{glib.ToGObject(ptr)}
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return obj
 }
 
 // Wrapper function for TestBoolConvs since cgo can't be used with
@@ -2652,11 +2662,8 @@ func ComboBoxNew() (*ComboBox, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cb := wrapComboBox(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return cb, nil
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapComboBox(obj), nil
 }
 
 // ComboBoxNewWithEntry() is a wrapper around gtk_combo_box_new_with_entry().
@@ -2665,11 +2672,8 @@ func ComboBoxNewWithEntry() (*ComboBox, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cb := wrapComboBox(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return cb, nil
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapComboBox(obj), nil
 }
 
 // ComboBoxNewWithModel() is a wrapper around gtk_combo_box_new_with_model().
@@ -2678,11 +2682,8 @@ func ComboBoxNewWithModel(model ITreeModel) (*ComboBox, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cb := wrapComboBox(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return cb, nil
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapComboBox(obj), nil
 }
 
 // GetActive() is a wrapper around gtk_combo_box_get_active().
@@ -2724,6 +2725,68 @@ func (v *ComboBox) GetActiveID() string {
 // SetModel is a wrapper around gtk_combo_box_set_model().
 func (v *ComboBox) SetModel(model ITreeModel) {
 	C.gtk_combo_box_set_model(v.native(), model.toTreeModel())
+}
+
+/*
+ * GtkComboBoxText
+ */
+
+// ComboBoxText is a representation of GTK's GtkComboBoxText.
+type ComboBoxText struct {
+	ComboBox
+}
+
+// native returns a pointer to the underlying GtkComboBoxText.
+func (v *ComboBoxText) native() *C.GtkComboBoxText {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkComboBoxText(p)
+}
+
+func marshalComboBoxText(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapComboBoxText(obj), nil
+}
+
+func wrapComboBoxText(obj *glib.Object) *ComboBoxText {
+	return &ComboBoxText{*wrapComboBox(obj)}
+}
+
+// ComboBoxTextNew is a wrapper around gtk_combo_box_text_new().
+func ComboBoxTextNew() (*ComboBoxText, error) {
+	c := C.gtk_combo_box_text_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapComboBoxText(obj), nil
+}
+
+// ComboBoxTextNewWithEntry is a wrapper around gtk_combo_box_text_new_with_entry().
+func ComboBoxTextNewWithEntry() (*ComboBoxText, error) {
+	c := C.gtk_combo_box_text_new_with_entry()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapComboBoxText(obj), nil
+}
+
+// AppendText is a wrapper around gtk_combo_box_text_append_text().
+func (v *ComboBoxText) AppendText(text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_combo_box_text_append_text(v.native(), (*C.gchar)(cstr))
+}
+
+// GetActiveText is a wrapper around gtk_combo_box_text_get_active_text().
+func (v *ComboBoxText) GetActiveText() string {
+	c := (*C.char)(C.gtk_combo_box_text_get_active_text(v.native()))
+	defer C.free(unsafe.Pointer(c))
+	return C.GoString(c)
 }
 
 /*
@@ -10807,6 +10870,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapClipboard(obj)
 	case "GtkComboBox":
 		g = wrapComboBox(obj)
+	case "GtkComboBoxText":
+		g = wrapComboBoxText(obj)
 	case "GtkContainer":
 		g = wrapContainer(obj)
 	case "GtkDialog":
