@@ -182,10 +182,22 @@ toGtkScaleButton(void *p)
 	return (GTK_SCALE_BUTTON(p));
 }
 
+static GtkViewport *
+toGtkViewport(void *p)
+{
+	return (GTK_VIEWPORT(p));
+}
+
 static GtkVolumeButton *
 toGtkVolumeButton(void *p)
 {
 	return (GTK_VOLUME_BUTTON(p));
+}
+
+static GtkScrollable *
+toGtkScrollable(void *p)
+{
+	return (GTK_SCROLLABLE(p));
 }
 
 static GtkScrolledWindow *
@@ -498,6 +510,30 @@ static GtkRadioButton *
 toGtkRadioButton(void *p)
 {
 	return (GTK_RADIO_BUTTON(p));
+}
+
+static GtkRecentChooser *
+toGtkRecentChooser(void *p)
+{
+	return (GTK_RECENT_CHOOSER(p));
+}
+
+static GtkRecentChooserMenu *
+toGtkRecentChooserMenu(void *p)
+{
+	return (GTK_RECENT_CHOOSER_MENU(p));
+}
+
+static GtkRecentFilter *
+toGtkRecentFilter(void *p)
+{
+	return (GTK_RECENT_FILTER(p));
+}
+
+static GtkRecentManager *
+toGtkRecentManager(void *p)
+{
+	return (GTK_RECENT_MANAGER(p));
 }
 
 static GtkCheckMenuItem *
