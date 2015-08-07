@@ -7050,7 +7050,7 @@ func (v *RecentManager) native() *C.GtkRecentManager {
 func marshalRecentManager(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapAlignment(obj), nil
+	return wrapRecentManager(obj), nil
 }
 
 func wrapRecentManager(obj *glib.Object) *RecentManager {
