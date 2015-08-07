@@ -6846,12 +6846,22 @@ func (v *RecentChooser) native() *C.GtkRecentChooser {
 	if v == nil || v.Object == nil {
 		return nil
 	}
-	p := unsafe.Pointer(v.Object)
+	p := unsafe.Pointer(v.GObject)
 	return C.toGtkRecentChooser(p)
 }
 
 func wrapRecentChooser(obj *glib.Object) *RecentChooser {
 	return &RecentChooser{obj}
+}
+
+func (v *RecentChooser) toRecentChooser() *C.GtkRecentChooser {
+	return v.native()
+}
+
+func (v *RecentChooser) GetCurrentUri() string {
+	curi := C.gtk_recent_chooser_get_current_uri(v.native())
+	uri := C.GoString((*C.char)(curi))
+	return uri
 }
 
 func (v *RecentChooser) AddFilter(filter *RecentFilter) {
@@ -6876,7 +6886,7 @@ func (v *RecentChooserMenu) native() *C.GtkRecentChooserMenu {
 	if v == nil || v.Object == nil {
 		return nil
 	}
-	p := unsafe.Pointer(v.Object)
+	p := unsafe.Pointer(v.GObject)
 	return C.toGtkRecentChooserMenu(p)
 }
 
@@ -6900,7 +6910,7 @@ func (v *RecentFilter) native() *C.GtkRecentFilter {
 	if v == nil || v.Object == nil {
 		return nil
 	}
-	p := unsafe.Pointer(v.Object)
+	p := unsafe.Pointer(v.GObject)
 	return C.toGtkRecentFilter(p)
 }
 
