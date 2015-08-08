@@ -578,6 +578,19 @@ toGtkSeparatorToolItem(void *p)
 	return (GTK_SEPARATOR_TOOL_ITEM(p));
 }
 
+static GtkCssProvider *
+toGtkCssProvider(void *p)
+{
+        return (GTK_CSS_PROVIDER(p));
+}
+
+static GtkStyleContext *
+toGtkStyleContext(void *p)
+{
+        return (GTK_STYLE_CONTEXT(p));
+}
+
+
 static GType *
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));

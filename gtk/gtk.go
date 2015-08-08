@@ -2815,6 +2815,101 @@ func (v *Container) SetFocusChain(focusableWidgets []IWidget) {
 }
 
 /*
+ * GtkCssProvider
+ */
+
+// CssProvider is a representation of GTK's GtkCssProvider.
+type CssProvider struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GtkCssProvider.
+func (v *CssProvider) native() *C.GtkCssProvider {
+	if v == nil || v.Object == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCssProvider(p)
+}
+
+func wrapCssProvider(obj *glib.Object) *CssProvider {
+	return &CssProvider{obj}
+}
+
+// CssProviderNew is a wrapper around gtk_css_provider_new().
+func CssProviderNew() (*CssProvider, error) {
+	c := C.gtk_css_provider_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	v := wrapCssProvider(obj)
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return v, nil
+}
+
+// LoadFromPath is a wrapper around gtk_css_provider_load_from_path().
+func (v *CssProvider) LoadFromPath(path string) error {
+	cpath := C.CString(path)
+	defer C.free(unsafe.Pointer(cpath))
+	var gerr *C.GError
+	if C.gtk_css_provider_load_from_path(v.native(), (*C.gchar)(cpath), &gerr) == 0 {
+		defer C.g_error_free(gerr)
+		return errors.New(C.GoString((*C.char)(gerr.message)))
+	}
+	return nil
+}
+
+// LoadFromData is a wrapper around gtk_css_provider_load_from_data().
+func (v *CssProvider) LoadFromData(data string) error {
+	cdata := C.CString(data)
+	defer C.free(unsafe.Pointer(cdata))
+	var gerr *C.GError
+	if C.gtk_css_provider_load_from_data(v.native(), (*C.gchar)(unsafe.Pointer(cdata)), C.gssize(len(data)), &gerr) == 0 {
+		defer C.g_error_free(gerr)
+		return errors.New(C.GoString((*C.char)(gerr.message)))
+	}
+	return nil
+}
+
+// ToString is a wrapper around gtk_css_provider_to_string().
+func (v *CssProvider) ToString() (string, error) {
+	c := C.gtk_css_provider_to_string(v.native())
+	if c == nil {
+		return "", nilPtrErr
+	}
+	return C.GoString(c), nil
+}
+
+// GetDefault is a wrapper around gtk_css_provider_to_string().
+func (v *CssProvider) GetDefault() (*CssProvider, error) {
+	c := C.gtk_css_provider_get_default()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCssProvider(obj), nil
+}
+
+// GetNamed is a wrapper around gtk_css_provider_get_named().
+func (v *CssProvider) GetNamed(name string, variant string) (*CssProvider, error) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	cvariant := C.CString(variant)
+	defer C.free(unsafe.Pointer(cvariant))
+
+	c := C.gtk_css_provider_get_named((*C.gchar)(cname), (*C.gchar)(cvariant))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapCssProvider(obj), nil
+}
+
+/*
  * GtkDialog
  */
 
@@ -6837,6 +6932,7 @@ type IRecentChooser interface {
  * GtkRecentChooser
  */
 
+// RecentChooser is a representation of GTK's GtkRecentChooser.
 type RecentChooser struct {
 	*glib.Object
 }
@@ -6876,6 +6972,7 @@ func (v *RecentChooser) RemoveFilter(filter *RecentFilter) {
  * GtkRecentChooserMenu
  */
 
+// RecentChooserMenu is a representation of GTK's GtkRecentChooserMenu.
 type RecentChooserMenu struct {
 	Menu
 	RecentChooser
@@ -6901,6 +6998,7 @@ func wrapRecentChooserMenu(obj *glib.Object) *RecentChooserMenu {
  * GtkRecentFilter
  */
 
+// RecentFilter is a representation of GTK's GtkRecentFilter.
 type RecentFilter struct {
 	glib.InitiallyUnowned
 }
@@ -6935,6 +7033,7 @@ func RecentFilterNew() (*RecentFilter, error) {
  * GtkRecentManager
  */
 
+// RecentManager is a representation of GTK's GtkRecentManager.
 type RecentManager struct {
 	*glib.Object
 }
@@ -6951,7 +7050,7 @@ func (v *RecentManager) native() *C.GtkRecentManager {
 func marshalRecentManager(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapAlignment(obj), nil
+	return wrapRecentManager(obj), nil
 }
 
 func wrapRecentManager(obj *glib.Object) *RecentManager {
@@ -7763,6 +7862,28 @@ func (v *Statusbar) GetMessageArea() (*Box, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, nil
+}
+
+/*
+ * GtkStyleContext
+ */
+
+// StyleContext is a representation of GTK's GtkStyleContext.
+type StyleContext struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GtkStyleContext.
+func (v *StyleContext) native() *C.GtkStyleContext {
+	if v == nil || v.Object == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkStyleContext(p)
+}
+
+func wrapStyleContext(obj *glib.Object) *StyleContext {
+	return &StyleContext{obj}
 }
 
 /*
@@ -9663,6 +9784,22 @@ func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions 
 		C.gint(len(targets)), C.GdkDragAction(actions))
 }
 */
+
+// GetStyleContext is a wrapper around gtk_widget_get_style_context().
+func (v *Widget) GetStyleContext() (*StyleContext, error) {
+	c := C.gtk_widget_get_style_context(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapStyleContext(obj), nil
+}
+
+// ResetStyle is a wrapper around gtk_widget_reset_style().
+func (v *Widget) ResetStyle() {
+	C.gtk_widget_reset_style(v.native())
+}
 
 // InDestruction is a wrapper around gtk_widget_in_destruction().
 func (v *Widget) InDestruction() bool {
