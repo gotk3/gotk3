@@ -3,8 +3,24 @@ User visible changes for gotk3
   Go bindings for GTK3
 ============================================================================
 
+Changes for next Version
+  - Add new binding support
+    - gdk: fix memory leak in Pixbuf finalizers
+    - gdk: new functions for Pixbuf: ApplyEmbeddedOrientation, SaveJPEG, SavePNG
+    - gdk: PixbufLoader wrapper
+    - gtk: new functions for Adjustment: GetPageSize, SetPageSize, Configure
+    - gtk: new functions for Range: SetIncrements, SetRange
+    - gtk: new wrappers: IRecentChooser, RecentChooser, RecentChooserMenu, 
+    - gtk: RecentFilter, RecentManager, IScrollable, Scrollable, IViewport, Viewport, Allocation
+    - gtk: new function for ScrolledWindow: SetHAdjustment
+    - gtk: new function for SpinButton: SetIncrements
+    - gtk: new functions for Widget: GetAllocation, SetAllocation, SizeAllocate
+    - gtk: new function RecentChooser
+    - gtk: added Widget.GetStyleContext, new wrappers for GtkCssProvider
+  - API Break Warning: no longer support for gtk 3.16 deprecated mark functions/elements
+
 Changes in 0.3.0 (Wed Jun 10 2015)
-  - API Break Waring: function signatures changed
+  - API Break Warning: function signatures changed
   - Add new binding support
   	- GtkBuilder
   	- GtkButton

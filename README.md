@@ -18,14 +18,6 @@ Care has been taken for memory management to work seamlessly with Go's
 garbage collector without the need to use or understand GObject's
 floating references.
 
-## Based on
-  - https://github.com/conformal/gotk3
-  - https://github.com/sqp/gotk3
-  - https://github.com/dradtke/gotk3
-  - https://github.com/MovingtoMars/gotk3
-  - https://github.com/shish/gotk3
-  - ....
-
 ## Sample Use
 
 The following example can be found in `gtk/examples/simple/simple.go`.
@@ -92,8 +84,8 @@ http://localhost:6060/pkg/github.com/andre-hub/gotk3
 
 ## Installation
 
-gotk3 currently requires GTK 3.6-3.12, GLib 2.36-2.40, and
-Cairo 1.10 or 1.12.  A recent Go (1.2 or newer) is also required.
+gotk3 currently requires GTK 3.6-3.16, GLib 2.36-2.40, and
+Cairo 1.10 or 1.12.  A recent Go (1.3 or newer) is also required.
 
 The gtk package requires the cairo, glib, and gdk packages as
 dependencies, so only one `go get` is necessary for complete
@@ -102,7 +94,7 @@ installation.
 The build process uses the tagging scheme gtk_MAJOR_MINOR to specify a
 build targeting any particular GTK version (for example, gtk_3_10).
 Building with no tags defaults to targeting the latest supported GTK
-release (3.12).
+release (3.16).
 
 To install gotk3 targeting the latest GTK version:
 

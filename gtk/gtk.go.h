@@ -182,6 +182,12 @@ toGtkScaleButton(void *p)
 	return (GTK_SCALE_BUTTON(p));
 }
 
+static GtkColorButton *
+toGtkColorButton(void *p)
+{
+	return (GTK_COLOR_BUTTON(p));
+}
+
 static GtkViewport *
 toGtkViewport(void *p)
 {
@@ -522,6 +528,12 @@ static GtkRecentChooserMenu *
 toGtkRecentChooserMenu(void *p)
 {
 	return (GTK_RECENT_CHOOSER_MENU(p));
+}
+
+static GtkColorChooser *
+toGtkColorChooser(void *p)
+{
+	return (GTK_COLOR_CHOOSER(p));
 }
 
 static GtkRecentFilter *
