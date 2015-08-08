@@ -4759,7 +4759,7 @@ func (v *IconView) ScrollToPath(path *TreePath, useAlign bool, rowAlign, colAlig
 
 // Image is a representation of GTK's GtkImage.
 type Image struct {
-	Misc
+	Widget
 }
 
 // native returns a pointer to the underlying GtkImage.
@@ -4778,7 +4778,7 @@ func marshalImage(p uintptr) (interface{}, error) {
 }
 
 func wrapImage(obj *glib.Object) *Image {
-	return &Image{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	return &Image{Widget{glib.InitiallyUnowned{obj}}}
 }
 
 // ImageNew() is a wrapper around gtk_image_new().
@@ -4970,7 +4970,7 @@ func (v *Image) GetPixelSize() int {
 
 // Label is a representation of GTK's GtkLabel.
 type Label struct {
-	Misc
+	Widget
 }
 
 // native returns a pointer to the underlying GtkLabel.
@@ -4989,7 +4989,7 @@ func marshalLabel(p uintptr) (interface{}, error) {
 }
 
 func wrapLabel(obj *glib.Object) *Label {
-	return &Label{Misc{Widget{glib.InitiallyUnowned{obj}}}}
+	return &Label{Widget{glib.InitiallyUnowned{obj}}}
 }
 
 // LabelNew is a wrapper around gtk_label_new().
@@ -5993,34 +5993,6 @@ func (v *MessageDialog) FormatSecondaryMarkup(format string, a ...interface{}) {
 	defer C.free(unsafe.Pointer(cstr))
 	C._gtk_message_dialog_format_secondary_markup(v.native(),
 		(*C.gchar)(cstr))
-}
-
-/*
- * GtkMisc
- */
-
-// Misc is a representation of GTK's GtkMisc.
-type Misc struct {
-	Widget
-}
-
-// native returns a pointer to the underlying GtkMisc.
-func (v *Misc) native() *C.GtkMisc {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkMisc(p)
-}
-
-func marshalMisc(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapMisc(obj), nil
-}
-
-func wrapMisc(obj *glib.Object) *Misc {
-	return &Misc{Widget{glib.InitiallyUnowned{obj}}}
 }
 
 /*
@@ -11024,8 +10996,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapMenuShell(obj)
 	case "GtkMessageDialog":
 		g = wrapMessageDialog(obj)
-	case "GtkMisc":
-		g = wrapMisc(obj)
 	case "GtkNotebook":
 		g = wrapNotebook(obj)
 	case "GtkOffscreenWindow":

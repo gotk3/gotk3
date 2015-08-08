@@ -80,6 +80,11 @@ toGtkArrow(void *p)
 	return (GTK_ARROW(p));
 }
 
+static GtkMisc *
+toGtkMisc(void *p)
+{
+	return (GTK_MISC(p));
+}
 /*
  * End deprecated since version 3.14
  */

@@ -846,6 +846,8 @@ func cast_3_10(class string, o *glib.Object) glib.IObject {
 		g = wrapAlignment(o)
 	case "GtkArrow":
 		g = wrapArrow(o)
+	case "GtkMisc":
+		g = wrapMisc(o)
 	}
 	return g
 }
@@ -1221,6 +1223,34 @@ func (v *StatusIcon) GetIconName() string {
 // GetSize is a wrapper around gtk_status_icon_get_size()
 func (v *StatusIcon) GetSize() int {
 	return int(C.gtk_status_icon_get_size(v.native()))
+}
+
+/*
+ * GtkMisc
+ */
+
+// Misc is a representation of GTK's GtkMisc.
+type Misc struct {
+	Widget
+}
+
+// native returns a pointer to the underlying GtkMisc.
+func (v *Misc) native() *C.GtkMisc {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkMisc(p)
+}
+
+func marshalMisc(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return wrapMisc(obj), nil
+}
+
+func wrapMisc(obj *glib.Object) *Misc {
+	return &Misc{Widget{glib.InitiallyUnowned{obj}}}
 }
 
 /*

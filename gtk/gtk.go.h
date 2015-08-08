@@ -392,12 +392,6 @@ toGtkMessageDialog(void *p)
 	return (GTK_MESSAGE_DIALOG(p));
 }
 
-static GtkMisc *
-toGtkMisc(void *p)
-{
-	return (GTK_MISC(p));
-}
-
 static GtkBuilder *
 toGtkBuilder(void *p)
 {
