@@ -237,6 +237,19 @@ func marshalEventMask(p uintptr) (interface{}, error) {
 	return EventMask(c), nil
 }
 
+// added by lazyshot
+// ScrollDirection is a representation of GDK's GdkScrollDirection
+
+type ScrollDirection int
+
+const (
+	SCROLL_UP     ScrollDirection = C.GDK_SCROLL_UP
+	SCROLL_DOWN   ScrollDirection = C.GDK_SCROLL_DOWN
+	SCROLL_LEFT   ScrollDirection = C.GDK_SCROLL_LEFT
+	SCROLL_RIGHT  ScrollDirection = C.GDK_SCROLL_RIGHT
+	SCROLL_SMOOTH ScrollDirection = C.GDK_SCROLL_SMOOTH
+)
+
 /*
  * GdkAtom
  */
