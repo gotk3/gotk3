@@ -22,7 +22,7 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	"github.com/andre-hub/gotk3/glib"
+	"github.com/gotk3/gotk3/glib"
 	"unsafe"
 )
 
