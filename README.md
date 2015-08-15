@@ -9,8 +9,8 @@ projects.  Each component is given its own subdirectory, which is used
 as the import path for the package.  Partial binding support for the
 following libraries is currently implemented:
 
-  - GTK+3 (3.6 and later)
-  - GDK 3 (3.6 and later)
+  - GTK+3 (3.12 and later)
+  - GDK 3 (3.12 and later)
   - GLib 2 (2.36 and later)
   - Cairo (1.10 and later)
 
@@ -20,9 +20,7 @@ floating references.
 
 ## Sample Use
 
-The following example can be found in `gtk/examples/simple/simple.go`.
-Usage of additional features is also demonstrated in the
-`gtk/examples/` directory.
+The following example can be found in [Examples](https://github.com/gotk3/gotk3-examples/).
 
 ```Go
 package main
