@@ -1754,10 +1754,16 @@ func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
 	return tb, nil
 }
 
+// GetRGBA is a wrapper around gtk_color_chooser_get_rgba().
 func (v *ColorButton) GetRGBA() *gdk.RGBA {
 	gdkColor := gdk.NewRGBA()
 	C.gtk_color_chooser_get_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer((&gdkColor.RGBA))))
 	return gdkColor
+}
+
+// SetRGBA is a wrapper around gtk_color_chooser_set_rgba().
+func (v *ColorButton) SetRGBA(gdkColor *gdk.RGBA) {
+	C.gtk_color_chooser_set_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer((&gdkColor.RGBA))))
 }
 
 /*
@@ -2447,16 +2453,6 @@ func (v *Clipboard) native() *C.GtkClipboard {
 	return C.toGtkClipboard(p)
 }
 
-// WaitForText is a wrapper around gtk_clipboard_wait_for_text
-func (v *Clipboard) WaitForText() (string, error) {
-	c := C.gtk_clipboard_wait_for_text(v.native())
-	if c == nil {
-		return "", nilPtrErr
-	}
-	defer C.g_free(C.gpointer(c))
-	return C.GoString((*C.char)(c)), nil
-}
-
 func marshalClipboard(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
@@ -2500,12 +2496,46 @@ func ClipboardGetForDisplay(display *gdk.Display, atom gdk.Atom) (*Clipboard, er
 	return cb, nil
 }
 
+// WaitIsTextAvailable is a wrapper around gtk_clipboard_wait_is_text_available
+func (v *Clipboard) WaitIsTextAvailable() bool {
+	c := C.gtk_clipboard_wait_is_text_available(v.native())
+	return gobool(c)
+}
+
+// WaitForText is a wrapper around gtk_clipboard_wait_for_text
+func (v *Clipboard) WaitForText() (string, error) {
+	c := C.gtk_clipboard_wait_for_text(v.native())
+	if c == nil {
+		return "", nilPtrErr
+	}
+	defer C.g_free(C.gpointer(c))
+	return C.GoString((*C.char)(c)), nil
+}
+
 // SetText() is a wrapper around gtk_clipboard_set_text().
 func (v *Clipboard) SetText(text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_clipboard_set_text(v.native(), (*C.gchar)(cstr),
 		C.gint(len(text)))
+}
+
+// WaitIsRichTextAvailable is a wrapper around gtk_clipboard_wait_is_rich_text_available
+func (v *Clipboard) WaitIsRichTextAvailable(buf *TextBuffer) bool {
+	c := C.gtk_clipboard_wait_is_rich_text_available(v.native(), buf.native())
+	return gobool(c)
+}
+
+// WaitIsUrisAvailable is a wrapper around gtk_clipboard_wait_is_uris_available
+func (v *Clipboard) WaitIsUrisAvailable() bool {
+	c := C.gtk_clipboard_wait_is_uris_available(v.native())
+	return gobool(c)
+}
+
+// WaitIsImageAvailable is a wrapper around gtk_clipboard_wait_is_image_available
+func (v *Clipboard) WaitIsImageAvailable() bool {
+	c := C.gtk_clipboard_wait_is_image_available(v.native())
+	return gobool(c)
 }
 
 // SetImage is a wrapper around gtk_clipboard_set_image
@@ -2524,6 +2554,12 @@ func (v *Clipboard) WaitForImage() (*gdk.Pixbuf, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
+}
+
+// WaitIsTargetAvailable is a wrapper around gtk_clipboard_wait_is_target_available
+func (v *Clipboard) WaitIsTargetAvailable(target gdk.Atom) bool {
+	c := C.gtk_clipboard_wait_is_target_available(v.native(), C.GdkAtom(unsafe.Pointer(target)))
+	return gobool(c)
 }
 
 // WaitForContents is a wrapper around gtk_clipboard_wait_for_contents
@@ -2822,6 +2858,19 @@ func (v *Container) ChildNotify(child IWidget, childProperty string) {
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_container_child_notify(v.native(), child.toWidget(),
 		(*C.gchar)(cstr))
+}
+
+// ChildSetProperty is a wrapper around gtk_container_child_set_property().
+func (v *Container) ChildSetProperty(child IWidget, name string, value interface{}) error {
+	gv, e := glib.GValue(value)
+	if e != nil {
+		return e
+	}
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.gtk_container_child_set_property(v.native(), child.toWidget(), (*C.gchar)(cstr), (*C.GValue)(unsafe.Pointer(gv)))
+	return nil
 }
 
 // TODO: gtk_container_forall
@@ -5326,6 +5375,12 @@ func LinkButtonNewWithLabel(uri, label string) (*LinkButton, error) {
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return lb, nil
+}
+
+// GetUri is a wrapper around gtk_link_button_get_uri().
+func (v *LinkButton) GetUri() string {
+	c := C.gtk_link_button_get_uri(v.native())
+	return C.GoString((*C.char)(c))
 }
 
 // SetUri is a wrapper around gtk_link_button_set_uri().
@@ -10329,6 +10384,20 @@ func (v *Widget) SetVExpand(expand bool) {
 	C.gtk_widget_set_vexpand(v.native(), gbool(expand))
 }
 
+// TranslateCoordinates is a wrapper around gtk_widget_translate_coordinates().
+func (v *Widget) TranslateCoordinates(dest IWidget, srcX, srcY int) (destX, destY int, e error) {
+	var cdest *C.GtkWidget
+	if dest != nil {
+		cdest = dest.toWidget()
+	}
+	var cdestX, cdestY C.gint
+	c := C.gtk_widget_translate_coordinates(v.native(), cdest, C.gint(srcX), C.gint(srcY), &cdestX, &cdestY)
+	if !gobool(c) {
+		return 0, 0, errors.New("translate coordinates failed")
+	}
+	return int(cdestX), int(cdestY), nil
+}
+
 // SetVisual is a wrapper around gtk_widget_set_visual().
 func (v *Widget) SetVisual(visual *gdk.Visual) {
 	C.gtk_widget_set_visual(v.native(),
@@ -10351,18 +10420,26 @@ func (v *Widget) QueueDraw() {
 	C.gtk_widget_queue_draw(v.native())
 }
 
+// GetAllocation is a wrapper around gtk_widget_get_allocation().
 func (v *Widget) GetAllocation() *Allocation {
 	var a Allocation
 	C.gtk_widget_get_allocation(v.native(), a.native())
 	return &a
 }
 
+// SetAllocation is a wrapper around gtk_widget_set_allocation().
 func (v *Widget) SetAllocation(allocation *Allocation) {
 	C.gtk_widget_set_allocation(v.native(), allocation.native())
 }
 
+// SizeAllocate is a wrapper around gtk_widget_size_allocate().
 func (v *Widget) SizeAllocate(allocation *Allocation) {
 	C.gtk_widget_size_allocate(v.native(), allocation.native())
+}
+
+// SetStateFlags is a wrapper around gtk_widget_set_state_flags().
+func (v *Widget) SetStateFlags(stateFlags StateFlags, clear bool) {
+	C.gtk_widget_set_state_flags(v.native(), C.GtkStateFlags(stateFlags), gbool(clear))
 }
 
 /*
@@ -10966,6 +11043,8 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		g = wrapFileChooser(obj)
 	case "GtkFileChooserButton":
 		g = wrapFileChooserButton(obj)
+	case "GtkFileChooserDialog":
+		g = wrapFileChooserDialog(obj)
 	case "GtkFileChooserWidget":
 		g = wrapFileChooserWidget(obj)
 	case "GtkFontButton":

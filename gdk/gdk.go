@@ -898,6 +898,45 @@ func (v *EventMotion) MotionValRoot() (float64, float64) {
 }
 
 /*
+ * GdkEventScroll
+ */
+
+// EventScroll is a representation of GDK's GdkEventScroll.
+type EventScroll struct {
+	*Event
+}
+
+// Native returns a pointer to the underlying GdkEventScroll.
+func (v *EventScroll) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventScroll) native() *C.GdkEventScroll {
+	return (*C.GdkEventScroll)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventScroll) DeltaX() float64 {
+	return float64(v.native().delta_x)
+}
+
+func (v *EventScroll) DeltaY() float64 {
+	return float64(v.native().delta_y)
+}
+
+func (v *EventScroll) X() float64 {
+	return float64(v.native().x)
+}
+
+func (v *EventScroll) Y() float64 {
+	return float64(v.native().y)
+}
+
+func (v *EventScroll) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+/*
  * GdkPixbuf
  */
 
@@ -1013,8 +1052,7 @@ func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, heigh
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1030,8 +1068,7 @@ func PixbufNewFromFile(filename string) (*Pixbuf, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
 	p := &Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1050,8 +1087,7 @@ func PixbufNewFromFileAtSize(filename string, width, height int) (*Pixbuf, error
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
 	p := &Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1071,8 +1107,7 @@ func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspect
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(res))}
 	p := &Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1085,8 +1120,7 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1098,8 +1132,7 @@ func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1111,7 +1144,7 @@ func (v *Pixbuf) ApplyEmbeddedOrientation() (*Pixbuf, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1123,7 +1156,7 @@ func (v *Pixbuf) Flip(horizontal bool) (*Pixbuf, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1199,7 +1232,7 @@ func PixbufLoaderNew() (*PixbufLoader, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &PixbufLoader{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
@@ -1255,7 +1288,7 @@ func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
 }
 
