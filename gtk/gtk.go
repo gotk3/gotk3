@@ -1002,6 +1002,34 @@ func (v *AboutDialog) SetProgramName(name string) {
 	C.gtk_about_dialog_set_program_name(v.native(), (*C.gchar)(cstr))
 }
 
+// GetAuthors is a wrapper around gtk_about_dialog_get_authors().
+func (v *AboutDialog) GetAuthors() []string {
+	var authors []string
+	cauthors := C.gtk_about_dialog_get_authors(v.native())
+	for {
+		authors = append(authors, C.GoString((*C.char)(*cauthors)))
+		cauthors = C.next_gcharptr(cauthors)
+		if *cauthors == nil {
+			break
+		}
+	}
+	return authors
+}
+
+// SetAuthors is a wrapper around gtk_about_dialog_set_authors().
+func (v *AboutDialog) SetAuthors(authors []string) {
+	cauthors := C.make_strings(C.int(len(authors) + 1))
+	for i, author := range authors {
+		cstr := C.CString(author)
+		defer C.free(unsafe.Pointer(cstr))
+		C.set_string(cauthors, C.int(i), (*C.gchar)(cstr))
+	}
+
+	C.set_string(cauthors, C.int(len(authors)), nil)
+	C.gtk_about_dialog_set_authors(v.native(), cauthors)
+	C.destroy_strings(cauthors)
+}
+
 // GetTranslatorCredits is a wrapper around gtk_about_dialog_get_translator_credits().
 func (v *AboutDialog) GetTranslatorCredits() string {
 	c := C.gtk_about_dialog_get_translator_credits(v.native())
