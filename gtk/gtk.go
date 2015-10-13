@@ -9926,6 +9926,10 @@ func (v *Widget) Destroy() {
 	C.gtk_widget_destroy(v.native())
 }
 
+func (v *Widget) HideOnDelete() {
+	C._gtk_widget_hide_on_delete(v.native())
+}
+
 /* TODO
 func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions gdk.DragAction) {
 	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]),

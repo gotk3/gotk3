@@ -695,6 +695,10 @@ gtk_file_chooser_dialog_new_2(
 		NULL);
 }
 
+static void _gtk_widget_hide_on_delete(GtkWidget* w) {
+	g_signal_connect(GTK_WIDGET(w), "delete-event", G_CALLBACK(gtk_widget_hide_on_delete), NULL);
+}
+
 static inline gchar** make_strings(int count) {
 	return (gchar**)malloc(sizeof(gchar*) * count);
 }
