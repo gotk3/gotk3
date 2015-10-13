@@ -9602,6 +9602,11 @@ func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
 	return t, nil
 }
 
+// SetHeadersVisible() is a wraper around gtk_tree_view_set_headers_visible()
+func (v *TreeView) SetHeadersVisible(flag bool) {
+	C.gtk_tree_view_set_headers_visible(v.native(), gbool(flag))
+}
+
 // GetModel() is a wrapper around gtk_tree_view_get_model().
 func (v *TreeView) GetModel() (*TreeModel, error) {
 	c := C.gtk_tree_view_get_model(v.native())
