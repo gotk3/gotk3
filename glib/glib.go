@@ -1364,6 +1364,11 @@ func (v *Value) SetPointer(p uintptr) {
 	C.g_value_set_pointer(v.native(), C.gpointer(p))
 }
 
+// GetPointer is a wrapper around g_value_get_pointer().
+func (v *Value) GetPointer() unsafe.Pointer {
+	return unsafe.Pointer(C.g_value_get_pointer(v.native()))
+}
+
 // GetString is a wrapper around g_value_get_string().  GetString()
 // returns a non-nil error if g_value_get_string() returned a NULL
 // pointer to distinguish between returning a NULL pointer and returning
