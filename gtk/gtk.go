@@ -8507,6 +8507,20 @@ func (v *TextBuffer) GetIterAtOffset(charOffset int) *TextIter {
 	return (*TextIter)(&iter)
 }
 
+// GetStartIter() is a wrapper around gtk_text_buffer_get_start_iter().
+func (v *TextBuffer) GetStartIter() *TextIter {
+	var iter C.GtkTextIter
+	C.gtk_text_buffer_get_start_iter(v.native(), &iter)
+	return (*TextIter)(&iter)
+}
+
+// GetEndIter() is a wrapper around gtk_text_buffer_get_end_iter().
+func (v *TextBuffer) GetEndIter() *TextIter {
+	var iter C.GtkTextIter
+	C.gtk_text_buffer_get_end_iter(v.native(), &iter)
+	return (*TextIter)(&iter)
+}
+
 // GetLineCount() is a wrapper around gtk_text_buffer_get_line_count().
 func (v *TextBuffer) GetLineCount() int {
 	return int(C.gtk_text_buffer_get_line_count(v.native()))
