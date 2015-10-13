@@ -1380,3 +1380,28 @@ func (v *Value) GetString() (string, error) {
 	}
 	return C.GoString((*C.char)(c)), nil
 }
+
+type Signal struct {
+	name     string
+	signalId C.guint
+}
+
+func SignalNew(s string) (*Signal, error) {
+	cstr := C.CString(s)
+	defer C.free(unsafe.Pointer(cstr))
+
+	signalId := C._g_signal_new((*C.gchar)(cstr))
+
+	if signalId == 0 {
+		return nil, fmt.Errorf("invalid signal name: %s", s)
+	}
+
+	return &Signal{
+		name:     s,
+		signalId: signalId,
+	}, nil
+}
+
+func (s *Signal) String() string {
+	return s.name
+}
