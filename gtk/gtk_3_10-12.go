@@ -50,12 +50,30 @@ func init() {
 		{glib.Type(C.gtk_search_bar_get_type()), marshalSearchBar},
 		{glib.Type(C.gtk_stack_get_type()), marshalStack},
 		{glib.Type(C.gtk_stack_switcher_get_type()), marshalStackSwitcher},
+
 		{glib.Type(C.gtk_alignment_get_type()), marshalAlignment},
 		{glib.Type(C.gtk_arrow_get_type()), marshalArrow},
 		{glib.Type(C.gtk_misc_get_type()), marshalMisc},
 		{glib.Type(C.gtk_status_icon_get_type()), marshalStatusIcon},
 	}
 	glib.RegisterGValueMarshalers(tm)
+
+	//Contribute to casting
+	for k, v := range map[string]WrapFn{
+		"GtkListBox":       wrapListBox,
+		"GtkListBoxRow":    wrapListBoxRow,
+		"GtkRevealer":      wrapRevealer,
+		"GtkSearchBar":     wrapSearchBar,
+		"GtkStack":         wrapStack,
+		"GtkStackSwitcher": wrapStackSwitcher,
+
+		"GtkAlignment":  wrapAlignment,
+		"GtkArrow":      wrapArrow,
+		"GtkMisc":       wrapMisc,
+		"GtkStatusIcon": wrapStatusIcon,
+	} {
+		WrapMap[k] = v
+	}
 }
 
 /*
@@ -825,35 +843,6 @@ func (v *Window) SetTitlebar(titlebar IWidget) {
 // Close is a wrapper around gtk_window_close().
 func (v *Window) Close() {
 	C.gtk_window_close(v.native())
-}
-
-func cast_3_10(class string, o *glib.Object) glib.IObject {
-	var g glib.IObject
-	switch class {
-	case "GtkListBox":
-		g = wrapListBox(o)
-	case "GtkListBoxRow":
-		g = wrapListBoxRow(o)
-	case "GtkRevealer":
-		g = wrapRevealer(o)
-	case "GtkSearchBar":
-		g = wrapSearchBar(o)
-	case "GtkStack":
-		g = wrapStack(o)
-	case "GtkStackSwitcher":
-		g = wrapStackSwitcher(o)
-	case "GtkAlignment":
-		g = wrapAlignment(o)
-	case "GtkArrow":
-		g = wrapArrow(o)
-	case "GtkMisc":
-		g = wrapMisc(o)
-	}
-	return g
-}
-
-func init() {
-	cast_3_10_func = cast_3_10
 }
 
 /*

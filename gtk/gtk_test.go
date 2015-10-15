@@ -637,3 +637,58 @@ func TestListStoreInsertAfter_WhenNilSibling(t *testing.T) {
 		t.Fatal("Expected the new iter was prepended to liststore")
 	}
 }
+
+func TestBuilder(t *testing.T) {
+	builder, err := BuilderNew()
+	if err != nil {
+		t.Error("Unable to create builder")
+	}
+
+	str := `
+<interface>
+  <object class="GtkDialog" id="dialog1">
+    <child internal-child="vbox">
+      <object class="GtkBox" id="vbox1">
+        <property name="border-width">10</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="hbuttonbox1">
+            <property name="border-width">20</property>
+            <child>
+              <object class="GtkButton" id="ok_button">
+                <property name="label">gtk-ok</property>
+                <property name="use-stock">TRUE</property>
+                <signal name="clicked" handler="ok_button_clicked"/>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
+`
+
+	err = builder.AddFromString(str)
+	if err != nil {
+		t.Error("Unable to add from string")
+	}
+
+	widget, err := builder.GetObject("ok_button")
+	if err != nil {
+		t.Error("Unable to get widget from string")
+	}
+
+	button, ok := widget.(*Button)
+	if !ok {
+		t.Error("Unable to cast to gtk.Button")
+	}
+
+	l, err := button.GetLabel()
+	if err != nil {
+		t.Error("Unable to get button label")
+	}
+
+	if l != "gtk-ok" {
+		t.Error("Label has the wrong value" + l)
+	}
+}
