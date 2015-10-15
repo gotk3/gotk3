@@ -1724,15 +1724,6 @@ func (v *Button) GetEventWindow() (*gdk.Window, error) {
 	return w, nil
 }
 
-// OverrideColor is a wrapper around gtk_widget_override_color().
-func (v *Widget) OverrideColor(state StateFlags, color *gdk.RGBA) {
-	var cColor *C.GdkRGBA
-	if color != nil {
-		cColor = (*C.GdkRGBA)(unsafe.Pointer((&color.RGBA)))
-	}
-	C.gtk_widget_override_color(v.native(), C.GtkStateFlags(state), cColor)
-}
-
 /*
  * GtkColorButton
  */
@@ -10369,14 +10360,6 @@ func (v *Widget) SetTooltipText(text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_widget_set_tooltip_text(v.native(), (*C.gchar)(cstr))
-}
-
-// OverrideFont is a wrapper around gtk_widget_override_font().
-func (v *Widget) OverrideFont(description string) {
-	cstr := C.CString(description)
-	defer C.free(unsafe.Pointer(cstr))
-	c := C.pango_font_description_from_string(cstr)
-	C.gtk_widget_override_font(v.native(), c)
 }
 
 // GetHAlign is a wrapper around gtk_widget_get_halign().
