@@ -1002,6 +1002,34 @@ func (v *AboutDialog) SetProgramName(name string) {
 	C.gtk_about_dialog_set_program_name(v.native(), (*C.gchar)(cstr))
 }
 
+// GetAuthors is a wrapper around gtk_about_dialog_get_authors().
+func (v *AboutDialog) GetAuthors() []string {
+	var authors []string
+	cauthors := C.gtk_about_dialog_get_authors(v.native())
+	for {
+		authors = append(authors, C.GoString((*C.char)(*cauthors)))
+		cauthors = C.next_gcharptr(cauthors)
+		if *cauthors == nil {
+			break
+		}
+	}
+	return authors
+}
+
+// SetAuthors is a wrapper around gtk_about_dialog_set_authors().
+func (v *AboutDialog) SetAuthors(authors []string) {
+	cauthors := C.make_strings(C.int(len(authors) + 1))
+	for i, author := range authors {
+		cstr := C.CString(author)
+		defer C.free(unsafe.Pointer(cstr))
+		C.set_string(cauthors, C.int(i), (*C.gchar)(cstr))
+	}
+
+	C.set_string(cauthors, C.int(len(authors)), nil)
+	C.gtk_about_dialog_set_authors(v.native(), cauthors)
+	C.destroy_strings(cauthors)
+}
+
 // GetTranslatorCredits is a wrapper around gtk_about_dialog_get_translator_credits().
 func (v *AboutDialog) GetTranslatorCredits() string {
 	c := C.gtk_about_dialog_get_translator_credits(v.native())
@@ -8479,6 +8507,20 @@ func (v *TextBuffer) GetIterAtOffset(charOffset int) *TextIter {
 	return (*TextIter)(&iter)
 }
 
+// GetStartIter() is a wrapper around gtk_text_buffer_get_start_iter().
+func (v *TextBuffer) GetStartIter() *TextIter {
+	var iter C.GtkTextIter
+	C.gtk_text_buffer_get_start_iter(v.native(), &iter)
+	return (*TextIter)(&iter)
+}
+
+// GetEndIter() is a wrapper around gtk_text_buffer_get_end_iter().
+func (v *TextBuffer) GetEndIter() *TextIter {
+	var iter C.GtkTextIter
+	C.gtk_text_buffer_get_end_iter(v.native(), &iter)
+	return (*TextIter)(&iter)
+}
+
 // GetLineCount() is a wrapper around gtk_text_buffer_get_line_count().
 func (v *TextBuffer) GetLineCount() int {
 	return int(C.gtk_text_buffer_get_line_count(v.native()))
@@ -9410,6 +9452,16 @@ func (v *TreeSelection) SelectIter(iter *TreeIter) {
 	C.gtk_tree_selection_select_iter(v.native(), iter.native())
 }
 
+// SetMode() is a wrapper around gtk_tree_selection_set_mode().
+func (v *TreeSelection) SetMode(m SelectionMode) {
+	C.gtk_tree_selection_set_mode(v.native(), C.GtkSelectionMode(m))
+}
+
+// GetMode() is a wrapper around gtk_tree_selection_get_mode().
+func (v *TreeSelection) GetMode() SelectionMode {
+	return SelectionMode(C.gtk_tree_selection_get_mode(v.native()))
+}
+
 /*
  * GtkTreeStore
  */
@@ -9548,6 +9600,11 @@ func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
 	obj.RefSink()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return t, nil
+}
+
+// SetHeadersVisible() is a wraper around gtk_tree_view_set_headers_visible()
+func (v *TreeView) SetHeadersVisible(flag bool) {
+	C.gtk_tree_view_set_headers_visible(v.native(), gbool(flag))
 }
 
 // GetModel() is a wrapper around gtk_tree_view_get_model().
@@ -9867,6 +9924,10 @@ func wrapWidget(obj *glib.Object) *Widget {
 // Destroy is a wrapper around gtk_widget_destroy().
 func (v *Widget) Destroy() {
 	C.gtk_widget_destroy(v.native())
+}
+
+func (v *Widget) HideOnDelete() {
+	C._gtk_widget_hide_on_delete(v.native())
 }
 
 /* TODO

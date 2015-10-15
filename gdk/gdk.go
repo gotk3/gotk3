@@ -868,6 +868,11 @@ func (v *EventKey) Type() EventType {
 	return EventType(c)
 }
 
+func (v *EventKey) State() uint {
+	c := v.native().state
+	return uint(c)
+}
+
 /*
  * GdkEventMotion
  */
@@ -1290,11 +1295,6 @@ func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return p, nil
-}
-
-func (v *EventKey) State() uint {
-	c := v.native().state
-	return uint(c)
 }
 
 type RGBA struct {

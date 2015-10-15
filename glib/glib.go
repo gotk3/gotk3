@@ -1364,6 +1364,11 @@ func (v *Value) SetPointer(p uintptr) {
 	C.g_value_set_pointer(v.native(), C.gpointer(p))
 }
 
+// GetPointer is a wrapper around g_value_get_pointer().
+func (v *Value) GetPointer() unsafe.Pointer {
+	return unsafe.Pointer(C.g_value_get_pointer(v.native()))
+}
+
 // GetString is a wrapper around g_value_get_string().  GetString()
 // returns a non-nil error if g_value_get_string() returned a NULL
 // pointer to distinguish between returning a NULL pointer and returning
@@ -1374,4 +1379,29 @@ func (v *Value) GetString() (string, error) {
 		return "", errNilPtr
 	}
 	return C.GoString((*C.char)(c)), nil
+}
+
+type Signal struct {
+	name     string
+	signalId C.guint
+}
+
+func SignalNew(s string) (*Signal, error) {
+	cstr := C.CString(s)
+	defer C.free(unsafe.Pointer(cstr))
+
+	signalId := C._g_signal_new((*C.gchar)(cstr))
+
+	if signalId == 0 {
+		return nil, fmt.Errorf("invalid signal name: %s", s)
+	}
+
+	return &Signal{
+		name:     s,
+		signalId: signalId,
+	}, nil
+}
+
+func (s *Signal) String() string {
+	return s.name
 }

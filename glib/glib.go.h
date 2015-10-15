@@ -121,3 +121,14 @@ _g_closure_add_finalize_notifier(GClosure *closure)
 {
 	g_closure_add_finalize_notifier(closure, NULL, removeClosure);
 }
+
+static inline guint _g_signal_new(const gchar *name) {
+	return g_signal_new(name,
+		G_TYPE_OBJECT,
+		G_SIGNAL_RUN_FIRST,
+		0, NULL, NULL,
+		g_cclosure_marshal_VOID__POINTER,
+		G_TYPE_NONE,
+		1,
+		G_TYPE_POINTER);
+}
