@@ -7,4 +7,5 @@
   - [shish](https://github.com/shish/gotk3)
   - [andre](https://github.com/andre-hub/gotk3)
   - [raichu](https://github.com/raichu/gotk3)
+  - [juniorz](https://github.com/juniorz)
   - you?
