@@ -28,9 +28,3 @@ func (v *Widget) OverrideFont(description string) {
 	c := C.pango_font_description_from_string(cstr)
 	C.gtk_widget_override_font(v.native(), c)
 }
-
-// SupportsComposite() is a wrapper around gdk_display_supports_composite().
-func (v *Display) SupportsComposite() bool {
-	c := C.gdk_display_supports_composite(v.native())
-	return gobool(c)
-}
