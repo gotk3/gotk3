@@ -590,12 +590,6 @@ func (v *Display) SupportsInputShapes() bool {
 	return gobool(c)
 }
 
-// SupportsComposite() is a wrapper around gdk_display_supports_composite().
-func (v *Display) SupportsComposite() bool {
-	c := C.gdk_display_supports_composite(v.native())
-	return gobool(c)
-}
-
 // TODO(jrick) glib.AppLaunchContext GdkAppLaunchContext
 func (v *Display) GetAppLaunchContext() {
 }
