@@ -1724,15 +1724,6 @@ func (v *Button) GetEventWindow() (*gdk.Window, error) {
 	return w, nil
 }
 
-// OverrideColor is a wrapper around gtk_widget_override_color().
-func (v *Widget) OverrideColor(state StateFlags, color *gdk.RGBA) {
-	var cColor *C.GdkRGBA
-	if color != nil {
-		cColor = (*C.GdkRGBA)(unsafe.Pointer((&color.RGBA)))
-	}
-	C.gtk_widget_override_color(v.native(), C.GtkStateFlags(state), cColor)
-}
-
 /*
  * GtkColorButton
  */
@@ -10371,14 +10362,6 @@ func (v *Widget) SetTooltipText(text string) {
 	C.gtk_widget_set_tooltip_text(v.native(), (*C.gchar)(cstr))
 }
 
-// OverrideFont is a wrapper around gtk_widget_override_font().
-func (v *Widget) OverrideFont(description string) {
-	cstr := C.CString(description)
-	defer C.free(unsafe.Pointer(cstr))
-	c := C.pango_font_description_from_string(cstr)
-	C.gtk_widget_override_font(v.native(), c)
-}
-
 // GetHAlign is a wrapper around gtk_widget_get_halign().
 func (v *Widget) GetHAlign() Align {
 	c := C.gtk_widget_get_halign(v.native())
@@ -11033,202 +11016,134 @@ func (v *Window) SetFocusVisible(setting bool) {
 
 // TODO gtk_window_get_application().
 
-var cast_3_10_func func(string, *glib.Object) glib.IObject
+type WrapFn interface{}
+
+var WrapMap = map[string]WrapFn{
+	"GtkAboutDialog":         wrapAboutDialog,
+	"GtkAccelGroup":          wrapAccelGroup,
+	"GtkAdjustment":          wrapAdjustment,
+	"GtkBin":                 wrapBin,
+	"GtkBox":                 wrapBox,
+	"GtkButton":              wrapButton,
+	"GtkCalendar":            wrapCalendar,
+	"GtkCellLayout":          wrapCellLayout,
+	"GtkCellRenderer":        wrapCellRenderer,
+	"GtkCellRendererSpinner": wrapCellRendererSpinner,
+	"GtkCellRendererPixbuf":  wrapCellRendererPixbuf,
+	"GtkCellRendererText":    wrapCellRendererText,
+	"GtkCellRendererToggle":  wrapCellRendererToggle,
+	"GtkCheckButton":         wrapCheckButton,
+	"GtkCheckMenuItem":       wrapCheckMenuItem,
+	"GtkClipboard":           wrapClipboard,
+	"GtkComboBox":            wrapComboBox,
+	"GtkComboBoxText":        wrapComboBoxText,
+	"GtkContainer":           wrapContainer,
+	"GtkDialog":              wrapDialog,
+	"GtkDrawingArea":         wrapDrawingArea,
+	"GtkEditable":            wrapEditable,
+	"GtkEntry":               wrapEntry,
+	"GtkEntryBuffer":         wrapEntryBuffer,
+	"GtkEntryCompletion":     wrapEntryCompletion,
+	"GtkEventBox":            wrapEventBox,
+	"GtkExpander":            wrapExpander,
+	"GtkFrame":               wrapFrame,
+	"GtkFileChooser":         wrapFileChooser,
+	"GtkFileChooserButton":   wrapFileChooserButton,
+	"GtkFileChooserDialog":   wrapFileChooserDialog,
+	"GtkFileChooserWidget":   wrapFileChooserWidget,
+	"GtkFontButton":          wrapFontButton,
+	"GtkGrid":                wrapGrid,
+	"GtkIconView":            wrapIconView,
+	"GtkImage":               wrapImage,
+	"GtkLabel":               wrapLabel,
+	"GtkLayout":              wrapLayout,
+	"GtkLinkButton":          wrapLinkButton,
+	"GtkListStore":           wrapListStore,
+	"GtkMenu":                wrapMenu,
+	"GtkMenuBar":             wrapMenuBar,
+	"GtkMenuButton":          wrapMenuButton,
+	"GtkMenuItem":            wrapMenuItem,
+	"GtkMenuShell":           wrapMenuShell,
+	"GtkMessageDialog":       wrapMessageDialog,
+	"GtkNotebook":            wrapNotebook,
+	"GtkOffscreenWindow":     wrapOffscreenWindow,
+	"GtkOrientable":          wrapOrientable,
+	"GtkPaned":               wrapPaned,
+	"GtkProgressBar":         wrapProgressBar,
+	"GtkRadioButton":         wrapRadioButton,
+	"GtkRadioMenuItem":       wrapRadioMenuItem,
+	"GtkRange":               wrapRange,
+	"GtkRecentChooser":       wrapRecentChooser,
+	"GtkRecentChooserMenu":   wrapRecentChooserMenu,
+	"GtkRecentFilter":        wrapRecentFilter,
+	"GtkRecentManager":       wrapRecentManager,
+	"GtkScaleButton":         wrapScaleButton,
+	"GtkScale":               wrapScale,
+	"GtkScrollable":          wrapScrollable,
+	"GtkScrollbar":           wrapScrollbar,
+	"GtkScrolledWindow":      wrapScrolledWindow,
+	"GtkSearchEntry":         wrapSearchEntry,
+	"GtkSeparator":           wrapSeparator,
+	"GtkSeparatorMenuItem":   wrapSeparatorMenuItem,
+	"GtkSeparatorToolItem":   wrapSeparatorToolItem,
+	"GtkSpinButton":          wrapSpinButton,
+	"GtkSpinner":             wrapSpinner,
+	"GtkStatusbar":           wrapStatusbar,
+	"GtkSwitch":              wrapSwitch,
+	"GtkTextView":            wrapTextView,
+	"GtkTextBuffer":          wrapTextBuffer,
+	"GtkTextTag":             wrapTextTag,
+	"GtkTextTagTable":        wrapTextTagTable,
+	"GtkToggleButton":        wrapToggleButton,
+	"GtkToolbar":             wrapToolbar,
+	"GtkToolButton":          wrapToolButton,
+	"GtkToolItem":            wrapToolItem,
+	"GtkTreeModel":           wrapTreeModel,
+	"GtkTreeSelection":       wrapTreeSelection,
+	"GtkTreeStore":           wrapTreeStore,
+	"GtkTreeView":            wrapTreeView,
+	"GtkTreeViewColumn":      wrapTreeViewColumn,
+	"GtkViewport":            wrapViewport,
+	"GtkVolumeButton":        wrapVolumeButton,
+	"GtkWidget":              wrapWidget,
+	"GtkWindow":              wrapWindow,
+}
 
 // cast takes a native GObject and casts it to the appropriate Go struct.
+//TODO change all wrapFns to return an IObject
 func cast(c *C.GObject) (glib.IObject, error) {
 	var (
 		className = C.GoString((*C.char)(C.object_get_class_name(c)))
 		obj       = &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-		g         glib.IObject
 	)
+
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	switch className {
-	case "GtkAboutDialog":
-		g = wrapAboutDialog(obj)
-	case "GtkAccelGroup":
-		g = wrapAccelGroup(obj)
-	case "GtkAdjustment":
-		g = wrapAdjustment(obj)
-	case "GtkBin":
-		g = wrapBin(obj)
-	case "GtkBox":
-		g = wrapBox(obj)
-	case "GtkButton":
-		g = wrapButton(obj)
-	case "GtkCalendar":
-		g = wrapCalendar(obj)
-	case "GtkCellLayout":
-		g = wrapCellLayout(obj)
-	case "GtkCellRenderer":
-		g = wrapCellRenderer(obj)
-	case "GtkCellRendererSpinner":
-		g = wrapCellRendererSpinner(obj)
-	case "GtkCellRendererPixbuf":
-		g = wrapCellRendererPixbuf(obj)
-	case "GtkCellRendererText":
-		g = wrapCellRendererText(obj)
-	case "GtkCellRendererToggle":
-		g = wrapCellRendererToggle(obj)
-	case "GtkCheckButton":
-		g = wrapCheckButton(obj)
-	case "GtkCheckMenuItem":
-		g = wrapCheckMenuItem(obj)
-	case "GtkClipboard":
-		g = wrapClipboard(obj)
-	case "GtkComboBox":
-		g = wrapComboBox(obj)
-	case "GtkComboBoxText":
-		g = wrapComboBoxText(obj)
-	case "GtkContainer":
-		g = wrapContainer(obj)
-	case "GtkDialog":
-		g = wrapDialog(obj)
-	case "GtkDrawingArea":
-		g = wrapDrawingArea(obj)
-	case "GtkEditable":
-		g = wrapEditable(obj)
-	case "GtkEntry":
-		g = wrapEntry(obj)
-	case "GtkEntryBuffer":
-		g = wrapEntryBuffer(obj)
-	case "GtkEntryCompletion":
-		g = wrapEntryCompletion(obj)
-	case "GtkEventBox":
-		g = wrapEventBox(obj)
-	case "GtkExpander":
-		g = wrapExpander(obj)
-	case "GtkFrame":
-		g = wrapFrame(obj)
-	case "GtkFileChooser":
-		g = wrapFileChooser(obj)
-	case "GtkFileChooserButton":
-		g = wrapFileChooserButton(obj)
-	case "GtkFileChooserDialog":
-		g = wrapFileChooserDialog(obj)
-	case "GtkFileChooserWidget":
-		g = wrapFileChooserWidget(obj)
-	case "GtkFontButton":
-		g = wrapFontButton(obj)
-	case "GtkGrid":
-		g = wrapGrid(obj)
-	case "GtkIconView":
-		g = wrapIconView(obj)
-	case "GtkImage":
-		g = wrapImage(obj)
-	case "GtkLabel":
-		g = wrapLabel(obj)
-	case "GtkLayout":
-		g = wrapLayout(obj)
-	case "GtkLinkButton":
-		g = wrapLinkButton(obj)
-	case "GtkListStore":
-		g = wrapListStore(obj)
-	case "GtkMenu":
-		g = wrapMenu(obj)
-	case "GtkMenuBar":
-		g = wrapMenuBar(obj)
-	case "GtkMenuButton":
-		g = wrapMenuButton(obj)
-	case "GtkMenuItem":
-		g = wrapMenuItem(obj)
-	case "GtkMenuShell":
-		g = wrapMenuShell(obj)
-	case "GtkMessageDialog":
-		g = wrapMessageDialog(obj)
-	case "GtkNotebook":
-		g = wrapNotebook(obj)
-	case "GtkOffscreenWindow":
-		g = wrapOffscreenWindow(obj)
-	case "GtkOrientable":
-		g = wrapOrientable(obj)
-	case "GtkPaned":
-		g = wrapPaned(obj)
-	case "GtkProgressBar":
-		g = wrapProgressBar(obj)
-	case "GtkRadioButton":
-		g = wrapRadioButton(obj)
-	case "GtkRadioMenuItem":
-		g = wrapRadioMenuItem(obj)
-	case "GtkRange":
-		g = wrapRange(obj)
-	case "GtkRecentChooser":
-		g = wrapRecentChooser(obj)
-	case "GtkRecentChooserMenu":
-		g = wrapRecentChooserMenu(obj)
-	case "GtkRecentFilter":
-		g = wrapRecentFilter(obj)
-	case "GtkRecentManager":
-		g = wrapRecentManager(obj)
-	case "GtkScaleButton":
-		g = wrapScaleButton(obj)
-	case "GtkScale":
-		g = wrapScale(obj)
-	case "GtkScrollable":
-		g = wrapScrollable(obj)
-	case "GtkScrollbar":
-		g = wrapScrollbar(obj)
-	case "GtkScrolledWindow":
-		g = wrapScrolledWindow(obj)
-	case "GtkSearchEntry":
-		g = wrapSearchEntry(obj)
-	case "GtkSeparator":
-		g = wrapSeparator(obj)
-	case "GtkSeparatorMenuItem":
-		g = wrapSeparatorMenuItem(obj)
-	case "GtkSeparatorToolItem":
-		g = wrapSeparatorToolItem(obj)
-	case "GtkSpinButton":
-		g = wrapSpinButton(obj)
-	case "GtkSpinner":
-		g = wrapSpinner(obj)
-	case "GtkStatusbar":
-		g = wrapStatusbar(obj)
-	case "GtkSwitch":
-		g = wrapSwitch(obj)
-	case "GtkTextView":
-		g = wrapTextView(obj)
-	case "GtkTextBuffer":
-		g = wrapTextBuffer(obj)
-	case "GtkTextTag":
-		g = wrapTextTag(obj)
-	case "GtkTextTagTable":
-		g = wrapTextTagTable(obj)
-	case "GtkToggleButton":
-		g = wrapToggleButton(obj)
-	case "GtkToolbar":
-		g = wrapToolbar(obj)
-	case "GtkToolButton":
-		g = wrapToolButton(obj)
-	case "GtkToolItem":
-		g = wrapToolItem(obj)
-	case "GtkTreeModel":
-		g = wrapTreeModel(obj)
-	case "GtkTreeSelection":
-		g = wrapTreeSelection(obj)
-	case "GtkTreeStore":
-		g = wrapTreeStore(obj)
-	case "GtkTreeView":
-		g = wrapTreeView(obj)
-	case "GtkTreeViewColumn":
-		g = wrapTreeViewColumn(obj)
-	case "GtkViewport":
-		g = wrapViewport(obj)
-	case "GtkVolumeButton":
-		g = wrapVolumeButton(obj)
-	case "GtkWidget":
-		g = wrapWidget(obj)
-	case "GtkWindow":
-		g = wrapWindow(obj)
-	default:
-		switch {
-		case cast_3_10_func != nil:
-			g = cast_3_10_func(className, obj)
-			if g != nil {
-				return g, nil
-			}
-		}
+
+	fn, ok := WrapMap[className]
+	if !ok {
 		return nil, errors.New("unrecognized class name '" + className + "'")
 	}
-	return g, nil
+
+	rf := reflect.ValueOf(fn)
+	if rf.Type().Kind() != reflect.Func {
+		return nil, errors.New("wraper is not a function")
+	}
+
+	v := reflect.ValueOf(obj)
+	rv := rf.Call([]reflect.Value{v})
+
+	if len(rv) != 1 {
+		return nil, errors.New("wrapper did not return")
+	}
+
+	if k := rv[0].Kind(); k != reflect.Ptr {
+		return nil, fmt.Errorf("wrong return type %s", k)
+	}
+
+	ret, ok := rv[0].Interface().(glib.IObject)
+	if !ok {
+		return nil, errors.New("did not return an IObject")
+	}
+
+	return ret, nil
 }
