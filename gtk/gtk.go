@@ -3014,8 +3014,8 @@ func (v *CssProvider) ToString() (string, error) {
 	return C.GoString(c), nil
 }
 
-// GetDefault is a wrapper around gtk_css_provider_to_string().
-func (v *CssProvider) GetDefault() (*CssProvider, error) {
+// CssProviderGetDefault is a wrapper around gtk_css_provider_get_default().
+func CssProviderGetDefault() (*CssProvider, error) {
 	c := C.gtk_css_provider_get_default()
 	if c == nil {
 		return nil, nilPtrErr
