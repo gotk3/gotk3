@@ -716,3 +716,16 @@ static inline void set_string(gchar** strings, int n, gchar* str) {
 }
 
 static inline gchar** next_gcharptr(gchar** s) { return (s+1); }
+
+extern void goBuilderConnect (GtkBuilder *builder,
+                          GObject *object,
+                          gchar *signal_name,
+                          gchar *handler_name,
+                          GObject *connect_object,
+                          GConnectFlags flags,
+                          gpointer user_data);
+
+static inline void _gtk_builder_connect_signals_full(GtkBuilder *builder) {
+	gtk_builder_connect_signals_full(builder, (GtkBuilderConnectFunc)(goBuilderConnect), NULL);
+}
+
