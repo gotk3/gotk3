@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log"
 	"testing"
+	"time"
 
 	"github.com/gotk3/gotk3/glib"
 )
@@ -689,6 +690,22 @@ func TestBuilder(t *testing.T) {
 	}
 
 	if l != "gtk-ok" {
-		t.Error("Label has the wrong value" + l)
+		t.Errorf("Label has the wrong value: %q", l)
+	}
+
+	done := make(chan bool)
+
+	builder.ConnectSignals(map[string]interface{}{
+		"ok_button_clicked": func() {
+			done <- true
+		},
+	})
+
+	go button.Emit("clicked")
+
+	select {
+	case <-done:
+	case <-time.After(1 * time.Second):
+		t.Error("Failed to call callback")
 	}
 }

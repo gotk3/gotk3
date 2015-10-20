@@ -53,6 +53,7 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"sync"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/cairo"
@@ -1556,6 +1557,24 @@ func (b *Builder) GetObject(name string) (glib.IObject, error) {
 		return nil, err
 	}
 	return obj, nil
+}
+
+var (
+	builderSignals = struct {
+		sync.RWMutex
+		m map[*C.GtkBuilder]map[string]interface{}
+	}{
+		m: make(map[*C.GtkBuilder]map[string]interface{}),
+	}
+)
+
+// ConnectSignals is a wrapper around gtk_builder_connect_signals_full().
+func (b *Builder) ConnectSignals(signals map[string]interface{}) {
+	builderSignals.Lock()
+	builderSignals.m[b.native()] = signals
+	builderSignals.Unlock()
+
+	C._gtk_builder_connect_signals_full(b.native())
 }
 
 /*
