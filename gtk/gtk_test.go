@@ -709,3 +709,28 @@ func TestBuilder(t *testing.T) {
 		t.Error("Failed to call callback")
 	}
 }
+
+func TestTextTagEvent(t *testing.T) {
+	textTag, err := TextTagNew("mytexttag")
+	if err != nil {
+		t.Error("could not create text tag")
+	}
+
+	var iter TextIter
+	ok := textTag.Event(textTag.Object, nil, &iter)
+
+	if ok {
+		t.Error("event should not have been handled")
+	}
+
+	textTag.Connect("event", func() bool {
+		return true
+	})
+
+	ok = textTag.Event(textTag.Object, nil, &iter)
+
+	if !ok {
+		t.Error("event should have been handled")
+	}
+
+}
