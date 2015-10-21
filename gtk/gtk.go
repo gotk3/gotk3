@@ -5696,16 +5696,8 @@ func MenuNew() (*Menu, error) {
 
 // PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
 func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button int, activateTime uint32) {
-	var wshell *C.GtkWidget = nil
-	if parentMenuShell != nil {
-		wshell = parentMenuShell.toWidget()
-	}
-	var witem *C.GtkWidget = nil
-	if parentMenuItem != nil {
-		witem = parentMenuItem.toWidget()
-	} else {
-
-	}
+	wshell := nullableWidget(parentMenuShell)
+	witem := nullableWidget(parentMenuItem)
 
 	C.gtk_menu_popup(v.native(),
 		wshell,
@@ -6131,10 +6123,7 @@ func NotebookNew() (*Notebook, error) {
 
 // AppendPage() is a wrapper around gtk_notebook_append_page().
 func (v *Notebook) AppendPage(child IWidget, tabLabel IWidget) int {
-	var cTabLabel *C.GtkWidget
-	if tabLabel != nil {
-		cTabLabel = tabLabel.toWidget()
-	}
+	cTabLabel := nullableWidget(tabLabel)
 	c := C.gtk_notebook_append_page(v.native(), child.toWidget(), cTabLabel)
 	return int(c)
 }
@@ -6148,10 +6137,7 @@ func (v *Notebook) AppendPageMenu(child IWidget, tabLabel IWidget, menuLabel IWi
 
 // PrependPage() is a wrapper around gtk_notebook_prepend_page().
 func (v *Notebook) PrependPage(child IWidget, tabLabel IWidget) int {
-	var cTabLabel *C.GtkWidget
-	if tabLabel != nil {
-		cTabLabel = tabLabel.toWidget()
-	}
+	cTabLabel := nullableWidget(tabLabel)
 	c := C.gtk_notebook_prepend_page(v.native(), child.toWidget(), cTabLabel)
 	return int(c)
 }
@@ -6165,8 +6151,9 @@ func (v *Notebook) PrependPageMenu(child IWidget, tabLabel IWidget, menuLabel IW
 
 // InsertPage() is a wrapper around gtk_notebook_insert_page().
 func (v *Notebook) InsertPage(child IWidget, tabLabel IWidget, position int) int {
-	c := C.gtk_notebook_insert_page(v.native(), child.toWidget(),
-		tabLabel.toWidget(), C.gint(position))
+	label := nullableWidget(tabLabel)
+	c := C.gtk_notebook_insert_page(v.native(), child.toWidget(), label, C.gint(position))
+
 	return int(c)
 }
 
@@ -8855,10 +8842,7 @@ func wrapToolButton(obj *glib.Object) *ToolButton {
 func ToolButtonNew(iconWidget IWidget, label string) (*ToolButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	var w *C.GtkWidget
-	if iconWidget != nil {
-		w = iconWidget.toWidget()
-	}
+	w := nullableWidget(iconWidget)
 	c := C.gtk_tool_button_new(w, (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
@@ -9905,6 +9889,18 @@ type IWidget interface {
 	Set(string, interface{}) error
 }
 
+type IWidgetable interface {
+	toWidget() *C.GtkWidget
+}
+
+func nullableWidget(v IWidgetable) *C.GtkWidget {
+	if v == nil {
+		return nil
+	}
+
+	return v.toWidget()
+}
+
 // native returns a pointer to the underlying GtkWidget.
 func (v *Widget) native() *C.GtkWidget {
 	if v == nil || v.GObject == nil {
@@ -10449,10 +10445,8 @@ func (v *Widget) SetVExpand(expand bool) {
 
 // TranslateCoordinates is a wrapper around gtk_widget_translate_coordinates().
 func (v *Widget) TranslateCoordinates(dest IWidget, srcX, srcY int) (destX, destY int, e error) {
-	var cdest *C.GtkWidget
-	if dest != nil {
-		cdest = dest.toWidget()
-	}
+	cdest := nullableWidget(dest)
+
 	var cdestX, cdestY C.gint
 	c := C.gtk_widget_translate_coordinates(v.native(), cdest, C.gint(srcX), C.gint(srcY), &cdestX, &cdestY)
 	if !gobool(c) {
