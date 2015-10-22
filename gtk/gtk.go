@@ -8002,6 +8002,20 @@ func wrapStyleContext(obj *glib.Object) *StyleContext {
 	return &StyleContext{obj}
 }
 
+func (v *StyleContext) AddClass(class_name string) {
+	cstr := C.CString(class_name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.gtk_style_context_add_class(v.native(), (*C.gchar)(cstr))
+}
+
+func (v *StyleContext) RemoveClass(class_name string) {
+	cstr := C.CString(class_name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.gtk_style_context_remove_class(v.native(), (*C.gchar)(cstr))
+}
+
 /*
  * GtkSwitch
  */
