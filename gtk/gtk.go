@@ -67,6 +67,7 @@ func init() {
 		{glib.Type(C.gtk_align_get_type()), marshalAlign},
 		{glib.Type(C.gtk_accel_flags_get_type()), marshalAccelFlags},
 		{glib.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
+		{glib.Type(C.gtk_accel_map_get_type()), marshalAccelMap},
 		{glib.Type(C.gtk_arrow_placement_get_type()), marshalArrowPlacement},
 		{glib.Type(C.gtk_arrow_type_get_type()), marshalArrowType},
 		{glib.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
@@ -105,6 +106,7 @@ func init() {
 		// Objects/Interfaces
 		{glib.Type(C.gtk_about_dialog_get_type()), marshalAboutDialog},
 		{glib.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
+		{glib.Type(C.gtk_accel_map_get_type()), marshalAccelMap},
 		{glib.Type(C.gtk_adjustment_get_type()), marshalAdjustment},
 		{glib.Type(C.gtk_assistant_get_type()), marshalAssistant},
 		{glib.Type(C.gtk_bin_get_type()), marshalBin},
@@ -263,20 +265,6 @@ const (
 func marshalAlign(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Align(c), nil
-}
-
-// AccelFlags is a representation of GTK's GtkAccelFlags
-type AccelFlags int
-
-const (
-	ACCEL_VISIBLE AccelFlags = C.GTK_ACCEL_VISIBLE
-	ACCEL_LOCKED  AccelFlags = C.GTK_ACCEL_LOCKED
-	ACCEL_MASK    AccelFlags = C.GTK_ACCEL_MASK
-)
-
-func marshalAccelFlags(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return AccelFlags(c), nil
 }
 
 // ArrowPlacement is a representation of GTK's GtkArrowPlacement.
@@ -865,23 +853,6 @@ func MainQuit() {
 	C.gtk_main_quit()
 }
 
-// AcceleratorName is a wrapper around gtk_accelerator_name().
-func AcceleratorName(key uint, mods gdk.ModifierType) string {
-	c := C.gtk_accelerator_name(C.guint(key), C.GdkModifierType(mods))
-	defer C.free(unsafe.Pointer(c))
-	return C.GoString((*C.char)(c))
-}
-
-// AcceleratorValid is a wrapper around gtk_accelerator_valid().
-func AcceleratorValid(key uint, mods gdk.ModifierType) bool {
-	return gobool(C.gtk_accelerator_valid(C.guint(key), C.GdkModifierType(mods)))
-}
-
-// AcceleratorGetDefaultModMask is a wrapper around gtk_accelerator_get_default_mod_mask().
-func AcceleratorGetDefaultModMask() gdk.ModifierType {
-	return gdk.ModifierType(C.gtk_accelerator_get_default_mod_mask())
-}
-
 /*
  * GtkAboutDialog
  */
@@ -1090,44 +1061,6 @@ func (v *AboutDialog) GetWrapLicense() bool {
 // SetWrapLicense is a wrapper around gtk_about_dialog_set_wrap_license().
 func (v *AboutDialog) SetWrapLicense(wrapLicense bool) {
 	C.gtk_about_dialog_set_wrap_license(v.native(), gbool(wrapLicense))
-}
-
-/*
- * GtkAccelGroup
- */
-
-// AccelGroup is a representation of GTK's GtkAccelGroup.
-type AccelGroup struct {
-	glib.InitiallyUnowned
-}
-
-// native returns a pointer to the underlying GtkAccelGroup.
-func (v *AccelGroup) native() *C.GtkAccelGroup {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkAccelGroup(p)
-}
-
-func marshalAccelGroup(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapAccelGroup(obj), nil
-}
-
-func wrapAccelGroup(obj *glib.Object) *AccelGroup {
-	return &AccelGroup{glib.InitiallyUnowned{obj}}
-}
-
-// AccelGroup is a wrapper around gtk_accel_group_new().
-func AccelGroupNew() (*AccelGroup, error) {
-	c := C.gtk_accel_group_new()
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAccelGroup(obj), nil
 }
 
 /*
@@ -6827,7 +6760,7 @@ func (v *RadioButton) SetGroup(group *glib.SList) {
 	C.gtk_radio_button_set_group(v.native(), gslist)
 }
 
-// GetGroup is a wrapper around gtk_radio_button_set_group().
+// GetGroup is a wrapper around gtk_radio_button_get_group().
 func (v *RadioButton) GetGroup() (*glib.SList, error) {
 	c := C.gtk_radio_button_get_group(v.native())
 	if c == nil {
@@ -10073,37 +10006,6 @@ func (v *Allocation) native() *C.GtkAllocation {
 	return (*C.GtkAllocation)(unsafe.Pointer(&v.GdkRectangle))
 }
 
-// AddAccelerator() is a wrapper around gtk_widget_add_accelerator().
-func (v *Widget) AddAccelerator(signal string, group *AccelGroup, key uint, mods gdk.ModifierType, flags AccelFlags) {
-	csignal := (*C.gchar)(C.CString(signal))
-	defer C.free(unsafe.Pointer(csignal))
-
-	C.gtk_widget_add_accelerator(v.native(),
-		csignal,
-		group.native(),
-		C.guint(key),
-		C.GdkModifierType(mods),
-		C.GtkAccelFlags(flags))
-}
-
-// TODO(jrick) GtkAccelGroup GdkModifierType
-/*
-func (v *Widget) RemoveAccelerator() {
-}
-*/
-
-// TODO(jrick) GtkAccelGroup
-/*
-func (v *Widget) SetAccelPath() {
-}
-*/
-
-// TODO(jrick) GList
-/*
-func (v *Widget) ListAccelClosures() {
-}
-*/
-
 // GetAllocatedWidth() is a wrapper around gtk_widget_get_allocated_width().
 func (v *Widget) GetAllocatedWidth() int {
 	return int(C.gtk_widget_get_allocated_width(v.native()))
@@ -10112,12 +10014,6 @@ func (v *Widget) GetAllocatedWidth() int {
 // GetAllocatedHeight() is a wrapper around gtk_widget_get_allocated_height().
 func (v *Widget) GetAllocatedHeight() int {
 	return int(C.gtk_widget_get_allocated_height(v.native()))
-}
-
-//gboolean gtk_widget_can_activate_accel(GtkWidget *widget, guint signal_id);
-func (v *Widget) CanActivateAccel(signal_id uint) bool {
-	c := C.gtk_widget_can_activate_accel(v.native(), C.guint(signal_id))
-	return gobool(c)
 }
 
 // Event() is a wrapper around gtk_widget_event().
@@ -10557,16 +10453,6 @@ func (v *Window) SetResizable(resizable bool) {
 func (v *Window) GetResizable() bool {
 	c := C.gtk_window_get_resizable(v.native())
 	return gobool(c)
-}
-
-// AddAccelGroup() is a wrapper around gtk_window_add_accel_group().
-func (v *Window) AddAccelGroup(accelGroup *AccelGroup) {
-	C.gtk_window_add_accel_group(v.native(), accelGroup.native())
-}
-
-// RemoveAccelGroup() is a wrapper around gtk_window_add_accel_group().
-func (v *Window) RemoveAccelGroup(accelGroup *AccelGroup) {
-	C.gtk_window_remove_accel_group(v.native(), accelGroup.native())
 }
 
 // ActivateFocus is a wrapper around gtk_window_activate_focus().
@@ -11021,6 +10907,7 @@ type WrapFn interface{}
 var WrapMap = map[string]WrapFn{
 	"GtkAboutDialog":         wrapAboutDialog,
 	"GtkAccelGroup":          wrapAccelGroup,
+	"GtkAccelMao":            wrapAccelMap,
 	"GtkAdjustment":          wrapAdjustment,
 	"GtkBin":                 wrapBin,
 	"GtkBox":                 wrapBox,

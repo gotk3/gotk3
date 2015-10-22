@@ -16,6 +16,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifndef __GTK_GO_H__
+#define __GTK_GO_H__
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -150,6 +153,12 @@ static GtkAccelGroup *
 toGtkAccelGroup(void *p)
 {
     return (GTK_ACCEL_GROUP(p));
+}
+
+static GtkAccelMap *
+toGtkAccelMap(void *p)
+{
+    return (GTK_ACCEL_MAP(p));
 }
 
 static GtkTextTag *
@@ -619,7 +628,7 @@ _gtk_tree_view_column_new_with_attributes_one(const gchar *title,
 	return (tvc);
 }
 
-void
+static void
 _gtk_list_store_set(GtkListStore *list_store, GtkTreeIter *iter, gint column,
 	void* value)
 {
@@ -647,14 +656,14 @@ _gtk_message_dialog_new_with_markup(GtkWindow *parent, GtkDialogFlags flags,
 	return (w);
 }
 
-void
+static void
 _gtk_message_dialog_format_secondary_text(GtkMessageDialog *message_dialog,
     const gchar *msg)
 {
 	gtk_message_dialog_format_secondary_text(message_dialog, "%s", msg);
 }
 
-void
+static void
 _gtk_message_dialog_format_secondary_markup(GtkMessageDialog *message_dialog,
     const gchar *msg)
 {
@@ -667,7 +676,7 @@ object_get_class_name(GObject *object)
 	return G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(object));
 }
 
-GtkWidget *
+static GtkWidget *
 gtk_file_chooser_dialog_new_1(
 	const gchar *title,
 	GtkWindow *parent,
@@ -680,7 +689,7 @@ gtk_file_chooser_dialog_new_1(
 		NULL);
 }
 
-GtkWidget *
+static GtkWidget *
 gtk_file_chooser_dialog_new_2(
 	const gchar *title,
 	GtkWindow *parent,
@@ -716,3 +725,5 @@ static inline void set_string(gchar** strings, int n, gchar* str) {
 }
 
 static inline gchar** next_gcharptr(gchar** s) { return (s+1); }
+
+#endif
