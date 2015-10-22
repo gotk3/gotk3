@@ -211,10 +211,7 @@ func gbool(b bool) C.gboolean {
 }
 
 func gobool(b C.gboolean) bool {
-	if b != 0 {
-		return true
-	}
-	return false
+	return b != C.FALSE
 }
 
 // Wrapper function for new objects with reference management.
@@ -8374,6 +8371,16 @@ func (v *TextTag) GetPriority() int {
 // SetPriority() is a wrapper around gtk_text_tag_set_priority().
 func (v *TextTag) SetPriority(priority int) {
 	C.gtk_text_tag_set_priority(v.native(), C.gint(priority))
+}
+
+// Event() is a wrapper around gtk_text_tag_event().
+func (v *TextTag) Event(eventObject *glib.Object, event *gdk.Event, iter *TextIter) bool {
+	ok := C.gtk_text_tag_event(v.native(),
+		(*C.GObject)(unsafe.Pointer(eventObject.Native())),
+		(*C.GdkEvent)(unsafe.Pointer(event.Native())),
+		(*C.GtkTextIter)(iter),
+	)
+	return gobool(ok)
 }
 
 /*
