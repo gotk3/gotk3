@@ -1405,3 +1405,5 @@ func SignalNew(s string) (*Signal, error) {
 func (s *Signal) String() string {
 	return s.name
 }
+
+type Quark uint32
