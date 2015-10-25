@@ -1711,7 +1711,7 @@ func ColorButtonNew() (*ColorButton, error) {
 
 // ColorButtonNewWithRGBA is a wrapper around gtk_color_button_new_with_rgba().
 func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
-	c := C.gtk_color_button_new_with_rgba((*C.GdkRGBA)(unsafe.Pointer((&gdkColor.RGBA))))
+	c := C.gtk_color_button_new_with_rgba((*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -1725,13 +1725,13 @@ func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
 // GetRGBA is a wrapper around gtk_color_chooser_get_rgba().
 func (v *ColorButton) GetRGBA() *gdk.RGBA {
 	gdkColor := gdk.NewRGBA()
-	C.gtk_color_chooser_get_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer((&gdkColor.RGBA))))
+	C.gtk_color_chooser_get_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 	return gdkColor
 }
 
 // SetRGBA is a wrapper around gtk_color_chooser_set_rgba().
 func (v *ColorButton) SetRGBA(gdkColor *gdk.RGBA) {
-	C.gtk_color_chooser_set_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer((&gdkColor.RGBA))))
+	C.gtk_color_chooser_set_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 }
 
 /*
@@ -7911,42 +7911,6 @@ func (v *Statusbar) GetMessageArea() (*Box, error) {
 }
 
 /*
- * GtkStyleContext
- */
-
-// StyleContext is a representation of GTK's GtkStyleContext.
-type StyleContext struct {
-	*glib.Object
-}
-
-// native returns a pointer to the underlying GtkStyleContext.
-func (v *StyleContext) native() *C.GtkStyleContext {
-	if v == nil || v.Object == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkStyleContext(p)
-}
-
-func wrapStyleContext(obj *glib.Object) *StyleContext {
-	return &StyleContext{obj}
-}
-
-func (v *StyleContext) AddClass(class_name string) {
-	cstr := C.CString(class_name)
-	defer C.free(unsafe.Pointer(cstr))
-
-	C.gtk_style_context_add_class(v.native(), (*C.gchar)(cstr))
-}
-
-func (v *StyleContext) RemoveClass(class_name string) {
-	cstr := C.CString(class_name)
-	defer C.free(unsafe.Pointer(cstr))
-
-	C.gtk_style_context_remove_class(v.native(), (*C.gchar)(cstr))
-}
-
-/*
  * GtkSwitch
  */
 
@@ -9896,17 +9860,6 @@ func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions 
 		C.gint(len(targets)), C.GdkDragAction(actions))
 }
 */
-
-// GetStyleContext is a wrapper around gtk_widget_get_style_context().
-func (v *Widget) GetStyleContext() (*StyleContext, error) {
-	c := C.gtk_widget_get_style_context(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapStyleContext(obj), nil
-}
 
 // ResetStyle is a wrapper around gtk_widget_reset_style().
 func (v *Widget) ResetStyle() {

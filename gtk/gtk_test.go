@@ -24,6 +24,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -716,8 +717,10 @@ func TestTextTagEvent(t *testing.T) {
 		t.Error("could not create text tag")
 	}
 
+	evk := gdk.EventKeyNew()
+
 	var iter TextIter
-	ok := textTag.Event(textTag.Object, nil, &iter)
+	ok := textTag.Event(textTag.Object, evk.Event, &iter)
 
 	if ok {
 		t.Error("event should not have been handled")
@@ -727,7 +730,7 @@ func TestTextTagEvent(t *testing.T) {
 		return true
 	})
 
-	ok = textTag.Event(textTag.Object, nil, &iter)
+	ok = textTag.Event(textTag.Object, evk.Event, &iter)
 
 	if !ok {
 		t.Error("event should have been handled")

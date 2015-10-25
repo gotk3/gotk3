@@ -48,6 +48,7 @@ func init() {
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
 		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
 		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
+		{glib.Type(C.gdk_rgba_get_type()), marshalRGBA},
 		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
 		{glib.Type(C.gdk_visual_get_type()), marshalVisual},
 		{glib.Type(C.gdk_window_get_type()), marshalWindow},
@@ -843,6 +844,12 @@ type EventKey struct {
 	*Event
 }
 
+func EventKeyNew() *EventKey {
+	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventKey{}))
+	ev := Event{ee}
+	return &EventKey{&ev}
+}
+
 // Native returns a pointer to the underlying GdkEventKey.
 func (v *EventKey) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
@@ -1292,33 +1299,62 @@ func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
 }
 
 type RGBA struct {
-	RGBA C.GdkRGBA
+	rgba *C.GdkRGBA
+}
+
+func marshalRGBA(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	c2 := (*C.GdkRGBA)(unsafe.Pointer(c))
+	return wrapRGBA(c2), nil
+}
+
+func wrapRGBA(obj *C.GdkRGBA) *RGBA {
+	return &RGBA{obj}
 }
 
 func NewRGBA(values ...float64) *RGBA {
-	c := &RGBA{}
+	cval := C.GdkRGBA{}
+	c := &RGBA{&cval}
 	if len(values) > 0 {
-		c.RGBA.red = C.gdouble(values[0])
+		c.rgba.red = C.gdouble(values[0])
 	}
 	if len(values) > 1 {
-		c.RGBA.green = C.gdouble(values[1])
+		c.rgba.green = C.gdouble(values[1])
 	}
 	if len(values) > 2 {
-		c.RGBA.blue = C.gdouble(values[2])
+		c.rgba.blue = C.gdouble(values[2])
 	}
 	if len(values) > 3 {
-		c.RGBA.alpha = C.gdouble(values[3])
+		c.rgba.alpha = C.gdouble(values[3])
 	}
 	return c
 }
 
 func (c *RGBA) Floats() []float64 {
-	return []float64{float64(c.RGBA.red), float64(c.RGBA.green), float64(c.RGBA.blue), float64(c.RGBA.alpha)}
+	return []float64{float64(c.rgba.red), float64(c.rgba.green), float64(c.rgba.blue), float64(c.rgba.alpha)}
 }
 
 func (v *RGBA) Native() uintptr {
-	return uintptr(unsafe.Pointer(&v.RGBA))
+	return uintptr(unsafe.Pointer(v.rgba))
 }
+
+// Parse is a representation of gdk_rgba_parse().
+func (v *RGBA) Parse(spec string) bool {
+	cstr := (*C.gchar)(C.CString(spec))
+	defer C.free(unsafe.Pointer(cstr))
+
+	return gobool(C.gdk_rgba_parse(v.rgba, cstr))
+}
+
+// String is a representation of gdk_rgba_to_string().
+func (v *RGBA) String() string {
+	return C.GoString((*C.char)(C.gdk_rgba_to_string(v.rgba)))
+}
+
+// GdkRGBA * 	gdk_rgba_copy ()
+// void 	gdk_rgba_free ()
+// gboolean 	gdk_rgba_equal ()
+// guint 	gdk_rgba_hash ()
 
 // PixbufGetType is a wrapper around gdk_pixbuf_get_type().
 func PixbufGetType() glib.Type {
