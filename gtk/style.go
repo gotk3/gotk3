@@ -162,9 +162,31 @@ func (v *StyleContext) SetState(state StateFlags) {
 	C.gtk_style_context_set_state(v.native(), C.GtkStateFlags(state))
 }
 
+type IStyleProvider interface {
+	toStyleProvider() *C.GtkStyleProvider
+}
+
+// AddProvider is a wrapper around gtk_style_context_add_provider().
+func (v *StyleContext) AddProvider(provider IStyleProvider, prio uint) {
+	C.gtk_style_context_add_provider(v.native(), provider.toStyleProvider(), C.guint(prio))
+}
+
+// AddProviderForScreen is a wrapper around gtk_style_context_add_provider_for_screen().
+func AddProviderForScreen(s *gdk.Screen, provider IStyleProvider, prio uint) {
+	C.gtk_style_context_add_provider_for_screen((*C.GdkScreen)(unsafe.Pointer(s.Native())), provider.toStyleProvider(), C.guint(prio))
+}
+
+// RemoveProvider is a wrapper around gtk_style_context_remove_provider().
+func (v *StyleContext) RemoveProvider(provider IStyleProvider) {
+	C.gtk_style_context_remove_provider(v.native(), provider.toStyleProvider())
+}
+
+// RemoveProviderForScreen is a wrapper around gtk_style_context_remove_provider_for_screen().
+func RemoveProviderForScreen(s *gdk.Screen, provider IStyleProvider) {
+	C.gtk_style_context_remove_provider_for_screen((*C.GdkScreen)(unsafe.Pointer(s.Native())), provider.toStyleProvider())
+}
+
 // GtkStyleContext * 	gtk_style_context_new ()
-// void 	gtk_style_context_add_provider ()
-// void 	gtk_style_context_add_provider_for_screen ()
 // void 	gtk_style_context_get ()
 // GtkTextDirection 	gtk_style_context_get_direction ()
 // GtkJunctionSides 	gtk_style_context_get_junction_sides ()
@@ -183,8 +205,6 @@ func (v *StyleContext) SetState(state StateFlags) {
 // void 	gtk_style_context_invalidate ()
 // gboolean 	gtk_style_context_state_is_running ()
 // GtkIconSet * 	gtk_style_context_lookup_icon_set ()
-// void 	gtk_style_context_remove_provider ()
-// void 	gtk_style_context_remove_provider_for_screen ()
 // void 	gtk_style_context_cancel_animations ()
 // void 	gtk_style_context_scroll_animations ()
 // void 	gtk_style_context_notify_state_change ()
