@@ -147,7 +147,7 @@ const (
 
 func marshalFontDescription(p uintptr) (interface{}, error) {
 	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
-	c2 := (*C.PangoFontDescription)(unsafe.Pointer(p))
+	c2 := (*C.PangoFontDescription)(unsafe.Pointer(c))
 	return wrapFontDescription(c2), nil
 }
 
