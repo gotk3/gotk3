@@ -25,16 +25,17 @@ import (
 	//	"github.com/andre-hub/gotk3/glib"
 	//	"github.com/andre-hub/gotk3/cairo"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
 )
 
 func init() {
-	//	tm := []glib.TypeMarshaler{
-	//		// Enums
-	//		{glib.Type(C.pango_alignement_get_type()), marshalAlignment},
-	//		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
-	//		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
-	//	}
-	//	glib.RegisterGValueMarshalers(tm)
+	tm := []glib.TypeMarshaler{
+		// Enums
+		// Objects/Interfaces
+		{glib.Type(C.pango_font_description_get_type()), marshalFontDescription},
+	}
+	glib.RegisterGValueMarshalers(tm)
 }
 
 // FontDescription is a representation of PangoFontDescription.
@@ -64,6 +65,10 @@ func (v *FontMetrics) Native() uintptr {
 func (v *FontMetrics) native() *C.PangoFontMetrics {
 	return (*C.PangoFontMetrics)(unsafe.Pointer(v.pangoFontMetrics))
 }
+
+const (
+	PANGO_SCALE = C.PANGO_SCALE
+)
 
 type Style int
 
@@ -139,6 +144,15 @@ const (
 /*
  * PangoFontDescription
  */
+
+func marshalFontDescription(p uintptr) (interface{}, error) {
+	c := (*C.PangoFontDescription)(unsafe.Pointer(p))
+	return wrapFontDescription(c), nil
+}
+
+func wrapFontDescription(obj *C.PangoFontDescription) *FontDescription {
+	return &FontDescription{obj}
+}
 
 //PangoFontDescription *pango_font_description_new         (void);
 func FontDescriptionNew() *FontDescription {
