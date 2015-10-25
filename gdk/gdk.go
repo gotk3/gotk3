@@ -1303,8 +1303,9 @@ type RGBA struct {
 }
 
 func marshalRGBA(p uintptr) (interface{}, error) {
-	c := (*C.GdkRGBA)(unsafe.Pointer(p))
-	return wrapRGBA(c), nil
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	c2 := (*C.GdkRGBA)(unsafe.Pointer(c))
+	return wrapRGBA(c2), nil
 }
 
 func wrapRGBA(obj *C.GdkRGBA) *RGBA {
