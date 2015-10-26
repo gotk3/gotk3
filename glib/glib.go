@@ -884,12 +884,6 @@ func (v *List) Free() {
 	C.g_list_free(glist)
 }
 
-// SList is a representation of Glib's GSList.
-type SList struct {
-	Data uintptr
-	Next *SList
-}
-
 /*
  * GValue
  */
