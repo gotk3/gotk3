@@ -6670,7 +6670,7 @@ func wrapRadioButton(obj *glib.Object) *RadioButton {
 
 // RadioButtonNew is a wrapper around gtk_radio_button_new().
 func RadioButtonNew(group *glib.SList) (*RadioButton, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	c := C.gtk_radio_button_new(gslist)
 	if c == nil {
 		return nil, nilPtrErr
@@ -6699,7 +6699,7 @@ func RadioButtonNewFromWidget(radioGroupMember *RadioButton) (*RadioButton, erro
 // RadioButtonNewWithLabel is a wrapper around
 // gtk_radio_button_new_with_label().
 func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_radio_button_new_with_label(gslist, (*C.gchar)(cstr))
@@ -6733,7 +6733,7 @@ func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label stri
 // RadioButtonNewWithMnemonic is a wrapper around
 // gtk_radio_button_new_with_mnemonic()
 func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_radio_button_new_with_mnemonic(gslist, (*C.gchar)(cstr))
@@ -6766,7 +6766,7 @@ func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label s
 
 // SetGroup is a wrapper around gtk_radio_button_set_group().
 func (v *RadioButton) SetGroup(group *glib.SList) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	C.gtk_radio_button_set_group(v.native(), gslist)
 }
 
@@ -6776,7 +6776,7 @@ func (v *RadioButton) GetGroup() (*glib.SList, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return (*glib.SList)(unsafe.Pointer(c)), nil
+	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
 }
 
 // JoinGroup is a wrapper around gtk_radio_button_join_group().
@@ -6815,7 +6815,7 @@ func wrapRadioMenuItem(obj *glib.Object) *RadioMenuItem {
 
 // RadioMenuItemNew is a wrapper around gtk_radio_menu_item_new().
 func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	c := C.gtk_radio_menu_item_new(gslist)
 	if c == nil {
 		return nil, nilPtrErr
@@ -6830,7 +6830,7 @@ func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
 // RadioMenuItemNewWithLabel is a wrapper around
 // gtk_radio_menu_item_new_with_label().
 func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_radio_menu_item_new_with_label(gslist, (*C.gchar)(cstr))
@@ -6847,7 +6847,7 @@ func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem,
 // RadioMenuItemNewWithMnemonic is a wrapper around
 // gtk_radio_menu_item_new_with_mnemonic().
 func RadioMenuItemNewWithMnemonic(group *glib.SList, label string) (*RadioMenuItem, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_radio_menu_item_new_with_mnemonic(gslist, (*C.gchar)(cstr))
@@ -6911,7 +6911,7 @@ func RadioMenuItemNewWithMnemonicFromWidget(group *RadioMenuItem, label string) 
 
 // SetGroup is a wrapper around gtk_radio_menu_item_set_group().
 func (v *RadioMenuItem) SetGroup(group *glib.SList) {
-	gslist := (*C.GSList)(unsafe.Pointer(group))
+	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	C.gtk_radio_menu_item_set_group(v.native(), gslist)
 }
 
@@ -6921,7 +6921,7 @@ func (v *RadioMenuItem) GetGroup() (*glib.SList, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return (*glib.SList)(unsafe.Pointer(c)), nil
+	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
 }
 
 /*

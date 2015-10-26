@@ -16,6 +16,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifndef __GLIB_GO_H__
+#define __GLIB_GO_H__
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -132,3 +135,5 @@ static inline guint _g_signal_new(const gchar *name) {
 		1,
 		G_TYPE_POINTER);
 }
+
+#endif
