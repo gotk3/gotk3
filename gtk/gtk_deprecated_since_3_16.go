@@ -17,7 +17,7 @@ import (
 func (v *Widget) OverrideColor(state StateFlags, color *gdk.RGBA) {
 	var cColor *C.GdkRGBA
 	if color != nil {
-		cColor = (*C.GdkRGBA)(unsafe.Pointer((&color.rgba)))
+		cColor = (*C.GdkRGBA)(unsafe.Pointer(color.Native()))
 	}
 	C.gtk_widget_override_color(v.native(), C.GtkStateFlags(state), cColor)
 }
