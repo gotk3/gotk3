@@ -67,3 +67,18 @@ func (v *List) NthData(n uint) interface{} {
 func (v *List) Free() {
 	C.g_list_free(v.native())
 }
+
+// Next is a wrapper around the next struct field
+func (v *List) Next() *List {
+	return wrapList(v.native().next)
+}
+
+// Previous is a wrapper around the prev struct field
+func (v *List) Previous() *List {
+	return wrapList(v.native().prev)
+}
+
+// Data is a wrapper around the data struct field
+func (v *List) Data() uintptr {
+	return uintptr(v.native().data)
+}
