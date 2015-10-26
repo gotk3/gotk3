@@ -605,6 +605,12 @@ toGtkStyleContext(void *p)
         return (GTK_STYLE_CONTEXT(p));
 }
 
+static GtkStyleProvider *
+toGtkStyleProvider(void *p)
+{
+        return (GTK_STYLE_PROVIDER(p));
+}
+
 
 static GType *
 alloc_types(int n) {

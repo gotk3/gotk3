@@ -2904,6 +2904,13 @@ type CssProvider struct {
 	*glib.Object
 }
 
+func (v *CssProvider) toStyleProvider() *C.GtkStyleProvider {
+	if v == nil {
+		return nil
+	}
+	return C.toGtkStyleProvider(unsafe.Pointer(v.native()))
+}
+
 // native returns a pointer to the underlying GtkCssProvider.
 func (v *CssProvider) native() *C.GtkCssProvider {
 	if v == nil || v.Object == nil {
