@@ -835,56 +835,6 @@ func (v *InitiallyUnowned) Native() uintptr {
 }
 
 /*
- * Linked Lists
- */
-
-// List is a representation of Glib's GList.
-type List struct {
-	Data uintptr
-	Next *List
-	Prev *List
-}
-
-// Append is a wrapper around g_list_append.
-func (v *List) Append(data uintptr) *List {
-	glist := (*C.GList)(unsafe.Pointer(v))
-	glist = C.g_list_append(glist, C.gpointer(data))
-	return (*List)(unsafe.Pointer(glist))
-}
-
-// Prepend is a wrapper around g_list_prepend.
-func (v *List) Prepend(data uintptr) *List {
-	glist := (*C.GList)(unsafe.Pointer(v))
-	glist = C.g_list_prepend(glist, C.gpointer(data))
-	return (*List)(unsafe.Pointer(glist))
-}
-
-// Insert is a wrapper around g_list_insert().
-func (v *List) Insert(data uintptr, position int) *List {
-	glist := (*C.GList)(unsafe.Pointer(v))
-	glist = C.g_list_insert(glist, C.gpointer(data), C.gint(position))
-	return (*List)(unsafe.Pointer(glist))
-}
-
-// Length is a wrapper around g_list_length().
-func (v *List) Length() uint {
-	glist := (*C.GList)(unsafe.Pointer(v))
-	return uint(C.g_list_length(glist))
-}
-
-// NthData is a wrapper around g_list_nth_data().
-func (v *List) NthData(n uint) interface{} {
-	glist := (*C.GList)(unsafe.Pointer(v))
-	return C.g_list_nth_data(glist, C.guint(n))
-}
-
-// Free is a wrapper around g_list_free().
-func (v *List) Free() {
-	glist := (*C.GList)(unsafe.Pointer(v))
-	C.g_list_free(glist)
-}
-
-/*
  * GValue
  */
 
