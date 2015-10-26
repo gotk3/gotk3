@@ -351,7 +351,7 @@ func TimeoutAdd(timeout uint, f interface{}, args ...interface{}) (SourceHandle,
 }
 
 // sourceAttach attaches a source to the default main loop context.
-func sourceAttach(src *C.GSource, rf reflect.Value, args ...interface{}) (SourceHandle, error) {
+func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{}) (SourceHandle, error) {
 	if src == nil {
 		return 0, errNilPtr
 	}

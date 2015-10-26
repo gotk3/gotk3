@@ -9,14 +9,14 @@ import "unsafe"
 
 // SList is a representation of Glib's GSList.
 type SList struct {
-	list *C.GSList
+	list *C.struct__GSList
 }
 
 func WrapSList(obj uintptr) *SList {
-	return wrapSList((*C.GSList)(unsafe.Pointer(obj)))
+	return wrapSList((*C.struct__GSList)(unsafe.Pointer(obj)))
 }
 
-func wrapSList(obj *C.GSList) *SList {
+func wrapSList(obj *C.struct__GSList) *SList {
 	return &SList{obj}
 }
 
@@ -24,7 +24,7 @@ func (v *SList) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.list))
 }
 
-func (v *SList) native() *C.GSList {
+func (v *SList) native() *C.struct__GSList {
 	if v == nil || v.list == nil {
 		return nil
 	}

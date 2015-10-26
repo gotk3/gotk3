@@ -13,14 +13,14 @@ import "unsafe"
 
 // List is a representation of Glib's GList.
 type List struct {
-	list *C.GList
+	list *C.struct__GList
 }
 
 func WrapList(obj uintptr) *List {
-	return wrapList((*C.GList)(unsafe.Pointer(obj)))
+	return wrapList((*C.struct__GList)(unsafe.Pointer(obj)))
 }
 
-func wrapList(obj *C.GList) *List {
+func wrapList(obj *C.struct__GList) *List {
 	return &List{obj}
 }
 
@@ -28,7 +28,7 @@ func (v *List) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.list))
 }
 
-func (v *List) native() *C.GList {
+func (v *List) native() *C.struct__GList {
 	if v == nil || v.list == nil {
 		return nil
 	}
