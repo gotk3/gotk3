@@ -8,15 +8,16 @@ package gtk
 import "C"
 
 import (
-	"github.com/gotk3/gotk3/gdk"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/gdk"
 )
 
 // OverrideColor is a wrapper around gtk_widget_override_color().
 func (v *Widget) OverrideColor(state StateFlags, color *gdk.RGBA) {
 	var cColor *C.GdkRGBA
 	if color != nil {
-		cColor = (*C.GdkRGBA)(unsafe.Pointer((&color.RGBA)))
+		cColor = (*C.GdkRGBA)(unsafe.Pointer((&color.rgba)))
 	}
 	C.gtk_widget_override_color(v.native(), C.GtkStateFlags(state), cColor)
 }
