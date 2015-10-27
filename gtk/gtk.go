@@ -9696,6 +9696,17 @@ func (v *Widget) SetCanFocus(canFocus bool) {
 	C.gtk_widget_set_can_focus(v.native(), gbool(canFocus))
 }
 
+// GetCanDefault is a wrapper around gtk_widget_get_can_default().
+func (v *Widget) GetCanDefault() bool {
+	c := C.gtk_widget_get_can_default(v.native())
+	return gobool(c)
+}
+
+// SetCanDefault is a wrapper around gtk_widget_set_can_default().
+func (v *Widget) SetCanDefault(canDefault bool) {
+	C.gtk_widget_set_can_default(v.native(), gbool(canDefault))
+}
+
 // GetMapped is a wrapper around gtk_window_get_mapped().
 func (v *Widget) GetMapped() bool {
 	c := C.gtk_widget_get_mapped(v.native())
@@ -10359,9 +10370,20 @@ func (v *Window) HasToplevelFocus() bool {
 
 // TODO gtk_window_set_focus().
 
-// TODO gtk_window_get_default_widget().
+// GetDefaultWidget is a wrapper arround gtk_window_get_default_widget().
+func (v *Window) GetDefaultWidget() *Widget {
+	c := C.gtk_window_get_default_widget(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapWidget(obj)
+}
 
-// TODO gtk_window_set_default().
+// SetDefault is a wrapper arround gtk_window_set_default().
+func (v *Window) SetDefault(widget IWidget) {
+	C.gtk_window_set_default(v.native(), widget.toWidget())
+}
 
 // Present is a wrapper around gtk_window_present().
 func (v *Window) Present() {
