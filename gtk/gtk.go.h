@@ -29,6 +29,12 @@ toGtkAboutDialog(void *p)
 	return (GTK_ABOUT_DIALOG(p));
 }
 
+static GtkApplication *
+toGtkApplication(void *p)
+{
+	return (GTK_APPLICATION(p));
+}
+
 static GtkAssistant *
 toGtkAssistant(void *p)
 {
