@@ -2873,9 +2873,9 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
 
 	var widgets []*Widget
-	wlist := (*glib.List)(unsafe.Pointer(cwlist))
-	for ; wlist.Data != uintptr(unsafe.Pointer(nil)); wlist = wlist.Next {
-		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(wlist.Data))}
+	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
+	for ; wlist.Data() != uintptr(unsafe.Pointer(nil)); wlist = wlist.Next() {
+		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(wlist.Data()))}
 		w := wrapWidget(obj)
 		obj.RefSink()
 		runtime.SetFinalizer(obj, (*glib.Object).Unref)
@@ -9255,7 +9255,7 @@ func TreePathFromList(list *glib.List) *TreePath {
 	if list == nil {
 		return nil
 	}
-	return &TreePath{(*C.GtkTreePath)(unsafe.Pointer(list.Data))}
+	return &TreePath{(*C.GtkTreePath)(unsafe.Pointer(list.Data()))}
 }
 
 // native returns a pointer to the underlying GtkTreePath.
@@ -9465,129 +9465,6 @@ func (v *TreeStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 // Clear is a wrapper around gtk_tree_store_clear().
 func (v *TreeStore) Clear() {
 	C.gtk_tree_store_clear(v.native())
-}
-
-/*
- * GtkTreeView
- */
-
-// TreeView is a representation of GTK's GtkTreeView.
-type TreeView struct {
-	Container
-}
-
-// native returns a pointer to the underlying GtkTreeView.
-func (v *TreeView) native() *C.GtkTreeView {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkTreeView(p)
-}
-
-func marshalTreeView(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return wrapTreeView(obj), nil
-}
-
-func wrapTreeView(obj *glib.Object) *TreeView {
-	return &TreeView{Container{Widget{glib.InitiallyUnowned{obj}}}}
-}
-
-// TreeViewNew() is a wrapper around gtk_tree_view_new().
-func TreeViewNew() (*TreeView, error) {
-	c := C.gtk_tree_view_new()
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeView(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
-}
-
-// TreeViewNewWithModel() is a wrapper around gtk_tree_view_new_with_model().
-func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
-	c := C.gtk_tree_view_new_with_model(model.toTreeModel())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeView(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
-}
-
-// SetHeadersVisible() is a wraper around gtk_tree_view_set_headers_visible()
-func (v *TreeView) SetHeadersVisible(flag bool) {
-	C.gtk_tree_view_set_headers_visible(v.native(), gbool(flag))
-}
-
-// GetModel() is a wrapper around gtk_tree_view_get_model().
-func (v *TreeView) GetModel() (*TreeModel, error) {
-	c := C.gtk_tree_view_get_model(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeModel(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
-}
-
-// SetModel() is a wrapper around gtk_tree_view_set_model().
-func (v *TreeView) SetModel(model ITreeModel) {
-	C.gtk_tree_view_set_model(v.native(), model.toTreeModel())
-}
-
-// GetSelection() is a wrapper around gtk_tree_view_get_selection().
-func (v *TreeView) GetSelection() (*TreeSelection, error) {
-	c := C.gtk_tree_view_get_selection(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapTreeSelection(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
-}
-
-// AppendColumn() is a wrapper around gtk_tree_view_append_column().
-func (v *TreeView) AppendColumn(column *TreeViewColumn) int {
-	c := C.gtk_tree_view_append_column(v.native(), column.native())
-	return int(c)
-}
-
-// GetPathAtPos() is a wrapper around gtk_tree_view_get_path_at_pos().
-func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn, cellX, cellY *int) bool {
-	var ctp **C.GtkTreePath
-	if path != nil {
-		ctp = (**C.GtkTreePath)(unsafe.Pointer(&path.GtkTreePath))
-	} else {
-		ctp = nil
-	}
-
-	var pctvcol **C.GtkTreeViewColumn
-	if column != nil {
-		ctvcol := column.native()
-		pctvcol = &ctvcol
-	} else {
-		pctvcol = nil
-	}
-
-	return 0 != C.gtk_tree_view_get_path_at_pos(
-		v.native(),
-		(C.gint)(x),
-		(C.gint)(y),
-		ctp,
-		pctvcol,
-		(*C.gint)(unsafe.Pointer(cellX)),
-		(*C.gint)(unsafe.Pointer(cellY)))
 }
 
 /*
