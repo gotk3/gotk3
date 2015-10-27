@@ -2870,7 +2870,7 @@ func GdkCairoSetSourcePixBuf(cr *cairo.Context, pixbuf *gdk.Pixbuf, pixbufX, pix
 // GetFocusChain is a wrapper around gtk_container_get_focus_chain().
 func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	var cwlist *C.GList
-	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
+	c := C.gtk_container_get_focus_chain(v.native(), (**C.GList)(&cwlist))
 
 	var widgets []*Widget
 	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
@@ -2892,7 +2892,7 @@ func (v *Container) SetFocusChain(focusableWidgets []IWidget) {
 		list = list.Append(data)
 	}
 	glist := (*C.GList)(unsafe.Pointer(list))
-	C.gtk_container_set_focus_chain(v.native(), glist)
+	C.gtk_container_set_focus_chain(v.native(), (*C.GList)(glist))
 }
 
 /*
@@ -9354,9 +9354,9 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 	}
 	clist := C.gtk_tree_selection_get_selected_rows(v.native(), pcmodel)
 	glist := (*glib.List)(unsafe.Pointer(clist))
-	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		C.g_list_free_full((*C.GList)(unsafe.Pointer(glist)),
-			(C.GDestroyNotify)(C.gtk_tree_path_free))
+	runtime.SetFinalizer(glist, func(list *glib.List) {
+		glist := (*C.GList)(unsafe.Pointer(list))
+		C.g_list_free_full((*C.GList)(glist), (C.GDestroyNotify)(C.gtk_tree_path_free))
 	})
 	return glist
 }
