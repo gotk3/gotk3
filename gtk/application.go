@@ -87,11 +87,6 @@ func (v *Application) Uninhibit(cookie uint) {
 	C.gtk_application_uninhibit(v.native(), C.guint(cookie))
 }
 
-// PrefersAppMenu is a wrapper around gtk_application_prefers_app_menu().
-func (v *Application) PrefersAppMenu() bool {
-	return gobool(C.gtk_application_prefers_app_menu(v.native()))
-}
-
 // GMenuModel * 	gtk_application_get_app_menu ()
 // void 	gtk_application_set_app_menu ()
 // GMenuModel * 	gtk_application_get_menubar ()
