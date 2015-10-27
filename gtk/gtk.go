@@ -2873,9 +2873,9 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
 
 	var widgets []*Widget
-	wlist := (*glib.List)(unsafe.Pointer(cwlist))
-	for ; wlist.Data != uintptr(unsafe.Pointer(nil)); wlist = wlist.Next {
-		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(wlist.Data))}
+	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
+	for ; wlist.Data() != uintptr(unsafe.Pointer(nil)); wlist = wlist.Next() {
+		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(wlist.Data()))}
 		w := wrapWidget(obj)
 		obj.RefSink()
 		runtime.SetFinalizer(obj, (*glib.Object).Unref)
@@ -9255,7 +9255,7 @@ func TreePathFromList(list *glib.List) *TreePath {
 	if list == nil {
 		return nil
 	}
-	return &TreePath{(*C.GtkTreePath)(unsafe.Pointer(list.Data))}
+	return &TreePath{(*C.GtkTreePath)(unsafe.Pointer(list.Data()))}
 }
 
 // native returns a pointer to the underlying GtkTreePath.
