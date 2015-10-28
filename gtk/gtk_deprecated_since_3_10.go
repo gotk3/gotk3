@@ -27,12 +27,7 @@ package gtk
 // #include <stdlib.h>
 // #include <gtk/gtk.h>
 import "C"
-import (
-	"runtime"
-	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
-)
+import "unsafe"
 
 // ButtonNewFromStock is a wrapper around gtk_button_new_from_stock().
 func ButtonNewFromStock(stock Stock) (*Button, error) {
@@ -42,11 +37,7 @@ func ButtonNewFromStock(stock Stock) (*Button, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := wrapButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return b, nil
+	return wrapButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetUseStock is a wrapper around gtk_button_set_use_stock().
@@ -86,11 +77,7 @@ func ImageNewFromStock(stock Stock, size IconSize) (*Image, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	i := wrapImage(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return i, nil
+	return wrapImage(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetFromStock is a wrapper around gtk_image_set_from_stock().

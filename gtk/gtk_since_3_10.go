@@ -29,7 +29,6 @@ package gtk
 // #include "gtk_since_3_10.go.h"
 import "C"
 import (
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -123,11 +122,7 @@ func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := wrapButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return b, nil
+	return wrapButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -163,11 +158,7 @@ func HeaderBarNew() (*HeaderBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	h := wrapHeaderBar(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return h, nil
+	return wrapHeaderBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetTitle is a wrapper around gtk_header_bar_set_title().
@@ -207,11 +198,7 @@ func (v *HeaderBar) GetCustomTitle() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // PackStart is a wrapper around gtk_header_bar_pack_start().
@@ -284,11 +271,7 @@ func ListBoxNew() (*ListBox, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	l := wrapListBox(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return l, nil
+	return wrapListBox(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Prepend is a wrapper around gtk_list_box_prepend().
@@ -312,11 +295,7 @@ func (v *ListBox) GetSelectedRow() *ListBoxRow {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	l := wrapListBoxRow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return l
+	return wrapListBoxRow(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetSelectionMode is a wrapper around gtk_list_box_set_selection_mode().
@@ -364,11 +343,7 @@ func (v *ListBox) GetRowAtIndex(index int) *ListBoxRow {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	l := wrapListBoxRow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return l
+	return wrapListBoxRow(wrapObject(unsafe.Pointer(c)))
 }
 
 // GetRowAtY is a wrapper around gtk_list_box_get_row_at_y().
@@ -377,11 +352,7 @@ func (v *ListBox) GetRowAtY(y int) *ListBoxRow {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	l := wrapListBoxRow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return l
+	return wrapListBoxRow(wrapObject(unsafe.Pointer(c)))
 }
 
 // InvalidateFilter is a wrapper around gtk_list_box_invalidate_filter().
@@ -441,11 +412,7 @@ func ListBoxRowNew() (*ListBoxRow, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapListBoxRow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapListBoxRow(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Changed is a wrapper around gtk_list_box_row_changed().
@@ -459,11 +426,7 @@ func (v *ListBoxRow) GetHeader() *Widget {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w
+	return wrapWidget(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetHeader is a wrapper around gtk_list_box_row_get_header().
@@ -511,11 +474,7 @@ func RevealerNew() (*Revealer, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRevealer(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRevealer(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetRevealChild is a wrapper around gtk_revealer_get_reveal_child().
@@ -592,11 +551,7 @@ func SearchBarNew() (*SearchBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSearchBar(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSearchBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ConnectEntry is a wrapper around gtk_search_bar_connect_entry().
@@ -666,11 +621,7 @@ func StackNew() (*Stack, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapStack(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapStack(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // AddNamed is a wrapper around gtk_stack_add_named().
@@ -701,11 +652,7 @@ func (v *Stack) GetVisibleChild() *Widget {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s
+	return wrapWidget(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetVisibleChildName is a wrapper around gtk_stack_set_visible_child_name().
@@ -796,11 +743,7 @@ func StackSwitcherNew() (*StackSwitcher, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapStackSwitcher(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapStackSwitcher(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetStack is a wrapper around gtk_stack_switcher_set_stack().
@@ -814,11 +757,7 @@ func (v *StackSwitcher) GetStack() *Stack {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapStack(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s
+	return wrapStack(wrapObject(unsafe.Pointer(c)))
 }
 
 /*
