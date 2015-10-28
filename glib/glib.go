@@ -19,6 +19,7 @@
 package glib
 
 // #cgo pkg-config: glib-2.0 gobject-2.0
+// #include <gio/gio.h>
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
@@ -134,6 +135,21 @@ const (
 )
 
 const USER_N_DIRECTORIES int = C.G_USER_N_DIRECTORIES
+
+/*
+ * GApplicationFlags
+ */
+
+type ApplicationFlags int
+
+const (
+	APPLICATION_FLAGS_NONE           ApplicationFlags = C.G_APPLICATION_FLAGS_NONE
+	APPLICATION_IS_SERVICE           ApplicationFlags = C.G_APPLICATION_IS_SERVICE
+	APPLICATION_HANDLES_OPEN         ApplicationFlags = C.G_APPLICATION_HANDLES_OPEN
+	APPLICATION_HANDLES_COMMAND_LINE ApplicationFlags = C.G_APPLICATION_HANDLES_COMMAND_LINE
+	APPLICATION_SEND_ENVIRONMENT     ApplicationFlags = C.G_APPLICATION_SEND_ENVIRONMENT
+	APPLICATION_NON_UNIQUE           ApplicationFlags = C.G_APPLICATION_NON_UNIQUE
+)
 
 /*
  * Events
