@@ -273,8 +273,8 @@ func StatusIconNewFromFile(filename string) (*StatusIcon, error) {
 func StatusIconNewFromIconName(iconName string) (*StatusIcon, error) {
 	cstr := C.CString(iconName)
 	defer C.free(unsafe.Pointer(cstr))
-	s := C.gtk_status_icon_new_from_icon_name((*C.gchar)(cstr))
-	if s == nil {
+	c := C.gtk_status_icon_new_from_icon_name((*C.gchar)(cstr))
+	if c == nil {
 		return nil, nilPtrErr
 	}
 	return wrapStatusIcon(wrapObject(unsafe.Pointer(c))), nil
