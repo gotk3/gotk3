@@ -10806,8 +10806,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 		obj       = &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	)
 
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-
 	fn, ok := WrapMap[className]
 	if !ok {
 		return nil, errors.New("unrecognized class name '" + className + "'")
@@ -10833,6 +10831,9 @@ func cast(c *C.GObject) (glib.IObject, error) {
 	if !ok {
 		return nil, errors.New("did not return an IObject")
 	}
+
+	obj.RefSink()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 
 	return ret, nil
 }
