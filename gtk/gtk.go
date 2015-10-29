@@ -1702,11 +1702,7 @@ func ColorButtonNew() (*ColorButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tb := wrapColorButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return tb, nil
+	return wrapColorButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ColorButtonNewWithRGBA is a wrapper around gtk_color_button_new_with_rgba().
@@ -1715,11 +1711,7 @@ func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tb := wrapColorButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return tb, nil
+	return wrapColorButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetRGBA is a wrapper around gtk_color_chooser_get_rgba().
@@ -2281,11 +2273,7 @@ func CheckButtonNewWithLabel(label string) (*CheckButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cb := wrapCheckButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return cb, nil
+	return wrapCheckButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // CheckButtonNewWithMnemonic is a wrapper around
@@ -2875,11 +2863,7 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	var widgets []*Widget
 	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
 	for ; wlist.Data() != uintptr(unsafe.Pointer(nil)); wlist = wlist.Next() {
-		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(wlist.Data()))}
-		w := wrapWidget(obj)
-		obj.RefSink()
-		runtime.SetFinalizer(obj, (*glib.Object).Unref)
-		widgets = append(widgets, w)
+		widgets = append(widgets, wrapWidget(wrapObject(unsafe.Pointer(wlist.Data()))))
 	}
 	return widgets, gobool(c)
 }
@@ -2930,11 +2914,7 @@ func CssProviderNew() (*CssProvider, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	v := wrapCssProvider(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return v, nil
+	return wrapCssProvider(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // LoadFromPath is a wrapper around gtk_css_provider_load_from_path().
@@ -4693,11 +4673,7 @@ func (v *IconTheme) LoadIcon(iconName string, size int, flags IconLookupFlags) (
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	pb := &gdk.Pixbuf{obj}
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return pb, nil
+	return &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}, nil
 }
 
 /*
@@ -4734,11 +4710,8 @@ func IconViewNew() (*IconView, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	iv := wrapIconView(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return iv, nil
+
+	return wrapIconView(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // IconViewNewWithModel is a wrapper around gtk_icon_view_new_with_model().
@@ -5328,11 +5301,7 @@ func LinkButtonNew(label string) (*LinkButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	lb := wrapLinkButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return lb, nil
+	return wrapLinkButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // LinkButtonNewWithLabel is a wrapper around gtk_link_button_new_with_label().
@@ -5345,11 +5314,7 @@ func LinkButtonNewWithLabel(uri, label string) (*LinkButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	lb := wrapLinkButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return lb, nil
+	return wrapLinkButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetUri is a wrapper around gtk_link_button_get_uri().
@@ -5624,11 +5589,7 @@ func MenuNew() (*Menu, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenu(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m, nil
+	return wrapMenu(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
@@ -5689,11 +5650,7 @@ func MenuBarNew() (*MenuBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenuBar(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m, nil
+	return wrapMenuBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -5731,11 +5688,7 @@ func MenuButtonNew() (*MenuButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenuButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m, nil
+	return wrapMenuButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetPopup is a wrapper around gtk_menu_button_set_popup().
@@ -5749,11 +5702,7 @@ func (v *MenuButton) GetPopup() *Menu {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenu(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m
+	return wrapMenu(wrapObject(unsafe.Pointer(c)))
 }
 
 // TODO: gtk_menu_button_set_menu_model
@@ -5781,11 +5730,7 @@ func (v *MenuButton) GetAlignWidget() *Widget {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w
+	return wrapWidget(wrapObject(unsafe.Pointer(c)))
 }
 
 /*
@@ -5838,11 +5783,7 @@ func MenuItemNew() (*MenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m, nil
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // MenuItemNewWithLabel() is a wrapper around gtk_menu_item_new_with_label().
@@ -5853,11 +5794,7 @@ func MenuItemNewWithLabel(label string) (*MenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m, nil
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // MenuItemNewWithMnemonic() is a wrapper around
@@ -5869,11 +5806,7 @@ func MenuItemNewWithMnemonic(label string) (*MenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m, nil
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetSubmenu() is a wrapper around gtk_menu_item_set_submenu().
@@ -5963,11 +5896,7 @@ func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, butt
 	c := C._gtk_message_dialog_new(w,
 		C.GtkDialogFlags(flags), C.GtkMessageType(mType),
 		C.GtkButtonsType(buttons), cstr)
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMessageDialog(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m
+	return wrapMessageDialog(wrapObject(unsafe.Pointer(c)))
 }
 
 // MessageDialogNewWithMarkup is a wrapper around
@@ -5983,11 +5912,7 @@ func MessageDialogNewWithMarkup(parent IWindow, flags DialogFlags, mType Message
 	c := C._gtk_message_dialog_new_with_markup(w,
 		C.GtkDialogFlags(flags), C.GtkMessageType(mType),
 		C.GtkButtonsType(buttons), cstr)
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMessageDialog(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m
+	return wrapMessageDialog(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetMarkup is a wrapper around gtk_message_dialog_set_markup().
@@ -6051,11 +5976,7 @@ func NotebookNew() (*Notebook, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	n := wrapNotebook(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return n, nil
+	return wrapNotebook(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // AppendPage() is a wrapper around gtk_notebook_append_page().
@@ -6170,11 +6091,7 @@ func (v *Notebook) GetMenuLabel(child IWidget) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetNthPage() is a wrapper around gtk_notebook_get_nth_page().
@@ -6183,11 +6100,7 @@ func (v *Notebook) GetNthPage(pageNum int) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetNPages() is a wrapper around gtk_notebook_get_n_pages().
@@ -6202,11 +6115,7 @@ func (v *Notebook) GetTabLabel(child IWidget) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetMenuLabel() is a wrapper around gtk_notebook_set_menu_label().
@@ -6337,11 +6246,7 @@ func (v *Notebook) GetActionWidget(packType PackType) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -6379,11 +6284,7 @@ func OffscreenWindowNew() (*OffscreenWindow, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	o := wrapOffscreenWindow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return o, nil
+	return wrapOffscreenWindow(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetSurface is a wrapper around gtk_offscreen_window_get_surface().
@@ -6493,11 +6394,7 @@ func PanedNew(orientation Orientation) (*Paned, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapPaned(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapPaned(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Add1() is a wrapper around gtk_paned_add1().
@@ -6531,11 +6428,7 @@ func (v *Paned) GetChild1() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetChild2() is a wrapper around gtk_paned_get_child2().
@@ -6544,11 +6437,7 @@ func (v *Paned) GetChild2() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetHandleWindow() is a wrapper around gtk_paned_get_handle_window().
@@ -6557,11 +6446,7 @@ func (v *Paned) GetHandleWindow() (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWindow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWindow(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetPosition() is a wrapper around gtk_paned_get_position().
@@ -6603,11 +6488,7 @@ func ProgressBarNew() (*ProgressBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := wrapProgressBar(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return p, nil
+	return wrapProgressBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetFraction() is a wrapper around gtk_progress_bar_set_fraction().
@@ -6675,11 +6556,7 @@ func RadioButtonNew(group *glib.SList) (*RadioButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewFromWidget is a wrapper around
@@ -6689,11 +6566,7 @@ func RadioButtonNewFromWidget(radioGroupMember *RadioButton) (*RadioButton, erro
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithLabel is a wrapper around
@@ -6706,11 +6579,7 @@ func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, err
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithLabelFromWidget is a wrapper around
@@ -6723,11 +6592,7 @@ func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label stri
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithMnemonic is a wrapper around
@@ -6740,11 +6605,7 @@ func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, 
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithMnemonicFromWidget is a wrapper around
@@ -6757,11 +6618,7 @@ func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label s
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetGroup is a wrapper around gtk_radio_button_set_group().
@@ -6820,11 +6677,7 @@ func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithLabel is a wrapper around
@@ -6837,11 +6690,7 @@ func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem,
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithMnemonic is a wrapper around
@@ -6854,11 +6703,7 @@ func RadioMenuItemNewWithMnemonic(group *glib.SList, label string) (*RadioMenuIt
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewFromWidget is a wrapper around
@@ -6868,11 +6713,7 @@ func RadioMenuItemNewFromWidget(group *RadioMenuItem) (*RadioMenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithLabelFromWidget is a wrapper around
@@ -6885,11 +6726,7 @@ func RadioMenuItemNewWithLabelFromWidget(group *RadioMenuItem, label string) (*R
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithMnemonicFromWidget is a wrapper around
@@ -6902,11 +6739,7 @@ func RadioMenuItemNewWithMnemonicFromWidget(group *RadioMenuItem, label string) 
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	r := wrapRadioMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return r, nil
+	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetGroup is a wrapper around gtk_radio_menu_item_set_group().
@@ -7075,11 +6908,7 @@ func RecentFilterNew() (*RecentFilter, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	f := wrapRecentFilter(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return f, nil
+	return wrapRecentFilter(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7163,11 +6992,7 @@ func ScaleNew(orientation Orientation, adjustment *Adjustment) (*Scale, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapScale(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapScale(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ScaleNewWithRange is a wrapper around gtk_scale_new_with_range().
@@ -7178,11 +7003,7 @@ func ScaleNewWithRange(orientation Orientation, min, max, step float64) (*Scale,
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapScale(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapScale(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7230,11 +7051,7 @@ func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*Sca
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := wrapScaleButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return b, nil
+	return wrapScaleButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetAdjustment() is a wrapper around gtk_scale_button_get_adjustment().
@@ -7250,11 +7067,7 @@ func (v *ScaleButton) GetPopup() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetValue() is a wrapper around gtk_scale_button_get_value().
@@ -7320,11 +7133,7 @@ func (v *Scrollable) GetHAdjustment() (*Adjustment, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	a := wrapAdjustment(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return a, nil
+	return wrapAdjustment(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetVAdjustment is a wrapper around gtk_scrollable_set_vadjustment().
@@ -7338,11 +7147,7 @@ func (v *Scrollable) GetVAdjustment() (*Adjustment, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	a := wrapAdjustment(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return a, nil
+	return wrapAdjustment(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7379,11 +7184,7 @@ func ScrollbarNew(orientation Orientation, adjustment *Adjustment) (*Scrollbar, 
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapScrollbar(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapScrollbar(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7421,11 +7222,7 @@ func ScrolledWindowNew(hadjustment, vadjustment *Adjustment) (*ScrolledWindow, e
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapScrolledWindow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapScrolledWindow(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetPolicy() is a wrapper around gtk_scrolled_window_set_policy().
@@ -7441,11 +7238,7 @@ func (v *ScrolledWindow) GetHAdjustment() *Adjustment {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	a := wrapAdjustment(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return a
+	return wrapAdjustment(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetHAdjustment is a wrapper around gtk_scrolled_window_set_hadjustment().
@@ -7459,11 +7252,7 @@ func (v *ScrolledWindow) GetVAdjustment() *Adjustment {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	a := wrapAdjustment(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return a
+	return wrapAdjustment(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetVAdjustment is a wrapper around gtk_scrolled_window_set_vadjustment().
@@ -7506,11 +7295,7 @@ func SearchEntryNew() (*SearchEntry, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSearchEntry(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSearchEntry(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7588,11 +7373,7 @@ func SeparatorNew(orientation Orientation) (*Separator, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSeparator(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSeparator(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7629,11 +7410,7 @@ func SeparatorMenuItemNew() (*SeparatorMenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSeparatorMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSeparatorMenuItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7671,11 +7448,7 @@ func SeparatorToolItemNew() (*SeparatorToolItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSeparatorToolItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSeparatorToolItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetDraw is a wrapper around gtk_separator_tool_item_set_draw().
@@ -7731,11 +7504,7 @@ func SpinButtonNew(adjustment *Adjustment, climbRate float64, digits uint) (*Spi
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSpinButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSpinButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SpinButtonNewWithRange() is a wrapper around
@@ -7746,11 +7515,7 @@ func SpinButtonNewWithRange(min, max, step float64) (*SpinButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSpinButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSpinButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetValueAsInt() is a wrapper around gtk_spin_button_get_value_as_int().
@@ -7776,11 +7541,7 @@ func (v *SpinButton) GetAdjustment() *Adjustment {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	a := wrapAdjustment(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return a
+	return wrapAdjustment(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetRange is a wrapper around gtk_spin_button_set_range().
@@ -7827,11 +7588,7 @@ func SpinnerNew() (*Spinner, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSpinner(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSpinner(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Start is a wrapper around gtk_spinner_start().
@@ -7878,11 +7635,7 @@ func StatusbarNew() (*Statusbar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapStatusbar(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapStatusbar(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetContextId() is a wrapper around gtk_statusbar_get_context_id().
@@ -7951,11 +7704,7 @@ func SwitchNew() (*Switch, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapSwitch(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapSwitch(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetActive is a wrapper around gtk_switch_get_active().
@@ -8036,22 +7785,14 @@ func TextViewNew() (*TextView, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTextView(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTextView(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // TextViewNewWithBuffer is a wrapper around gtk_text_view_new_with_buffer().
 func TextViewNewWithBuffer(buf *TextBuffer) (*TextView, error) {
 	cbuf := buf.native()
 	c := C.gtk_text_view_new_with_buffer(cbuf)
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTextView(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTextView(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetBuffer is a wrapper around gtk_text_view_get_buffer().
@@ -8060,11 +7801,7 @@ func (v *TextView) GetBuffer() (*TextBuffer, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTextBuffer(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTextBuffer(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetBuffer is a wrapper around gtk_text_view_set_buffer().
@@ -8260,11 +7997,7 @@ func TextTagNew(name string) (*TextTag, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTextTag(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTextTag(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetPriority() is a wrapper around gtk_text_tag_get_priority().
@@ -8319,11 +8052,7 @@ func TextTagTableNew() (*TextTagTable, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTextTagTable(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTextTagTable(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Add() is a wrapper around gtk_text_tag_table_add().
@@ -8340,11 +8069,7 @@ func (v *TextTagTable) Lookup(name string) (*TextTag, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapTextTag(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapTextTag(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Remove() is a wrapper around gtk_text_tag_table_remove().
@@ -8551,11 +8276,7 @@ func ToggleButtonNew() (*ToggleButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tb := wrapToggleButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return tb, nil
+	return wrapToggleButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ToggleButtonNewWithLabel is a wrapper around
@@ -8567,11 +8288,7 @@ func ToggleButtonNewWithLabel(label string) (*ToggleButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tb := wrapToggleButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return tb, nil
+	return wrapToggleButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ToggleButtonNewWithMnemonic is a wrapper around
@@ -8583,11 +8300,7 @@ func ToggleButtonNewWithMnemonic(label string) (*ToggleButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tb := wrapToggleButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return tb, nil
+	return wrapToggleButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetActive is a wrapper around gtk_toggle_button_get_active().
@@ -8635,11 +8348,7 @@ func ToolbarNew() (*Toolbar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tb := wrapToolbar(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return tb, nil
+	return wrapToolbar(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Insert is a wrapper around gtk_toolbar_insert().
@@ -8665,11 +8374,7 @@ func (v *Toolbar) GetNthItem(n int) *ToolItem {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	ti := wrapToolItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return ti
+	return wrapToolItem(wrapObject(unsafe.Pointer(c)))
 }
 
 // GetDropIndex is a wrapper around gtk_toolbar_get_drop_index().
@@ -8772,11 +8477,7 @@ func ToolButtonNew(iconWidget IWidget, label string) (*ToolButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	tb := wrapToolButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return tb, nil
+	return wrapToolButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetLabel is a wrapper around gtk_tool_button_set_label().
@@ -8827,11 +8528,7 @@ func (v *ToolButton) GetIconWidget() *Widget {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w
+	return wrapWidget(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetLabelWidget is a wrapper around gtk_tool_button_set_label_widget().
@@ -8845,11 +8542,7 @@ func (v *ToolButton) GetLabelWidget() *Widget {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w
+	return wrapWidget(wrapObject(unsafe.Pointer(c)))
 }
 
 /*
@@ -8897,11 +8590,7 @@ func ToolItemNew() (*ToolItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	ti := wrapToolItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return ti, nil
+	return wrapToolItem(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetHomogeneous is a wrapper around gtk_tool_item_set_homogeneous().
@@ -9032,11 +8721,7 @@ func (v *ToolItem) RetrieveProxyMenuItem() *MenuItem {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	m := wrapMenuItem(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return m
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetProxyMenuItem is a wrapper around gtk_tool_item_set_proxy_menu_item().
@@ -9518,11 +9203,7 @@ func ViewportNew(hadjustment, vadjustment *Adjustment) (*Viewport, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := wrapViewport(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return b, nil
+	return wrapViewport(wrapObject(unsafe.Pointer(c))), nil
 }
 
 func (v *Viewport) SetHAdjustment(adjustment *Adjustment) {
@@ -9575,11 +9256,7 @@ func VolumeButtonNew() (*VolumeButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	b := wrapVolumeButton(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return b, nil
+	return wrapVolumeButton(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -9899,11 +9576,7 @@ func (v *Widget) GetParent() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetSizeRequest is a wrapper around gtk_widget_set_size_request().
@@ -10025,11 +9698,7 @@ func (v *Widget) GetToplevel() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWidget(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetTooltipText is a wrapper around gtk_widget_get_tooltip_text().
@@ -10221,11 +9890,7 @@ func WindowNew(t WindowType) (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWindow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w, nil
+	return wrapWindow(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetTitle is a wrapper around gtk_window_set_title().

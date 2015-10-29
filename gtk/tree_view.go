@@ -41,30 +41,22 @@ func wrapTreeView(obj *glib.Object) *TreeView {
 	return &TreeView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
-// TreeViewNew() is a wrapper around gtk_tree_view_new().
-func TreeViewNew() (*TreeView, error) {
-	c := C.gtk_tree_view_new()
+func setupTreeView(c unsafe.Pointer) (*TreeView, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeView(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+
+	return wrapTreeView(wrapObject(c)), nil
+}
+
+// TreeViewNew() is a wrapper around gtk_tree_view_new().
+func TreeViewNew() (*TreeView, error) {
+	return setupTreeView(unsafe.Pointer(C.gtk_tree_view_new()))
 }
 
 // TreeViewNewWithModel() is a wrapper around gtk_tree_view_new_with_model().
 func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
-	c := C.gtk_tree_view_new_with_model(model.toTreeModel())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeView(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return setupTreeView(unsafe.Pointer(C.gtk_tree_view_new_with_model(model.toTreeModel())))
 }
 
 // GetModel() is a wrapper around gtk_tree_view_get_model().
@@ -73,11 +65,7 @@ func (v *TreeView) GetModel() (*TreeModel, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeModel(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTreeModel(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetModel() is a wrapper around gtk_tree_view_set_model().
@@ -91,11 +79,7 @@ func (v *TreeView) GetSelection() (*TreeSelection, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := wrapTreeSelection(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+	return wrapTreeSelection(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // AppendColumn() is a wrapper around gtk_tree_view_append_column().
@@ -207,11 +191,7 @@ func (v *TreeView) GetColumn(n int) *TreeViewColumn {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	c2 := wrapTreeViewColumn(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return c2
+	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c)))
 }
 
 // MoveColumnAfter() is a wrapper around gtk_tree_view_move_column_after().
@@ -230,11 +210,7 @@ func (v *TreeView) GetExpanderColumn() *TreeViewColumn {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	c2 := wrapTreeViewColumn(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return c2
+	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c)))
 }
 
 // ScrollToPoint() is a wrapper around gtk_tree_view_scroll_to_point().
@@ -265,10 +241,7 @@ func (v *TreeView) GetCursor() (p *TreePath, c *TreeViewColumn) {
 	}
 
 	if col != nil {
-		cobj := &glib.Object{glib.ToGObject(unsafe.Pointer(col))}
-		c = wrapTreeViewColumn(cobj)
-		cobj.Ref()
-		runtime.SetFinalizer(cobj, (*glib.Object).Unref)
+		c = wrapTreeViewColumn(wrapObject(unsafe.Pointer(col)))
 	}
 
 	return

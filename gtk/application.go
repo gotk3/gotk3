@@ -6,7 +6,6 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -62,11 +61,7 @@ func (v *Application) GetWindowByID(id uint) *Window {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWindow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w
+	return wrapWindow(wrapObject(unsafe.Pointer(c)))
 }
 
 // GetActiveWindow is a wrapper around gtk_application_get_active_window().
@@ -75,11 +70,7 @@ func (v *Application) GetActiveWindow() *Window {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := wrapWindow(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return w
+	return wrapWindow(wrapObject(unsafe.Pointer(c)))
 }
 
 // Uninhibit is a wrapper around gtk_application_uninhibit().

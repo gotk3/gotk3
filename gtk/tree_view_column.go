@@ -6,7 +6,6 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -46,11 +45,7 @@ func TreeViewColumnNew() (*TreeViewColumn, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeViewColumn(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // TreeViewColumnNewWithAttribute() is a wrapper around
@@ -66,11 +61,7 @@ func TreeViewColumnNewWithAttribute(title string, renderer ICellRenderer, attrib
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	t := wrapTreeViewColumn(obj)
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return t, nil
+	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // AddAttribute() is a wrapper around gtk_tree_view_column_add_attribute().

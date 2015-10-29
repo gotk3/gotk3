@@ -8,7 +8,6 @@ package gtk
 // #include "gtk_deprecated_since_3_14.go.h"
 import "C"
 import (
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -256,11 +255,7 @@ func StatusIconNew() (*StatusIcon, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	obj.RefSink()
-	e := wrapStatusIcon(obj)
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return e, nil
+	return wrapStatusIcon(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // StatusIconNewFromFile is a wrapper around gtk_status_icon_new_from_file()
@@ -271,26 +266,18 @@ func StatusIconNewFromFile(filename string) (*StatusIcon, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	obj.RefSink()
-	e := wrapStatusIcon(obj)
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return e, nil
+	return wrapStatusIcon(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // StatusIconNewFromIconName is a wrapper around gtk_status_icon_new_from_name()
 func StatusIconNewFromIconName(iconName string) (*StatusIcon, error) {
 	cstr := C.CString(iconName)
 	defer C.free(unsafe.Pointer(cstr))
-	s := C.gtk_status_icon_new_from_icon_name((*C.gchar)(cstr))
-	if s == nil {
+	c := C.gtk_status_icon_new_from_icon_name((*C.gchar)(cstr))
+	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
-	obj.RefSink()
-	e := wrapStatusIcon(obj)
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return e, nil
+	return wrapStatusIcon(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetFromFile is a wrapper around gtk_status_icon_set_from_file()
