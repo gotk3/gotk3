@@ -882,8 +882,20 @@ func ValueAlloc() (*Value, error) {
 	if c == nil {
 		return nil, errNilPtr
 	}
+
 	v := &Value{*c}
-	runtime.SetFinalizer(v, (*Value).unset)
+
+	//An allocated GValue is not guaranteed to hold a value that can be unset
+	//We need to double check before unsetting, to prevent:
+	//`g_value_unset: assertion 'G_IS_VALUE (value)' failed`
+	runtime.SetFinalizer(v, func(f *Value) {
+		if t, _, err := f.Type(); err != nil || t == TYPE_INVALID || t == TYPE_NONE {
+			return
+		}
+
+		f.unset()
+	})
+
 	return v, nil
 }
 
