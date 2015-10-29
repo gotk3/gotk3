@@ -277,7 +277,7 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 	// Fill beginning of args, up to the minimum of the total number of callback
 	// parameters and parameters from the glib runtime.
 	for i := 0; i < nCbParams && i < nGLibParams; i++ {
-		v := &Value{gValues[i]}
+		v := &Value{&gValues[i]}
 		val, err := v.GoValue()
 		if err != nil {
 			fmt.Fprintf(os.Stderr,
@@ -861,17 +861,17 @@ func (v *InitiallyUnowned) Native() uintptr {
 // which will set the runtime finalizer to unset the Value after it has
 // left scope.
 type Value struct {
-	GValue C.GValue
+	GValue *C.GValue
 }
 
 // native returns a pointer to the underlying GValue.
 func (v *Value) native() *C.GValue {
-	return &v.GValue
+	return v.GValue
 }
 
 // Native returns a pointer to the underlying GValue.
-func (v *Value) Native() uintptr {
-	return uintptr(unsafe.Pointer(v.native()))
+func (v *Value) Native() unsafe.Pointer {
+	return unsafe.Pointer(v.native())
 }
 
 // ValueAlloc allocates a Value and sets a runtime finalizer to call
@@ -883,13 +883,14 @@ func ValueAlloc() (*Value, error) {
 		return nil, errNilPtr
 	}
 
-	v := &Value{*c}
+	v := &Value{c}
 
 	//An allocated GValue is not guaranteed to hold a value that can be unset
 	//We need to double check before unsetting, to prevent:
 	//`g_value_unset: assertion 'G_IS_VALUE (value)' failed`
 	runtime.SetFinalizer(v, func(f *Value) {
 		if t, _, err := f.Type(); err != nil || t == TYPE_INVALID || t == TYPE_NONE {
+			C.g_free(C.gpointer(f.native()))
 			return
 		}
 
@@ -908,16 +909,17 @@ func ValueInit(t Type) (*Value, error) {
 	if c == nil {
 		return nil, errNilPtr
 	}
-	v := &Value{*c}
+
+	v := &Value{c}
+
 	runtime.SetFinalizer(v, (*Value).unset)
 	return v, nil
 }
 
 // ValueFromNative returns a type-asserted pointer to the Value.
 func ValueFromNative(l unsafe.Pointer) *Value {
-	//	x := C.toValue(l)
-	x := (*C.GValue)(l)
-	return &Value{*x}
+	//TODO why it does not add finalizer to the value?
+	return &Value{(*C.GValue)(l)}
 }
 
 func (v *Value) unset() {
