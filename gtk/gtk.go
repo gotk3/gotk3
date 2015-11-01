@@ -10376,6 +10376,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkAccelGroup":          wrapAccelGroup,
 	"GtkAccelMao":            wrapAccelMap,
 	"GtkAdjustment":          wrapAdjustment,
+	"GtkAssistant":           wrapAssistant,
 	"GtkBin":                 wrapBin,
 	"GtkBox":                 wrapBox,
 	"GtkButton":              wrapButton,
