@@ -1245,13 +1245,14 @@ func (v *Assistant) GetNPages() int {
 }
 
 // GetNthPage is a wrapper around gtk_assistant_get_nth_page().
-func (v *Assistant) GetNthPage(pageNum int) *Widget {
+func (v *Assistant) GetNthPage(pageNum int) (*Widget, error) {
 	c := C.gtk_assistant_get_nth_page(v.native(), C.gint(pageNum))
 	if c == nil {
-		return nil
+		return nil, fmt.Errorf("page %d is out of bounds", pageNum)
 	}
+
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return wrapWidget(obj), nil
 }
 
 // PrependPage is a wrapper around gtk_assistant_prepend_page().
