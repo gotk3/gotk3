@@ -364,6 +364,14 @@ func marshalDisplay(p uintptr) (interface{}, error) {
 	return &Display{obj}, nil
 }
 
+func toDisplay(s *C.GdkDisplay) (*Display, error) {
+	if s == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
+	return &Display{obj}, nil
+}
+
 // DisplayOpen() is a wrapper around gdk_display_open().
 func DisplayOpen(displayName string) (*Display, error) {
 	cstr := C.CString(displayName)
@@ -1396,73 +1404,6 @@ func (r *Rectangle) GetHeight() int {
 }
 
 /*
- * GdkScreen
- */
-
-// Screen is a representation of GDK's GdkScreen.
-type Screen struct {
-	*glib.Object
-}
-
-// native returns a pointer to the underlying GdkScreen.
-func (v *Screen) native() *C.GdkScreen {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGdkScreen(p)
-}
-
-// Native returns a pointer to the underlying GdkScreen.
-func (v *Screen) Native() uintptr {
-	return uintptr(unsafe.Pointer(v.native()))
-}
-
-func marshalScreen(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return &Screen{obj}, nil
-}
-
-// GetRGBAVisual is a wrapper around gdk_screen_get_rgba_visual().
-func (v *Screen) GetRGBAVisual() (*Visual, error) {
-	c := C.gdk_screen_get_rgba_visual(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	visual := &Visual{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return visual, nil
-}
-
-// GetSystemVisual is a wrapper around gdk_screen_get_system_visual().
-func (v *Screen) GetSystemVisual() (*Visual, error) {
-	c := C.gdk_screen_get_system_visual(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	visual := &Visual{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return visual, nil
-}
-
-// GetWidth is a wrapper around gdk_screen_get_width().
-func (v *Screen) GetWidth() int {
-	c := C.gdk_screen_get_width(v.native())
-	return int(c)
-}
-
-// GetHeight is a wrapper around gdk_screen_get_height().
-func (v *Screen) GetHeight() int {
-	c := C.gdk_screen_get_height(v.native())
-	return int(c)
-}
-
-/*
  * GdkVisual
  */
 
@@ -1515,5 +1456,13 @@ func (v *Window) Native() uintptr {
 func marshalWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Window{obj}, nil
+}
+
+func toWindow(s *C.GdkWindow) (*Window, error) {
+	if s == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
 	return &Window{obj}, nil
 }
