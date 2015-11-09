@@ -575,6 +575,20 @@ func (v *Window) SetFocusVisible(setting bool) {
 	C.gtk_window_set_focus_visible(v.native(), gbool(setting))
 }
 
+// GetApplication is a wrapper around gtk_window_get_application().
+func (v *Window) GetApplication() (*Application, error) {
+	c := C.gtk_window_get_application(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapApplication(c), nil
+}
+
+// SetApplication is a wrapper around gtk_window_set_application().
+func (v *Window) SetApplication(a *Application) {
+	C.gtk_window_set_application(v.native(), a.native())
+}
+
 // TODO gtk_window_activate_key().
 // TODO gtk_window_add_mnemonic().
 // TODO gtk_window_begin_move_drag().
@@ -596,3 +610,4 @@ func (v *Window) SetFocusVisible(setting bool) {
 // TODO gtk_window_set_mnemonic_modifier().
 // TODO gtk_window_set_screen().
 // TODO gtk_window_set_type_hint().
+// TODO gtk_window_get_resize_grip_area().
