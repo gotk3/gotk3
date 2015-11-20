@@ -67,11 +67,18 @@ func main() {
 ```
 
 To build the example:
+
+```
 $ go build example.go
 
+```
+
 To build this example with older gtk version you should use gtk_3_10 tag:
+
+```
 $ go build -tags gtk_3_10 example.go
 
+```
 
 ## Documentation
 
