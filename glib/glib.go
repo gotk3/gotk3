@@ -1396,3 +1396,14 @@ func SetApplicationName(name string) {
 
 	C.g_set_application_name(cstr)
 }
+
+// InitI18n initializes the i18n subsystem.
+func InitI18n(domain string, dir string) {
+	domainStr := C.CString(domain)
+	defer C.free(unsafe.Pointer(domainStr))
+
+	dirStr := C.CString(dir)
+	defer C.free(unsafe.Pointer(dirStr))
+
+	C.init_i18n(domainStr, dirStr)
+}

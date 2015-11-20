@@ -23,6 +23,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <glib/gi18n.h>
+#include <locale.h>
+
 /* GObject Type Casting */
 static GObject *
 toGObject(void *p)
@@ -134,6 +137,13 @@ static inline guint _g_signal_new(const gchar *name) {
 		G_TYPE_NONE,
 		1,
 		G_TYPE_POINTER);
+}
+
+static void init_i18n(const char *domain, const char *dir) {
+  setlocale(LC_ALL, "");
+  bindtextdomain(domain, dir);
+  bind_textdomain_codeset(domain, "UTF-8");
+  textdomain(domain);
 }
 
 #endif
