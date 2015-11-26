@@ -7,7 +7,6 @@ package gtk
 import "C"
 import (
 	"errors"
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -117,10 +116,8 @@ func (v *Window) GetScreen() (*gdk.Screen, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &gdk.Screen{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	s := &gdk.Screen{wrapObject(unsafe.Pointer(c))}
 	return s, nil
 }
 
@@ -384,10 +381,8 @@ func (v *Window) GetIcon() (*gdk.Pixbuf, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &gdk.Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	p := &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}
 	return p, nil
 }
 
