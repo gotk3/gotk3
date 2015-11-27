@@ -6,7 +6,6 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -96,10 +95,8 @@ func (v *StyleContext) GetScreen() (*gdk.Screen, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	d := &gdk.Screen{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	d := &gdk.Screen{wrapObject(unsafe.Pointer(c))}
 	return d, nil
 }
 

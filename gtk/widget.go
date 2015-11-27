@@ -7,7 +7,6 @@ package gtk
 import "C"
 import (
 	"errors"
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -358,10 +357,8 @@ func (v *Widget) GetParentWindow() (*gdk.Window, error) {
 	if v == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &gdk.Window{obj}
-	w.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	w := &gdk.Window{wrapObject(unsafe.Pointer(c))}
 	return w, nil
 }
 
@@ -603,9 +600,7 @@ func (v *Widget) GetWindow() (*gdk.Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &gdk.Window{obj}
-	w.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	w := &gdk.Window{wrapObject(unsafe.Pointer(c))}
 	return w, nil
 }

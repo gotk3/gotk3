@@ -298,10 +298,8 @@ func (v *TreeView) GetBinWindow() *gdk.Window {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &gdk.Window{obj}
-	w.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	w := &gdk.Window{wrapObject(unsafe.Pointer(c))}
 	return w
 }
 

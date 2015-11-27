@@ -1667,10 +1667,8 @@ func (v *Button) GetEventWindow() (*gdk.Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	w := &gdk.Window{obj}
-	w.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	w := &gdk.Window{wrapObject(unsafe.Pointer(c))}
 	return w, nil
 }
 
@@ -2431,10 +2429,8 @@ func ClipboardGet(atom gdk.Atom) (*Clipboard, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cb := &Clipboard{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	cb := &Clipboard{wrapObject(unsafe.Pointer(c))}
 	return cb, nil
 }
 
@@ -2446,10 +2442,8 @@ func ClipboardGetForDisplay(display *gdk.Display, atom gdk.Atom) (*Clipboard, er
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	cb := &Clipboard{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	cb := &Clipboard{wrapObject(unsafe.Pointer(c))}
 	return cb, nil
 }
 
@@ -2506,10 +2500,8 @@ func (v *Clipboard) WaitForImage() (*gdk.Pixbuf, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &gdk.Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	p := &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}
 	return p, nil
 }
 
@@ -2915,6 +2907,7 @@ func CssProviderNew() (*CssProvider, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
+
 	return wrapCssProvider(wrapObject(unsafe.Pointer(c))), nil
 }
 
@@ -3526,10 +3519,8 @@ func (v *Entry) GetCompletion() (*EntryCompletion, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	e := &EntryCompletion{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	e := &EntryCompletion{wrapObject(unsafe.Pointer(c))}
 	return e, nil
 }
 
@@ -3787,10 +3778,8 @@ func EntryBufferNew(initialChars string, nInitialChars int) (*EntryBuffer, error
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	e := wrapEntryBuffer(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	e := wrapEntryBuffer(wrapObject(unsafe.Pointer(c)))
 	return e, nil
 }
 
@@ -4923,10 +4912,8 @@ func (v *Image) GetPixbuf() *gdk.Pixbuf {
 	if c == nil {
 		return nil
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	pb := &gdk.Pixbuf{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	pb := &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}
 	return pb
 }
 
@@ -5380,10 +5367,8 @@ func ListStoreNew(types ...glib.Type) (*ListStore, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	ls := wrapListStore(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	ls := wrapListStore(wrapObject(unsafe.Pointer(c)))
 	return ls, nil
 }
 
@@ -6306,10 +6291,10 @@ func (v *OffscreenWindow) GetPixbuf() (*gdk.Pixbuf, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	pb := &gdk.Pixbuf{obj}
+
 	// Pixbuf is returned with ref count of 1, so don't increment.
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	// Is it a floating reference?
+	pb := &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}
 	return pb, nil
 }
 
@@ -8112,10 +8097,8 @@ func TextBufferNew(table *TextTagTable) (*TextBuffer, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	e := wrapTextBuffer(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	e := wrapTextBuffer(wrapObject(unsafe.Pointer(c)))
 	return e, nil
 }
 
@@ -9117,10 +9100,8 @@ func TreeStoreNew(types ...glib.Type) (*TreeStore, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	ts := wrapTreeStore(obj)
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	ts := wrapTreeStore(wrapObject(unsafe.Pointer(c)))
 	return ts, nil
 }
 
