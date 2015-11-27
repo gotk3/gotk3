@@ -1270,7 +1270,9 @@ func (v *Value) GoValue() (interface{}, error) {
 	rv, err := f(uintptr(unsafe.Pointer(v.native())))
 	if obj, ok := rv.(IObject); ok {
 		o := obj.toObject()
-		o.RefSink()
+		o.Ref()
+		//How could this marshall a floating object? Is it supposed to instantiate gobjects?
+		//o.RefSink()
 		runtime.SetFinalizer(o, (*Object).Unref)
 	}
 	return rv, err
