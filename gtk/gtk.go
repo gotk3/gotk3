@@ -219,7 +219,13 @@ func gobool(b C.gboolean) bool {
 // Wrapper function for new objects with reference management.
 func wrapObject(ptr unsafe.Pointer) *glib.Object {
 	obj := &glib.Object{glib.ToGObject(ptr)}
-	obj.RefSink()
+
+	if obj.IsFloating() {
+		obj.RefSink()
+	} else {
+		obj.Ref()
+	}
+
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return obj
 }
@@ -9341,7 +9347,7 @@ var WrapMap = map[string]WrapFn{
 func cast(c *C.GObject) (glib.IObject, error) {
 	var (
 		className = C.GoString((*C.char)(C.object_get_class_name(c)))
-		obj       = &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+		obj       = wrapObject(unsafe.Pointer(c))
 	)
 
 	fn, ok := WrapMap[className]
@@ -9369,9 +9375,6 @@ func cast(c *C.GObject) (glib.IObject, error) {
 	if !ok {
 		return nil, errors.New("did not return an IObject")
 	}
-
-	obj.RefSink()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 
 	return ret, nil
 }
