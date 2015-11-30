@@ -9016,6 +9016,11 @@ func (v *TreeSelection) SelectPath(path *TreePath) {
 	C.gtk_tree_selection_select_path(v.native(), path.native())
 }
 
+// UnselectPath is a wrapper around gtk_tree_selection_unselect_path().
+func (v *TreeSelection) UnselectPath(path *TreePath) {
+	C.gtk_tree_selection_unselect_path(v.native(), path.native())
+}
+
 // GetSelectedRows is a wrapper around gtk_tree_selection_get_selected_rows().
 //
 // Please note that a runtime finalizer is only set on the head of the linked
