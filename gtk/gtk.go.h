@@ -647,6 +647,13 @@ _gtk_list_store_set(GtkListStore *list_store, GtkTreeIter *iter, gint column,
 	gtk_list_store_set(list_store, iter, column, value, -1);
 }
 
+static void
+_gtk_tree_store_set(GtkTreeStore *store, GtkTreeIter *iter, gint column,
+	void* value)
+{
+	gtk_tree_store_set(store, iter, column, value, -1);
+}
+
 static GtkWidget *
 _gtk_message_dialog_new(GtkWindow *parent, GtkDialogFlags flags,
     GtkMessageType type, GtkButtonsType buttons, char *msg)
