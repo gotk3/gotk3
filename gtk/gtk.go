@@ -9130,13 +9130,21 @@ func (v *TreeStore) Append(parent *TreeIter) *TreeIter {
 
 // SetValue is a wrapper around gtk_tree_store_set_value()
 func (v *TreeStore) SetValue(iter *TreeIter, column int, value interface{}) error {
-	gv, err := glib.GValue(value)
-	if err != nil {
-		return err
+	switch value.(type) {
+	case *gdk.Pixbuf:
+		pix := value.(*gdk.Pixbuf)
+		C._gtk_tree_store_set(v.native(), iter.native(),
+			C.gint(column), unsafe.Pointer(pix.Native()))
+
+	default:
+		gv, err := glib.GValue(value)
+		if err != nil {
+			return err
+		}
+		C.gtk_tree_store_set_value(v.native(), iter.native(),
+			C.gint(column),
+			(*C.GValue)(C.gpointer(gv.Native())))
 	}
-	C.gtk_tree_store_set_value(v.native(), iter.native(),
-		C.gint(column),
-		(*C.GValue)(C.gpointer(gv.Native())))
 	return nil
 }
 
