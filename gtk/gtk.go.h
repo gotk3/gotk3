@@ -617,6 +617,11 @@ toGtkStyleProvider(void *p)
         return (GTK_STYLE_PROVIDER(p));
 }
 
+static GtkInfoBar *
+toGtkInfoBar(void *p)
+{
+	return (GTK_INFO_BAR(p));
+}
 
 static GType *
 alloc_types(int n) {
