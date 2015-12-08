@@ -87,13 +87,13 @@ func (v *InfoBar) GetActionArea() (*Widget, error) {
 	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func (v *InfoBar) GetContentArea() (*Widget, error) {
+func (v *InfoBar) GetContentArea() (*Box, error) {
 	c := C.gtk_info_bar_get_content_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
 
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return wrapBox(wrapObject(unsafe.Pointer(c))), nil
 }
 
 func (v *InfoBar) GetShowCloseButton() bool {
