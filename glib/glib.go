@@ -1183,14 +1183,8 @@ func (v *Value) GoValue() (interface{}, error) {
 		return nil, err
 	}
 
+	//No need to add finalizer because it is already done by ValueAlloc and ValueInit
 	rv, err := f(uintptr(unsafe.Pointer(v.native())))
-	if obj, ok := rv.(IObject); ok {
-		o := obj.toObject()
-		o.Ref()
-		//How could this marshall a floating object? Is it supposed to instantiate gobjects?
-		//o.RefSink()
-		runtime.SetFinalizer(o, (*Object).Unref)
-	}
 	return rv, err
 }
 
