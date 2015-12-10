@@ -54,6 +54,7 @@ func init() {
 
 	//Contribute to casting
 	for k, v := range map[string]WrapFn{
+		"GtkHeaderBar":     wrapHeaderBar,
 		"GtkListBox":       wrapListBox,
 		"GtkListBoxRow":    wrapListBoxRow,
 		"GtkRevealer":      wrapRevealer,
