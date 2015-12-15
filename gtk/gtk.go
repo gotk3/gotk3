@@ -8914,6 +8914,17 @@ func (v *TreeModel) IterPrevious(iter *TreeIter) bool {
 	return gobool(c)
 }
 
+// IterChildren is a wrapper around gtk_tree_model_iter_children().
+func (v *TreeModel) IterChildren(iter, child *TreeIter) bool {
+	var cIter, cChild *C.GtkTreeIter
+	if iter != nil {
+		cIter = iter.native()
+	}
+	cChild = child.native()
+	c := C.gtk_tree_model_iter_children(v.native(), cChild, cIter)
+	return gobool(c)
+}
+
 // IterNChildren is a wrapper around gtk_tree_model_iter_n_children().
 func (v *TreeModel) IterNChildren(iter *TreeIter) int {
 	var cIter *C.GtkTreeIter
