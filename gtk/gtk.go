@@ -9147,6 +9147,18 @@ func (v *TreeStore) Append(parent *TreeIter) *TreeIter {
 	return iter
 }
 
+// Insert is a wrapper around gtk_tree_store_insert
+func (v *TreeStore) Insert(parent *TreeIter, position int) *TreeIter {
+	var ti C.GtkTreeIter
+	var cParent *C.GtkTreeIter
+	if parent != nil {
+		cParent = parent.native()
+	}
+	C.gtk_tree_store_insert(v.native(), &ti, cParent, C.gint(position))
+	iter := &TreeIter{ti}
+	return iter
+}
+
 // SetValue is a wrapper around gtk_tree_store_set_value()
 func (v *TreeStore) SetValue(iter *TreeIter, column int, value interface{}) error {
 	switch value.(type) {
@@ -9164,6 +9176,15 @@ func (v *TreeStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 			(*C.GValue)(C.gpointer(gv.Native())))
 	}
 	return nil
+}
+
+// Remove is a wrapper around gtk_tree_store_remove().
+func (v *TreeStore) Remove(iter *TreeIter) bool {
+	var ti *C.GtkTreeIter
+	if iter != nil {
+		ti = iter.native()
+	}
+	return 0 != C.gtk_tree_store_remove(v.native(), ti)
 }
 
 // Clear is a wrapper around gtk_tree_store_clear().
