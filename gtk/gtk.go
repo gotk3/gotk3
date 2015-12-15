@@ -4060,6 +4060,14 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// SetCurrentName is a wrapper around gtk_file_chooser_set_current_name().
+func (v *FileChooser) SetCurrentName(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_chooser_set_current_name(v.native(), (*C.gchar)(cstr))
+	return
+}
+
 // SetCurrentFolder is a wrapper around gtk_file_chooser_set_current_folder().
 func (v *FileChooser) SetCurrentFolder(folder string) bool {
 	cstr := C.CString(folder)
