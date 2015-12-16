@@ -87,7 +87,7 @@ func (v *AccelGroup) native() *C.GtkAccelGroup {
 
 func marshalAccelGroup(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapAccelGroup(obj), nil
 }
 
@@ -213,7 +213,7 @@ func (v *AccelMap) native() *C.GtkAccelMap {
 
 func marshalAccelMap(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapAccelMap(obj), nil
 }
 

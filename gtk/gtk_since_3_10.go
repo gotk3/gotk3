@@ -145,7 +145,7 @@ func (v *HeaderBar) native() *C.GtkHeaderBar {
 
 func marshalHeaderBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapHeaderBar(obj), nil
 }
 
@@ -258,7 +258,7 @@ func (v *ListBox) native() *C.GtkListBox {
 
 func marshalListBox(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapListBox(obj), nil
 }
 
@@ -324,7 +324,7 @@ func (v *ListBox) GetActivateOnSingleClick() bool {
 // GetAdjustment is a wrapper around gtk_list_box_get_adjustment().
 func (v *ListBox) GetAdjustment() *Adjustment {
 	c := C.gtk_list_box_get_adjustment(v.native())
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return &Adjustment{glib.InitiallyUnowned{obj}}
 }
 
@@ -400,7 +400,7 @@ func (v *ListBoxRow) native() *C.GtkListBoxRow {
 
 func marshalListBoxRow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapListBoxRow(obj), nil
 }
 
@@ -461,7 +461,7 @@ func (v *Revealer) native() *C.GtkRevealer {
 
 func marshalRevealer(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapRevealer(obj), nil
 }
 
@@ -538,7 +538,7 @@ func (v *SearchBar) native() *C.GtkSearchBar {
 
 func marshalSearchBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapSearchBar(obj), nil
 }
 
@@ -608,7 +608,7 @@ func (v *Stack) native() *C.GtkStack {
 
 func marshalStack(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapStack(obj), nil
 }
 
@@ -730,7 +730,7 @@ func (v *StackSwitcher) native() *C.GtkStackSwitcher {
 
 func marshalStackSwitcher(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapStackSwitcher(obj), nil
 }
 

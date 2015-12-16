@@ -53,7 +53,7 @@ func fromNativeStyleContext(c *C.GtkStyleContext) (*StyleContext, error) {
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapStyleContext(obj), nil
 }
 

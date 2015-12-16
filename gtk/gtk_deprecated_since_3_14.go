@@ -185,7 +185,7 @@ func (v *Arrow) native() *C.GtkArrow {
 
 func marshalArrow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapArrow(obj), nil
 }
 
@@ -213,7 +213,7 @@ func (v *Alignment) native() *C.GtkAlignment {
 
 func marshalAlignment(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapAlignment(obj), nil
 }
 
@@ -233,7 +233,7 @@ type StatusIcon struct {
 
 func marshalStatusIcon(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapStatusIcon(obj), nil
 }
 
@@ -410,7 +410,7 @@ func (v *Misc) native() *C.GtkMisc {
 
 func marshalMisc(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapMisc(obj), nil
 }
 

@@ -117,7 +117,7 @@ func marshalEllipsizeMode(p uintptr) (interface{}, error) {
 /*
 func marshalLayout(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := wrapObject(unsafe.Pointer(c))
 	return wrapLayout(obj), nil
 }
 
