@@ -4060,6 +4060,14 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// SetCurrentName is a wrapper around gtk_file_chooser_set_current_name().
+func (v *FileChooser) SetCurrentName(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_chooser_set_current_name(v.native(), (*C.gchar)(cstr))
+	return
+}
+
 // SetCurrentFolder is a wrapper around gtk_file_chooser_set_current_folder().
 func (v *FileChooser) SetCurrentFolder(folder string) bool {
 	cstr := C.CString(folder)
@@ -8906,6 +8914,17 @@ func (v *TreeModel) IterPrevious(iter *TreeIter) bool {
 	return gobool(c)
 }
 
+// IterChildren is a wrapper around gtk_tree_model_iter_children().
+func (v *TreeModel) IterChildren(iter, child *TreeIter) bool {
+	var cIter, cChild *C.GtkTreeIter
+	if iter != nil {
+		cIter = iter.native()
+	}
+	cChild = child.native()
+	c := C.gtk_tree_model_iter_children(v.native(), cChild, cIter)
+	return gobool(c)
+}
+
 // IterNChildren is a wrapper around gtk_tree_model_iter_n_children().
 func (v *TreeModel) IterNChildren(iter *TreeIter) int {
 	var cIter *C.GtkTreeIter
@@ -9128,6 +9147,18 @@ func (v *TreeStore) Append(parent *TreeIter) *TreeIter {
 	return iter
 }
 
+// Insert is a wrapper around gtk_tree_store_insert
+func (v *TreeStore) Insert(parent *TreeIter, position int) *TreeIter {
+	var ti C.GtkTreeIter
+	var cParent *C.GtkTreeIter
+	if parent != nil {
+		cParent = parent.native()
+	}
+	C.gtk_tree_store_insert(v.native(), &ti, cParent, C.gint(position))
+	iter := &TreeIter{ti}
+	return iter
+}
+
 // SetValue is a wrapper around gtk_tree_store_set_value()
 func (v *TreeStore) SetValue(iter *TreeIter, column int, value interface{}) error {
 	switch value.(type) {
@@ -9145,6 +9176,15 @@ func (v *TreeStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 			(*C.GValue)(C.gpointer(gv.Native())))
 	}
 	return nil
+}
+
+// Remove is a wrapper around gtk_tree_store_remove().
+func (v *TreeStore) Remove(iter *TreeIter) bool {
+	var ti *C.GtkTreeIter
+	if iter != nil {
+		ti = iter.native()
+	}
+	return 0 != C.gtk_tree_store_remove(v.native(), ti)
 }
 
 // Clear is a wrapper around gtk_tree_store_clear().

@@ -120,7 +120,7 @@ func (v *TreeView) GetLevelIndentation() int {
 	return int(C.gtk_tree_view_get_level_indentation(v.native()))
 }
 
-// GetLevelIndentation is a wrapper around gtk_tree_view_get_show_expanders().
+// GetShowExpanders is a wrapper around gtk_tree_view_get_show_expanders().
 func (v *TreeView) GetShowExpanders() bool {
 	return gobool(C.gtk_tree_view_get_show_expanders(v.native()))
 }
