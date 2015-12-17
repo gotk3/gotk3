@@ -17,16 +17,17 @@
 // Go bindings for GDK 3 Inmem API
 // For documentation see https://developer.gnome.org/gdk-pixbuf/unstable/gdk-pixbuf-Image-Data-in-Memory.html
 
+// +build gdk_3_32
 package gdk
 
 // #cgo pkg-config: gdk-3.0
 // #include <gdk/gdk.h>
-// #include "gdk_inmem.h"
+// #include "gdk_inmem_2_32.h"
 import "C"
 import (
+	"github.com/gotk3/gotk3/glib"
 	"runtime"
 	"unsafe"
-	"github.com/gotk3/gotk3/glib"
 )
 
 // Explicitly hold a reference for each slice that has been converted
