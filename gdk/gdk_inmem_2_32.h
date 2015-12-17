@@ -19,7 +19,7 @@
 // given []byte slice. A reference to the slice is stored in a map until
 // the destroy callback of GBytes is called, which removes that reference.
 
-// +build gdk_3_32
+// +build gdk_3_32, !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16
 // Exported by gdk_inmem.go
 extern void gdkDestroyGBytes(void *data);
 

@@ -17,7 +17,7 @@
 // Go bindings for GDK 3 Inmem API
 // For documentation see https://developer.gnome.org/gdk-pixbuf/unstable/gdk-pixbuf-Image-Data-in-Memory.html
 
-// +build gdk_3_32
+// +build gdk_3_32, !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16
 package gdk
 
 // #cgo pkg-config: gdk-3.0
