@@ -84,10 +84,39 @@ func wrapActionBar(obj *glib.Object) *ActionBar {
 	return &ActionBar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
+//gtk_action_bar_new()
 func ActionBarNew() (*ActionBar, error) {
 	c := C.gtk_action_bar_new()
 	if c == nil {
 		return nil, nilPtrErr
 	}
 	return wrapActionBar(wrapObject(unsafe.Pointer(c))), nil
+}
+
+//gtk_action_bar_pack_start(GtkActionBar *action_bar,GtkWidget *child)
+func (a *ActionBar) PackStart(child IWidget) {
+	C.gtk_action_bar_pack_start(a.native(), child.toWidget())
+}
+
+//gtk_action_bar_pack_end(GtkActionBar *action_bar,GtkWidget *child)
+func (a *ActionBar) PackEnd(child IWidget) {
+	C.gtk_action_bar_pack_end(a.native(), child.toWidget())
+}
+
+//gtk_action_bar_set_center_widget(GtkActionBar *action_bar,GtkWidget *center_widget)
+func (a *ActionBar) SetCenterWidget(child IWidget) {
+	if child == nil {
+		C.gtk_action_bar_set_center_widget(a.native(), nil)
+	} else {
+		C.gtk_action_bar_set_center_widget(a.native(), child.toWidget())
+	}
+}
+
+//gtk_action_bar_get_center_widget(GtkActionBar *action_bar)
+func (a *ActionBar) GetCenterWidget() *Widget {
+	w := C.gtk_action_bar_get_center_widget(a.native())
+	if w == nil {
+		return nil
+	}
+	return &Widget{glib.InitiallyUnowned{wrapObject(unsafe.Pointer(w))}}
 }
