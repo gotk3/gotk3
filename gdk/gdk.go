@@ -1071,6 +1071,18 @@ func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, heigh
 	return p, nil
 }
 
+// PixbufCopy is a wrapper around gdk_pixbuf_copy().
+func PixbufCopy(v *Pixbuf) (*Pixbuf, error) {
+	c := C.gdk_pixbuf_copy(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
 // PixbufNewFromFile is a wrapper around gdk_pixbuf_new_from_file().
 func PixbufNewFromFile(filename string) (*Pixbuf, error) {
 	cstr := C.CString(filename)

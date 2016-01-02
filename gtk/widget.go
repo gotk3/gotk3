@@ -202,6 +202,11 @@ func (v *Widget) Unmap() {
 	C.gtk_widget_unmap(v.native())
 }
 
+// QueueDrawArea is a wrapper aroung gtk_widget_queue_draw_area().
+func (v *Widget) QueueDrawArea(x, y, w, h int) {
+	C.gtk_widget_queue_draw_area(v.native(), C.gint(x), C.gint(y), C.gint(w), C.gint(h))
+}
+
 //void gtk_widget_realize(GtkWidget *widget);
 //void gtk_widget_unrealize(GtkWidget *widget);
 //void gtk_widget_draw(GtkWidget *widget, cairo_t *cr);
