@@ -36,11 +36,13 @@ import (
 func init() {
 	tm := []glib.TypeMarshaler{
 		{glib.Type(C.gtk_action_bar_get_type()), marshalActionBar},
+		{glib.Type(C.gtk_popover_get_type()), marshalPopover},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
 
 	WrapMap["GtkActionBar"] = wrapActionBar
+	WrapMap["GtkPopover"] = wrapPopover
 }
 
 func (v *Widget) SetMarginStart(margin int) {
@@ -119,4 +121,43 @@ func (a *ActionBar) GetCenterWidget() *Widget {
 		return nil
 	}
 	return &Widget{glib.InitiallyUnowned{wrapObject(unsafe.Pointer(w))}}
+}
+
+//TODO(sjon): Implement GtkPopover
+//GtkPopover
+type Popover struct {
+	Bin
+}
+
+func (v *Popover) native() *C.GtkPopover {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkPopover(p)
+}
+
+func marshalPopover(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	return wrapPopover(wrapObject(unsafe.Pointer(c))), nil
+}
+
+func wrapPopover(obj *glib.Object) *Popover {
+	return &Popover{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+//gtk_popover_new()
+func PopoverNew(relative IWidget) (*Popover, error) {
+	//Takes relative to widget
+	var c *C.struct__GtkWidget
+	if relative == nil {
+		c = C.gtk_popover_new(nil)
+	} else {
+		c = C.gtk_popover_new(relative.toWidget())
+	}
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapPopover(wrapObject(unsafe.Pointer(c))), nil
 }
