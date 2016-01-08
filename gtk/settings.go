@@ -1,7 +1,6 @@
 package gtk
 
 // #include <gtk/gtk.h>
-// #include "gtk.go.h"
 // #include "settings.go.h"
 import "C"
 import (
@@ -20,6 +19,7 @@ func init() {
 	WrapMap["GtkSettings"] = wrapSettings
 }
 
+//GtkSettings
 type Settings struct {
 	*glib.Object
 }
@@ -42,6 +42,7 @@ func wrapSettings(obj *glib.Object) *Settings {
 	return &Settings{obj}
 }
 
+//Get the global non window specific settings
 func SettingsGetDefault() (*Settings, error) {
 	c := C.gtk_settings_get_default()
 	if c == nil {
