@@ -32,7 +32,6 @@ import (
 )
 
 func init() {
-	init_inmem()
 	tm := []glib.TypeMarshaler{
 		// Enums
 		{glib.Type(C.gdk_drag_action_get_type()), marshalDragAction},
