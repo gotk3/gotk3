@@ -7,8 +7,8 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 // #include "gvariant.go.h"
-import "C"
-import "unsafe"
+//import "C"
+//import "unsafe"
 
 /*
  * GVariant
@@ -17,6 +17,7 @@ import "unsafe"
 // IVariant is an interface type implemented by Variant and all types which embed
 // an Variant.  It is meant to be used as a type for function arguments which
 // require GVariants or any subclasses thereof.
+/* todo fix bugs
 type IVariant interface {
 	ToGVariant() *C.GVariant
 	ToVariant() *Variant
@@ -60,6 +61,7 @@ func (v *Variant) native() *C.GVariant {
 func (v *Variant) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
+*/
 
 //void	g_variant_unref ()
 //GVariant *	g_variant_ref ()

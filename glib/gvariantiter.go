@@ -1,3 +1,5 @@
+// Same copyright and license as the rest of the files in this project
+
 //GVariant : GVariant — strongly typed value datatype
 // https://developer.gnome.org/glib/2.26/glib-GVariant.html
 package glib
@@ -6,13 +8,14 @@ package glib
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
-import "C"
-import "unsafe"
+// #include "gvariant.go.h"
+//import "C"
+//import "unsafe"
 
 /*
  * GVariantIter
  */
-
+/* todo fix bugs
 // VariantIter is a representation of GLib's GVariantIter.
 type VariantIter struct {
 	GVariantIter *C.GVariantIter
@@ -47,3 +50,4 @@ func (v *VariantIter) native() *C.GVariantIter {
 func (v *VariantIter) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
+*/

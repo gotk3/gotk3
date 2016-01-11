@@ -1,4 +1,6 @@
-//GVariant : GVariant — strongly typed value datatype
+// Same copyright and license as the rest of the files in this project
+
+// GVariant : GVariant — strongly typed value datatype
 // https://developer.gnome.org/glib/2.26/glib-GVariant.html
 package glib
 
@@ -6,13 +8,14 @@ package glib
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
-import "C"
-import "unsafe"
+// #include "gvariant.go.h"
+//import "C"
+//import "unsafe"
 
 /*
  * GVariantBuilder
  */
-
+/* todo fix bugs
 // VariantBuilder is a representation of GLib's VariantBuilder.
 type VariantBuilder struct {
 	GVariantBuilder *C.GVariantBuilder
@@ -47,3 +50,4 @@ func (v *VariantBuilder) native() *C.GVariantBuilder {
 func (v *VariantBuilder) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
+*/
