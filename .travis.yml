@@ -18,7 +18,10 @@ before_install:
   - "export DISPLAY=:99.0"
   - sudo /usr/bin/Xvfb $DISPLAY 2>1 > /dev/null &
   - "export GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _| cut -d '_' -f 1-2)"
-  - echo "GTK version ${GTK_VERSION}"
+  - "export Glib_VERSION=$(pkg-config --modversion glib-2.0)"
+  - "export Cairo_VERSION=$(pkg-config --modversion cairo)"
+  - "export Pango_VERSION=$(pkg-config --modversion pango)"
+  - echo "GTK version ${GTK_VERSION} (Glib ${Glib_VERSION}, Cairo ${Cairo_VERSION}, Pango ${Pango_VERSION})"
 
 install:
   - go get -t -tags "gtk_${GTK_VERSION}" github.com/gotk3/gotk3/...
