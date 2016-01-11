@@ -1,25 +1,8 @@
-// Copyright (c) 2013-2014 Conformal Systems <info@conformal.com>
-//
-// This file originated from: http://opensource.conformal.com/
-//
-// Permission to use, copy, modify, and distribute this software for any
-// purpose with or without fee is hereby granted, provided that the above
-// copyright notice and this permission notice appear in all copies.
-//
-// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-// ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-// ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-// OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+// Same copyright and license as the rest of the files in this project
+// This file contains accelerator related functions and structures
 
-// This file includes wrapers for symbols included since GTK 3.10, and
-// and should not be included in a build intended to target any older GTK
-// versions.  To target an older build, such as 3.8, use
-// 'go build -tags gtk_3_8'.  Otherwise, if no build tags are used, GTK 3.10
-// is assumed and this file is built.
 // +build !gtk_3_6,!gtk_3_8
+// not use this: go build -tags gtk_3_8'. Otherwise, if no build tags are used, GTK 3.10
 
 package gtk
 
@@ -54,13 +37,12 @@ func init() {
 
 	//Contribute to casting
 	for k, v := range map[string]WrapFn{
-		"GtkHeaderBar":     wrapHeaderBar,
-		"GtkListBox":       wrapListBox,
-		"GtkListBoxRow":    wrapListBoxRow,
-		"GtkRevealer":      wrapRevealer,
-		"GtkSearchBar":     wrapSearchBar,
-		"GtkStack":         wrapStack,
-		"GtkStackSwitcher": wrapStackSwitcher,
+		"GtkHeaderBar":  wrapHeaderBar,
+		"GtkListBox":    wrapListBox,
+		"GtkListBoxRow": wrapListBoxRow,
+		"GtkRevealer":   wrapRevealer,
+		"GtkSearchBar":  wrapSearchBar,
+		"GtkStack":      wrapStack,
 	} {
 		WrapMap[k] = v
 	}
@@ -708,69 +690,4 @@ func (v *Stack) SetTransitionType(transition StackTransitionType) {
 func (v *Stack) GetTransitionType() StackTransitionType {
 	c := C.gtk_stack_get_transition_type(v.native())
 	return StackTransitionType(c)
-}
-
-/*
- * GtkStackSwitcher
- */
-
-// StackSwitcher is a representation of GTK's GtkStackSwitcher
-type StackSwitcher struct {
-	Box
-}
-
-// native returns a pointer to the underlying GtkStackSwitcher.
-func (v *StackSwitcher) native() *C.GtkStackSwitcher {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkStackSwitcher(p)
-}
-
-func marshalStackSwitcher(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
-	return wrapStackSwitcher(obj), nil
-}
-
-func wrapStackSwitcher(obj *glib.Object) *StackSwitcher {
-	return &StackSwitcher{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
-}
-
-// StackSwitcherNew is a wrapper around gtk_stack_switcher_new().
-func StackSwitcherNew() (*StackSwitcher, error) {
-	c := C.gtk_stack_switcher_new()
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	return wrapStackSwitcher(wrapObject(unsafe.Pointer(c))), nil
-}
-
-// SetStack is a wrapper around gtk_stack_switcher_set_stack().
-func (v *StackSwitcher) SetStack(stack *Stack) {
-	C.gtk_stack_switcher_set_stack(v.native(), stack.native())
-}
-
-// GetStack is a wrapper around gtk_stack_switcher_get_stack().
-func (v *StackSwitcher) GetStack() *Stack {
-	c := C.gtk_stack_switcher_get_stack(v.native())
-	if c == nil {
-		return nil
-	}
-	return wrapStack(wrapObject(unsafe.Pointer(c)))
-}
-
-/*
- * GtkWindow
- */
-
-// SetTitlebar is a wrapper around gtk_window_set_titlebar().
-func (v *Window) SetTitlebar(titlebar IWidget) {
-	C.gtk_window_set_titlebar(v.native(), titlebar.toWidget())
-}
-
-// Close is a wrapper around gtk_window_close().
-func (v *Window) Close() {
-	C.gtk_window_close(v.native())
 }

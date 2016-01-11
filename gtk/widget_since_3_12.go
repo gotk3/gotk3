@@ -14,12 +14,12 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-// This file includes wrapers for symbols included since GTK 3.8, and
+// This file includes wrapers for symbols included since GTK 3.12, and
 // and should not be included in a build intended to target any older GTK
-// versions.  To target an older build, such as 3.8, use
-// 'go build -tags gtk_3_8'.  Otherwise, if no build tags are used, GTK 3.18
+// versions.  To target an older build, such as 3.10, use
+// 'go build -tags gtk_3_10'.  Otherwise, if no build tags are used, GTK 3.12
 // is assumed and this file is built.
-// +build !gtk_3_6
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10
 
 package gtk
 
@@ -27,11 +27,20 @@ package gtk
 // #include <gtk/gtk.h>
 import "C"
 
-/*
- * Constants
- */
+func (v *Widget) SetMarginStart(margin int) {
+	C.gtk_widget_set_margin_start(v.native(), C.gint(margin))
+}
 
-const (
-	STATE_FLAG_DIR_LTR StateFlags = C.GTK_STATE_FLAG_DIR_LTR
-	STATE_FLAG_DIR_RTL StateFlags = C.GTK_STATE_FLAG_DIR_RTL
-)
+func (v *Widget) GetMarginStart() int {
+	c := C.gtk_widget_get_margin_start(v.native())
+	return int(c)
+}
+
+func (v *Widget) SetMarginEnd(margin int) {
+	C.gtk_widget_set_margin_end(v.native(), C.gint(margin))
+}
+
+func (v *Widget) GetMarginEnd() int {
+	c := C.gtk_widget_get_margin_end(v.native())
+	return int(c)
+}

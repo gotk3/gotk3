@@ -28,10 +28,11 @@ package gtk
 import "C"
 
 /*
- * Constants
+ * GtkWidget
  */
 
-const (
-	STATE_FLAG_DIR_LTR StateFlags = C.GTK_STATE_FLAG_DIR_LTR
-	STATE_FLAG_DIR_RTL StateFlags = C.GTK_STATE_FLAG_DIR_RTL
-)
+// IsVisible is a wrapper around gtk_widget_is_visible().
+func (v *Widget) IsVisible() bool {
+	c := C.gtk_widget_is_visible(v.native())
+	return gobool(c)
+}

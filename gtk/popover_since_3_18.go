@@ -1,4 +1,4 @@
-// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16,gtk_3_18
 
 // See: https://developer.gnome.org/gtk3/3.18/api-index-3-18.html
 
@@ -14,8 +14,7 @@ import (
 )
 
 //void
-//gtk_popover_set_default_widget (GtkPopover *popover,
-//                                GtkWidget *widget);
+//gtk_popover_set_default_widget (GtkPopover *popover, GtkWidget *widget);
 func (p *Popover) SetDefaultWidget(widget IWidget) {
 	C.gtk_popover_set_default_widget(p.native(), widget.toWidget())
 }

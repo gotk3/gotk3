@@ -1,3 +1,5 @@
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12
+
 /*
  * Copyright (c) 2013-2014 Conformal Systems <info@conformal.com>
  *
@@ -20,10 +22,4 @@ static GtkPopover *
 toGtkPopover(void *p)
 {
 	return (GTK_POPOVER(p));
-}
-
-static GtkActionBar *
-toGtkActionBar(void *p)
-{
-	return (GTK_ACTION_BAR(p));
 }
