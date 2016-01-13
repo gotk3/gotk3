@@ -5822,39 +5822,6 @@ func (v *MenuItem) SetLabel(label string) {
 }
 
 /*
- * GtkMenuShell
- */
-
-// MenuShell is a representation of GTK's GtkMenuShell.
-type MenuShell struct {
-	Container
-}
-
-// native returns a pointer to the underlying GtkMenuShell.
-func (v *MenuShell) native() *C.GtkMenuShell {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkMenuShell(p)
-}
-
-func marshalMenuShell(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
-	return wrapMenuShell(obj), nil
-}
-
-func wrapMenuShell(obj *glib.Object) *MenuShell {
-	return &MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}
-}
-
-// Append is a wrapper around gtk_menu_shell_append().
-func (v *MenuShell) Append(child IMenuItem) {
-	C.gtk_menu_shell_append(v.native(), child.toWidget())
-}
-
-/*
  * GtkMessageDialog
  */
 
