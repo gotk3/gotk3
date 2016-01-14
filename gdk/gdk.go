@@ -44,6 +44,7 @@ func init() {
 
 		// Objects/Interfaces
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
+		{glib.Type(C.gdk_cursor_get_type()), marshalCursor},
 		{glib.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
 		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
@@ -251,6 +252,44 @@ const (
 	SCROLL_SMOOTH ScrollDirection = C.GDK_SCROLL_SMOOTH
 )
 
+// CURRENT_TIME is a representation of GDK_CURRENT_TIME
+
+const CURRENT_TIME = C.GDK_CURRENT_TIME
+
+// GrabStatus is a representation of GdkGrabStatus
+
+type GrabStatus int
+
+const (
+	GRAB_SUCCESS         GrabStatus = C.GDK_GRAB_SUCCESS
+	GRAB_ALREADY_GRABBED GrabStatus = C.GDK_GRAB_ALREADY_GRABBED
+	GRAB_INVALID_TIME    GrabStatus = C.GDK_GRAB_INVALID_TIME
+	GRAB_FROZEN          GrabStatus = C.GDK_GRAB_FROZEN
+	// Only exists since 3.16
+	// GRAB_FAILED GrabStatus = C.GDK_GRAB_FAILED
+	GRAB_FAILED GrabStatus = 5
+)
+
+// GrabOwnership is a representation of GdkGrabOwnership
+
+type GrabOwnership int
+
+const (
+	OWNERSHIP_NONE        GrabOwnership = C.GDK_OWNERSHIP_NONE
+	OWNERSHIP_WINDOW      GrabOwnership = C.GDK_OWNERSHIP_WINDOW
+	OWNERSHIP_APPLICATION GrabOwnership = C.GDK_OWNERSHIP_APPLICATION
+)
+
+// DeviceType is a representation of GdkDeviceType
+
+type DeviceType int
+
+const (
+	DEVICE_TYPE_MASTER   DeviceType = C.GDK_DEVICE_TYPE_MASTER
+	DEVICE_TYPE_SLAVE    DeviceType = C.GDK_DEVICE_TYPE_SLAVE
+	DEVICE_TYPE_FLOATING DeviceType = C.GDK_DEVICE_TYPE_FLOATING
+)
+
 /*
  * GdkAtom
  */
@@ -306,6 +345,54 @@ func marshalDevice(p uintptr) (interface{}, error) {
 	return &Device{obj}, nil
 }
 
+// Grab() is a wrapper around gdk_device_grab().
+func (v *Device) Grab(w *Window, ownership GrabOwnership, owner_events bool, event_mask EventMask, cursor *Cursor, time uint32) GrabStatus {
+	ret := C.gdk_device_grab(
+		v.native(),
+		w.native(),
+		C.GdkGrabOwnership(ownership),
+		gbool(owner_events),
+		C.GdkEventMask(event_mask),
+		cursor.native(),
+		C.guint32(time),
+	)
+	return GrabStatus(ret)
+}
+
+// Ungrab() is a wrapper around gdk_device_ungrab().
+func (v *Device) Ungrab(time uint32) {
+	C.gdk_device_ungrab(v.native(), C.guint32(time))
+}
+
+/*
+ * GdkCursor
+ */
+
+// Cursor is a representation of GdkCursor.
+type Cursor struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GdkCursor.
+func (v *Cursor) native() *C.GdkCursor {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkCursor(p)
+}
+
+// Native returns a pointer to the underlying GdkCursor.
+func (v *Cursor) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalCursor(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Cursor{obj}, nil
+}
+
 /*
  * GdkDeviceManager
  */
@@ -333,6 +420,40 @@ func marshalDeviceManager(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	return &DeviceManager{obj}, nil
+}
+
+// GetClientPointer() is a wrapper around gdk_device_manager_get_client_pointer().
+func (v *DeviceManager) GetClientPointer() (*Device, error) {
+	c := C.gdk_device_manager_get_client_pointer(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return &Device{obj}, nil
+}
+
+// GetDisplay() is a wrapper around gdk_device_manager_get_display().
+func (v *DeviceManager) GetDisplay() (*Display, error) {
+	c := C.gdk_device_manager_get_display(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj.Ref()
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return &Display{obj}, nil
+}
+
+// ListDevices() is a wrapper around gdk_device_manager_list_devices().
+func (v *DeviceManager) ListDevices(tp DeviceType) *glib.List {
+	clist := C.gdk_device_manager_list_devices(v.native(), C.GdkDeviceType(tp))
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	runtime.SetFinalizer(glist, func(glist *glib.List) {
+		glist.Free()
+	})
+	return glist
 }
 
 /*
@@ -731,7 +852,7 @@ func marshalDragContext(p uintptr) (interface{}, error) {
 
 func (v *DragContext) ListTargets() *glib.List {
 	c := C.gdk_drag_context_list_targets(v.native())
-	return (*glib.List)(unsafe.Pointer(c))
+	return glib.WrapList(uintptr(unsafe.Pointer(c)))
 }
 
 /*

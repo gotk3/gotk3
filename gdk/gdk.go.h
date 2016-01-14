@@ -31,6 +31,12 @@ toGdkDevice(void *p)
 	return (GDK_DEVICE(p));
 }
 
+static GdkCursor *
+toGdkCursor(void *p)
+{
+	return (GDK_CURSOR(p));
+}
+
 static GdkDeviceManager *
 toGdkDeviceManager(void *p)
 {
