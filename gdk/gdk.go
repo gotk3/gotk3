@@ -731,7 +731,7 @@ func marshalDragContext(p uintptr) (interface{}, error) {
 
 func (v *DragContext) ListTargets() *glib.List {
 	c := C.gdk_drag_context_list_targets(v.native())
-	return (*glib.List)(unsafe.Pointer(c))
+	return glib.WrapList(uintptr(unsafe.Pointer(c)))
 }
 
 /*
