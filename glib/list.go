@@ -56,6 +56,9 @@ func (v *List) native() *C.struct__GList {
 // and DataWrapped(). It's used to cast raw C data into appropriate
 // Go structures and types every time that data is retreived.
 func (v *List) DataWrapper(fn func(unsafe.Pointer) interface{}) {
+	if v == nil {
+		return
+	}
 	v.dataWrap = fn
 }
 
