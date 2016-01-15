@@ -95,6 +95,12 @@ toGtkProgressBar(void *p)
 	return (GTK_PROGRESS_BAR(p));
 }
 
+static GtkLevelBar *
+toGtkLevelBar(void *p)
+{
+	return (GTK_LEVEL_BAR(p));
+}
+
 static GtkBin *
 toGtkBin(void *p)
 {
