@@ -9008,6 +9008,7 @@ func (v *TreeSelection) UnselectPath(path *TreePath) {
 }
 
 // GetSelectedRows is a wrapper around gtk_tree_selection_get_selected_rows().
+// All the elements of returned list are wrapped into (*gtk.TreePath) values.
 //
 // Please note that a runtime finalizer is only set on the head of the linked
 // list, and must be kept live while accessing any item in the list, or the
@@ -9018,12 +9019,21 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 		cmodel := model.toTreeModel()
 		pcmodel = &cmodel
 	}
+
 	clist := C.gtk_tree_selection_get_selected_rows(v.native(), pcmodel)
+	if clist == nil {
+		return nil
+	}
+
 	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return &TreePath{(*C.GtkTreePath)(ptr)}
+	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
 		C.g_list_free_full((*C.GList)(unsafe.Pointer(glist.Native())),
 			(C.GDestroyNotify)(C.gtk_tree_path_free))
 	})
+
 	return glist
 }
 
