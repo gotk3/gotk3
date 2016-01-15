@@ -25,10 +25,16 @@ func WrapList(obj uintptr) *List {
 }
 
 func wrapList(obj *C.struct__GList) *List {
+	if obj == nil {
+		return nil
+	}
 	return &List{list: obj}
 }
 
 func (v *List) wrapNewHead(obj *C.struct__GList) *List {
+	if obj == nil {
+		return nil
+	}
 	return &List{
 		list:     obj,
 		dataWrap: v.dataWrap,

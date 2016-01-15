@@ -29,7 +29,7 @@ func TestList_DataWrapper(t *testing.T) {
 		return fmt.Sprintf("Value %v", uintptr(ptr))
 	})
 
-	for l := list; l.list != nil; l = l.Next() {
+	for l := list; l != nil; l = l.Next() {
 		expect := fmt.Sprintf("Value %v", uintptr(l.Data()))
 		actual, ok := l.DataWrapped().(string)
 		if !ok {
