@@ -449,7 +449,13 @@ func (v *DeviceManager) GetDisplay() (*Display, error) {
 // ListDevices() is a wrapper around gdk_device_manager_list_devices().
 func (v *DeviceManager) ListDevices(tp DeviceType) *glib.List {
 	clist := C.gdk_device_manager_list_devices(v.native(), C.GdkDeviceType(tp))
+	if clist == nil {
+		return nil
+	}
 	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return &Device{&glib.Object{glib.ToGObject(ptr)}}
+	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
 		glist.Free()
 	})

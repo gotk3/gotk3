@@ -2861,8 +2861,8 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 
 	var widgets []*Widget
 	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
-	for ; wlist.Data() != uintptr(unsafe.Pointer(nil)); wlist = wlist.Next() {
-		widgets = append(widgets, wrapWidget(wrapObject(unsafe.Pointer(wlist.Data()))))
+	for ; wlist.Data() != nil; wlist = wlist.Next() {
+		widgets = append(widgets, wrapWidget(wrapObject(wlist.Data())))
 	}
 	return widgets, gobool(c)
 }
@@ -8916,7 +8916,7 @@ func TreePathFromList(list *glib.List) *TreePath {
 	if list == nil {
 		return nil
 	}
-	return &TreePath{(*C.GtkTreePath)(unsafe.Pointer(list.Data()))}
+	return &TreePath{(*C.GtkTreePath)(list.Data())}
 }
 
 // native returns a pointer to the underlying GtkTreePath.
@@ -9008,6 +9008,7 @@ func (v *TreeSelection) UnselectPath(path *TreePath) {
 }
 
 // GetSelectedRows is a wrapper around gtk_tree_selection_get_selected_rows().
+// All the elements of returned list are wrapped into (*gtk.TreePath) values.
 //
 // Please note that a runtime finalizer is only set on the head of the linked
 // list, and must be kept live while accessing any item in the list, or the
@@ -9018,12 +9019,21 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 		cmodel := model.toTreeModel()
 		pcmodel = &cmodel
 	}
+
 	clist := C.gtk_tree_selection_get_selected_rows(v.native(), pcmodel)
+	if clist == nil {
+		return nil
+	}
+
 	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return &TreePath{(*C.GtkTreePath)(ptr)}
+	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
 		C.g_list_free_full((*C.GList)(unsafe.Pointer(glist.Native())),
 			(C.GDestroyNotify)(C.gtk_tree_path_free))
 	})
+
 	return glist
 }
 
