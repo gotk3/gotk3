@@ -79,6 +79,6 @@ func (v *List) Previous() *List {
 }
 
 // Data is a wrapper around the data struct field
-func (v *List) Data() uintptr {
-	return uintptr(v.native().data)
+func (v *List) Data() unsafe.Pointer {
+	return unsafe.Pointer(v.native().data)
 }
