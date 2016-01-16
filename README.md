@@ -1,8 +1,7 @@
-gotk3
+gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3)
 =====
 
-[![Build Status](https://travis-ci.org/gotk3/gotk3.png?branch=master)]
-(https://travis-ci.org/gotk3/gotk3)
+[![Build Status](https://travis-ci.org/gotk3/gotk3.png?branch=master)](https://travis-ci.org/gotk3/gotk3)
 
 The gotk3 project provides Go bindings for GTK+3 and dependent
 projects.  Each component is given its own subdirectory, which is used
