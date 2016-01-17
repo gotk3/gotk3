@@ -2,8 +2,8 @@ package gtk
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
+import "C"
 import (
-	"C"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -70,6 +70,15 @@ func LevelBarNew() (*LevelBar, error) {
 	return wrapLevelBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
+// LevelBarNewForInterval() is a wrapper around gtk_level_bar_new_for_interval().
+func LevelBarNewForInterval(min_value, max_value float64) (*LevelBar, error) {
+	c := C.gtk_level_bar_new_for_interval(C.gdouble(min_value), C.gdouble(max_value))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapLevelBar(wrapObject(unsafe.Pointer(c))), nil
+}
+
 // SetMode() is a wrapper around gtk_level_bar_set_mode().
 func (v *LevelBar) SetMode(m LevelBarMode) {
 	C.gtk_level_bar_set_mode(v.native(), C.GtkLevelBarMode(m))
@@ -111,4 +120,32 @@ func (v *LevelBar) SetMaxValue(value float64) {
 func (v *LevelBar) GetMaxValue() float64 {
 	c := C.gtk_level_bar_get_max_value(v.native())
 	return float64(c)
+}
+
+const (
+	LEVEL_BAR_OFFSET_LOW  string = C.GTK_LEVEL_BAR_OFFSET_LOW
+	LEVEL_BAR_OFFSET_HIGH string = C.GTK_LEVEL_BAR_OFFSET_HIGH
+)
+
+// AddOffsetValue() is a wrapper around gtk_level_bar_add_offset_value().
+func (v *LevelBar) AddOffsetValue(name string, value float64) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_level_bar_add_offset_value(v.native(), (*C.gchar)(cstr), C.gdouble(value))
+}
+
+// RemoveOffsetValue() is a wrapper around gtk_level_bar_remove_offset_value().
+func (v *LevelBar) RemoveOffsetValue(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_level_bar_remove_offset_value(v.native(), (*C.gchar)(cstr))
+}
+
+// GetOffsetValue() is a wrapper around gtk_level_bar_get_offset_value().
+func (v *LevelBar) GetOffsetValue(name string) (float64, bool) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	var value C.gdouble
+	c := C.gtk_level_bar_get_offset_value(v.native(), (*C.gchar)(cstr), &value)
+	return float64(value), gobool(c)
 }
