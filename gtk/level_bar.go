@@ -2,8 +2,8 @@ package gtk
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
-import "C"
 import (
+	"C"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -111,15 +111,4 @@ func (v *LevelBar) SetMaxValue(value float64) {
 func (v *LevelBar) GetMaxValue() float64 {
 	c := C.gtk_level_bar_get_max_value(v.native())
 	return float64(c)
-}
-
-// SetInverted() is a wrapper around gtk_level_bar_set_inverted().
-func (v *LevelBar) SetInverted(inverted bool) {
-	C.gtk_level_bar_set_inverted(v.native(), gbool(inverted))
-}
-
-// GetInverted() is a wrapper around gtk_level_bar_get_inverted().
-func (v *LevelBar) GetInverted() bool {
-	c := C.gtk_level_bar_get_inverted(v.native())
-	return gobool(c)
 }
