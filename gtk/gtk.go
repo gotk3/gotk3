@@ -8986,7 +8986,7 @@ func wrapTreeSelection(obj *glib.Object) *TreeSelection {
 // GetSelected() is a wrapper around gtk_tree_selection_get_selected().
 func (v *TreeSelection) GetSelected(model *ITreeModel, iter *TreeIter) bool {
 	var pcmodel **C.GtkTreeModel
-	if pcmodel != nil {
+	if model != nil {
 		cmodel := (*model).toTreeModel()
 		pcmodel = &cmodel
 	} else {
