@@ -18,7 +18,7 @@ func init() {
 
 	glib.RegisterGValueMarshalers(tm)
 
-	WrapMap["GtkLevelBar"] = wrapLevelBar
+	WrapMap["GtkLevelBar"] = LevelBarWrap
 }
 
 // LevelBarMode is a representation of GTK's GtkLevelBarMode.
@@ -54,10 +54,10 @@ func (v *LevelBar) native() *C.GtkLevelBar {
 func marshalLevelBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapLevelBar(obj), nil
+	return LevelBarWrap(obj), nil
 }
 
-func wrapLevelBar(obj *glib.Object) *LevelBar {
+func LevelBarWrap(obj *glib.Object) *LevelBar {
 	return &LevelBar{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -67,7 +67,7 @@ func LevelBarNew() (*LevelBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapLevelBar(wrapObject(unsafe.Pointer(c))), nil
+	return LevelBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // LevelBarNewForInterval() is a wrapper around gtk_level_bar_new_for_interval().
@@ -76,7 +76,7 @@ func LevelBarNewForInterval(min_value, max_value float64) (*LevelBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapLevelBar(wrapObject(unsafe.Pointer(c))), nil
+	return LevelBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetMode() is a wrapper around gtk_level_bar_set_mode().

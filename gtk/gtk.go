@@ -878,10 +878,10 @@ func (v *AboutDialog) native() *C.GtkAboutDialog {
 func marshalAboutDialog(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAboutDialog(obj), nil
+	return AboutDialogWrap(obj), nil
 }
 
-func wrapAboutDialog(obj *glib.Object) *AboutDialog {
+func AboutDialogWrap(obj *glib.Object) *AboutDialog {
 	return &AboutDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
 }
 
@@ -892,7 +892,7 @@ func AboutDialogNew() (*AboutDialog, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAboutDialog(obj), nil
+	return AboutDialogWrap(obj), nil
 }
 
 // GetComments is a wrapper around gtk_about_dialog_get_comments().
@@ -1063,8 +1063,8 @@ func (v *AboutDialog) GetWrapLicense() bool {
 }
 
 // SetWrapLicense is a wrapper around gtk_about_dialog_set_wrap_license().
-func (v *AboutDialog) SetWrapLicense(wrapLicense bool) {
-	C.gtk_about_dialog_set_wrap_license(v.native(), gbool(wrapLicense))
+func (v *AboutDialog) SetWrapLicense(LicenseWrap bool) {
+	C.gtk_about_dialog_set_wrap_license(v.native(), gbool(LicenseWrap))
 }
 
 /*
@@ -1088,10 +1088,10 @@ func (v *Adjustment) native() *C.GtkAdjustment {
 func marshalAdjustment(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAdjustment(obj), nil
+	return AdjustmentWrap(obj), nil
 }
 
-func wrapAdjustment(obj *glib.Object) *Adjustment {
+func AdjustmentWrap(obj *glib.Object) *Adjustment {
 	return &Adjustment{glib.InitiallyUnowned{obj}}
 }
 
@@ -1107,7 +1107,7 @@ func AdjustmentNew(value, lower, upper, stepIncrement, pageIncrement, pageSize f
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAdjustment(obj), nil
+	return AdjustmentWrap(obj), nil
 }
 
 // GetValue is a wrapper around gtk_adjustment_get_value().
@@ -1216,10 +1216,10 @@ func (v *Assistant) native() *C.GtkAssistant {
 func marshalAssistant(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAssistant(obj), nil
+	return AssistantWrap(obj), nil
 }
 
-func wrapAssistant(obj *glib.Object) *Assistant {
+func AssistantWrap(obj *glib.Object) *Assistant {
 	return &Assistant{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -1230,7 +1230,7 @@ func AssistantNew() (*Assistant, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAssistant(obj), nil
+	return AssistantWrap(obj), nil
 }
 
 // GetCurrentPage is a wrapper around gtk_assistant_get_current_page().
@@ -1258,7 +1258,7 @@ func (v *Assistant) GetNthPage(pageNum int) (*Widget, error) {
 	}
 
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return WidgetWrap(obj), nil
 }
 
 // PrependPage is a wrapper around gtk_assistant_prepend_page().
@@ -1376,10 +1376,10 @@ func (v *Bin) native() *C.GtkBin {
 func marshalBin(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapBin(obj), nil
+	return BinWrap(obj), nil
 }
 
-func wrapBin(obj *glib.Object) *Bin {
+func BinWrap(obj *glib.Object) *Bin {
 	return &Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -1390,7 +1390,7 @@ func (v *Bin) GetChild() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return WidgetWrap(obj), nil
 }
 
 /*
@@ -1535,10 +1535,10 @@ func (v *Button) native() *C.GtkButton {
 func marshalButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapButton(obj), nil
+	return ButtonWrap(obj), nil
 }
 
-func wrapButton(obj *glib.Object) *Button {
+func ButtonWrap(obj *glib.Object) *Button {
 	return &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -1549,7 +1549,7 @@ func ButtonNew() (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapButton(obj), nil
+	return ButtonWrap(obj), nil
 }
 
 // ButtonNewWithLabel() is a wrapper around gtk_button_new_with_label().
@@ -1561,7 +1561,7 @@ func ButtonNewWithLabel(label string) (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapButton(obj), nil
+	return ButtonWrap(obj), nil
 }
 
 // ButtonNewWithMnemonic() is a wrapper around gtk_button_new_with_mnemonic().
@@ -1573,7 +1573,7 @@ func ButtonNewWithMnemonic(label string) (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapButton(obj), nil
+	return ButtonWrap(obj), nil
 }
 
 // Clicked() is a wrapper around gtk_button_clicked().
@@ -1642,7 +1642,7 @@ func (v *Button) GetImage() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return WidgetWrap(obj), nil
 }
 
 // SetImagePosition() is a wrapper around gtk_button_set_image_position().
@@ -1696,7 +1696,7 @@ func (v *ColorButton) native() *C.GtkColorButton {
 	return C.toGtkColorButton(p)
 }
 
-func wrapColorButton(obj *glib.Object) *ColorButton {
+func ColorButtonWrap(obj *glib.Object) *ColorButton {
 	return &ColorButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -1707,7 +1707,7 @@ func ColorButtonNew() (*ColorButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapColorButton(wrapObject(unsafe.Pointer(c))), nil
+	return ColorButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ColorButtonNewWithRGBA is a wrapper around gtk_color_button_new_with_rgba().
@@ -1716,7 +1716,7 @@ func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapColorButton(wrapObject(unsafe.Pointer(c))), nil
+	return ColorButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetRGBA is a wrapper around gtk_color_chooser_get_rgba().
@@ -1752,10 +1752,10 @@ func (v *Box) native() *C.GtkBox {
 func marshalBox(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapBox(obj), nil
+	return BoxWrap(obj), nil
 }
 
-func wrapBox(obj *glib.Object) *Box {
+func BoxWrap(obj *glib.Object) *Box {
 	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -1766,7 +1766,7 @@ func BoxNew(orientation Orientation, spacing int) (*Box, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapBox(obj), nil
+	return BoxWrap(obj), nil
 }
 
 // PackStart() is a wrapper around gtk_box_pack_start().
@@ -1846,10 +1846,10 @@ func (v *Calendar) native() *C.GtkCalendar {
 func marshalCalendar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCalendar(obj), nil
+	return CalendarWrap(obj), nil
 }
 
-func wrapCalendar(obj *glib.Object) *Calendar {
+func CalendarWrap(obj *glib.Object) *Calendar {
 	return &Calendar{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -1860,7 +1860,7 @@ func CalendarNew() (*Calendar, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCalendar(obj), nil
+	return CalendarWrap(obj), nil
 }
 
 // SelectMonth is a wrapper around gtk_calendar_select_month().
@@ -1966,10 +1966,10 @@ func (v *CellLayout) native() *C.GtkCellLayout {
 func marshalCellLayout(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellLayout(obj), nil
+	return CellLayoutWrap(obj), nil
 }
 
-func wrapCellLayout(obj *glib.Object) *CellLayout {
+func CellLayoutWrap(obj *glib.Object) *CellLayout {
 	return &CellLayout{obj}
 }
 
@@ -2030,10 +2030,10 @@ func (v *CellRenderer) toCellRenderer() *C.GtkCellRenderer {
 func marshalCellRenderer(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRenderer(obj), nil
+	return CellRendererWrap(obj), nil
 }
 
-func wrapCellRenderer(obj *glib.Object) *CellRenderer {
+func CellRendererWrap(obj *glib.Object) *CellRenderer {
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
 }
 
@@ -2058,10 +2058,10 @@ func (v *CellRendererSpinner) native() *C.GtkCellRendererSpinner {
 func marshalCellRendererSpinner(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererSpinner(obj), nil
+	return CellRendererSpinnerWrap(obj), nil
 }
 
-func wrapCellRendererSpinner(obj *glib.Object) *CellRendererSpinner {
+func CellRendererSpinnerWrap(obj *glib.Object) *CellRendererSpinner {
 	return &CellRendererSpinner{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2072,7 +2072,7 @@ func CellRendererSpinnerNew() (*CellRendererSpinner, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererSpinner(obj), nil
+	return CellRendererSpinnerWrap(obj), nil
 }
 
 /*
@@ -2096,10 +2096,10 @@ func (v *CellRendererPixbuf) native() *C.GtkCellRendererPixbuf {
 func marshalCellRendererPixbuf(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererPixbuf(obj), nil
+	return CellRendererPixbufWrap(obj), nil
 }
 
-func wrapCellRendererPixbuf(obj *glib.Object) *CellRendererPixbuf {
+func CellRendererPixbufWrap(obj *glib.Object) *CellRendererPixbuf {
 	return &CellRendererPixbuf{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2110,7 +2110,7 @@ func CellRendererPixbufNew() (*CellRendererPixbuf, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererPixbuf(obj), nil
+	return CellRendererPixbufWrap(obj), nil
 }
 
 /*
@@ -2134,10 +2134,10 @@ func (v *CellRendererText) native() *C.GtkCellRendererText {
 func marshalCellRendererText(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererText(obj), nil
+	return CellRendererTextWrap(obj), nil
 }
 
-func wrapCellRendererText(obj *glib.Object) *CellRendererText {
+func CellRendererTextWrap(obj *glib.Object) *CellRendererText {
 	return &CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2148,7 +2148,7 @@ func CellRendererTextNew() (*CellRendererText, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererText(obj), nil
+	return CellRendererTextWrap(obj), nil
 }
 
 /*
@@ -2179,10 +2179,10 @@ func (v *CellRendererToggle) toCellRenderer() *C.GtkCellRenderer {
 func marshalCellRendererToggle(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererToggle(obj), nil
+	return CellRendererToggleWrap(obj), nil
 }
 
-func wrapCellRendererToggle(obj *glib.Object) *CellRendererToggle {
+func CellRendererToggleWrap(obj *glib.Object) *CellRendererToggle {
 	return &CellRendererToggle{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2193,7 +2193,7 @@ func CellRendererToggleNew() (*CellRendererToggle, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCellRendererToggle(obj), nil
+	return CellRendererToggleWrap(obj), nil
 }
 
 // SetRadio is a wrapper around gtk_cell_renderer_toggle_set_radio().
@@ -2251,10 +2251,10 @@ func (v *CheckButton) native() *C.GtkCheckButton {
 func marshalCheckButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCheckButton(obj), nil
+	return CheckButtonWrap(obj), nil
 }
 
-func wrapCheckButton(obj *glib.Object) *CheckButton {
+func CheckButtonWrap(obj *glib.Object) *CheckButton {
 	return &CheckButton{ToggleButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}}
 }
@@ -2266,7 +2266,7 @@ func CheckButtonNew() (*CheckButton, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCheckButton(obj), nil
+	return CheckButtonWrap(obj), nil
 }
 
 // CheckButtonNewWithLabel is a wrapper around
@@ -2278,7 +2278,7 @@ func CheckButtonNewWithLabel(label string) (*CheckButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapCheckButton(wrapObject(unsafe.Pointer(c))), nil
+	return CheckButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // CheckButtonNewWithMnemonic is a wrapper around
@@ -2291,7 +2291,7 @@ func CheckButtonNewWithMnemonic(label string) (*CheckButton, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCheckButton(obj), nil
+	return CheckButtonWrap(obj), nil
 }
 
 /*
@@ -2314,10 +2314,10 @@ func (v *CheckMenuItem) native() *C.GtkCheckMenuItem {
 func marshalCheckMenuItem(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCheckMenuItem(obj), nil
+	return CheckMenuItemWrap(obj), nil
 }
 
-func wrapCheckMenuItem(obj *glib.Object) *CheckMenuItem {
+func CheckMenuItemWrap(obj *glib.Object) *CheckMenuItem {
 	return &CheckMenuItem{MenuItem{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -2329,7 +2329,7 @@ func CheckMenuItemNew() (*CheckMenuItem, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCheckMenuItem(obj), nil
+	return CheckMenuItemWrap(obj), nil
 }
 
 // CheckMenuItemNewWithLabel is a wrapper around
@@ -2342,7 +2342,7 @@ func CheckMenuItemNewWithLabel(label string) (*CheckMenuItem, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCheckMenuItem(obj), nil
+	return CheckMenuItemWrap(obj), nil
 }
 
 // CheckMenuItemNewWithMnemonic is a wrapper around
@@ -2355,7 +2355,7 @@ func CheckMenuItemNewWithMnemonic(label string) (*CheckMenuItem, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCheckMenuItem(obj), nil
+	return CheckMenuItemWrap(obj), nil
 }
 
 // GetActive is a wrapper around gtk_check_menu_item_get_active().
@@ -2417,10 +2417,10 @@ func (v *Clipboard) native() *C.GtkClipboard {
 func marshalClipboard(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapClipboard(obj), nil
+	return ClipboardWrap(obj), nil
 }
 
-func wrapClipboard(obj *glib.Object) *Clipboard {
+func ClipboardWrap(obj *glib.Object) *Clipboard {
 	return &Clipboard{obj}
 }
 
@@ -2559,11 +2559,11 @@ func (v *ComboBox) toCellLayout() *C.GtkCellLayout {
 func marshalComboBox(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapComboBox(obj), nil
+	return ComboBoxWrap(obj), nil
 }
 
-func wrapComboBox(obj *glib.Object) *ComboBox {
-	cl := wrapCellLayout(obj)
+func ComboBoxWrap(obj *glib.Object) *ComboBox {
+	cl := CellLayoutWrap(obj)
 	return &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl}
 }
 
@@ -2574,7 +2574,7 @@ func ComboBoxNew() (*ComboBox, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapComboBox(obj), nil
+	return ComboBoxWrap(obj), nil
 }
 
 // ComboBoxNewWithEntry() is a wrapper around gtk_combo_box_new_with_entry().
@@ -2584,7 +2584,7 @@ func ComboBoxNewWithEntry() (*ComboBox, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapComboBox(obj), nil
+	return ComboBoxWrap(obj), nil
 }
 
 // ComboBoxNewWithModel() is a wrapper around gtk_combo_box_new_with_model().
@@ -2594,7 +2594,7 @@ func ComboBoxNewWithModel(model ITreeModel) (*ComboBox, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapComboBox(obj), nil
+	return ComboBoxWrap(obj), nil
 }
 
 // GetActive() is a wrapper around gtk_combo_box_get_active().
@@ -2659,11 +2659,11 @@ func (v *ComboBoxText) native() *C.GtkComboBoxText {
 func marshalComboBoxText(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapComboBoxText(obj), nil
+	return ComboBoxTextWrap(obj), nil
 }
 
-func wrapComboBoxText(obj *glib.Object) *ComboBoxText {
-	return &ComboBoxText{*wrapComboBox(obj)}
+func ComboBoxTextWrap(obj *glib.Object) *ComboBoxText {
+	return &ComboBoxText{*ComboBoxWrap(obj)}
 }
 
 // ComboBoxTextNew is a wrapper around gtk_combo_box_text_new().
@@ -2673,7 +2673,7 @@ func ComboBoxTextNew() (*ComboBoxText, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapComboBoxText(obj), nil
+	return ComboBoxTextWrap(obj), nil
 }
 
 // ComboBoxTextNewWithEntry is a wrapper around gtk_combo_box_text_new_with_entry().
@@ -2683,7 +2683,7 @@ func ComboBoxTextNewWithEntry() (*ComboBoxText, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapComboBoxText(obj), nil
+	return ComboBoxTextWrap(obj), nil
 }
 
 // AppendText is a wrapper around gtk_combo_box_text_append_text().
@@ -2721,10 +2721,10 @@ func (v *Container) native() *C.GtkContainer {
 func marshalContainer(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapContainer(obj), nil
+	return ContainerWrap(obj), nil
 }
 
-func wrapContainer(obj *glib.Object) *Container {
+func ContainerWrap(obj *glib.Object) *Container {
 	return &Container{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2756,7 +2756,7 @@ func (v *Container) GetFocusChild() *Widget {
 		return nil
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return WidgetWrap(obj)
 }
 
 // SetFocusChild is a wrapper around gtk_container_set_focus_child().
@@ -2772,7 +2772,7 @@ func (v *Container) GetFocusVAdjustment() *Adjustment {
 		return nil
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAdjustment(obj)
+	return AdjustmentWrap(obj)
 }
 
 // SetFocusVAdjustment is a wrapper around
@@ -2789,7 +2789,7 @@ func (v *Container) GetFocusHAdjustment() *Adjustment {
 		return nil
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapAdjustment(obj)
+	return AdjustmentWrap(obj)
 }
 
 // SetFocusHAdjustment is a wrapper around
@@ -2862,7 +2862,7 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	var widgets []*Widget
 	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
 	for ; wlist.Data() != nil; wlist = wlist.Next() {
-		widgets = append(widgets, wrapWidget(wrapObject(wlist.Data())))
+		widgets = append(widgets, WidgetWrap(wrapObject(wlist.Data())))
 	}
 	return widgets, gobool(c)
 }
@@ -2903,7 +2903,7 @@ func (v *CssProvider) native() *C.GtkCssProvider {
 	return C.toGtkCssProvider(p)
 }
 
-func wrapCssProvider(obj *glib.Object) *CssProvider {
+func CssProviderWrap(obj *glib.Object) *CssProvider {
 	return &CssProvider{obj}
 }
 
@@ -2914,7 +2914,7 @@ func CssProviderNew() (*CssProvider, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapCssProvider(wrapObject(unsafe.Pointer(c))), nil
+	return CssProviderWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // LoadFromPath is a wrapper around gtk_css_provider_load_from_path().
@@ -2958,7 +2958,7 @@ func CssProviderGetDefault() (*CssProvider, error) {
 	}
 
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCssProvider(obj), nil
+	return CssProviderWrap(obj), nil
 }
 
 // GetNamed is a wrapper around gtk_css_provider_get_named().
@@ -2974,7 +2974,7 @@ func (v *CssProvider) GetNamed(name string, variant string) (*CssProvider, error
 	}
 
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapCssProvider(obj), nil
+	return CssProviderWrap(obj), nil
 }
 
 /*
@@ -2998,10 +2998,10 @@ func (v *Dialog) native() *C.GtkDialog {
 func marshalDialog(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapDialog(obj), nil
+	return DialogWrap(obj), nil
 }
 
-func wrapDialog(obj *glib.Object) *Dialog {
+func DialogWrap(obj *glib.Object) *Dialog {
 	return &Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -3012,7 +3012,7 @@ func DialogNew() (*Dialog, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapDialog(obj), nil
+	return DialogWrap(obj), nil
 }
 
 // Run() is a wrapper around gtk_dialog_run().
@@ -3072,7 +3072,7 @@ func (v *Dialog) GetWidgetForResponse(id ResponseType) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return WidgetWrap(obj), nil
 }
 
 // GetContentArea() is a wrapper around gtk_dialog_get_content_area().
@@ -3121,10 +3121,10 @@ func (v *DrawingArea) native() *C.GtkDrawingArea {
 func marshalDrawingArea(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapDrawingArea(obj), nil
+	return DrawingAreaWrap(obj), nil
 }
 
-func wrapDrawingArea(obj *glib.Object) *DrawingArea {
+func DrawingAreaWrap(obj *glib.Object) *DrawingArea {
 	return &DrawingArea{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -3135,7 +3135,7 @@ func DrawingAreaNew() (*DrawingArea, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapDrawingArea(obj), nil
+	return DrawingAreaWrap(obj), nil
 }
 
 /*
@@ -3167,10 +3167,10 @@ func (v *Editable) native() *C.GtkEditable {
 func marshalEditable(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEditable(obj), nil
+	return EditableWrap(obj), nil
 }
 
-func wrapEditable(obj *glib.Object) *Editable {
+func EditableWrap(obj *glib.Object) *Editable {
 	return &Editable{obj}
 }
 
@@ -3293,11 +3293,11 @@ func (v *Entry) native() *C.GtkEntry {
 func marshalEntry(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEntry(obj), nil
+	return EntryWrap(obj), nil
 }
 
-func wrapEntry(obj *glib.Object) *Entry {
-	e := wrapEditable(obj)
+func EntryWrap(obj *glib.Object) *Entry {
+	e := EditableWrap(obj)
 	return &Entry{Widget{glib.InitiallyUnowned{obj}}, *e}
 }
 
@@ -3308,7 +3308,7 @@ func EntryNew() (*Entry, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEntry(obj), nil
+	return EntryWrap(obj), nil
 }
 
 // EntryNewWithBuffer() is a wrapper around gtk_entry_new_with_buffer().
@@ -3318,7 +3318,7 @@ func EntryNewWithBuffer(buffer *EntryBuffer) (*Entry, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEntry(obj), nil
+	return EntryWrap(obj), nil
 }
 
 // GetBuffer() is a wrapper around gtk_entry_get_buffer().
@@ -3769,10 +3769,10 @@ func (v *EntryBuffer) native() *C.GtkEntryBuffer {
 func marshalEntryBuffer(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEntryBuffer(obj), nil
+	return EntryBufferWrap(obj), nil
 }
 
-func wrapEntryBuffer(obj *glib.Object) *EntryBuffer {
+func EntryBufferWrap(obj *glib.Object) *EntryBuffer {
 	return &EntryBuffer{obj}
 }
 
@@ -3785,7 +3785,7 @@ func EntryBufferNew(initialChars string, nInitialChars int) (*EntryBuffer, error
 		return nil, nilPtrErr
 	}
 
-	e := wrapEntryBuffer(wrapObject(unsafe.Pointer(c)))
+	e := EntryBufferWrap(wrapObject(unsafe.Pointer(c)))
 	return e, nil
 }
 
@@ -3882,10 +3882,10 @@ func (v *EntryCompletion) native() *C.GtkEntryCompletion {
 func marshalEntryCompletion(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEntryCompletion(obj), nil
+	return EntryCompletionWrap(obj), nil
 }
 
-func wrapEntryCompletion(obj *glib.Object) *EntryCompletion {
+func EntryCompletionWrap(obj *glib.Object) *EntryCompletion {
 	return &EntryCompletion{obj}
 }
 
@@ -3910,10 +3910,10 @@ func (v *EventBox) native() *C.GtkEventBox {
 func marshalEventBox(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEventBox(obj), nil
+	return EventBoxWrap(obj), nil
 }
 
-func wrapEventBox(obj *glib.Object) *EventBox {
+func EventBoxWrap(obj *glib.Object) *EventBox {
 	return &EventBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -3924,7 +3924,7 @@ func EventBoxNew() (*EventBox, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapEventBox(obj), nil
+	return EventBoxWrap(obj), nil
 }
 
 // SetAboveChild is a wrapper around gtk_event_box_set_above_child().
@@ -3970,10 +3970,10 @@ func (v *Expander) native() *C.GtkExpander {
 func marshalExpander(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapExpander(obj), nil
+	return ExpanderWrap(obj), nil
 }
 
-func wrapExpander(obj *glib.Object) *Expander {
+func ExpanderWrap(obj *glib.Object) *Expander {
 	return &Expander{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -3989,7 +3989,7 @@ func ExpanderNew(label string) (*Expander, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapExpander(obj), nil
+	return ExpanderWrap(obj), nil
 }
 
 // SetExpanded is a wrapper around gtk_expander_set_expanded().
@@ -4045,10 +4045,10 @@ func (v *FileChooser) native() *C.GtkFileChooser {
 func marshalFileChooser(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooser(obj), nil
+	return FileChooserWrap(obj), nil
 }
 
-func wrapFileChooser(obj *glib.Object) *FileChooser {
+func FileChooserWrap(obj *glib.Object) *FileChooser {
 	return &FileChooser{obj}
 }
 
@@ -4148,11 +4148,11 @@ func (v *FileChooserButton) native() *C.GtkFileChooserButton {
 func marshalFileChooserButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooserButton(obj), nil
+	return FileChooserButtonWrap(obj), nil
 }
 
-func wrapFileChooserButton(obj *glib.Object) *FileChooserButton {
-	fc := wrapFileChooser(obj)
+func FileChooserButtonWrap(obj *glib.Object) *FileChooserButton {
+	fc := FileChooserWrap(obj)
 	return &FileChooserButton{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
 }
 
@@ -4166,7 +4166,7 @@ func FileChooserButtonNew(title string, action FileChooserAction) (*FileChooserB
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooserButton(obj), nil
+	return FileChooserButtonWrap(obj), nil
 }
 
 /*
@@ -4193,11 +4193,11 @@ func (v *FileChooserDialog) native() *C.GtkFileChooserDialog {
 func marshalFileChooserDialog(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooserDialog(obj), nil
+	return FileChooserDialogWrap(obj), nil
 }
 
-func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
-	fc := wrapFileChooser(obj)
+func FileChooserDialogWrap(obj *glib.Object) *FileChooserDialog {
+	fc := FileChooserWrap(obj)
 	return &FileChooserDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}, *fc}
 }
 
@@ -4219,7 +4219,7 @@ func FileChooserDialogNewWith1Button(
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooserDialog(obj), nil
+	return FileChooserDialogWrap(obj), nil
 }
 
 // FileChooserDialogNewWith2Buttons is a wrapper around gtk_file_chooser_dialog_new() with two buttons.
@@ -4245,7 +4245,7 @@ func FileChooserDialogNewWith2Buttons(
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooserDialog(obj), nil
+	return FileChooserDialogWrap(obj), nil
 }
 
 /*
@@ -4272,11 +4272,11 @@ func (v *FileChooserWidget) native() *C.GtkFileChooserWidget {
 func marshalFileChooserWidget(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooserWidget(obj), nil
+	return FileChooserWidgetWrap(obj), nil
 }
 
-func wrapFileChooserWidget(obj *glib.Object) *FileChooserWidget {
-	fc := wrapFileChooser(obj)
+func FileChooserWidgetWrap(obj *glib.Object) *FileChooserWidget {
+	fc := FileChooserWrap(obj)
 	return &FileChooserWidget{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
 }
 
@@ -4287,7 +4287,7 @@ func FileChooserWidgetNew(action FileChooserAction) (*FileChooserWidget, error) 
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileChooserWidget(obj), nil
+	return FileChooserWidgetWrap(obj), nil
 }
 
 /*
@@ -4311,10 +4311,10 @@ func (v *FileFilter) native() *C.GtkFileFilter {
 func marshalFileFilter(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileFilter(obj), nil
+	return FileFilterWrap(obj), nil
 }
 
-func wrapFileFilter(obj *glib.Object) *FileFilter {
+func FileFilterWrap(obj *glib.Object) *FileFilter {
 	return &FileFilter{obj}
 }
 
@@ -4325,7 +4325,7 @@ func FileFilterNew() (*FileFilter, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFileFilter(obj), nil
+	return FileFilterWrap(obj), nil
 }
 
 // SetName is a wrapper around gtk_file_filter_set_name().
@@ -4368,10 +4368,10 @@ func (v *FontButton) native() *C.GtkFontButton {
 func marshalFontButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFontButton(obj), nil
+	return FontButtonWrap(obj), nil
 }
 
-func wrapFontButton(obj *glib.Object) *FontButton {
+func FontButtonWrap(obj *glib.Object) *FontButton {
 	return &FontButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -4383,7 +4383,7 @@ func FontButtonNew() (*FontButton, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFontButton(obj), nil
+	return FontButtonWrap(obj), nil
 }
 
 // FontButtonNewWithFont is a wrapper around gtk_font_button_new_with_font().
@@ -4395,7 +4395,7 @@ func FontButtonNewWithFont(fontname string) (*FontButton, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFontButton(obj), nil
+	return FontButtonWrap(obj), nil
 }
 
 // GetFontName is a wrapper around gtk_font_button_get_font_name().
@@ -4433,10 +4433,10 @@ func (v *Frame) native() *C.GtkFrame {
 func marshalFrame(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFrame(obj), nil
+	return FrameWrap(obj), nil
 }
 
-func wrapFrame(obj *glib.Object) *Frame {
+func FrameWrap(obj *glib.Object) *Frame {
 	return &Frame{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -4452,7 +4452,7 @@ func FrameNew(label string) (*Frame, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapFrame(obj), nil
+	return FrameWrap(obj), nil
 }
 
 // SetLabel is a wrapper around gtk_frame_set_label().
@@ -4498,7 +4498,7 @@ func (v *Frame) GetLabelWidget() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return WidgetWrap(obj), nil
 }
 
 // GetShadowType is a wrapper around gtk_frame_get_shadow_type().
@@ -4538,11 +4538,11 @@ func (v *Grid) toOrientable() *C.GtkOrientable {
 func marshalGrid(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapGrid(obj), nil
+	return GridWrap(obj), nil
 }
 
-func wrapGrid(obj *glib.Object) *Grid {
-	o := wrapOrientable(obj)
+func GridWrap(obj *glib.Object) *Grid {
+	o := OrientableWrap(obj)
 	return &Grid{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}
 }
 
@@ -4553,7 +4553,7 @@ func GridNew() (*Grid, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapGrid(obj), nil
+	return GridWrap(obj), nil
 }
 
 // Attach() is a wrapper around gtk_grid_attach().
@@ -4576,7 +4576,7 @@ func (v *Grid) GetChildAt(left, top int) (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return WidgetWrap(obj), nil
 }
 
 // InsertRow() is a wrapper around gtk_grid_insert_row().
@@ -4701,10 +4701,10 @@ func (v *IconView) native() *C.GtkIconView {
 func marshalIconView(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapIconView(obj), nil
+	return IconViewWrap(obj), nil
 }
 
-func wrapIconView(obj *glib.Object) *IconView {
+func IconViewWrap(obj *glib.Object) *IconView {
 	return &IconView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -4715,7 +4715,7 @@ func IconViewNew() (*IconView, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapIconView(wrapObject(unsafe.Pointer(c))), nil
+	return IconViewWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // IconViewNewWithModel is a wrapper around gtk_icon_view_new_with_model().
@@ -4725,7 +4725,7 @@ func IconViewNewWithModel(model ITreeModel) (*IconView, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapIconView(obj), nil
+	return IconViewWrap(obj), nil
 }
 
 // GetModel is a wrapper around gtk_icon_view_get_model().
@@ -4735,7 +4735,7 @@ func (v *IconView) GetModel() (*TreeModel, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTreeModel(obj), nil
+	return TreeModelWrap(obj), nil
 }
 
 // SetModel is a wrapper around gtk_icon_view_set_model().
@@ -4775,10 +4775,10 @@ func (v *Image) native() *C.GtkImage {
 func marshalImage(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapImage(obj), nil
+	return ImageWrap(obj), nil
 }
 
-func wrapImage(obj *glib.Object) *Image {
+func ImageWrap(obj *glib.Object) *Image {
 	return &Image{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -4789,7 +4789,7 @@ func ImageNew() (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapImage(obj), nil
+	return ImageWrap(obj), nil
 }
 
 // ImageNewFromFile() is a wrapper around gtk_image_new_from_file().
@@ -4801,7 +4801,7 @@ func ImageNewFromFile(filename string) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapImage(obj), nil
+	return ImageWrap(obj), nil
 }
 
 // ImageNewFromResource() is a wrapper around gtk_image_new_from_resource().
@@ -4813,7 +4813,7 @@ func ImageNewFromResource(resourcePath string) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapImage(obj), nil
+	return ImageWrap(obj), nil
 }
 
 // ImageNewFromPixbuf is a wrapper around gtk_image_new_from_pixbuf().
@@ -4824,7 +4824,7 @@ func ImageNewFromPixbuf(pixbuf *gdk.Pixbuf) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapImage(obj), nil
+	return ImageWrap(obj), nil
 }
 
 // TODO(jrick) GtkIconSet
@@ -4849,7 +4849,7 @@ func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapImage(obj), nil
+	return ImageWrap(obj), nil
 }
 
 // TODO(jrick) GIcon
@@ -4984,10 +4984,10 @@ func (v *Label) native() *C.GtkLabel {
 func marshalLabel(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapLabel(obj), nil
+	return LabelWrap(obj), nil
 }
 
-func wrapLabel(obj *glib.Object) *Label {
+func LabelWrap(obj *glib.Object) *Label {
 	return &Label{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -5000,7 +5000,7 @@ func LabelNew(str string) (*Label, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapLabel(obj), nil
+	return LabelWrap(obj), nil
 }
 
 // SetText is a wrapper around gtk_label_set_text().
@@ -5076,8 +5076,8 @@ func (v *Label) SetLineWrap(wrap bool) {
 }
 
 // SetLineWrapMode is a wrapper around gtk_label_set_line_wrap_mode().
-func (v *Label) SetLineWrapMode(wrapMode pango.WrapMode) {
-	C.gtk_label_set_line_wrap_mode(v.native(), C.PangoWrapMode(wrapMode))
+func (v *Label) SetLineWrapMode(ModeWrap pango.WrapMode) {
+	C.gtk_label_set_line_wrap_mode(v.native(), C.PangoWrapMode(ModeWrap))
 }
 
 // GetSelectable is a wrapper around gtk_label_get_selectable().
@@ -5184,7 +5184,7 @@ func LabelNewWithMnemonic(str string) (*Label, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapLabel(obj), nil
+	return LabelWrap(obj), nil
 }
 
 // SelectRegion is a wrapper around gtk_label_select_region().
@@ -5227,10 +5227,10 @@ func (v *Layout) native() *C.GtkLayout {
 func marshalLayout(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapLayout(obj), nil
+	return LayoutWrap(obj), nil
 }
 
-func wrapLayout(obj *glib.Object) *Layout {
+func LayoutWrap(obj *glib.Object) *Layout {
 	return &Layout{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -5241,7 +5241,7 @@ func LayoutNew(hadjustment, vadjustment *Adjustment) (*Layout, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapLayout(obj), nil
+	return LayoutWrap(obj), nil
 }
 
 // Layout.Put is a wrapper around gtk_layout_put().
@@ -5287,10 +5287,10 @@ func (v *LinkButton) native() *C.GtkLinkButton {
 func marshalLinkButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapLinkButton(obj), nil
+	return LinkButtonWrap(obj), nil
 }
 
-func wrapLinkButton(obj *glib.Object) *LinkButton {
+func LinkButtonWrap(obj *glib.Object) *LinkButton {
 	return &LinkButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -5303,7 +5303,7 @@ func LinkButtonNew(label string) (*LinkButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapLinkButton(wrapObject(unsafe.Pointer(c))), nil
+	return LinkButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // LinkButtonNewWithLabel is a wrapper around gtk_link_button_new_with_label().
@@ -5316,7 +5316,7 @@ func LinkButtonNewWithLabel(uri, label string) (*LinkButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapLinkButton(wrapObject(unsafe.Pointer(c))), nil
+	return LinkButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetUri is a wrapper around gtk_link_button_get_uri().
@@ -5355,11 +5355,11 @@ func (v *ListStore) native() *C.GtkListStore {
 func marshalListStore(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapListStore(obj), nil
+	return ListStoreWrap(obj), nil
 }
 
-func wrapListStore(obj *glib.Object) *ListStore {
-	tm := wrapTreeModel(obj)
+func ListStoreWrap(obj *glib.Object) *ListStore {
+	tm := TreeModelWrap(obj)
 	return &ListStore{obj, *tm}
 }
 
@@ -5382,7 +5382,7 @@ func ListStoreNew(types ...glib.Type) (*ListStore, error) {
 		return nil, nilPtrErr
 	}
 
-	ls := wrapListStore(wrapObject(unsafe.Pointer(c)))
+	ls := ListStoreWrap(wrapObject(unsafe.Pointer(c)))
 	return ls, nil
 }
 
@@ -5440,7 +5440,7 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 
 // func (v *ListStore) Model(model ITreeModel) {
 // 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(model.toTreeModel()))}
-//	v.TreeModel = *wrapTreeModel(obj)
+//	v.TreeModel = *TreeModelWrap(obj)
 //}
 
 // SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
@@ -5576,10 +5576,10 @@ func (v *Menu) toMenu() *C.GtkMenu {
 func marshalMenu(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapMenu(obj), nil
+	return MenuWrap(obj), nil
 }
 
-func wrapMenu(obj *glib.Object) *Menu {
+func MenuWrap(obj *glib.Object) *Menu {
 	return &Menu{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -5589,7 +5589,7 @@ func MenuNew() (*Menu, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapMenu(wrapObject(unsafe.Pointer(c))), nil
+	return MenuWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
@@ -5637,10 +5637,10 @@ func (v *MenuBar) native() *C.GtkMenuBar {
 func marshalMenuBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapMenuBar(obj), nil
+	return MenuBarWrap(obj), nil
 }
 
-func wrapMenuBar(obj *glib.Object) *MenuBar {
+func MenuBarWrap(obj *glib.Object) *MenuBar {
 	return &MenuBar{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -5650,7 +5650,7 @@ func MenuBarNew() (*MenuBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapMenuBar(wrapObject(unsafe.Pointer(c))), nil
+	return MenuBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -5674,10 +5674,10 @@ func (v *MenuButton) native() *C.GtkMenuButton {
 func marshalMenuButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapMenuButton(obj), nil
+	return MenuButtonWrap(obj), nil
 }
 
-func wrapMenuButton(obj *glib.Object) *MenuButton {
+func MenuButtonWrap(obj *glib.Object) *MenuButton {
 	return &MenuButton{ToggleButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}}
 }
@@ -5688,7 +5688,7 @@ func MenuButtonNew() (*MenuButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapMenuButton(wrapObject(unsafe.Pointer(c))), nil
+	return MenuButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetPopup is a wrapper around gtk_menu_button_set_popup().
@@ -5702,7 +5702,7 @@ func (v *MenuButton) GetPopup() *Menu {
 	if c == nil {
 		return nil
 	}
-	return wrapMenu(wrapObject(unsafe.Pointer(c)))
+	return MenuWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // TODO: gtk_menu_button_set_menu_model
@@ -5730,7 +5730,7 @@ func (v *MenuButton) GetAlignWidget() *Widget {
 	if c == nil {
 		return nil
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+	return WidgetWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 /*
@@ -5770,10 +5770,10 @@ func (v *MenuItem) toMenuItem() *C.GtkMenuItem {
 func marshalMenuItem(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapMenuItem(obj), nil
+	return MenuItemWrap(obj), nil
 }
 
-func wrapMenuItem(obj *glib.Object) *MenuItem {
+func MenuItemWrap(obj *glib.Object) *MenuItem {
 	return &MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -5783,7 +5783,7 @@ func MenuItemNew() (*MenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return MenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // MenuItemNewWithLabel() is a wrapper around gtk_menu_item_new_with_label().
@@ -5794,7 +5794,7 @@ func MenuItemNewWithLabel(label string) (*MenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return MenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // MenuItemNewWithMnemonic() is a wrapper around
@@ -5806,7 +5806,7 @@ func MenuItemNewWithMnemonic(label string) (*MenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return MenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetSubmenu() is a wrapper around gtk_menu_item_set_submenu().
@@ -5842,10 +5842,10 @@ func (v *MessageDialog) native() *C.GtkMessageDialog {
 func marshalMessageDialog(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapMessageDialog(obj), nil
+	return MessageDialogWrap(obj), nil
 }
 
-func wrapMessageDialog(obj *glib.Object) *MessageDialog {
+func MessageDialogWrap(obj *glib.Object) *MessageDialog {
 	return &MessageDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
 }
 
@@ -5863,7 +5863,7 @@ func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, butt
 	c := C._gtk_message_dialog_new(w,
 		C.GtkDialogFlags(flags), C.GtkMessageType(mType),
 		C.GtkButtonsType(buttons), cstr)
-	return wrapMessageDialog(wrapObject(unsafe.Pointer(c)))
+	return MessageDialogWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // MessageDialogNewWithMarkup is a wrapper around
@@ -5879,7 +5879,7 @@ func MessageDialogNewWithMarkup(parent IWindow, flags DialogFlags, mType Message
 	c := C._gtk_message_dialog_new_with_markup(w,
 		C.GtkDialogFlags(flags), C.GtkMessageType(mType),
 		C.GtkButtonsType(buttons), cstr)
-	return wrapMessageDialog(wrapObject(unsafe.Pointer(c)))
+	return MessageDialogWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetMarkup is a wrapper around gtk_message_dialog_set_markup().
@@ -5930,10 +5930,10 @@ func (v *Notebook) native() *C.GtkNotebook {
 func marshalNotebook(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapNotebook(obj), nil
+	return NotebookWrap(obj), nil
 }
 
-func wrapNotebook(obj *glib.Object) *Notebook {
+func NotebookWrap(obj *glib.Object) *Notebook {
 	return &Notebook{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -5943,7 +5943,7 @@ func NotebookNew() (*Notebook, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapNotebook(wrapObject(unsafe.Pointer(c))), nil
+	return NotebookWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // AppendPage() is a wrapper around gtk_notebook_append_page().
@@ -6058,7 +6058,7 @@ func (v *Notebook) GetMenuLabel(child IWidget) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetNthPage() is a wrapper around gtk_notebook_get_nth_page().
@@ -6067,7 +6067,7 @@ func (v *Notebook) GetNthPage(pageNum int) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetNPages() is a wrapper around gtk_notebook_get_n_pages().
@@ -6082,7 +6082,7 @@ func (v *Notebook) GetTabLabel(child IWidget) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetMenuLabel() is a wrapper around gtk_notebook_set_menu_label().
@@ -6213,7 +6213,7 @@ func (v *Notebook) GetActionWidget(packType PackType) (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -6237,10 +6237,10 @@ func (v *OffscreenWindow) native() *C.GtkOffscreenWindow {
 func marshalOffscreenWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapOffscreenWindow(obj), nil
+	return OffscreenWindowWrap(obj), nil
 }
 
-func wrapOffscreenWindow(obj *glib.Object) *OffscreenWindow {
+func OffscreenWindowWrap(obj *glib.Object) *OffscreenWindow {
 	return &OffscreenWindow{Window{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -6251,7 +6251,7 @@ func OffscreenWindowNew() (*OffscreenWindow, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapOffscreenWindow(wrapObject(unsafe.Pointer(c))), nil
+	return OffscreenWindowWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetSurface is a wrapper around gtk_offscreen_window_get_surface().
@@ -6308,10 +6308,10 @@ func (v *Orientable) native() *C.GtkOrientable {
 func marshalOrientable(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapOrientable(obj), nil
+	return OrientableWrap(obj), nil
 }
 
-func wrapOrientable(obj *glib.Object) *Orientable {
+func OrientableWrap(obj *glib.Object) *Orientable {
 	return &Orientable{obj}
 }
 
@@ -6348,10 +6348,10 @@ func (v *Paned) native() *C.GtkPaned {
 func marshalPaned(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapPaned(obj), nil
+	return PanedWrap(obj), nil
 }
 
-func wrapPaned(obj *glib.Object) *Paned {
+func PanedWrap(obj *glib.Object) *Paned {
 	return &Paned{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -6361,7 +6361,7 @@ func PanedNew(orientation Orientation) (*Paned, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapPaned(wrapObject(unsafe.Pointer(c))), nil
+	return PanedWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Add1() is a wrapper around gtk_paned_add1().
@@ -6395,7 +6395,7 @@ func (v *Paned) GetChild1() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetChild2() is a wrapper around gtk_paned_get_child2().
@@ -6404,7 +6404,7 @@ func (v *Paned) GetChild2() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetHandleWindow() is a wrapper around gtk_paned_get_handle_window().
@@ -6413,7 +6413,7 @@ func (v *Paned) GetHandleWindow() (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c))), nil
+	return WindowWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetPosition() is a wrapper around gtk_paned_get_position().
@@ -6442,10 +6442,10 @@ func (v *ProgressBar) native() *C.GtkProgressBar {
 func marshalProgressBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapProgressBar(obj), nil
+	return ProgressBarWrap(obj), nil
 }
 
-func wrapProgressBar(obj *glib.Object) *ProgressBar {
+func ProgressBarWrap(obj *glib.Object) *ProgressBar {
 	return &ProgressBar{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -6455,7 +6455,7 @@ func ProgressBarNew() (*ProgressBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapProgressBar(wrapObject(unsafe.Pointer(c))), nil
+	return ProgressBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetFraction() is a wrapper around gtk_progress_bar_set_fraction().
@@ -6508,10 +6508,10 @@ func (v *RadioButton) native() *C.GtkRadioButton {
 func marshalRadioButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapRadioButton(obj), nil
+	return RadioButtonWrap(obj), nil
 }
 
-func wrapRadioButton(obj *glib.Object) *RadioButton {
+func RadioButtonWrap(obj *glib.Object) *RadioButton {
 	return &RadioButton{CheckButton{ToggleButton{Button{Bin{Container{
 		Widget{glib.InitiallyUnowned{obj}}}}}}}}
 }
@@ -6523,7 +6523,7 @@ func RadioButtonNew(group *glib.SList) (*RadioButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
+	return RadioButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewFromWidget is a wrapper around
@@ -6533,7 +6533,7 @@ func RadioButtonNewFromWidget(radioGroupMember *RadioButton) (*RadioButton, erro
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
+	return RadioButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithLabel is a wrapper around
@@ -6546,7 +6546,7 @@ func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, err
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
+	return RadioButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithLabelFromWidget is a wrapper around
@@ -6559,7 +6559,7 @@ func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label stri
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
+	return RadioButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithMnemonic is a wrapper around
@@ -6572,7 +6572,7 @@ func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, 
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
+	return RadioButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioButtonNewWithMnemonicFromWidget is a wrapper around
@@ -6585,7 +6585,7 @@ func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label s
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioButton(wrapObject(unsafe.Pointer(c))), nil
+	return RadioButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetGroup is a wrapper around gtk_radio_button_set_group().
@@ -6629,10 +6629,10 @@ func (v *RadioMenuItem) native() *C.GtkRadioMenuItem {
 func marshalRadioMenuItem(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapRadioMenuItem(obj), nil
+	return RadioMenuItemWrap(obj), nil
 }
 
-func wrapRadioMenuItem(obj *glib.Object) *RadioMenuItem {
+func RadioMenuItemWrap(obj *glib.Object) *RadioMenuItem {
 	return &RadioMenuItem{CheckMenuItem{MenuItem{Bin{Container{
 		Widget{glib.InitiallyUnowned{obj}}}}}}}
 }
@@ -6644,7 +6644,7 @@ func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return RadioMenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithLabel is a wrapper around
@@ -6657,7 +6657,7 @@ func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem,
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return RadioMenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithMnemonic is a wrapper around
@@ -6670,7 +6670,7 @@ func RadioMenuItemNewWithMnemonic(group *glib.SList, label string) (*RadioMenuIt
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return RadioMenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewFromWidget is a wrapper around
@@ -6680,7 +6680,7 @@ func RadioMenuItemNewFromWidget(group *RadioMenuItem) (*RadioMenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return RadioMenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithLabelFromWidget is a wrapper around
@@ -6693,7 +6693,7 @@ func RadioMenuItemNewWithLabelFromWidget(group *RadioMenuItem, label string) (*R
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return RadioMenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // RadioMenuItemNewWithMnemonicFromWidget is a wrapper around
@@ -6706,7 +6706,7 @@ func RadioMenuItemNewWithMnemonicFromWidget(group *RadioMenuItem, label string) 
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRadioMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return RadioMenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetGroup is a wrapper around gtk_radio_menu_item_set_group().
@@ -6745,10 +6745,10 @@ func (v *Range) native() *C.GtkRange {
 func marshalRange(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapRange(obj), nil
+	return RangeWrap(obj), nil
 }
 
-func wrapRange(obj *glib.Object) *Range {
+func RangeWrap(obj *glib.Object) *Range {
 	return &Range{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -6799,7 +6799,7 @@ func (v *RecentChooser) native() *C.GtkRecentChooser {
 	return C.toGtkRecentChooser(p)
 }
 
-func wrapRecentChooser(obj *glib.Object) *RecentChooser {
+func RecentChooserWrap(obj *glib.Object) *RecentChooser {
 	return &RecentChooser{obj}
 }
 
@@ -6840,7 +6840,7 @@ func (v *RecentChooserMenu) native() *C.GtkRecentChooserMenu {
 	return C.toGtkRecentChooserMenu(p)
 }
 
-func wrapRecentChooserMenu(obj *glib.Object) *RecentChooserMenu {
+func RecentChooserMenuWrap(obj *glib.Object) *RecentChooserMenu {
 	return &RecentChooserMenu{
 		Menu{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}},
 		RecentChooser{obj},
@@ -6865,7 +6865,7 @@ func (v *RecentFilter) native() *C.GtkRecentFilter {
 	return C.toGtkRecentFilter(p)
 }
 
-func wrapRecentFilter(obj *glib.Object) *RecentFilter {
+func RecentFilterWrap(obj *glib.Object) *RecentFilter {
 	return &RecentFilter{glib.InitiallyUnowned{obj}}
 }
 
@@ -6875,7 +6875,7 @@ func RecentFilterNew() (*RecentFilter, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRecentFilter(wrapObject(unsafe.Pointer(c))), nil
+	return RecentFilterWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -6899,10 +6899,10 @@ func (v *RecentManager) native() *C.GtkRecentManager {
 func marshalRecentManager(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapRecentManager(obj), nil
+	return RecentManagerWrap(obj), nil
 }
 
-func wrapRecentManager(obj *glib.Object) *RecentManager {
+func RecentManagerWrap(obj *glib.Object) *RecentManager {
 	return &RecentManager{obj}
 }
 
@@ -6913,7 +6913,7 @@ func RecentManagerGetDefault() (*RecentManager, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	v := wrapRecentManager(obj)
+	v := RecentManagerWrap(obj)
 	return v, nil
 }
 
@@ -6946,10 +6946,10 @@ func (v *Scale) native() *C.GtkScale {
 func marshalScale(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapScale(obj), nil
+	return ScaleWrap(obj), nil
 }
 
-func wrapScale(obj *glib.Object) *Scale {
+func ScaleWrap(obj *glib.Object) *Scale {
 	return &Scale{Range{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -6959,7 +6959,7 @@ func ScaleNew(orientation Orientation, adjustment *Adjustment) (*Scale, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapScale(wrapObject(unsafe.Pointer(c))), nil
+	return ScaleWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ScaleNewWithRange is a wrapper around gtk_scale_new_with_range().
@@ -6970,7 +6970,7 @@ func ScaleNewWithRange(orientation Orientation, min, max, step float64) (*Scale,
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapScale(wrapObject(unsafe.Pointer(c))), nil
+	return ScaleWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -6994,10 +6994,10 @@ func (v *ScaleButton) native() *C.GtkScaleButton {
 func marshalScaleButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapScaleButton(obj), nil
+	return ScaleButtonWrap(obj), nil
 }
 
-func wrapScaleButton(obj *glib.Object) *ScaleButton {
+func ScaleButtonWrap(obj *glib.Object) *ScaleButton {
 	return &ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -7018,7 +7018,7 @@ func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*Sca
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapScaleButton(wrapObject(unsafe.Pointer(c))), nil
+	return ScaleButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetAdjustment() is a wrapper around gtk_scale_button_get_adjustment().
@@ -7034,7 +7034,7 @@ func (v *ScaleButton) GetPopup() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetValue() is a wrapper around gtk_scale_button_get_value().
@@ -7078,7 +7078,7 @@ func (v *Scrollable) native() *C.GtkScrollable {
 	return C.toGtkScrollable(p)
 }
 
-func wrapScrollable(obj *glib.Object) *Scrollable {
+func ScrollableWrap(obj *glib.Object) *Scrollable {
 	return &Scrollable{obj}
 }
 
@@ -7100,7 +7100,7 @@ func (v *Scrollable) GetHAdjustment() (*Adjustment, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapAdjustment(wrapObject(unsafe.Pointer(c))), nil
+	return AdjustmentWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetVAdjustment is a wrapper around gtk_scrollable_set_vadjustment().
@@ -7114,7 +7114,7 @@ func (v *Scrollable) GetVAdjustment() (*Adjustment, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapAdjustment(wrapObject(unsafe.Pointer(c))), nil
+	return AdjustmentWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7138,10 +7138,10 @@ func (v *Scrollbar) native() *C.GtkScrollbar {
 func marshalScrollbar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapScrollbar(obj), nil
+	return ScrollbarWrap(obj), nil
 }
 
-func wrapScrollbar(obj *glib.Object) *Scrollbar {
+func ScrollbarWrap(obj *glib.Object) *Scrollbar {
 	return &Scrollbar{Range{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -7151,7 +7151,7 @@ func ScrollbarNew(orientation Orientation, adjustment *Adjustment) (*Scrollbar, 
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapScrollbar(wrapObject(unsafe.Pointer(c))), nil
+	return ScrollbarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7175,10 +7175,10 @@ func (v *ScrolledWindow) native() *C.GtkScrolledWindow {
 func marshalScrolledWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapScrolledWindow(obj), nil
+	return ScrolledWindowWrap(obj), nil
 }
 
-func wrapScrolledWindow(obj *glib.Object) *ScrolledWindow {
+func ScrolledWindowWrap(obj *glib.Object) *ScrolledWindow {
 	return &ScrolledWindow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -7189,7 +7189,7 @@ func ScrolledWindowNew(hadjustment, vadjustment *Adjustment) (*ScrolledWindow, e
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapScrolledWindow(wrapObject(unsafe.Pointer(c))), nil
+	return ScrolledWindowWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetPolicy() is a wrapper around gtk_scrolled_window_set_policy().
@@ -7205,7 +7205,7 @@ func (v *ScrolledWindow) GetHAdjustment() *Adjustment {
 	if c == nil {
 		return nil
 	}
-	return wrapAdjustment(wrapObject(unsafe.Pointer(c)))
+	return AdjustmentWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetHAdjustment is a wrapper around gtk_scrolled_window_set_hadjustment().
@@ -7219,7 +7219,7 @@ func (v *ScrolledWindow) GetVAdjustment() *Adjustment {
 	if c == nil {
 		return nil
 	}
-	return wrapAdjustment(wrapObject(unsafe.Pointer(c)))
+	return AdjustmentWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetVAdjustment is a wrapper around gtk_scrolled_window_set_vadjustment().
@@ -7248,11 +7248,11 @@ func (v *SearchEntry) native() *C.GtkSearchEntry {
 func marshalSearchEntry(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapSearchEntry(obj), nil
+	return SearchEntryWrap(obj), nil
 }
 
-func wrapSearchEntry(obj *glib.Object) *SearchEntry {
-	e := wrapEditable(obj)
+func SearchEntryWrap(obj *glib.Object) *SearchEntry {
+	e := EditableWrap(obj)
 	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}, *e}}
 }
 
@@ -7262,7 +7262,7 @@ func SearchEntryNew() (*SearchEntry, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSearchEntry(wrapObject(unsafe.Pointer(c))), nil
+	return SearchEntryWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7327,10 +7327,10 @@ func (v *Separator) native() *C.GtkSeparator {
 func marshalSeparator(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapSeparator(obj), nil
+	return SeparatorWrap(obj), nil
 }
 
-func wrapSeparator(obj *glib.Object) *Separator {
+func SeparatorWrap(obj *glib.Object) *Separator {
 	return &Separator{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -7340,7 +7340,7 @@ func SeparatorNew(orientation Orientation) (*Separator, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSeparator(wrapObject(unsafe.Pointer(c))), nil
+	return SeparatorWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7364,10 +7364,10 @@ func (v *SeparatorMenuItem) native() *C.GtkSeparatorMenuItem {
 func marshalSeparatorMenuItem(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapSeparatorMenuItem(obj), nil
+	return SeparatorMenuItemWrap(obj), nil
 }
 
-func wrapSeparatorMenuItem(obj *glib.Object) *SeparatorMenuItem {
+func SeparatorMenuItemWrap(obj *glib.Object) *SeparatorMenuItem {
 	return &SeparatorMenuItem{MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -7377,7 +7377,7 @@ func SeparatorMenuItemNew() (*SeparatorMenuItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSeparatorMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return SeparatorMenuItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -7401,10 +7401,10 @@ func (v *SeparatorToolItem) native() *C.GtkSeparatorToolItem {
 func marshalSeparatorToolItem(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapSeparatorToolItem(obj), nil
+	return SeparatorToolItemWrap(obj), nil
 }
 
-func wrapSeparatorToolItem(obj *glib.Object) *SeparatorToolItem {
+func SeparatorToolItemWrap(obj *glib.Object) *SeparatorToolItem {
 	return &SeparatorToolItem{ToolItem{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -7415,7 +7415,7 @@ func SeparatorToolItemNew() (*SeparatorToolItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSeparatorToolItem(wrapObject(unsafe.Pointer(c))), nil
+	return SeparatorToolItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetDraw is a wrapper around gtk_separator_tool_item_set_draw().
@@ -7450,11 +7450,11 @@ func (v *SpinButton) native() *C.GtkSpinButton {
 func marshalSpinButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapSpinButton(obj), nil
+	return SpinButtonWrap(obj), nil
 }
 
-func wrapSpinButton(obj *glib.Object) *SpinButton {
-	e := wrapEditable(obj)
+func SpinButtonWrap(obj *glib.Object) *SpinButton {
+	e := EditableWrap(obj)
 	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}, *e}}
 }
 
@@ -7471,7 +7471,7 @@ func SpinButtonNew(adjustment *Adjustment, climbRate float64, digits uint) (*Spi
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSpinButton(wrapObject(unsafe.Pointer(c))), nil
+	return SpinButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SpinButtonNewWithRange() is a wrapper around
@@ -7482,7 +7482,7 @@ func SpinButtonNewWithRange(min, max, step float64) (*SpinButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSpinButton(wrapObject(unsafe.Pointer(c))), nil
+	return SpinButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetValueAsInt() is a wrapper around gtk_spin_button_get_value_as_int().
@@ -7508,7 +7508,7 @@ func (v *SpinButton) GetAdjustment() *Adjustment {
 	if c == nil {
 		return nil
 	}
-	return wrapAdjustment(wrapObject(unsafe.Pointer(c)))
+	return AdjustmentWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetRange is a wrapper around gtk_spin_button_set_range().
@@ -7542,10 +7542,10 @@ func (v *Spinner) native() *C.GtkSpinner {
 func marshalSpinner(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapSpinner(obj), nil
+	return SpinnerWrap(obj), nil
 }
 
-func wrapSpinner(obj *glib.Object) *Spinner {
+func SpinnerWrap(obj *glib.Object) *Spinner {
 	return &Spinner{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -7555,7 +7555,7 @@ func SpinnerNew() (*Spinner, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSpinner(wrapObject(unsafe.Pointer(c))), nil
+	return SpinnerWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Start is a wrapper around gtk_spinner_start().
@@ -7589,10 +7589,10 @@ func (v *Statusbar) native() *C.GtkStatusbar {
 func marshalStatusbar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapStatusbar(obj), nil
+	return StatusbarWrap(obj), nil
 }
 
-func wrapStatusbar(obj *glib.Object) *Statusbar {
+func StatusbarWrap(obj *glib.Object) *Statusbar {
 	return &Statusbar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -7602,7 +7602,7 @@ func StatusbarNew() (*Statusbar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStatusbar(wrapObject(unsafe.Pointer(c))), nil
+	return StatusbarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetContextId() is a wrapper around gtk_statusbar_get_context_id().
@@ -7658,10 +7658,10 @@ func (v *Switch) native() *C.GtkSwitch {
 func marshalSwitch(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapSwitch(obj), nil
+	return SwitchWrap(obj), nil
 }
 
-func wrapSwitch(obj *glib.Object) *Switch {
+func SwitchWrap(obj *glib.Object) *Switch {
 	return &Switch{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -7671,7 +7671,7 @@ func SwitchNew() (*Switch, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSwitch(wrapObject(unsafe.Pointer(c))), nil
+	return SwitchWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetActive is a wrapper around gtk_switch_get_active().
@@ -7739,10 +7739,10 @@ func (v *TextView) native() *C.GtkTextView {
 func marshalTextView(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTextView(obj), nil
+	return TextViewWrap(obj), nil
 }
 
-func wrapTextView(obj *glib.Object) *TextView {
+func TextViewWrap(obj *glib.Object) *TextView {
 	return &TextView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -7752,14 +7752,14 @@ func TextViewNew() (*TextView, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTextView(wrapObject(unsafe.Pointer(c))), nil
+	return TextViewWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // TextViewNewWithBuffer is a wrapper around gtk_text_view_new_with_buffer().
 func TextViewNewWithBuffer(buf *TextBuffer) (*TextView, error) {
 	cbuf := buf.native()
 	c := C.gtk_text_view_new_with_buffer(cbuf)
-	return wrapTextView(wrapObject(unsafe.Pointer(c))), nil
+	return TextViewWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetBuffer is a wrapper around gtk_text_view_get_buffer().
@@ -7768,7 +7768,7 @@ func (v *TextView) GetBuffer() (*TextBuffer, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTextBuffer(wrapObject(unsafe.Pointer(c))), nil
+	return TextBufferWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetBuffer is a wrapper around gtk_text_view_set_buffer().
@@ -7788,8 +7788,8 @@ func (v *TextView) GetEditable() bool {
 }
 
 // SetWrapMode is a wrapper around gtk_text_view_set_wrap_mode().
-func (v *TextView) SetWrapMode(wrapMode WrapMode) {
-	C.gtk_text_view_set_wrap_mode(v.native(), C.GtkWrapMode(wrapMode))
+func (v *TextView) SetWrapMode(ModeWrap WrapMode) {
+	C.gtk_text_view_set_wrap_mode(v.native(), C.GtkWrapMode(ModeWrap))
 }
 
 // GetWrapMode is a wrapper around gtk_text_view_get_wrap_mode().
@@ -7950,10 +7950,10 @@ func (v *TextTag) native() *C.GtkTextTag {
 func marshalTextTag(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTextTag(obj), nil
+	return TextTagWrap(obj), nil
 }
 
-func wrapTextTag(obj *glib.Object) *TextTag {
+func TextTagWrap(obj *glib.Object) *TextTag {
 	return &TextTag{obj}
 }
 
@@ -7964,7 +7964,7 @@ func TextTagNew(name string) (*TextTag, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTextTag(wrapObject(unsafe.Pointer(c))), nil
+	return TextTagWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetPriority() is a wrapper around gtk_text_tag_get_priority().
@@ -8007,10 +8007,10 @@ func (v *TextTagTable) native() *C.GtkTextTagTable {
 func marshalTextTagTable(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTextTagTable(obj), nil
+	return TextTagTableWrap(obj), nil
 }
 
-func wrapTextTagTable(obj *glib.Object) *TextTagTable {
+func TextTagTableWrap(obj *glib.Object) *TextTagTable {
 	return &TextTagTable{obj}
 }
 
@@ -8019,7 +8019,7 @@ func TextTagTableNew() (*TextTagTable, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTextTagTable(wrapObject(unsafe.Pointer(c))), nil
+	return TextTagTableWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Add() is a wrapper around gtk_text_tag_table_add().
@@ -8036,7 +8036,7 @@ func (v *TextTagTable) Lookup(name string) (*TextTag, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTextTag(wrapObject(unsafe.Pointer(c))), nil
+	return TextTagWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Remove() is a wrapper around gtk_text_tag_table_remove().
@@ -8065,10 +8065,10 @@ func (v *TextBuffer) native() *C.GtkTextBuffer {
 func marshalTextBuffer(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTextBuffer(obj), nil
+	return TextBufferWrap(obj), nil
 }
 
-func wrapTextBuffer(obj *glib.Object) *TextBuffer {
+func TextBufferWrap(obj *glib.Object) *TextBuffer {
 	return &TextBuffer{obj}
 }
 
@@ -8079,7 +8079,7 @@ func TextBufferNew(table *TextTagTable) (*TextBuffer, error) {
 		return nil, nilPtrErr
 	}
 
-	e := wrapTextBuffer(wrapObject(unsafe.Pointer(c)))
+	e := TextBufferWrap(wrapObject(unsafe.Pointer(c)))
 	return e, nil
 }
 
@@ -8150,7 +8150,7 @@ func (v *TextBuffer) GetTagTable() (*TextTagTable, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTextTagTable(obj), nil
+	return TextTagTableWrap(obj), nil
 }
 
 func (v *TextBuffer) GetText(start, end *TextIter, includeHiddenChars bool) (string, error) {
@@ -8227,10 +8227,10 @@ func (v *ToggleButton) native() *C.GtkToggleButton {
 func marshalToggleButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapToggleButton(obj), nil
+	return ToggleButtonWrap(obj), nil
 }
 
-func wrapToggleButton(obj *glib.Object) *ToggleButton {
+func ToggleButtonWrap(obj *glib.Object) *ToggleButton {
 	return &ToggleButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -8241,7 +8241,7 @@ func ToggleButtonNew() (*ToggleButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapToggleButton(wrapObject(unsafe.Pointer(c))), nil
+	return ToggleButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ToggleButtonNewWithLabel is a wrapper around
@@ -8253,7 +8253,7 @@ func ToggleButtonNewWithLabel(label string) (*ToggleButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapToggleButton(wrapObject(unsafe.Pointer(c))), nil
+	return ToggleButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // ToggleButtonNewWithMnemonic is a wrapper around
@@ -8265,7 +8265,7 @@ func ToggleButtonNewWithMnemonic(label string) (*ToggleButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapToggleButton(wrapObject(unsafe.Pointer(c))), nil
+	return ToggleButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetActive is a wrapper around gtk_toggle_button_get_active().
@@ -8300,10 +8300,10 @@ func (v *Toolbar) native() *C.GtkToolbar {
 func marshalToolbar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapToolbar(obj), nil
+	return ToolbarWrap(obj), nil
 }
 
-func wrapToolbar(obj *glib.Object) *Toolbar {
+func ToolbarWrap(obj *glib.Object) *Toolbar {
 	return &Toolbar{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -8313,7 +8313,7 @@ func ToolbarNew() (*Toolbar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapToolbar(wrapObject(unsafe.Pointer(c))), nil
+	return ToolbarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // Insert is a wrapper around gtk_toolbar_insert().
@@ -8339,7 +8339,7 @@ func (v *Toolbar) GetNthItem(n int) *ToolItem {
 	if c == nil {
 		return nil
 	}
-	return wrapToolItem(wrapObject(unsafe.Pointer(c)))
+	return ToolItemWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // GetDropIndex is a wrapper around gtk_toolbar_get_drop_index().
@@ -8425,10 +8425,10 @@ func (v *ToolButton) native() *C.GtkToolButton {
 func marshalToolButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapToolButton(obj), nil
+	return ToolButtonWrap(obj), nil
 }
 
-func wrapToolButton(obj *glib.Object) *ToolButton {
+func ToolButtonWrap(obj *glib.Object) *ToolButton {
 	return &ToolButton{ToolItem{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -8442,7 +8442,7 @@ func ToolButtonNew(iconWidget IWidget, label string) (*ToolButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapToolButton(wrapObject(unsafe.Pointer(c))), nil
+	return ToolButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetLabel is a wrapper around gtk_tool_button_set_label().
@@ -8493,7 +8493,7 @@ func (v *ToolButton) GetIconWidget() *Widget {
 	if c == nil {
 		return nil
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+	return WidgetWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetLabelWidget is a wrapper around gtk_tool_button_set_label_widget().
@@ -8507,7 +8507,7 @@ func (v *ToolButton) GetLabelWidget() *Widget {
 	if c == nil {
 		return nil
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+	return WidgetWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 /*
@@ -8542,10 +8542,10 @@ func (v *ToolItem) toToolItem() *C.GtkToolItem {
 func marshalToolItem(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapToolItem(obj), nil
+	return ToolItemWrap(obj), nil
 }
 
-func wrapToolItem(obj *glib.Object) *ToolItem {
+func ToolItemWrap(obj *glib.Object) *ToolItem {
 	return &ToolItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -8555,7 +8555,7 @@ func ToolItemNew() (*ToolItem, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapToolItem(wrapObject(unsafe.Pointer(c))), nil
+	return ToolItemWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetHomogeneous is a wrapper around gtk_tool_item_set_homogeneous().
@@ -8686,7 +8686,7 @@ func (v *ToolItem) RetrieveProxyMenuItem() *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return MenuItemWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // SetProxyMenuItem is a wrapper around gtk_tool_item_set_proxy_menu_item().
@@ -8782,10 +8782,10 @@ func (v *TreeModel) toTreeModel() *C.GtkTreeModel {
 func marshalTreeModel(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTreeModel(obj), nil
+	return TreeModelWrap(obj), nil
 }
 
-func wrapTreeModel(obj *glib.Object) *TreeModel {
+func TreeModelWrap(obj *glib.Object) *TreeModel {
 	return &TreeModel{obj}
 }
 
@@ -8976,10 +8976,10 @@ func (v *TreeSelection) native() *C.GtkTreeSelection {
 func marshalTreeSelection(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTreeSelection(obj), nil
+	return TreeSelectionWrap(obj), nil
 }
 
-func wrapTreeSelection(obj *glib.Object) *TreeSelection {
+func TreeSelectionWrap(obj *glib.Object) *TreeSelection {
 	return &TreeSelection{obj}
 }
 
@@ -9081,11 +9081,11 @@ func (v *TreeStore) native() *C.GtkTreeStore {
 func marshalTreeStore(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTreeStore(obj), nil
+	return TreeStoreWrap(obj), nil
 }
 
-func wrapTreeStore(obj *glib.Object) *TreeStore {
-	tm := wrapTreeModel(obj)
+func TreeStoreWrap(obj *glib.Object) *TreeStore {
+	tm := TreeModelWrap(obj)
 	return &TreeStore{obj, *tm}
 }
 
@@ -9108,7 +9108,7 @@ func TreeStoreNew(types ...glib.Type) (*TreeStore, error) {
 		return nil, nilPtrErr
 	}
 
-	ts := wrapTreeStore(wrapObject(unsafe.Pointer(c)))
+	ts := TreeStoreWrap(wrapObject(unsafe.Pointer(c)))
 	return ts, nil
 }
 
@@ -9198,9 +9198,9 @@ func (v *Viewport) native() *C.GtkViewport {
 	return C.toGtkViewport(p)
 }
 
-func wrapViewport(obj *glib.Object) *Viewport {
-	b := wrapBin(obj)
-	s := wrapScrollable(obj)
+func ViewportWrap(obj *glib.Object) *Viewport {
+	b := BinWrap(obj)
+	s := ScrollableWrap(obj)
 	return &Viewport{
 		Bin:        *b,
 		Scrollable: *s,
@@ -9220,23 +9220,23 @@ func ViewportNew(hadjustment, vadjustment *Adjustment) (*Viewport, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapViewport(wrapObject(unsafe.Pointer(c))), nil
+	return ViewportWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 func (v *Viewport) SetHAdjustment(adjustment *Adjustment) {
-	wrapScrollable(v.Object).SetHAdjustment(adjustment)
+	ScrollableWrap(v.Object).SetHAdjustment(adjustment)
 }
 
 func (v *Viewport) GetHAdjustment() (*Adjustment, error) {
-	return wrapScrollable(v.Object).GetHAdjustment()
+	return ScrollableWrap(v.Object).GetHAdjustment()
 }
 
 func (v *Viewport) SetVAdjustment(adjustment *Adjustment) {
-	wrapScrollable(v.Object).SetVAdjustment(adjustment)
+	ScrollableWrap(v.Object).SetVAdjustment(adjustment)
 }
 
 func (v *Viewport) GetVAdjustment() (*Adjustment, error) {
-	return wrapScrollable(v.Object).GetVAdjustment()
+	return ScrollableWrap(v.Object).GetVAdjustment()
 }
 
 /*
@@ -9260,10 +9260,10 @@ func (v *VolumeButton) native() *C.GtkVolumeButton {
 func marshalVolumeButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapVolumeButton(obj), nil
+	return VolumeButtonWrap(obj), nil
 }
 
-func wrapVolumeButton(obj *glib.Object) *VolumeButton {
+func VolumeButtonWrap(obj *glib.Object) *VolumeButton {
 	return &VolumeButton{ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
 }
 
@@ -9273,106 +9273,106 @@ func VolumeButtonNew() (*VolumeButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapVolumeButton(wrapObject(unsafe.Pointer(c))), nil
+	return VolumeButtonWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 type WrapFn interface{}
 
 var WrapMap = map[string]WrapFn{
-	"GtkAboutDialog":         wrapAboutDialog,
-	"GtkAccelGroup":          wrapAccelGroup,
-	"GtkAccelMao":            wrapAccelMap,
-	"GtkAdjustment":          wrapAdjustment,
-	"GtkAssistant":           wrapAssistant,
-	"GtkBin":                 wrapBin,
-	"GtkBox":                 wrapBox,
-	"GtkButton":              wrapButton,
-	"GtkCalendar":            wrapCalendar,
-	"GtkCellLayout":          wrapCellLayout,
-	"GtkCellRenderer":        wrapCellRenderer,
-	"GtkCellRendererSpinner": wrapCellRendererSpinner,
-	"GtkCellRendererPixbuf":  wrapCellRendererPixbuf,
-	"GtkCellRendererText":    wrapCellRendererText,
-	"GtkCellRendererToggle":  wrapCellRendererToggle,
-	"GtkCheckButton":         wrapCheckButton,
-	"GtkCheckMenuItem":       wrapCheckMenuItem,
-	"GtkClipboard":           wrapClipboard,
-	"GtkComboBox":            wrapComboBox,
-	"GtkComboBoxText":        wrapComboBoxText,
-	"GtkContainer":           wrapContainer,
-	"GtkDialog":              wrapDialog,
-	"GtkDrawingArea":         wrapDrawingArea,
-	"GtkEditable":            wrapEditable,
-	"GtkEntry":               wrapEntry,
-	"GtkEntryBuffer":         wrapEntryBuffer,
-	"GtkEntryCompletion":     wrapEntryCompletion,
-	"GtkEventBox":            wrapEventBox,
-	"GtkExpander":            wrapExpander,
-	"GtkFrame":               wrapFrame,
-	"GtkFileChooser":         wrapFileChooser,
-	"GtkFileChooserButton":   wrapFileChooserButton,
-	"GtkFileChooserDialog":   wrapFileChooserDialog,
-	"GtkFileChooserWidget":   wrapFileChooserWidget,
-	"GtkFontButton":          wrapFontButton,
-	"GtkGrid":                wrapGrid,
-	"GtkIconView":            wrapIconView,
-	"GtkImage":               wrapImage,
-	"GtkLabel":               wrapLabel,
-	"GtkLayout":              wrapLayout,
-	"GtkLinkButton":          wrapLinkButton,
-	"GtkListStore":           wrapListStore,
-	"GtkMenu":                wrapMenu,
-	"GtkMenuBar":             wrapMenuBar,
-	"GtkMenuButton":          wrapMenuButton,
-	"GtkMenuItem":            wrapMenuItem,
-	"GtkMenuShell":           wrapMenuShell,
-	"GtkMessageDialog":       wrapMessageDialog,
-	"GtkNotebook":            wrapNotebook,
-	"GtkOffscreenWindow":     wrapOffscreenWindow,
-	"GtkOrientable":          wrapOrientable,
-	"GtkPaned":               wrapPaned,
-	"GtkProgressBar":         wrapProgressBar,
-	"GtkRadioButton":         wrapRadioButton,
-	"GtkRadioMenuItem":       wrapRadioMenuItem,
-	"GtkRange":               wrapRange,
-	"GtkRecentChooser":       wrapRecentChooser,
-	"GtkRecentChooserMenu":   wrapRecentChooserMenu,
-	"GtkRecentFilter":        wrapRecentFilter,
-	"GtkRecentManager":       wrapRecentManager,
-	"GtkScaleButton":         wrapScaleButton,
-	"GtkScale":               wrapScale,
-	"GtkScrollable":          wrapScrollable,
-	"GtkScrollbar":           wrapScrollbar,
-	"GtkScrolledWindow":      wrapScrolledWindow,
-	"GtkSearchEntry":         wrapSearchEntry,
-	"GtkSeparator":           wrapSeparator,
-	"GtkSeparatorMenuItem":   wrapSeparatorMenuItem,
-	"GtkSeparatorToolItem":   wrapSeparatorToolItem,
-	"GtkSpinButton":          wrapSpinButton,
-	"GtkSpinner":             wrapSpinner,
-	"GtkStatusbar":           wrapStatusbar,
-	"GtkSwitch":              wrapSwitch,
-	"GtkTextView":            wrapTextView,
-	"GtkTextBuffer":          wrapTextBuffer,
-	"GtkTextTag":             wrapTextTag,
-	"GtkTextTagTable":        wrapTextTagTable,
-	"GtkToggleButton":        wrapToggleButton,
-	"GtkToolbar":             wrapToolbar,
-	"GtkToolButton":          wrapToolButton,
-	"GtkToolItem":            wrapToolItem,
-	"GtkTreeModel":           wrapTreeModel,
-	"GtkTreeSelection":       wrapTreeSelection,
-	"GtkTreeStore":           wrapTreeStore,
-	"GtkTreeView":            wrapTreeView,
-	"GtkTreeViewColumn":      wrapTreeViewColumn,
-	"GtkViewport":            wrapViewport,
-	"GtkVolumeButton":        wrapVolumeButton,
-	"GtkWidget":              wrapWidget,
-	"GtkWindow":              wrapWindow,
+	"GtkAboutDialog":         AboutDialogWrap,
+	"GtkAccelGroup":          AccelGroupWrap,
+	"GtkAccelMao":            AccelMapWrap,
+	"GtkAdjustment":          AdjustmentWrap,
+	"GtkAssistant":           AssistantWrap,
+	"GtkBin":                 BinWrap,
+	"GtkBox":                 BoxWrap,
+	"GtkButton":              ButtonWrap,
+	"GtkCalendar":            CalendarWrap,
+	"GtkCellLayout":          CellLayoutWrap,
+	"GtkCellRenderer":        CellRendererWrap,
+	"GtkCellRendererSpinner": CellRendererSpinnerWrap,
+	"GtkCellRendererPixbuf":  CellRendererPixbufWrap,
+	"GtkCellRendererText":    CellRendererTextWrap,
+	"GtkCellRendererToggle":  CellRendererToggleWrap,
+	"GtkCheckButton":         CheckButtonWrap,
+	"GtkCheckMenuItem":       CheckMenuItemWrap,
+	"GtkClipboard":           ClipboardWrap,
+	"GtkComboBox":            ComboBoxWrap,
+	"GtkComboBoxText":        ComboBoxTextWrap,
+	"GtkContainer":           ContainerWrap,
+	"GtkDialog":              DialogWrap,
+	"GtkDrawingArea":         DrawingAreaWrap,
+	"GtkEditable":            EditableWrap,
+	"GtkEntry":               EntryWrap,
+	"GtkEntryBuffer":         EntryBufferWrap,
+	"GtkEntryCompletion":     EntryCompletionWrap,
+	"GtkEventBox":            EventBoxWrap,
+	"GtkExpander":            ExpanderWrap,
+	"GtkFrame":               FrameWrap,
+	"GtkFileChooser":         FileChooserWrap,
+	"GtkFileChooserButton":   FileChooserButtonWrap,
+	"GtkFileChooserDialog":   FileChooserDialogWrap,
+	"GtkFileChooserWidget":   FileChooserWidgetWrap,
+	"GtkFontButton":          FontButtonWrap,
+	"GtkGrid":                GridWrap,
+	"GtkIconView":            IconViewWrap,
+	"GtkImage":               ImageWrap,
+	"GtkLabel":               LabelWrap,
+	"GtkLayout":              LayoutWrap,
+	"GtkLinkButton":          LinkButtonWrap,
+	"GtkListStore":           ListStoreWrap,
+	"GtkMenu":                MenuWrap,
+	"GtkMenuBar":             MenuBarWrap,
+	"GtkMenuButton":          MenuButtonWrap,
+	"GtkMenuItem":            MenuItemWrap,
+	"GtkMenuShell":           MenuShellWrap,
+	"GtkMessageDialog":       MessageDialogWrap,
+	"GtkNotebook":            NotebookWrap,
+	"GtkOffscreenWindow":     OffscreenWindowWrap,
+	"GtkOrientable":          OrientableWrap,
+	"GtkPaned":               PanedWrap,
+	"GtkProgressBar":         ProgressBarWrap,
+	"GtkRadioButton":         RadioButtonWrap,
+	"GtkRadioMenuItem":       RadioMenuItemWrap,
+	"GtkRange":               RangeWrap,
+	"GtkRecentChooser":       RecentChooserWrap,
+	"GtkRecentChooserMenu":   RecentChooserMenuWrap,
+	"GtkRecentFilter":        RecentFilterWrap,
+	"GtkRecentManager":       RecentManagerWrap,
+	"GtkScaleButton":         ScaleButtonWrap,
+	"GtkScale":               ScaleWrap,
+	"GtkScrollable":          ScrollableWrap,
+	"GtkScrollbar":           ScrollbarWrap,
+	"GtkScrolledWindow":      ScrolledWindowWrap,
+	"GtkSearchEntry":         SearchEntryWrap,
+	"GtkSeparator":           SeparatorWrap,
+	"GtkSeparatorMenuItem":   SeparatorMenuItemWrap,
+	"GtkSeparatorToolItem":   SeparatorToolItemWrap,
+	"GtkSpinButton":          SpinButtonWrap,
+	"GtkSpinner":             SpinnerWrap,
+	"GtkStatusbar":           StatusbarWrap,
+	"GtkSwitch":              SwitchWrap,
+	"GtkTextView":            TextViewWrap,
+	"GtkTextBuffer":          TextBufferWrap,
+	"GtkTextTag":             TextTagWrap,
+	"GtkTextTagTable":        TextTagTableWrap,
+	"GtkToggleButton":        ToggleButtonWrap,
+	"GtkToolbar":             ToolbarWrap,
+	"GtkToolButton":          ToolButtonWrap,
+	"GtkToolItem":            ToolItemWrap,
+	"GtkTreeModel":           TreeModelWrap,
+	"GtkTreeSelection":       TreeSelectionWrap,
+	"GtkTreeStore":           TreeStoreWrap,
+	"GtkTreeView":            TreeViewWrap,
+	"GtkTreeViewColumn":      TreeViewColumnWrap,
+	"GtkViewport":            ViewportWrap,
+	"GtkVolumeButton":        VolumeButtonWrap,
+	"GtkWidget":              WidgetWrap,
+	"GtkWindow":              WindowWrap,
 }
 
 // cast takes a native GObject and casts it to the appropriate Go struct.
-//TODO change all wrapFns to return an IObject
+//TODO change all FnsWrap to return an IObject
 func cast(c *C.GObject) (glib.IObject, error) {
 	var (
 		className = C.GoString((*C.char)(C.object_get_class_name(c)))

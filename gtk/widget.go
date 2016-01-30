@@ -62,10 +62,10 @@ func (v *Widget) toWidget() *C.GtkWidget {
 func marshalWidget(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return WidgetWrap(obj), nil
 }
 
-func wrapWidget(obj *glib.Object) *Widget {
+func WidgetWrap(obj *glib.Object) *Widget {
 	return &Widget{glib.InitiallyUnowned{obj}}
 }
 
@@ -335,7 +335,7 @@ func (v *Widget) GetParent() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetSizeRequest is a wrapper around gtk_widget_set_size_request().
@@ -455,7 +455,7 @@ func (v *Widget) GetToplevel() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetTooltipText is a wrapper around gtk_widget_get_tooltip_text().

@@ -29,7 +29,7 @@ func (v *Application) native() *C.GtkApplication {
 	return C.toGtkApplication(p)
 }
 
-func wrapApplication(obj *C.GtkApplication) *Application {
+func ApplicationWrap(obj *C.GtkApplication) *Application {
 	return &Application{obj}
 }
 
@@ -42,7 +42,7 @@ func ApplicationNew(appId string, flags glib.ApplicationFlags) (*Application, er
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapApplication(c), nil
+	return ApplicationWrap(c), nil
 }
 
 // AddWindow is a wrapper around gtk_application_add_window().
@@ -61,7 +61,7 @@ func (v *Application) GetWindowByID(id uint) *Window {
 	if c == nil {
 		return nil
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c)))
+	return WindowWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // GetActiveWindow is a wrapper around gtk_application_get_active_window().
@@ -70,7 +70,7 @@ func (v *Application) GetActiveWindow() *Window {
 	if c == nil {
 		return nil
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c)))
+	return WindowWrap(wrapObject(unsafe.Pointer(c)))
 }
 
 // Uninhibit is a wrapper around gtk_application_uninhibit().

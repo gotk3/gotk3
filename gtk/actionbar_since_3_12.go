@@ -40,7 +40,7 @@ func init() {
 
 	glib.RegisterGValueMarshalers(tm)
 
-	WrapMap["GtkActionBar"] = wrapActionBar
+	WrapMap["GtkActionBar"] = ActionBarWrap
 }
 
 //GtkActionBar
@@ -59,10 +59,10 @@ func (v *ActionBar) native() *C.GtkActionBar {
 
 func marshalActionBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapActionBar(wrapObject(unsafe.Pointer(c))), nil
+	return ActionBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapActionBar(obj *glib.Object) *ActionBar {
+func ActionBarWrap(obj *glib.Object) *ActionBar {
 	return &ActionBar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -72,7 +72,7 @@ func ActionBarNew() (*ActionBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapActionBar(wrapObject(unsafe.Pointer(c))), nil
+	return ActionBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 //gtk_action_bar_pack_start(GtkActionBar *action_bar,GtkWidget *child)
