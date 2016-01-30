@@ -29,9 +29,11 @@ func TestList_DataWrapper(t *testing.T) {
 		return fmt.Sprintf("Value %v", uintptr(ptr))
 	})
 
+	i := 0
 	for l := list; l != nil; l = l.Next() {
-		expect := fmt.Sprintf("Value %v", uintptr(l.Data()))
-		actual, ok := l.DataWrapped().(string)
+		expect := fmt.Sprintf("Value %v", i)
+		i++
+		actual, ok := l.Data().(string)
 		if !ok {
 			t.Error("DataWrapper must have returned a string!")
 		}

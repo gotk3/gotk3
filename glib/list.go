@@ -85,16 +85,16 @@ func (v *List) Length() uint {
 	return uint(C.g_list_length(v.native()))
 }
 
-// NthData is a wrapper around g_list_nth_data().
-func (v *List) NthData(n uint) unsafe.Pointer {
+// nthDataRaw is a wrapper around g_list_nth_data().
+func (v *List) nthDataRaw(n uint) unsafe.Pointer {
 	return unsafe.Pointer(C.g_list_nth_data(v.native(), C.guint(n)))
 }
 
-// NthDataWrapped acts the same as NthData(), but passes
+// NthDataWrapped acts the same as g_list_nth_data(), but passes
 // retrieved value before returning through wrap function, set by DataWrapper().
 // If no wrap function is set, it returns raw unsafe.Pointer.
-func (v *List) NthDataWrapped(n uint) interface{} {
-	ptr := v.NthData(n)
+func (v *List) NthData(n uint) interface{} {
+	ptr := v.nthDataRaw(n)
 	if v.dataWrap != nil {
 		return v.dataWrap(ptr)
 	}
@@ -116,16 +116,16 @@ func (v *List) Previous() *List {
 	return v.wrapNewHead(v.native().prev)
 }
 
-// Data is a wrapper around the data struct field
-func (v *List) Data() unsafe.Pointer {
+// dataRaw is a wrapper around the data struct field
+func (v *List) dataRaw() unsafe.Pointer {
 	return unsafe.Pointer(v.native().data)
 }
 
-// DataWrapped acts the same as Data(), but passes
+// DataWrapped acts the same as data struct field, but passes
 // retrieved value before returning through wrap function, set by DataWrapper().
 // If no wrap function is set, it returns raw unsafe.Pointer.
-func (v *List) DataWrapped() interface{} {
-	ptr := v.Data()
+func (v *List) Data() interface{} {
+	ptr := v.dataRaw()
 	if v.dataWrap != nil {
 		return v.dataWrap(ptr)
 	}
