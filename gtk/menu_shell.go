@@ -32,10 +32,10 @@ func (v *MenuShell) native() *C.GtkMenuShell {
 func marshalMenuShell(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapMenuShell(obj), nil
+	return MenuShellWrap(obj), nil
 }
 
-func wrapMenuShell(obj *glib.Object) *MenuShell {
+func MenuShellWrap(obj *glib.Object) *MenuShell {
 	return &MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

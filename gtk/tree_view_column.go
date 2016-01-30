@@ -32,10 +32,10 @@ func (v *TreeViewColumn) native() *C.GtkTreeViewColumn {
 func marshalTreeViewColumn(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapTreeViewColumn(obj), nil
+	return TreeViewColumnWrap(obj), nil
 }
 
-func wrapTreeViewColumn(obj *glib.Object) *TreeViewColumn {
+func TreeViewColumnWrap(obj *glib.Object) *TreeViewColumn {
 	return &TreeViewColumn{glib.InitiallyUnowned{obj}}
 }
 
@@ -45,7 +45,7 @@ func TreeViewColumnNew() (*TreeViewColumn, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c))), nil
+	return TreeViewColumnWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // TreeViewColumnNewWithAttribute() is a wrapper around
@@ -61,7 +61,7 @@ func TreeViewColumnNewWithAttribute(title string, renderer ICellRenderer, attrib
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c))), nil
+	return TreeViewColumnWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // AddAttribute() is a wrapper around gtk_tree_view_column_add_attribute().

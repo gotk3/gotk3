@@ -16,7 +16,7 @@ func init() {
 
 	glib.RegisterGValueMarshalers(tm)
 
-	WrapMap["GtkInfoBar"] = wrapInfoBar
+	WrapMap["GtkInfoBar"] = InfoBarWrap
 }
 
 type InfoBar struct {
@@ -34,10 +34,10 @@ func (v *InfoBar) native() *C.GtkInfoBar {
 
 func marshalInfoBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
+	return InfoBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapInfoBar(obj *glib.Object) *InfoBar {
+func InfoBarWrap(obj *glib.Object) *InfoBar {
 	return &InfoBar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -47,7 +47,7 @@ func InfoBarNew() (*InfoBar, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
+	return InfoBarWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 func (v *InfoBar) AddActionWidget(w IWidget, responseId ResponseType) {
@@ -84,7 +84,7 @@ func (v *InfoBar) GetActionArea() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 func (v *InfoBar) GetContentArea() (*Box, error) {
@@ -93,7 +93,7 @@ func (v *InfoBar) GetContentArea() (*Box, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapBox(wrapObject(unsafe.Pointer(c))), nil
+	return BoxWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 func (v *InfoBar) GetShowCloseButton() bool {

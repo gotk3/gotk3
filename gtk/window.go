@@ -48,10 +48,10 @@ func (v *Window) toWindow() *C.GtkWindow {
 func marshalWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWindow(obj), nil
+	return WindowWrap(obj), nil
 }
 
-func wrapWindow(obj *glib.Object) *Window {
+func WindowWrap(obj *glib.Object) *Window {
 	return &Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -61,7 +61,7 @@ func WindowNew(t WindowType) (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c))), nil
+	return WindowWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetTitle is a wrapper around gtk_window_set_title().
@@ -196,7 +196,7 @@ func (v *Window) GetFocus() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetFocus is a wrapper around gtk_window_set_focus().
@@ -211,7 +211,7 @@ func (v *Window) GetDefaultWidget() *Widget {
 		return nil
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return WidgetWrap(obj)
 }
 
 // SetDefault is a wrapper arround gtk_window_set_default().
@@ -434,7 +434,7 @@ func (v *Window) GetTransientFor() (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c))), nil
+	return WindowWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetAttachedTo is a wrapper around gtk_window_get_attached_to().
@@ -443,7 +443,7 @@ func (v *Window) GetAttachedTo() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return WidgetWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // GetSkipTaskbarHint is a wrapper around gtk_window_get_skip_taskbar_hint().
@@ -576,7 +576,7 @@ func (v *Window) GetApplication() (*Application, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapApplication(c), nil
+	return ApplicationWrap(c), nil
 }
 
 // SetApplication is a wrapper around gtk_window_set_application().

@@ -40,7 +40,7 @@ func init() {
 	}
 
 	glib.RegisterGValueMarshalers(tm)
-	WrapMap["GtkPopover"] = wrapPopover
+	WrapMap["GtkPopover"] = PopoverWrap
 }
 
 //TODO(sjon): Implement GtkPopover
@@ -60,10 +60,10 @@ func (v *Popover) native() *C.GtkPopover {
 
 func marshalPopover(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapPopover(wrapObject(unsafe.Pointer(c))), nil
+	return PopoverWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapPopover(obj *glib.Object) *Popover {
+func PopoverWrap(obj *glib.Object) *Popover {
 	return &Popover{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -79,5 +79,5 @@ func PopoverNew(relative IWidget) (*Popover, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapPopover(wrapObject(unsafe.Pointer(c))), nil
+	return PopoverWrap(wrapObject(unsafe.Pointer(c))), nil
 }

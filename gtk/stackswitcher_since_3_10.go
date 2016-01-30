@@ -20,7 +20,7 @@ import (
 func init() {
 	//Contribute to casting
 	for k, v := range map[string]WrapFn{
-		"GtkStackSwitcher": wrapStackSwitcher,
+		"GtkStackSwitcher": StackSwitcherWrap,
 	} {
 		WrapMap[k] = v
 	}
@@ -47,10 +47,10 @@ func (v *StackSwitcher) native() *C.GtkStackSwitcher {
 func marshalStackSwitcher(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapStackSwitcher(obj), nil
+	return StackSwitcherWrap(obj), nil
 }
 
-func wrapStackSwitcher(obj *glib.Object) *StackSwitcher {
+func StackSwitcherWrap(obj *glib.Object) *StackSwitcher {
 	return &StackSwitcher{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -60,7 +60,7 @@ func StackSwitcherNew() (*StackSwitcher, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStackSwitcher(wrapObject(unsafe.Pointer(c))), nil
+	return StackSwitcherWrap(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetStack is a wrapper around gtk_stack_switcher_set_stack().
@@ -74,5 +74,5 @@ func (v *StackSwitcher) GetStack() *Stack {
 	if c == nil {
 		return nil
 	}
-	return wrapStack(wrapObject(unsafe.Pointer(c)))
+	return StackWrap(wrapObject(unsafe.Pointer(c)))
 }

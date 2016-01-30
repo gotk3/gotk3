@@ -30,7 +30,7 @@ func (v *StyleContext) native() *C.GtkStyleContext {
 	return C.toGtkStyleContext(p)
 }
 
-func wrapStyleContext(obj *glib.Object) *StyleContext {
+func StyleContextWrap(obj *glib.Object) *StyleContext {
 	return &StyleContext{obj}
 }
 
@@ -54,7 +54,7 @@ func fromNativeStyleContext(c *C.GtkStyleContext) (*StyleContext, error) {
 	}
 
 	obj := wrapObject(unsafe.Pointer(c))
-	return wrapStyleContext(obj), nil
+	return StyleContextWrap(obj), nil
 }
 
 // GetStyleContext is a wrapper around gtk_widget_get_style_context().
