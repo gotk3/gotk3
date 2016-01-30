@@ -42,3 +42,35 @@ func TestList_DataWrapper(t *testing.T) {
 		}
 	}
 }
+
+func TestList_Foreach(t *testing.T) {
+	list := (&List{}).Append(0).Append(1).Append(2)
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return int(uintptr(ptr) + 1)
+	})
+
+	sum := 0
+	list.Foreach(func(item interface{}) {
+		sum += item.(int)
+	})
+
+	if sum != 6 {
+		t.Errorf("Foreach resulted into wrong sum. Got %v, expected %v.", sum, 6)
+	}
+}
+
+func TestList_Nth(t *testing.T) {
+	list := (&List{}).Append(0).Append(1).Append(2)
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return int(uintptr(ptr) + 1)
+	})
+
+	for i := uint(0); i < 3; i++ {
+		nth := list.Nth(i).Data().(int)
+		nthData := list.NthData(i).(int)
+
+		if nth != nthData {
+			t.Errorf("%v's element didn't match. Nth->Data returned %v; NthData returned %v.", i, nth, nthData)
+		}
+	}
+}

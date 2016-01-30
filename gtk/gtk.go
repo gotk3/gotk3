@@ -9030,8 +9030,10 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 		return &TreePath{(*C.GtkTreePath)(ptr)}
 	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		C.g_list_free_full((*C.GList)(unsafe.Pointer(glist.Native())),
-			(C.GDestroyNotify)(C.gtk_tree_path_free))
+		glist.FreeFull(func(item interface{}) {
+			path := item.(TreePath)
+			C.gtk_tree_path_free(path.GtkTreePath)
+		})
 	})
 
 	return glist

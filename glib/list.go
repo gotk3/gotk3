@@ -90,6 +90,13 @@ func (v *List) nthDataRaw(n uint) unsafe.Pointer {
 	return unsafe.Pointer(C.g_list_nth_data(v.native(), C.guint(n)))
 }
 
+// Nth() is a wrapper around g_list_nth().
+func (v *List) Nth(n uint) *List {
+	list := wrapList(C.g_list_nth(v.native(), C.guint(n)))
+	list.DataWrapper(v.dataWrap)
+	return list
+}
+
 // NthDataWrapped acts the same as g_list_nth_data(), but passes
 // retrieved value before returning through wrap function, set by DataWrapper().
 // If no wrap function is set, it returns raw unsafe.Pointer.
@@ -130,4 +137,20 @@ func (v *List) Data() interface{} {
 		return v.dataWrap(ptr)
 	}
 	return ptr
+}
+
+// Foreach acts the same as g_list_foreach().
+// No user_data arguement is implemented because of Go clojure capabilities.
+func (v *List) Foreach(fn func(item interface{})) {
+	for l := v; l != nil; l = l.Next() {
+		fn(l.Data())
+	}
+}
+
+// FreeFull acts the same as g_list_free_full().
+// Calling list.FreeFull(fn) is equivalent to calling list.Foreach(fn) and
+// list.Free() sequentially.
+func (v *List) FreeFull(fn func(item interface{})) {
+	v.Foreach(fn)
+	v.Free()
 }
