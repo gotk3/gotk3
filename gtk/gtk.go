@@ -822,7 +822,9 @@ parsing.
 func Init(args *[]string) {
 	if args != nil {
 		argc := C.int(len(*args))
-		argv := make([]*C.char, argc)
+		argvPtr := C.malloc(C.size_t(int(argc) * int(unsafe.Sizeof((*C.char)(nil)))))
+		defer C.free(argvPtr)
+		argv := *(*[]*C.char)(unsafe.Pointer(&argvPtr))
 		for i, arg := range *args {
 			argv[i] = C.CString(arg)
 		}
