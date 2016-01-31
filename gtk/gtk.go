@@ -2862,7 +2862,7 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	var widgets []*Widget
 	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
 	for ; wlist.Data() != nil; wlist = wlist.Next() {
-		widgets = append(widgets, wrapWidget(wrapObject(wlist.Data())))
+		widgets = append(widgets, wrapWidget(wrapObject(wlist.Data().(unsafe.Pointer))))
 	}
 	return widgets, gobool(c)
 }
@@ -8916,7 +8916,7 @@ func TreePathFromList(list *glib.List) *TreePath {
 	if list == nil {
 		return nil
 	}
-	return &TreePath{(*C.GtkTreePath)(list.Data())}
+	return &TreePath{(*C.GtkTreePath)(list.Data().(unsafe.Pointer))}
 }
 
 // native returns a pointer to the underlying GtkTreePath.
@@ -9030,8 +9030,10 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 		return &TreePath{(*C.GtkTreePath)(ptr)}
 	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		C.g_list_free_full((*C.GList)(unsafe.Pointer(glist.Native())),
-			(C.GDestroyNotify)(C.gtk_tree_path_free))
+		glist.FreeFull(func(item interface{}) {
+			path := item.(TreePath)
+			C.gtk_tree_path_free(path.GtkTreePath)
+		})
 	})
 
 	return glist
