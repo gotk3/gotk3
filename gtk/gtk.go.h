@@ -35,6 +35,12 @@ toGtkApplication(void *p)
 	return (GTK_APPLICATION(p));
 }
 
+static GtkApplicationWindow *
+toGtkApplicationWindow(void *p)
+{
+	return (GTK_APPLICATION_WINDOW(p));
+}
+
 static GtkAssistant *
 toGtkAssistant(void *p)
 {
