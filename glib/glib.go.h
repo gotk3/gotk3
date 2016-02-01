@@ -23,6 +23,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <gio/gio.h>
+#include <glib.h>
+#include <glib-object.h>
 #include <glib/gi18n.h>
 #include <locale.h>
 
@@ -32,6 +35,25 @@ toGObject(void *p)
 {
 	return (G_OBJECT(p));
 }
+
+static GMenuModel *
+toGMenuModel(void *p)
+{
+	return (G_MENU_MODEL(p));
+}
+
+static GMenu *
+toGMenu(void *p)
+{
+	return (G_MENU(p));
+}
+
+static GMenuItem *
+toGMenuItem(void *p)
+{
+	return (G_MENU_ITEM(p));
+}
+
 
 static GType
 _g_type_from_instance(gpointer instance)
