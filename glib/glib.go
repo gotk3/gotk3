@@ -18,7 +18,7 @@
 // and later.
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
+// #cgo pkg-config: glib-2.0 gobject-2.0 gio-2.0
 // #include <gio/gio.h>
 // #include <glib.h>
 // #include <glib-object.h>
@@ -742,6 +742,20 @@ func (v *Object) HandlerDisconnect(handle SignalHandle) {
 	C.g_closure_invalidate(signals[handle])
 	delete(closures.m, signals[handle])
 	delete(signals, handle)
+}
+
+// Wrapper function for new objects with reference management.
+func wrapObject(ptr unsafe.Pointer) *Object {
+	obj := &Object{ToGObject(ptr)}
+
+	if obj.IsFloating() {
+		obj.RefSink()
+	} else {
+		obj.Ref()
+	}
+
+	runtime.SetFinalizer(obj, (*Object).Unref)
+	return obj
 }
 
 /*
