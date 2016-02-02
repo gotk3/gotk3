@@ -29,6 +29,30 @@ toGtkAboutDialog(void *p)
 	return (GTK_ABOUT_DIALOG(p));
 }
 
+static GtkAppChooser *
+toGtkAppChooser(void *p)
+{
+	return (GTK_APP_CHOOSER(p));
+}
+
+static GtkAppChooserButton *
+toGtkAppChooserButton(void *p)
+{
+	return (GTK_APP_CHOOSER_BUTTON(p));
+}
+
+static GtkAppChooserDialog *
+toGtkAppChooserDialog(void *p)
+{
+	return (GTK_APP_CHOOSER_DIALOG(p));
+}
+
+static GtkAppChooserWidget *
+toGtkAppChooserWidget(void *p)
+{
+	return (GTK_APP_CHOOSER_WIDGET(p));
+}
+
 static GtkApplication *
 toGtkApplication(void *p)
 {
