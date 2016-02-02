@@ -6,7 +6,6 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gio"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -328,18 +327,19 @@ func wrapAppChooserDialog(obj *glib.Object) *AppChooserDialog {
 	return &AppChooserDialog{*dialog, *ac}
 }
 
+// TODO: Uncomment when gio builds successfully
 // AppChooserDialogNew() is a wrapper around gtk_app_chooser_dialog_new().
-func AppChooserDialogNew(parent *Window, flags DialogFlags, file *gio.File) (*AppChooserDialog, error) {
-	var gfile *C.GFile
-	if file != nil {
-		gfile = (*C.GFile)(unsafe.Pointer(file.Native()))
-	}
-	c := C.gtk_app_chooser_dialog_new(parent.native(), C.GtkDialogFlags(flags), gfile)
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	return wrapAppChooserDialog(wrapObject(unsafe.Pointer(c))), nil
-}
+// func AppChooserDialogNew(parent *Window, flags DialogFlags, file *gio.File) (*AppChooserDialog, error) {
+// 	var gfile *C.GFile
+// 	if file != nil {
+// 		gfile = (*C.GFile)(unsafe.Pointer(file.Native()))
+// 	}
+// 	c := C.gtk_app_chooser_dialog_new(parent.native(), C.GtkDialogFlags(flags), gfile)
+// 	if c == nil {
+// 		return nil, nilPtrErr
+// 	}
+// 	return wrapAppChooserDialog(wrapObject(unsafe.Pointer(c))), nil
+// }
 
 // AppChooserDialogNewForContentType() is a wrapper around gtk_app_chooser_dialog_new_for_content_type().
 func AppChooserDialogNewForContentType(parent *Window, flags DialogFlags, content_type string) (*AppChooserDialog, error) {
