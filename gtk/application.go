@@ -11,6 +11,16 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+// ApplicationInhibitFlags is a representation of GTK's GtkApplicationInhibitFlags.
+type ApplicationInhibitFlags int
+
+const (
+	APPLICATION_INHIBIT_LOGOUT  ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_LOGOUT
+	APPLICATION_INHIBIT_SWITCH  ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_SWITCH
+	APPLICATION_INHIBIT_SUSPEND ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_SUSPEND
+	APPLICATION_INHIBIT_IDLE    ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_IDLE
+)
+
 /*
  * GtkApplication
  */
@@ -78,17 +88,49 @@ func (v *Application) Uninhibit(cookie uint) {
 	C.gtk_application_uninhibit(v.native(), C.guint(cookie))
 }
 
-// GMenuModel * 	gtk_application_get_app_menu ()
-// void 	gtk_application_set_app_menu ()
-// GMenuModel * 	gtk_application_get_menubar ()
-// void 	gtk_application_set_menubar ()
-// GMenu * 	gtk_application_get_menu_by_id ()
-// void 	gtk_application_add_accelerator ()
-// void 	gtk_application_remove_accelerator ()
-// gboolean 	gtk_application_is_inhibited ()
-// guint 	gtk_application_inhibit ()
-// GList * 	gtk_application_get_windows ()
-// gchar ** 	gtk_application_list_action_descriptions ()
-// gchar ** 	gtk_application_get_accels_for_action ()
-// void 	gtk_application_set_accels_for_action ()
-// gchar ** 	gtk_application_get_actions_for_accel ()
+// GetAppMenu is a wrapper around gtk_application_get_app_menu().
+func (v *Application) GetAppMenu() *glib.MenuModel {
+	c := C.gtk_application_get_app_menu(v.native())
+	if c == nil {
+		return nil
+	}
+	return &glib.MenuModel{wrapObject(unsafe.Pointer(c))}
+}
+
+// SetAppMenu is a wrapper around gtk_application_set_app_menu().
+func (v *Application) SetAppMenu(m *glib.MenuModel) {
+	mptr := (*C.GMenuModel)(unsafe.Pointer(m.Native()))
+	C.gtk_application_set_app_menu(v.native(), mptr)
+}
+
+// GetMenubar is a wrapper around gtk_application_get_menubar().
+func (v *Application) GetMenubar() *glib.MenuModel {
+	c := C.gtk_application_get_menubar(v.native())
+	if c == nil {
+		return nil
+	}
+	return &glib.MenuModel{wrapObject(unsafe.Pointer(c))}
+}
+
+// SetMenubar is a wrapper around gtk_application_set_menubar().
+func (v *Application) SetMenubar(m *glib.MenuModel) {
+	mptr := (*C.GMenuModel)(unsafe.Pointer(m.Native()))
+	C.gtk_application_set_menubar(v.native(), mptr)
+}
+
+// IsInhibited is a wrapper around gtk_application_is_inhibited().
+func (v *Application) IsInhibited(flags ApplicationInhibitFlags) bool {
+	return gobool(C.gtk_application_is_inhibited(v.native(), C.GtkApplicationInhibitFlags(flags)))
+}
+
+// Inhibit is a wrapper around gtk_application_inhibit().
+func (v *Application) Inhibited(w *Window, flags ApplicationInhibitFlags, reason string) uint {
+	cstr1 := (*C.gchar)(C.CString(reason))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	return uint(C.gtk_application_inhibit(v.native(), w.native(), C.GtkApplicationInhibitFlags(flags), cstr1))
+}
+
+// void 	gtk_application_add_accelerator () // deprecated and uses a gvariant paramater
+// void 	gtk_application_remove_accelerator () // deprecated and uses a gvariant paramater
+// GList * 	gtk_application_get_windows () // glist
