@@ -7,7 +7,11 @@ package gtk
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
+)
 
 // PrefersAppMenu is a wrapper around gtk_application_prefers_app_menu().
 func (v *Application) PrefersAppMenu() bool {
@@ -30,4 +34,16 @@ func (v *Application) GetActionsForAccel(acc string) []string {
 	}
 
 	return acts
+}
+
+// GetMenuByID is a wrapper around gtk_application_get_menu_by_id().
+func (v *Application) GetMenuByID(id string) *glib.Menu {
+	cstr1 := (*C.gchar)(C.CString(id))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	c := C.gtk_application_get_menu_by_id(v.native(), cstr1)
+	if c == nil {
+		return nil
+	}
+	return &glib.Menu{glib.MenuModel{wrapObject(unsafe.Pointer(c))}}
 }
