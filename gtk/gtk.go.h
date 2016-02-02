@@ -77,6 +77,12 @@ toGtkCalendar(void *p)
 	return (GTK_CALENDAR(p));
 }
 
+static GtkColorChooserDialog *
+toGtkColorChooserDialog(void *p)
+{
+	return (GTK_COLOR_CHOOSER_DIALOG(p));
+}
+
 static GtkDrawingArea *
 toGtkDrawingArea(void *p)
 {
