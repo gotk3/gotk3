@@ -21,6 +21,10 @@ func (v *MenuModel) native() *C.GMenuModel {
 	return C.toGMenuModel(unsafe.Pointer(v.GObject))
 }
 
+func (v *MenuModel) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
 func marshalMenuModel(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	return wrapMenuModel(wrapObject(unsafe.Pointer(c))), nil
