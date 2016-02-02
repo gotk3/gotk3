@@ -352,8 +352,11 @@ func AppChooserDialogNewForContentType(parent *Window, flags DialogFlags, conten
 	return wrapAppChooserDialog(wrapObject(unsafe.Pointer(c))), nil
 }
 
-// TODO: Implement GtkAppChooserWidget
-//gtk_app_chooser_dialog_get_widget()
+// GetWidget() is a wrapper around gtk_app_chooser_dialog_get_widget().
+func (v *AppChooserDialog) GetWidget() *AppChooserWidget {
+	c := C.gtk_app_chooser_dialog_get_widget(v.native())
+	return wrapAppChooserWidget(wrapObject(unsafe.Pointer(c)))
+}
 
 // GetHeading() is a wrapper around gtk_app_chooser_dialog_get_heading().
 // In case when gtk_app_chooser_dialog_get_heading() returns a nil string,
