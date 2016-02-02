@@ -1685,6 +1685,9 @@ func (v *Button) GetEventWindow() (*gdk.Window, error) {
 // ColorButton is a representation of GTK's GtkColorButton.
 type ColorButton struct {
 	Button
+
+	// Interfaces
+	ColorChooser
 }
 
 // Native returns a pointer to the underlying GtkColorButton.
@@ -1697,8 +1700,9 @@ func (v *ColorButton) native() *C.GtkColorButton {
 }
 
 func wrapColorButton(obj *glib.Object) *ColorButton {
+	cc := wrapColorChooser(obj)
 	return &ColorButton{Button{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}}
+		glib.InitiallyUnowned{obj}}}}}, *cc}
 }
 
 // ColorButtonNew is a wrapper around gtk_color_button_new().
@@ -1717,18 +1721,6 @@ func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
 		return nil, nilPtrErr
 	}
 	return wrapColorButton(wrapObject(unsafe.Pointer(c))), nil
-}
-
-// GetRGBA is a wrapper around gtk_color_chooser_get_rgba().
-func (v *ColorButton) GetRGBA() *gdk.RGBA {
-	gdkColor := gdk.NewRGBA()
-	C.gtk_color_chooser_get_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
-	return gdkColor
-}
-
-// SetRGBA is a wrapper around gtk_color_chooser_set_rgba().
-func (v *ColorButton) SetRGBA(gdkColor *gdk.RGBA) {
-	C.gtk_color_chooser_set_rgba(C.toGtkColorChooser(unsafe.Pointer(v.native())), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 }
 
 /*
