@@ -27,20 +27,19 @@ const (
 
 // Application is a representation of GTK's GtkApplication.
 type Application struct {
-	app *C.GtkApplication
+	glib.Application
 }
 
 // native returns a pointer to the underlying GtkApplication.
 func (v *Application) native() *C.GtkApplication {
-	if v == nil || v.app == nil {
+	if v == nil || v.GObject == nil {
 		return nil
 	}
-	p := unsafe.Pointer(v.app)
-	return C.toGtkApplication(p)
+	return C.toGtkApplication(unsafe.Pointer(v.GObject))
 }
 
-func wrapApplication(obj *C.GtkApplication) *Application {
-	return &Application{obj}
+func wrapApplication(obj *glib.Object) *Application {
+	return &Application{glib.Application{obj}}
 }
 
 // ApplicationNew is a wrapper around gtk_application_new().
@@ -52,7 +51,7 @@ func ApplicationNew(appId string, flags glib.ApplicationFlags) (*Application, er
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapApplication(c), nil
+	return wrapApplication(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // AddWindow is a wrapper around gtk_application_add_window().
