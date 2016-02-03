@@ -54,6 +54,18 @@ toGMenuItem(void *p)
 	return (G_MENU_ITEM(p));
 }
 
+static GNotification *
+toGNotification(void *p)
+{
+	return (G_NOTIFICATION(p));
+}
+
+static GApplication *
+toGApplication(void *p)
+{
+	return (G_APPLICATION(p));
+}
+
 
 static GType
 _g_type_from_instance(gpointer instance)
