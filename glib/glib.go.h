@@ -180,4 +180,20 @@ static void init_i18n(const char *domain, const char *dir) {
   textdomain(domain);
 }
 
+static inline char** make_strings(int count) {
+	return (char**)malloc(sizeof(char*) * count);
+}
+
+static inline void destroy_strings(char** strings) {
+	free(strings);
+}
+
+static inline char* get_string(char** strings, int n) {
+	return strings[n];
+}
+
+static inline void set_string(char** strings, int n, char* str) {
+	strings[n] = str;
+}
+
 #endif

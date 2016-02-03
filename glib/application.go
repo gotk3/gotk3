@@ -183,6 +183,22 @@ func (v *Application) UnmarkBusy() {
 	C.g_application_unmark_busy(v.native())
 }
 
+// Run is a wrapper around g_application_run().
+func (v *Application) Run(args []string) int {
+	cargs := C.make_strings(C.int(len(args)))
+	defer C.destroy_strings(cargs)
+
+	for i, arg := range args {
+		cstr := C.CString(arg)
+		defer C.free(unsafe.Pointer(cstr))
+		C.set_string(cargs, C.int(i), (*C.char)(cstr))
+	}
+
+	C.set_string(cargs, C.int(len(args)), nil)
+
+	return int(C.g_application_run(v.native(), C.int(len(args)), cargs))
+}
+
 // Only available in GLib 2.44+
 // // GetIsBusy is a wrapper around g_application_get_is_busy().
 // func (v *Application) GetIsBusy() bool {
@@ -191,7 +207,6 @@ func (v *Application) UnmarkBusy() {
 
 // void 	g_application_bind_busy_property ()
 // void 	g_application_unbind_busy_property ()
-// int 	g_application_run ()
 // gboolean 	g_application_register () // requires GCancellable
 // void 	g_application_set_action_group () // Deprecated since 2.32
 // GDBusConnection * 	g_application_get_dbus_connection () // No support for GDBusConnection
