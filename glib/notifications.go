@@ -8,15 +8,16 @@ package glib
 import "C"
 import "unsafe"
 
-// NotificationPriority is a representation of GLib's GNotificationPriority.
-type NotificationPriority int
+// Only available from 2.42
+// // NotificationPriority is a representation of GLib's GNotificationPriority.
+// type NotificationPriority int
 
-const (
-	NOTIFICATION_PRIORITY_NORMAL NotificationPriority = C.G_NOTIFICATION_PRIORITY_NORMAL
-	NOTIFICATION_PRIORITY_LOW    NotificationPriority = C.G_NOTIFICATION_PRIORITY_LOW
-	NOTIFICATION_PRIORITY_HIGH   NotificationPriority = C.G_NOTIFICATION_PRIORITY_HIGH
-	NOTIFICATION_PRIORITY_URGENT NotificationPriority = C.G_NOTIFICATION_PRIORITY_URGENT
-)
+// const (
+// 	NOTIFICATION_PRIORITY_NORMAL NotificationPriority = C.G_NOTIFICATION_PRIORITY_NORMAL
+// 	NOTIFICATION_PRIORITY_LOW    NotificationPriority = C.G_NOTIFICATION_PRIORITY_LOW
+// 	NOTIFICATION_PRIORITY_HIGH   NotificationPriority = C.G_NOTIFICATION_PRIORITY_HIGH
+// 	NOTIFICATION_PRIORITY_URGENT NotificationPriority = C.G_NOTIFICATION_PRIORITY_URGENT
+// )
 
 // Notification is a representation of GNotification.
 type Notification struct {
@@ -72,10 +73,11 @@ func (v *Notification) SetBody(body string) {
 	C.g_notification_set_body(v.native(), cstr1)
 }
 
-// SetPriority is a wrapper around g_notification_set_priority().
-func (v *Notification) SetPriority(prio NotificationPriority) {
-	C.g_notification_set_priority(v.native(), C.GNotificationPriority(prio))
-}
+// Only available from 2.42
+// // SetPriority is a wrapper around g_notification_set_priority().
+// func (v *Notification) SetPriority(prio NotificationPriority) {
+// 	C.g_notification_set_priority(v.native(), C.GNotificationPriority(prio))
+// }
 
 // SetDefaultAction is a wrapper around g_notification_set_default_action().
 func (v *Notification) SetDefaultAction(detailedAction string) {
