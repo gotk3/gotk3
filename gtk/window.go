@@ -576,7 +576,8 @@ func (v *Window) GetApplication() (*Application, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapApplication(c), nil
+
+	return wrapApplication(wrapObject(unsafe.Pointer(c))), nil
 }
 
 // SetApplication is a wrapper around gtk_window_set_application().
