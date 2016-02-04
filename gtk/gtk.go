@@ -2678,11 +2678,62 @@ func ComboBoxTextNewWithEntry() (*ComboBoxText, error) {
 	return wrapComboBoxText(obj), nil
 }
 
+// Append is a wrapper around gtk_combo_box_text_append().
+func (v *ComboBoxText) Append(id, text string) {
+	cid := C.CString(id)
+	ctext := C.CString(text)
+	defer C.free(unsafe.Pointer(cid))
+	defer C.free(unsafe.Pointer(ctext))
+	C.gtk_combo_box_text_append(v.native(), (*C.gchar)(cid), (*C.gchar)(ctext))
+}
+
+// Prepend is a wrapper around gtk_combo_box_text_prepend().
+func (v *ComboBoxText) Prepend(id, text string) {
+	cid := C.CString(id)
+	ctext := C.CString(text)
+	defer C.free(unsafe.Pointer(cid))
+	defer C.free(unsafe.Pointer(ctext))
+	C.gtk_combo_box_text_prepend(v.native(), (*C.gchar)(cid), (*C.gchar)(ctext))
+}
+
+// Insert is a wrapper around gtk_combo_box_text_insert().
+func (v *ComboBoxText) Insert(position int, id, text string) {
+	cid := C.CString(id)
+	ctext := C.CString(text)
+	defer C.free(unsafe.Pointer(cid))
+	defer C.free(unsafe.Pointer(ctext))
+	C.gtk_combo_box_text_insert(v.native(), C.gint(position), (*C.gchar)(cid), (*C.gchar)(ctext))
+}
+
 // AppendText is a wrapper around gtk_combo_box_text_append_text().
 func (v *ComboBoxText) AppendText(text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_combo_box_text_append_text(v.native(), (*C.gchar)(cstr))
+}
+
+// PrependText is a wrapper around gtk_combo_box_text_prepend_text().
+func (v *ComboBoxText) PrependText(text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_combo_box_text_prepend_text(v.native(), (*C.gchar)(cstr))
+}
+
+// InsertText is a wrapper around gtk_combo_box_text_insert_text().
+func (v *ComboBoxText) InsertText(position int, text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_combo_box_text_insert_text(v.native(), C.gint(position), (*C.gchar)(cstr))
+}
+
+// Remove is a wrapper around gtk_combo_box_text_remove().
+func (v *ComboBoxText) Remove(position int) {
+	C.gtk_combo_box_text_remove(v.native(), C.gint(position))
+}
+
+// RemoveAll is a wrapper around gtk_combo_box_text_remove_all().
+func (v *ComboBoxText) RemoveAll() {
+	C.gtk_combo_box_text_remove_all(v.native())
 }
 
 // GetActiveText is a wrapper around gtk_combo_box_text_get_active_text().
