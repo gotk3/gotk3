@@ -127,6 +127,24 @@ func (v *ComboBox) GetActiveID() string {
 	return C.GoString((*C.char)(c))
 }
 
+// SetActiveID is a wrapper around gtk_combo_box_set_active_id().
+func (v *ComboBox) SetActiveID(id string) bool {
+	cid := C.CString(id)
+	defer C.free(unsafe.Pointer(cid))
+	c := C.gtk_combo_box_set_active_id(v.native(), (*C.gchar)(cid))
+	return gobool(c)
+}
+
+// GetModel is a wrapper around gtk_combo_box_get_model().
+func (v *ComboBox) GetModel() (*TreeModel, error) {
+	c := C.gtk_combo_box_get_model(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapTreeModel(obj), nil
+}
+
 // SetModel is a wrapper around gtk_combo_box_set_model().
 func (v *ComboBox) SetModel(model ITreeModel) {
 	C.gtk_combo_box_set_model(v.native(), model.toTreeModel())
