@@ -138,7 +138,7 @@ func (v *Widget) SetCanDefault(canDefault bool) {
 	C.gtk_widget_set_can_default(v.native(), gbool(canDefault))
 }
 
-// GetMapped is a wrapper around gtk_window_get_mapped().
+// GetMapped is a wrapper around gtk_widget_get_mapped().
 func (v *Widget) GetMapped() bool {
 	c := C.gtk_widget_get_mapped(v.native())
 	return gobool(c)
@@ -149,7 +149,7 @@ func (v *Widget) SetMapped(mapped bool) {
 	C.gtk_widget_set_can_focus(v.native(), gbool(mapped))
 }
 
-// GetRealized is a wrapper around gtk_window_get_realized().
+// GetRealized is a wrapper around gtk_widget_get_realized().
 func (v *Widget) GetRealized() bool {
 	c := C.gtk_widget_get_realized(v.native())
 	return gobool(c)

@@ -2203,24 +2203,24 @@ func (v *CellRendererToggle) GetRadio() bool {
 	return gobool(c)
 }
 
-// SetActive is a wrapper arround gtk_cell_renderer_set_active().
+// SetActive is a wrapper arround gtk_cell_renderer_toggle_set_active().
 func (v *CellRendererToggle) SetActive(active bool) {
 	C.gtk_cell_renderer_toggle_set_active(v.native(), gbool(active))
 }
 
-// GetActive is a wrapper around gtk_cell_renderer_get_active().
+// GetActive is a wrapper around gtk_cell_renderer_toggle_get_active().
 func (v *CellRendererToggle) GetActive() bool {
 	c := C.gtk_cell_renderer_toggle_get_active(v.native())
 	return gobool(c)
 }
 
-// SetActivatable is a wrapper around gtk_cell_renderer_set_activatable().
+// SetActivatable is a wrapper around gtk_cell_renderer_toggle_set_activatable().
 func (v *CellRendererToggle) SetActivatable(activatable bool) {
 	C.gtk_cell_renderer_toggle_set_activatable(v.native(),
 		gbool(activatable))
 }
 
-// GetActivatable is a wrapper around gtk_cell_renderer_get_activatable().
+// GetActivatable is a wrapper around gtk_cell_renderer_toggle_get_activatable().
 func (v *CellRendererToggle) GetActivatable() bool {
 	c := C.gtk_cell_renderer_toggle_get_activatable(v.native())
 	return gobool(c)
@@ -4104,7 +4104,7 @@ func wrapFileChooserWidget(obj *glib.Object) *FileChooserWidget {
 	return &FileChooserWidget{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
 }
 
-// FileChooserWidgetNew is a wrapper around gtk_gtk_file_chooser_widget_new().
+// FileChooserWidgetNew is a wrapper around gtk_file_chooser_widget_new().
 func FileChooserWidgetNew(action FileChooserAction) (*FileChooserWidget, error) {
 	c := C.gtk_file_chooser_widget_new((C.GtkFileChooserAction)(action))
 	if c == nil {
