@@ -1,3 +1,5 @@
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10
+
 // Copyright (c) 2013-2014 Conformal Systems <info@conformal.com>
 //
 // This file originated from: http://opensource.conformal.com/
