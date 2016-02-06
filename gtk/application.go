@@ -7,6 +7,7 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -123,7 +124,7 @@ func (v *Application) IsInhibited(flags ApplicationInhibitFlags) bool {
 	return gobool(C.gtk_application_is_inhibited(v.native(), C.GtkApplicationInhibitFlags(flags)))
 }
 
-// Inhibit is a wrapper around gtk_application_inhibit().
+// Inhibited is a wrapper around gtk_application_inhibit().
 func (v *Application) Inhibited(w *Window, flags ApplicationInhibitFlags, reason string) uint {
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
@@ -133,4 +134,17 @@ func (v *Application) Inhibited(w *Window, flags ApplicationInhibitFlags, reason
 
 // void 	gtk_application_add_accelerator () // deprecated and uses a gvariant paramater
 // void 	gtk_application_remove_accelerator () // deprecated and uses a gvariant paramater
-// GList * 	gtk_application_get_windows () // glist
+
+// GetWindows is a wrapper around gtk_application_get_windows().
+// Returned list is wrapped to return *gtk.Window elements.
+func (v *Application) GetWindows() *glib.List {
+	glist := C.gtk_application_get_windows(v.native())
+	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return wrapWindow(wrapObject(ptr))
+	})
+	runtime.SetFinalizer(list, func(l *glib.List) {
+		l.Free()
+	})
+	return list
+}
