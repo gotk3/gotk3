@@ -821,16 +821,22 @@ parsing.
 func Init(args *[]string) {
 	if args != nil {
 		argc := C.int(len(*args))
-		argv := make([]*C.char, argc)
+		argv := C.make_strings(argc)
+		defer C.destroy_strings(argv)
+
 		for i, arg := range *args {
-			argv[i] = C.CString(arg)
+			cstr := C.CString(arg)
+			C.set_string(argv, C.int(i), (*C.gchar)(cstr))
 		}
+
 		C.gtk_init((*C.int)(unsafe.Pointer(&argc)),
 			(***C.char)(unsafe.Pointer(&argv)))
+
 		unhandled := make([]string, argc)
 		for i := 0; i < int(argc); i++ {
-			unhandled[i] = C.GoString(argv[i])
-			C.free(unsafe.Pointer(argv[i]))
+			cstr := C.get_string(argv, C.int(i))
+			unhandled[i] = C.GoString((*C.char)(cstr))
+			C.free(unsafe.Pointer(cstr))
 		}
 		*args = unhandled
 	} else {
