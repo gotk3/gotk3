@@ -12,6 +12,16 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+type StyleProviderPriority int
+
+const (
+	STYLE_PROVIDER_PRIORITY_FALLBACK    StyleProviderPriority = C.GTK_STYLE_PROVIDER_PRIORITY_FALLBACK
+	STYLE_PROVIDER_PRIORITY_THEME                             = C.GTK_STYLE_PROVIDER_PRIORITY_THEME
+	STYLE_PROVIDER_PRIORITY_SETTINGS                          = C.GTK_STYLE_PROVIDER_PRIORITY_SETTINGS
+	STYLE_PROVIDER_PRIORITY_APPLICATION                       = C.GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
+	STYLE_PROVIDER_PRIORITY_USER                              = C.GTK_STYLE_PROVIDER_PRIORITY_USER
+)
+
 /*
  * GtkStyleContext
  */
