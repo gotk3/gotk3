@@ -15,6 +15,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 package pango
 
 // #cgo pkg-config: pango pangocairo
@@ -25,8 +26,9 @@ package pango
 import "C"
 import (
 	//	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/cairo"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/cairo"
 )
 
 func init() {
