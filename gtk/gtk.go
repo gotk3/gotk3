@@ -2786,7 +2786,7 @@ func CssProviderGetDefault() (*CssProvider, error) {
 }
 
 // GetNamed is a wrapper around gtk_css_provider_get_named().
-func (v *CssProvider) GetNamed(name string, variant string) (*CssProvider, error) {
+func CssProviderGetNamed(name string, variant string) (*CssProvider, error) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	cvariant := C.CString(variant)
