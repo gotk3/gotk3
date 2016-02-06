@@ -849,9 +849,19 @@ func Main() {
 	C.gtk_main()
 }
 
-// MainIterationDo is a wrapper around gtk_main_iteration_do
+// MainIteration is a wrapper around gtk_main_iteration.
+func MainIteration() bool {
+	return gobool(C.gtk_main_iteration())
+}
+
+// MainIterationDo is a wrapper around gtk_main_iteration_do.
 func MainIterationDo(blocking bool) bool {
 	return gobool(C.gtk_main_iteration_do(gbool(blocking)))
+}
+
+// EventsPending is a wrapper around gtk_events_pending.
+func EventsPending() bool {
+	return gobool(C.gtk_events_pending())
 }
 
 // MainQuit() is a wrapper around gtk_main_quit() is used to terminate
