@@ -1,13 +1,15 @@
 // Same copyright and license as the rest of the files in this project
 // This file contains style related functions and structures
+
 package gtk
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
 import (
-	"github.com/gotk3/gotk3/pango"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/pango"
 
 	"github.com/gotk3/gotk3/glib"
 )

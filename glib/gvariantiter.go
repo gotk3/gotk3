@@ -2,6 +2,7 @@
 
 //GVariant : GVariant — strongly typed value datatype
 // https://developer.gnome.org/glib/2.26/glib-GVariant.html
+
 package glib
 
 // #cgo pkg-config: glib-2.0 gobject-2.0

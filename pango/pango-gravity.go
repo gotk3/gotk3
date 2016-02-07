@@ -15,17 +15,17 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 package pango
 
 // #cgo pkg-config: pango
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
-import (
+
 //	"github.com/andre-hub/gotk3/glib"
 //	"github.com/andre-hub/gotk3/cairo"
 //	"unsafe"
-)
 
 type Gravity int
 
