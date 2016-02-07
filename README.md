@@ -98,46 +98,11 @@ http://localhost:6060/pkg/github.com/gotk3/gotk3
 gotk3 currently requires GTK 3.6-3.16, GLib 2.36-2.40, and
 Cairo 1.10 or 1.12.  A recent Go (1.3 or newer) is also required.
 
-The gtk package requires the cairo, glib, and gdk packages as
-dependencies, so only one `go get` is necessary for complete
-installation.
-
-The build process uses the tagging scheme gtk_MAJOR_MINOR to specify a
-build targeting any particular GTK version (for example, gtk_3_10).
-Building with no tags defaults to targeting the latest supported GTK
-release (3.16).
-
-To install gotk3 targeting the latest GTK version:
-
-```bash
-$ go get github.com/gotk3/gotk3/gtk
-```
-
-On MacOS (using homebrew) you would likely specify PKG_CONFIG_PATH as such:
-```bash
-$ PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig:`brew --prefix gtk+3`/lib/pkgconfig go get -u -v github.com/gotk3/gotk3/gdk
-```
-
-To install gotk3 targeting the older GTK 3.10 release:
-
-```bash
-$ go get -tags gtk_3_10 github.com/gotk3/gotk3/gtk
-```
-
-Ubuntu 14.04 uses the GTK 3.10 release.  Also, some required packages may be
-missing.  You may need to install the first or all of these packages in Ubuntu
-before gotk3:
-
-```bash
-$ sudo apt-get install libgtk-3-dev
-$ sudo apt-get install libcairo2-dev
-$ sudo apt-get install libglib2.0-dev
-```
+For detailed instructions see the wiki pages: [installation](https://github.com/gotk3/gotk3/wiki#installation)
 
 ## TODO
 - Add bindings for all of GTK+
 - Add tests for each implemented binding
-- Add examples for intent
 
 ## License
 
