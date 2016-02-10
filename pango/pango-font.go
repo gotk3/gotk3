@@ -28,13 +28,15 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
+	"github.com/gotk3/gotk3/pango/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
 		// Objects/Interfaces
-		{glib.Type(C.pango_font_description_get_type()), marshalFontDescription},
+		{glib_iface.Type(C.pango_font_description_get_type()), marshalFontDescription},
 	}
 	glib.RegisterGValueMarshalers(tm)
 }
@@ -71,75 +73,63 @@ const (
 	PANGO_SCALE = C.PANGO_SCALE
 )
 
-type Style int
-
 const (
-	STYLE_NORMAL  Style = C.PANGO_STYLE_NORMAL
-	STYLE_OBLIQUE Style = C.PANGO_STYLE_OBLIQUE
-	STYLE_ITALIC  Style = C.PANGO_STYLE_ITALIC
+	STYLE_NORMAL  iface.Style = C.PANGO_STYLE_NORMAL
+	STYLE_OBLIQUE iface.Style = C.PANGO_STYLE_OBLIQUE
+	STYLE_ITALIC  iface.Style = C.PANGO_STYLE_ITALIC
 )
 
-type Variant int
-
 const (
-	VARIANT_NORMAL     Variant = C.PANGO_VARIANT_NORMAL
-	VARIANT_SMALL_CAPS Variant = C.PANGO_VARIANT_SMALL_CAPS
+	VARIANT_NORMAL     iface.Variant = C.PANGO_VARIANT_NORMAL
+	VARIANT_SMALL_CAPS iface.Variant = C.PANGO_VARIANT_SMALL_CAPS
 )
 
-type Weight int
-
 const (
-	WEIGHT_THIN       Weight = C.PANGO_WEIGHT_THIN       /* 100 */
-	WEIGHT_ULTRALIGHT Weight = C.PANGO_WEIGHT_ULTRALIGHT /* 200 */
-	WEIGHT_LIGHT      Weight = C.PANGO_WEIGHT_LIGHT      /* 300 */
-	WEIGHT_SEMILIGHT  Weight = 350                       /* 350 */
-	WEIGHT_BOOK       Weight = C.PANGO_WEIGHT_BOOK       /* 380 */
-	WEIGHT_NORMAL     Weight = C.PANGO_WEIGHT_NORMAL     /* 400 */
-	WEIGHT_MEDIUM     Weight = C.PANGO_WEIGHT_MEDIUM     /* 500 */
-	WEIGHT_SEMIBOLD   Weight = C.PANGO_WEIGHT_SEMIBOLD   /* 600 */
-	WEIGHT_BOLD       Weight = C.PANGO_WEIGHT_BOLD       /* 700 */
-	WEIGHT_ULTRABOLD  Weight = C.PANGO_WEIGHT_ULTRABOLD  /* 800 */
-	WEIGHT_HEAVY      Weight = C.PANGO_WEIGHT_HEAVY      /* 900 */
-	WEIGHT_ULTRAHEAVY Weight = C.PANGO_WEIGHT_ULTRAHEAVY /* 1000 */
+	WEIGHT_THIN       iface.Weight = C.PANGO_WEIGHT_THIN       /* 100 */
+	WEIGHT_ULTRALIGHT iface.Weight = C.PANGO_WEIGHT_ULTRALIGHT /* 200 */
+	WEIGHT_LIGHT      iface.Weight = C.PANGO_WEIGHT_LIGHT      /* 300 */
+	WEIGHT_SEMILIGHT  iface.Weight = 350                       /* 350 */
+	WEIGHT_BOOK       iface.Weight = C.PANGO_WEIGHT_BOOK       /* 380 */
+	WEIGHT_NORMAL     iface.Weight = C.PANGO_WEIGHT_NORMAL     /* 400 */
+	WEIGHT_MEDIUM     iface.Weight = C.PANGO_WEIGHT_MEDIUM     /* 500 */
+	WEIGHT_SEMIBOLD   iface.Weight = C.PANGO_WEIGHT_SEMIBOLD   /* 600 */
+	WEIGHT_BOLD       iface.Weight = C.PANGO_WEIGHT_BOLD       /* 700 */
+	WEIGHT_ULTRABOLD  iface.Weight = C.PANGO_WEIGHT_ULTRABOLD  /* 800 */
+	WEIGHT_HEAVY      iface.Weight = C.PANGO_WEIGHT_HEAVY      /* 900 */
+	WEIGHT_ULTRAHEAVY iface.Weight = C.PANGO_WEIGHT_ULTRAHEAVY /* 1000 */
 
 )
 
-type Stretch int
-
 const (
-	STRETCH_ULTRA_CONDENSED        Stretch = C.PANGO_STRETCH_ULTRA_CONDENSED
-	STRETCH_EXTRA_CONDENSEDStretch Stretch = C.PANGO_STRETCH_EXTRA_CONDENSED
-	STRETCH_CONDENSEDStretch       Stretch = C.PANGO_STRETCH_CONDENSED
-	STRETCH_SEMI_CONDENSEDStretch  Stretch = C.PANGO_STRETCH_SEMI_CONDENSED
-	STRETCH_NORMALStretch          Stretch = C.PANGO_STRETCH_NORMAL
-	STRETCH_SEMI_EXPANDEDStretch   Stretch = C.PANGO_STRETCH_SEMI_EXPANDED
-	STRETCH_EXPANDEDStretch        Stretch = C.PANGO_STRETCH_EXPANDED
-	STRETCH_EXTRA_EXPANDEDStretch  Stretch = C.PANGO_STRETCH_EXTRA_EXPANDED
-	STRETCH_ULTRA_EXPANDEDStretch  Stretch = C.PANGO_STRETCH_ULTRA_EXPANDED
+	STRETCH_ULTRA_CONDENSED        iface.Stretch = C.PANGO_STRETCH_ULTRA_CONDENSED
+	STRETCH_EXTRA_CONDENSEDStretch iface.Stretch = C.PANGO_STRETCH_EXTRA_CONDENSED
+	STRETCH_CONDENSEDStretch       iface.Stretch = C.PANGO_STRETCH_CONDENSED
+	STRETCH_SEMI_CONDENSEDStretch  iface.Stretch = C.PANGO_STRETCH_SEMI_CONDENSED
+	STRETCH_NORMALStretch          iface.Stretch = C.PANGO_STRETCH_NORMAL
+	STRETCH_SEMI_EXPANDEDStretch   iface.Stretch = C.PANGO_STRETCH_SEMI_EXPANDED
+	STRETCH_EXPANDEDStretch        iface.Stretch = C.PANGO_STRETCH_EXPANDED
+	STRETCH_EXTRA_EXPANDEDStretch  iface.Stretch = C.PANGO_STRETCH_EXTRA_EXPANDED
+	STRETCH_ULTRA_EXPANDEDStretch  iface.Stretch = C.PANGO_STRETCH_ULTRA_EXPANDED
 )
 
-type FontMask int
-
 const (
-	FONT_MASK_FAMILY          FontMask = C.PANGO_FONT_MASK_FAMILY  /*  1 << 0 */
-	FONT_MASK_STYLEFontMask   FontMask = C.PANGO_FONT_MASK_STYLE   /*  1 << 1 */
-	FONT_MASK_VARIANTFontMask FontMask = C.PANGO_FONT_MASK_VARIANT /*  1 << 2 */
-	FONT_MASK_WEIGHTFontMask  FontMask = C.PANGO_FONT_MASK_WEIGHT  /*  1 << 3 */
-	FONT_MASK_STRETCHFontMask FontMask = C.PANGO_FONT_MASK_STRETCH /*  1 << 4 */
-	FONT_MASK_SIZEFontMask    FontMask = C.PANGO_FONT_MASK_SIZE    /*  1 << 5 */
-	FONT_MASK_GRAVITYFontMask FontMask = C.PANGO_FONT_MASK_GRAVITY /*  1 << 6 */
+	FONT_MASK_FAMILY          iface.FontMask = C.PANGO_FONT_MASK_FAMILY  /*  1 << 0 */
+	FONT_MASK_STYLEFontMask   iface.FontMask = C.PANGO_FONT_MASK_STYLE   /*  1 << 1 */
+	FONT_MASK_VARIANTFontMask iface.FontMask = C.PANGO_FONT_MASK_VARIANT /*  1 << 2 */
+	FONT_MASK_WEIGHTFontMask  iface.FontMask = C.PANGO_FONT_MASK_WEIGHT  /*  1 << 3 */
+	FONT_MASK_STRETCHFontMask iface.FontMask = C.PANGO_FONT_MASK_STRETCH /*  1 << 4 */
+	FONT_MASK_SIZEFontMask    iface.FontMask = C.PANGO_FONT_MASK_SIZE    /*  1 << 5 */
+	FONT_MASK_GRAVITYFontMask iface.FontMask = C.PANGO_FONT_MASK_GRAVITY /*  1 << 6 */
 )
 
-type Scale float64
-
 const (
-	SCALE_XX_SMALL Scale = /* C.PANGO_SCALE_XX_SMALL */ 0.5787037037037
-	SCALE_X_SMALL  Scale = /*C.PANGO_SCALE_X_SMALL  */ 0.6444444444444
-	SCALE_SMALL    Scale = /*C.PANGO_SCALE_SMALL    */ 0.8333333333333
-	SCALE_MEDIUM   Scale = /*C.PANGO_SCALE_MEDIUM   */ 1.0
-	SCALE_LARGE    Scale = /*C.PANGO_SCALE_LARGE    */ 1.2
-	SCALE_X_LARGE  Scale = /*C.PANGO_SCALE_X_LARGE  */ 1.4399999999999
-	SCALE_XX_LARGE Scale = /*C.PANGO_SCALE_XX_LARGE */ 1.728
+	SCALE_XX_SMALL iface.Scale = /* C.PANGO_SCALE_XX_SMALL */ 0.5787037037037
+	SCALE_X_SMALL  iface.Scale = /*C.PANGO_SCALE_X_SMALL  */ 0.6444444444444
+	SCALE_SMALL    iface.Scale = /*C.PANGO_SCALE_SMALL    */ 0.8333333333333
+	SCALE_MEDIUM   iface.Scale = /*C.PANGO_SCALE_MEDIUM   */ 1.0
+	SCALE_LARGE    iface.Scale = /*C.PANGO_SCALE_LARGE    */ 1.2
+	SCALE_X_LARGE  iface.Scale = /*C.PANGO_SCALE_X_LARGE  */ 1.4399999999999
+	SCALE_XX_LARGE iface.Scale = /*C.PANGO_SCALE_XX_LARGE */ 1.728
 )
 
 /*
@@ -165,7 +155,7 @@ func FontDescriptionNew() *FontDescription {
 }
 
 //PangoFontDescription *pango_font_description_copy        (const PangoFontDescription  *desc);
-func (v *FontDescription) Copy() *FontDescription {
+func (v *FontDescription) Copy() iface.FontDescription {
 	c := C.pango_font_description_copy(v.native())
 	v2 := new(FontDescription)
 	v2.pangoFontDescription = c
@@ -173,7 +163,7 @@ func (v *FontDescription) Copy() *FontDescription {
 }
 
 //PangoFontDescription *pango_font_description_copy_static (const PangoFontDescription  *desc);
-func (v *FontDescription) CopyStatic() *FontDescription {
+func (v *FontDescription) CopyStatic() iface.FontDescription {
 	c := C.pango_font_description_copy_static(v.native())
 	v2 := new(FontDescription)
 	v2.pangoFontDescription = c
@@ -188,8 +178,8 @@ func (v *FontDescription) Hash() uint {
 
 //gboolean              pango_font_description_equal       (const PangoFontDescription  *desc1,
 //							  const PangoFontDescription  *desc2) G_GNUC_PURE;
-func (v *FontDescription) Equal(v2 *FontDescription) bool {
-	c := C.pango_font_description_equal(v.native(), v2.native())
+func (v *FontDescription) Equal(v2 iface.FontDescription) bool {
+	c := C.pango_font_description_equal(v.native(), v2.(*FontDescription).native())
 	return gobool(c)
 }
 
@@ -228,14 +218,14 @@ func (v *FontDescription) GetFamily() string {
 
 //void                 pango_font_description_set_style         (PangoFontDescription *desc,
 //							       PangoStyle            style);
-func (v *FontDescription) SetStyle(style Style) {
+func (v *FontDescription) SetStyle(style iface.Style) {
 	C.pango_font_description_set_style(v.native(), (C.PangoStyle)(style))
 }
 
 //PangoStyle           pango_font_description_get_style         (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetStyle() Style {
+func (v *FontDescription) GetStyle() iface.Style {
 	c := C.pango_font_description_get_style(v.native())
-	return Style(c)
+	return iface.Style(c)
 }
 
 //void                 pango_font_description_set_variant       (PangoFontDescription *desc,
@@ -244,26 +234,26 @@ func (v *FontDescription) GetStyle() Style {
 
 //void                 pango_font_description_set_weight        (PangoFontDescription *desc,
 //							       PangoWeight           weight);
-func (v *FontDescription) SetWeight(weight Weight) {
+func (v *FontDescription) SetWeight(weight iface.Weight) {
 	C.pango_font_description_set_weight(v.native(), (C.PangoWeight)(weight))
 }
 
 //PangoWeight          pango_font_description_get_weight        (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetWeight() Weight {
+func (v *FontDescription) GetWeight() iface.Weight {
 	c := C.pango_font_description_get_weight(v.native())
-	return Weight(c)
+	return iface.Weight(c)
 }
 
 //void                 pango_font_description_set_stretch       (PangoFontDescription *desc,
 //							       PangoStretch          stretch);
-func (v *FontDescription) SetStretch(stretch Stretch) {
+func (v *FontDescription) SetStretch(stretch iface.Stretch) {
 	C.pango_font_description_set_stretch(v.native(), (C.PangoStretch)(stretch))
 }
 
 //PangoStretch         pango_font_description_get_stretch       (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetStretch() Stretch {
+func (v *FontDescription) GetStretch() iface.Stretch {
 	c := C.pango_font_description_get_stretch(v.native())
-	return Stretch(c)
+	return iface.Stretch(c)
 }
 
 //void                 pango_font_description_set_size          (PangoFontDescription *desc,
@@ -292,47 +282,47 @@ func (v *FontDescription) GetSizeIsAbsolute() bool {
 
 //void                 pango_font_description_set_gravity       (PangoFontDescription *desc,
 //							       PangoGravity          gravity);
-func (v *FontDescription) SetGravity(gravity Gravity) {
+func (v *FontDescription) SetGravity(gravity iface.Gravity) {
 	C.pango_font_description_set_gravity(v.native(), (C.PangoGravity)(gravity))
 }
 
 //PangoGravity         pango_font_description_get_gravity       (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetGravity() Gravity {
+func (v *FontDescription) GetGravity() iface.Gravity {
 	c := C.pango_font_description_get_gravity(v.native())
-	return Gravity(c)
+	return iface.Gravity(c)
 }
 
 //PangoFontMask pango_font_description_get_set_fields (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetSetFields() FontMask {
+func (v *FontDescription) GetSetFields() iface.FontMask {
 	c := C.pango_font_description_get_set_fields(v.native())
-	return FontMask(c)
+	return iface.FontMask(c)
 }
 
 //void          pango_font_description_unset_fields   (PangoFontDescription       *desc,
 //						     PangoFontMask               to_unset);
-func (v *FontDescription) GetUnsetFields(to_unset FontMask) {
+func (v *FontDescription) GetUnsetFields(to_unset iface.FontMask) {
 	C.pango_font_description_unset_fields(v.native(), (C.PangoFontMask)(to_unset))
 }
 
 //void pango_font_description_merge        (PangoFontDescription       *desc,
 //					  const PangoFontDescription *desc_to_merge,
 //					  gboolean                    replace_existing);
-func (v *FontDescription) Merge(desc_to_merge *FontDescription, replace_existing bool) {
-	C.pango_font_description_merge(v.native(), desc_to_merge.native(), gbool(replace_existing))
+func (v *FontDescription) Merge(desc_to_merge iface.FontDescription, replace_existing bool) {
+	C.pango_font_description_merge(v.native(), desc_to_merge.(*FontDescription).native(), gbool(replace_existing))
 }
 
 //void pango_font_description_merge_static (PangoFontDescription       *desc,
 //					  const PangoFontDescription *desc_to_merge,
 //					  gboolean                    replace_existing);
-func (v *FontDescription) MergeStatic(desc_to_merge *FontDescription, replace_existing bool) {
-	C.pango_font_description_merge_static(v.native(), desc_to_merge.native(), gbool(replace_existing))
+func (v *FontDescription) MergeStatic(desc_to_merge iface.FontDescription, replace_existing bool) {
+	C.pango_font_description_merge_static(v.native(), desc_to_merge.(*FontDescription).native(), gbool(replace_existing))
 }
 
 //gboolean pango_font_description_better_match (const PangoFontDescription *desc,
 //					      const PangoFontDescription *old_match,
 //					      const PangoFontDescription *new_match) G_GNUC_PURE;
-func (v *FontDescription) BetterMatch(old_match, new_match *FontDescription) bool {
-	c := C.pango_font_description_better_match(v.native(), old_match.native(), new_match.native())
+func (v *FontDescription) BetterMatch(old_match, new_match iface.FontDescription) bool {
+	c := C.pango_font_description_better_match(v.native(), old_match.(*FontDescription).native(), new_match.(*FontDescription).native())
 	return gobool(c)
 }
 

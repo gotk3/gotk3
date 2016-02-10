@@ -25,6 +25,8 @@ package pango
 import "C"
 import (
 	"unsafe"
+
+	"github.com/gotk3/gotk3/pango/iface"
 )
 
 // LogAttr is a representation of PangoLogAttr.
@@ -111,13 +113,10 @@ func (v *Rectangle) native() *C.PangoRectangle {
 	return (*C.PangoRectangle)(unsafe.Pointer(v.pangoRectangle))
 }
 
-// Glyph is a representation of PangoGlyph
-type Glyph uint32
-
 //void pango_extents_to_pixels (PangoRectangle *inclusive,
 //			      PangoRectangle *nearest);
-func (inclusive *Rectangle) ExtentsToPixels(nearest *Rectangle) {
-	C.pango_extents_to_pixels(inclusive.native(), nearest.native())
+func (inclusive *Rectangle) ExtentsToPixels(nearest iface.Rectangle) {
+	C.pango_extents_to_pixels(inclusive.native(), nearest.(*Rectangle).native())
 }
 
 func RectangleNew(x, y, width, height int) *Rectangle {

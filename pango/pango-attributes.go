@@ -26,13 +26,15 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
+	"github.com/gotk3/gotk3/pango/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
-		{glib.Type(C.pango_attr_type_get_type()), marshalAttrType},
-		{glib.Type(C.pango_underline_get_type()), marshalUnderline},
+		{glib_iface.Type(C.pango_attr_type_get_type()), marshalAttrType},
+		{glib_iface.Type(C.pango_underline_get_type()), marshalUnderline},
 	}
 	glib.RegisterGValueMarshalers(tm)
 }
@@ -64,7 +66,7 @@ func (v *Color) Get() (red, green, blue uint16) {
 }
 
 //PangoColor *pango_color_copy     (const PangoColor *src);
-func (v *Color) Copy(c *Color) *Color {
+func (v *Color) Copy(c iface.Color) iface.Color {
 	w := new(Color)
 	w.pangoColor = C.pango_color_copy(v.native())
 	return w
@@ -106,55 +108,49 @@ func (v *AttrList) native() *C.PangoAttrList {
 	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
 }
 
-// AttrType is a representation of Pango's PangoAttrType.
-type AttrType int
-
 const (
-	ATTR_INVALID             AttrType = C.PANGO_ATTR_INVALID             /* 0 is an invalid attribute type */
-	ATTR_LANGUAGE            AttrType = C.PANGO_ATTR_LANGUAGE            /* PangoAttrLanguage */
-	ATTR_FAMILY              AttrType = C.PANGO_ATTR_FAMILY              /* PangoAttrString */
-	ATTR_STYLE               AttrType = C.PANGO_ATTR_STYLE               /* PangoAttrInt */
-	ATTR_WEIGHT              AttrType = C.PANGO_ATTR_WEIGHT              /* PangoAttrInt */
-	ATTR_VARIANT             AttrType = C.PANGO_ATTR_VARIANT             /* PangoAttrInt */
-	ATTR_STRETCH             AttrType = C.PANGO_ATTR_STRETCH             /* PangoAttrInt */
-	ATTR_SIZE                AttrType = C.PANGO_ATTR_SIZE                /* PangoAttrSize */
-	ATTR_FONT_DESC           AttrType = C.PANGO_ATTR_FONT_DESC           /* PangoAttrFontDesc */
-	ATTR_FOREGROUND          AttrType = C.PANGO_ATTR_FOREGROUND          /* PangoAttrColor */
-	ATTR_BACKGROUND          AttrType = C.PANGO_ATTR_BACKGROUND          /* PangoAttrColor */
-	ATTR_UNDERLINE           AttrType = C.PANGO_ATTR_UNDERLINE           /* PangoAttrInt */
-	ATTR_STRIKETHROUGH       AttrType = C.PANGO_ATTR_STRIKETHROUGH       /* PangoAttrInt */
-	ATTR_RISE                AttrType = C.PANGO_ATTR_RISE                /* PangoAttrInt */
-	ATTR_SHAPE               AttrType = C.PANGO_ATTR_SHAPE               /* PangoAttrShape */
-	ATTR_SCALE               AttrType = C.PANGO_ATTR_SCALE               /* PangoAttrFloat */
-	ATTR_FALLBACK            AttrType = C.PANGO_ATTR_FALLBACK            /* PangoAttrInt */
-	ATTR_LETTER_SPACING      AttrType = C.PANGO_ATTR_LETTER_SPACING      /* PangoAttrInt */
-	ATTR_UNDERLINE_COLOR     AttrType = C.PANGO_ATTR_UNDERLINE_COLOR     /* PangoAttrColor */
-	ATTR_STRIKETHROUGH_COLOR AttrType = C.PANGO_ATTR_STRIKETHROUGH_COLOR /* PangoAttrColor */
-	ATTR_ABSOLUTE_SIZE       AttrType = C.PANGO_ATTR_ABSOLUTE_SIZE       /* PangoAttrSize */
-	ATTR_GRAVITY             AttrType = C.PANGO_ATTR_GRAVITY             /* PangoAttrInt */
-	ATTR_GRAVITY_HINT        AttrType = C.PANGO_ATTR_GRAVITY_HINT        /* PangoAttrInt */
+	ATTR_INVALID             iface.AttrType = C.PANGO_ATTR_INVALID             /* 0 is an invalid attribute type */
+	ATTR_LANGUAGE            iface.AttrType = C.PANGO_ATTR_LANGUAGE            /* PangoAttrLanguage */
+	ATTR_FAMILY              iface.AttrType = C.PANGO_ATTR_FAMILY              /* PangoAttrString */
+	ATTR_STYLE               iface.AttrType = C.PANGO_ATTR_STYLE               /* PangoAttrInt */
+	ATTR_WEIGHT              iface.AttrType = C.PANGO_ATTR_WEIGHT              /* PangoAttrInt */
+	ATTR_VARIANT             iface.AttrType = C.PANGO_ATTR_VARIANT             /* PangoAttrInt */
+	ATTR_STRETCH             iface.AttrType = C.PANGO_ATTR_STRETCH             /* PangoAttrInt */
+	ATTR_SIZE                iface.AttrType = C.PANGO_ATTR_SIZE                /* PangoAttrSize */
+	ATTR_FONT_DESC           iface.AttrType = C.PANGO_ATTR_FONT_DESC           /* PangoAttrFontDesc */
+	ATTR_FOREGROUND          iface.AttrType = C.PANGO_ATTR_FOREGROUND          /* PangoAttrColor */
+	ATTR_BACKGROUND          iface.AttrType = C.PANGO_ATTR_BACKGROUND          /* PangoAttrColor */
+	ATTR_UNDERLINE           iface.AttrType = C.PANGO_ATTR_UNDERLINE           /* PangoAttrInt */
+	ATTR_STRIKETHROUGH       iface.AttrType = C.PANGO_ATTR_STRIKETHROUGH       /* PangoAttrInt */
+	ATTR_RISE                iface.AttrType = C.PANGO_ATTR_RISE                /* PangoAttrInt */
+	ATTR_SHAPE               iface.AttrType = C.PANGO_ATTR_SHAPE               /* PangoAttrShape */
+	ATTR_SCALE               iface.AttrType = C.PANGO_ATTR_SCALE               /* PangoAttrFloat */
+	ATTR_FALLBACK            iface.AttrType = C.PANGO_ATTR_FALLBACK            /* PangoAttrInt */
+	ATTR_LETTER_SPACING      iface.AttrType = C.PANGO_ATTR_LETTER_SPACING      /* PangoAttrInt */
+	ATTR_UNDERLINE_COLOR     iface.AttrType = C.PANGO_ATTR_UNDERLINE_COLOR     /* PangoAttrColor */
+	ATTR_STRIKETHROUGH_COLOR iface.AttrType = C.PANGO_ATTR_STRIKETHROUGH_COLOR /* PangoAttrColor */
+	ATTR_ABSOLUTE_SIZE       iface.AttrType = C.PANGO_ATTR_ABSOLUTE_SIZE       /* PangoAttrSize */
+	ATTR_GRAVITY             iface.AttrType = C.PANGO_ATTR_GRAVITY             /* PangoAttrInt */
+	ATTR_GRAVITY_HINT        iface.AttrType = C.PANGO_ATTR_GRAVITY_HINT        /* PangoAttrInt */
 
 )
 
 func marshalAttrType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return AttrType(c), nil
+	return iface.AttrType(c), nil
 }
 
-// Underline is a representation of Pango's PangoUnderline.
-type Underline int
-
 const (
-	UNDERLINE_NONE   Underline = C.PANGO_UNDERLINE_NONE
-	UNDERLINE_SINGLE Underline = C.PANGO_UNDERLINE_SINGLE
-	UNDERLINE_DOUBLE Underline = C.PANGO_UNDERLINE_DOUBLE
-	UNDERLINE_LOW    Underline = C.PANGO_UNDERLINE_LOW
-	UNDERLINE_ERROR  Underline = C.PANGO_UNDERLINE_ERROR
+	UNDERLINE_NONE   iface.Underline = C.PANGO_UNDERLINE_NONE
+	UNDERLINE_SINGLE iface.Underline = C.PANGO_UNDERLINE_SINGLE
+	UNDERLINE_DOUBLE iface.Underline = C.PANGO_UNDERLINE_DOUBLE
+	UNDERLINE_LOW    iface.Underline = C.PANGO_UNDERLINE_LOW
+	UNDERLINE_ERROR  iface.Underline = C.PANGO_UNDERLINE_ERROR
 )
 
 func marshalUnderline(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Underline(c), nil
+	return iface.Underline(c), nil
 }
 
 const (

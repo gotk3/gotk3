@@ -22,31 +22,28 @@ package pango
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
+import "github.com/gotk3/gotk3/pango/iface"
 
 //	"github.com/andre-hub/gotk3/glib"
 //	"github.com/andre-hub/gotk3/cairo"
 //	"unsafe"
 
-type Gravity int
-
 const (
-	GRAVITY_SOUTH Gravity = C.PANGO_GRAVITY_SOUTH
-	GRAVITY_EAST  Gravity = C.PANGO_GRAVITY_EAST
-	GRAVITY_NORTH Gravity = C.PANGO_GRAVITY_NORTH
-	GRAVITY_WEST  Gravity = C.PANGO_GRAVITY_WEST
-	GRAVITY_AUTO  Gravity = C.PANGO_GRAVITY_AUTO
+	GRAVITY_SOUTH iface.Gravity = C.PANGO_GRAVITY_SOUTH
+	GRAVITY_EAST  iface.Gravity = C.PANGO_GRAVITY_EAST
+	GRAVITY_NORTH iface.Gravity = C.PANGO_GRAVITY_NORTH
+	GRAVITY_WEST  iface.Gravity = C.PANGO_GRAVITY_WEST
+	GRAVITY_AUTO  iface.Gravity = C.PANGO_GRAVITY_AUTO
 )
 
-type GravityHint int
-
 const (
-	GRAVITY_HINT_NATURAL GravityHint = C.PANGO_GRAVITY_HINT_NATURAL
-	GRAVITY_HINT_STRONG  GravityHint = C.PANGO_GRAVITY_HINT_STRONG
-	GRAVITY_HINT_LINE    GravityHint = C.PANGO_GRAVITY_HINT_LINE
+	GRAVITY_HINT_NATURAL iface.GravityHint = C.PANGO_GRAVITY_HINT_NATURAL
+	GRAVITY_HINT_STRONG  iface.GravityHint = C.PANGO_GRAVITY_HINT_STRONG
+	GRAVITY_HINT_LINE    iface.GravityHint = C.PANGO_GRAVITY_HINT_LINE
 )
 
 //double       pango_gravity_to_rotation    (PangoGravity       gravity) G_GNUC_CONST;
-func GravityToRotation(gravity Gravity) float64 {
+func GravityToRotation(gravity iface.Gravity) float64 {
 	c := C.pango_gravity_to_rotation((C.PangoGravity)(gravity))
 	return float64(c)
 }

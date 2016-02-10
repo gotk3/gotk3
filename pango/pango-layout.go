@@ -15,7 +15,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
- 
+
 package pango
 
 // #cgo pkg-config: pango
@@ -23,16 +23,19 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	"github.com/gotk3/gotk3/glib"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
+	"github.com/gotk3/gotk3/pango/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
-		{glib.Type(C.pango_alignment_get_type()), marshalAlignment},
-		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
-		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
+		{glib_iface.Type(C.pango_alignment_get_type()), marshalAlignment},
+		{glib_iface.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
+		{glib_iface.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
 
 		// Objects/Interfaces
 		//		{glib.Type(C.pango_layout_get_type()), marshalLayout},
@@ -72,47 +75,38 @@ func (v *LayoutLine) native() *C.PangoLayoutLine {
  * Constants
  */
 
-// Alignment is a representation of Pango's PangoAlignment.
-type Alignment int
-
 const (
-	ALIGN_LEFT   Alignment = C.PANGO_ALIGN_LEFT
-	ALIGN_CENTER Alignment = C.PANGO_ALIGN_CENTER
-	ALIGN_RIGHT  Alignment = C.PANGO_ALIGN_RIGHT
+	ALIGN_LEFT   iface.Alignment = C.PANGO_ALIGN_LEFT
+	ALIGN_CENTER iface.Alignment = C.PANGO_ALIGN_CENTER
+	ALIGN_RIGHT  iface.Alignment = C.PANGO_ALIGN_RIGHT
 )
 
 func marshalAlignment(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Alignment(c), nil
+	return iface.Alignment(c), nil
 }
 
-// WrapMode is a representation of Pango's PangoWrapMode.
-type WrapMode int
-
 const (
-	WRAP_WORD      WrapMode = C.PANGO_WRAP_WORD
-	WRAP_CHAR      WrapMode = C.PANGO_WRAP_CHAR
-	WRAP_WORD_CHAR WrapMode = C.PANGO_WRAP_WORD_CHAR
+	WRAP_WORD      iface.WrapMode = C.PANGO_WRAP_WORD
+	WRAP_CHAR      iface.WrapMode = C.PANGO_WRAP_CHAR
+	WRAP_WORD_CHAR iface.WrapMode = C.PANGO_WRAP_WORD_CHAR
 )
 
 func marshalWrapMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return WrapMode(c), nil
+	return iface.WrapMode(c), nil
 }
 
-// EllipsizeMode is a representation of Pango's PangoEllipsizeMode.
-type EllipsizeMode int
-
 const (
-	ELLIPSIZE_NONE   EllipsizeMode = C.PANGO_ELLIPSIZE_NONE
-	ELLIPSIZE_START  EllipsizeMode = C.PANGO_ELLIPSIZE_START
-	ELLIPSIZE_MIDDLE EllipsizeMode = C.PANGO_ELLIPSIZE_MIDDLE
-	ELLIPSIZE_END    EllipsizeMode = C.PANGO_ELLIPSIZE_END
+	ELLIPSIZE_NONE   iface.EllipsizeMode = C.PANGO_ELLIPSIZE_NONE
+	ELLIPSIZE_START  iface.EllipsizeMode = C.PANGO_ELLIPSIZE_START
+	ELLIPSIZE_MIDDLE iface.EllipsizeMode = C.PANGO_ELLIPSIZE_MIDDLE
+	ELLIPSIZE_END    iface.EllipsizeMode = C.PANGO_ELLIPSIZE_END
 )
 
 func marshalEllipsizeMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return EllipsizeMode(c), nil
+	return iface.EllipsizeMode(c), nil
 }
 
 /*
@@ -137,7 +131,7 @@ func LayoutNew(context *Context) *Layout {
 }
 
 //PangoLayout *pango_layout_copy           (PangoLayout    *src);
-func (v *Layout) Copy() *Layout {
+func (v *Layout) Copy() iface.Layout {
 	c := C.pango_layout_copy(v.native())
 
 	layout := new(Layout)
@@ -146,7 +140,7 @@ func (v *Layout) Copy() *Layout {
 }
 
 //PangoContext  *pango_layout_get_context    (PangoLayout    *layout);
-func (v *Layout) GetContext() *Context {
+func (v *Layout) GetContext() iface.Context {
 	c := C.pango_layout_get_context(v.native())
 
 	context := new(Context)
@@ -157,12 +151,12 @@ func (v *Layout) GetContext() *Context {
 
 //void           pango_layout_set_attributes (PangoLayout    *layout,
 //					    PangoAttrList  *attrs);
-func (v *Layout) SetAttributes(attrs *AttrList) {
-	C.pango_layout_set_attributes(v.native(), attrs.native())
+func (v *Layout) SetAttributes(attrs iface.AttrList) {
+	C.pango_layout_set_attributes(v.native(), attrs.(*AttrList).native())
 }
 
 //PangoAttrList *pango_layout_get_attributes (PangoLayout    *layout);
-func (v *Layout) GetAttributes() *AttrList {
+func (v *Layout) GetAttributes() iface.AttrList {
 	c := C.pango_layout_get_attributes(v.native())
 
 	attrList := new(AttrList)
@@ -218,13 +212,13 @@ func (v *Layout)SetMarkupWithAccel (text string, length int, accel_marker, accel
 //void           pango_layout_set_font_description (PangoLayout                *layout,
 //						  const PangoFontDescription *desc);
 
-func (v *Layout) SetFontDescription(desc *FontDescription) {
-	C.pango_layout_set_font_description(v.native(), desc.native())
+func (v *Layout) SetFontDescription(desc iface.FontDescription) {
+	C.pango_layout_set_font_description(v.native(), desc.(*FontDescription).native())
 }
 
 //const PangoFontDescription *pango_layout_get_font_description (PangoLayout *layout);
 
-func (v *Layout) GetFontDescription() *FontDescription {
+func (v *Layout) GetFontDescription() iface.FontDescription {
 	c := C.pango_layout_get_font_description(v.native())
 
 	desc := new(FontDescription)
@@ -264,15 +258,15 @@ func (v *Layout) GetHeight() int {
 //void           pango_layout_set_wrap             (PangoLayout                *layout,
 //						  PangoWrapMode               wrap);
 
-func (v *Layout) SetWrap(wrap WrapMode) {
+func (v *Layout) SetWrap(wrap iface.WrapMode) {
 	C.pango_layout_set_wrap(v.native(), C.PangoWrapMode(wrap))
 }
 
 //PangoWrapMode  pango_layout_get_wrap             (PangoLayout                *layout);
 
-func (v *Layout) GetWrap() WrapMode {
+func (v *Layout) GetWrap() iface.WrapMode {
 	c := C.pango_layout_get_wrap(v.native())
-	return WrapMode(c)
+	return iface.WrapMode(c)
 }
 
 //gboolean       pango_layout_is_wrapped           (PangoLayout                *layout);
