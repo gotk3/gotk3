@@ -8,6 +8,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -88,7 +89,7 @@ func (v *ColorChooser) SetUseAlpha(use_alpha bool) {
 }
 
 // AddPalette() is a wrapper around gtk_color_chooser_add_palette().
-func (v *ColorChooser) AddPalette(orientation Orientation, colors_per_line int, colors []*gdk.RGBA) {
+func (v *ColorChooser) AddPalette(orientation iface.Orientation, colors_per_line int, colors []*gdk.RGBA) {
 	n_colors := len(colors)
 	var c_colors []C.GdkRGBA
 	for _, c := range colors {

@@ -16,6 +16,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -46,46 +47,30 @@ func init() {
 	} {
 		WrapMap[k] = v
 	}
+
+	iface.ALIGN_BASELINE = C.GTK_ALIGN_BASELINE
+
+	iface.REVEALER_TRANSITION_TYPE_NONE = C.GTK_REVEALER_TRANSITION_TYPE_NONE
+	iface.REVEALER_TRANSITION_TYPE_CROSSFADE = C.GTK_REVEALER_TRANSITION_TYPE_CROSSFADE
+	iface.REVEALER_TRANSITION_TYPE_SLIDE_RIGHT = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT
+	iface.REVEALER_TRANSITION_TYPE_SLIDE_LEFT = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT
+	iface.REVEALER_TRANSITION_TYPE_SLIDE_UP = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_UP
+	iface.REVEALER_TRANSITION_TYPE_SLIDE_DOWN = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN
+
+	iface.STACK_TRANSITION_TYPE_NONE = C.GTK_STACK_TRANSITION_TYPE_NONE
+	iface.STACK_TRANSITION_TYPE_CROSSFADE = C.GTK_STACK_TRANSITION_TYPE_CROSSFADE
+	iface.STACK_TRANSITION_TYPE_SLIDE_RIGHT = C.GTK_STACK_TRANSITION_TYPE_SLIDE_RIGHT
+	iface.STACK_TRANSITION_TYPE_SLIDE_LEFT = C.GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT
+	iface.STACK_TRANSITION_TYPE_SLIDE_UP = C.GTK_STACK_TRANSITION_TYPE_SLIDE_UP
+	iface.STACK_TRANSITION_TYPE_SLIDE_DOWN = C.GTK_STACK_TRANSITION_TYPE_SLIDE_DOWN
+	iface.STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT = C.GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT
+	iface.STACK_TRANSITION_TYPE_SLIDE_UP_DOWN = C.GTK_STACK_TRANSITION_TYPE_SLIDE_UP_DOWN
 }
-
-/*
- * Constants
- */
-
-const (
-	ALIGN_BASELINE Align = C.GTK_ALIGN_BASELINE
-)
-
-// RevealerTransitionType is a representation of GTK's GtkRevealerTransitionType.
-type RevealerTransitionType int
-
-const (
-	REVEALER_TRANSITION_TYPE_NONE        RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_NONE
-	REVEALER_TRANSITION_TYPE_CROSSFADE   RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_CROSSFADE
-	REVEALER_TRANSITION_TYPE_SLIDE_RIGHT RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT
-	REVEALER_TRANSITION_TYPE_SLIDE_LEFT  RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT
-	REVEALER_TRANSITION_TYPE_SLIDE_UP    RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_UP
-	REVEALER_TRANSITION_TYPE_SLIDE_DOWN  RevealerTransitionType = C.GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN
-)
 
 func marshalRevealerTransitionType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return RevealerTransitionType(c), nil
 }
-
-// StackTransitionType is a representation of GTK's GtkStackTransitionType.
-type StackTransitionType int
-
-const (
-	STACK_TRANSITION_TYPE_NONE             StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_NONE
-	STACK_TRANSITION_TYPE_CROSSFADE        StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_CROSSFADE
-	STACK_TRANSITION_TYPE_SLIDE_RIGHT      StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_RIGHT
-	STACK_TRANSITION_TYPE_SLIDE_LEFT       StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT
-	STACK_TRANSITION_TYPE_SLIDE_UP         StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_UP
-	STACK_TRANSITION_TYPE_SLIDE_DOWN       StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_DOWN
-	STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT
-	STACK_TRANSITION_TYPE_SLIDE_UP_DOWN    StackTransitionType = C.GTK_STACK_TRANSITION_TYPE_SLIDE_UP_DOWN
-)
 
 func marshalStackTransitionType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
@@ -97,7 +82,7 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
  */
 
 // ButtonNewFromIconName is a wrapper around gtk_button_new_from_icon_name().
-func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
+func ButtonNewFromIconName(iconName string, size iface.IconSize) (*Button, error) {
 	cstr := C.CString(iconName)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_button_new_from_icon_name((*C.gchar)(cstr),
@@ -282,12 +267,12 @@ func (v *ListBox) GetSelectedRow() *ListBoxRow {
 }
 
 // SetSelectionMode is a wrapper around gtk_list_box_set_selection_mode().
-func (v *ListBox) SetSelectionMode(mode SelectionMode) {
+func (v *ListBox) SetSelectionMode(mode iface.SelectionMode) {
 	C.gtk_list_box_set_selection_mode(v.native(), C.GtkSelectionMode(mode))
 }
 
 // GetSelectionMode is a wrapper around gtk_list_box_get_selection_mode()
-func (v *ListBox) GetSelectionMode() SelectionMode {
+func (v *ListBox) GetSelectionMode() iface.SelectionMode {
 	c := C.gtk_list_box_get_selection_mode(v.native())
 	return SelectionMode(c)
 }
@@ -489,13 +474,13 @@ func (v *Revealer) SetTransitionDuration(duration uint) {
 }
 
 // GetTransitionType is a wrapper around gtk_revealer_get_transition_type()
-func (v *Revealer) GetTransitionType() RevealerTransitionType {
+func (v *Revealer) GetTransitionType() iface.RevealerTransitionType {
 	c := C.gtk_revealer_get_transition_type(v.native())
 	return RevealerTransitionType(c)
 }
 
 // SetTransitionType is a wrapper around gtk_revealer_set_transition_type()
-func (v *Revealer) SetTransitionType(transition RevealerTransitionType) {
+func (v *Revealer) SetTransitionType(transition iface.RevealerTransitionType) {
 	t := C.GtkRevealerTransitionType(transition)
 	C.gtk_revealer_set_transition_type(v.native(), t)
 }
@@ -652,7 +637,7 @@ func (v *Stack) GetVisibleChildName() string {
 }
 
 // SetVisibleChildFull is a wrapper around gtk_stack_set_visible_child_full().
-func (v *Stack) SetVisibleChildFull(name string, transaction StackTransitionType) {
+func (v *Stack) SetVisibleChildFull(name string, transaction iface.StackTransitionType) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_stack_set_visible_child_full(v.native(), (*C.gchar)(cstr),
@@ -682,12 +667,12 @@ func (v *Stack) GetTransitionDuration() uint {
 }
 
 // SetTransitionType is a wrapper around gtk_stack_set_transition_type().
-func (v *Stack) SetTransitionType(transition StackTransitionType) {
+func (v *Stack) SetTransitionType(transition iface.StackTransitionType) {
 	C.gtk_stack_set_transition_type(v.native(), C.GtkStackTransitionType(transition))
 }
 
 // GetTransitionType is a wrapper around gtk_stack_get_transition_type().
-func (v *Stack) GetTransitionType() StackTransitionType {
+func (v *Stack) GetTransitionType() iface.StackTransitionType {
 	c := C.gtk_stack_get_transition_type(v.native())
-	return StackTransitionType(c)
+	return iface.StackTransitionType(c)
 }

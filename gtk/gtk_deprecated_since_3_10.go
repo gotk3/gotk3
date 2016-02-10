@@ -88,13 +88,6 @@ func (v *Image) SetFromStock(stock Stock, size IconSize) {
 		C.GtkIconSize(size))
 }
 
-// Stock is a special type that does not have an equivalent type in
-// GTK.  It is the type used as a parameter anytime an identifier for
-// stock icons are needed.  A Stock must be type converted to string when
-// function parameters may take a Stock, but when other string values are
-// valid as well.
-type Stock string
-
 const (
 	STOCK_ABOUT                         Stock = C.GTK_STOCK_ABOUT
 	STOCK_ADD                           Stock = C.GTK_STOCK_ADD

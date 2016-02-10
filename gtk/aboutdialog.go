@@ -8,6 +8,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -98,13 +99,13 @@ func (v *AboutDialog) SetLicense(license string) {
 }
 
 // GetLicenseType is a wrapper around gtk_about_dialog_get_license_type().
-func (v *AboutDialog) GetLicenseType() License {
+func (v *AboutDialog) GetLicenseType() iface.License {
 	c := C.gtk_about_dialog_get_license_type(v.native())
 	return License(c)
 }
 
 // SetLicenseType is a wrapper around gtk_about_dialog_set_license_type().
-func (v *AboutDialog) SetLicenseType(license License) {
+func (v *AboutDialog) SetLicenseType(license iface.License) {
 	C.gtk_about_dialog_set_license_type(v.native(), C.GtkLicense(license))
 }
 

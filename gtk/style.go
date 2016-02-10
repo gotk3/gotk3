@@ -11,17 +11,16 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
-type StyleProviderPriority int
-
-const (
-	STYLE_PROVIDER_PRIORITY_FALLBACK    StyleProviderPriority = C.GTK_STYLE_PROVIDER_PRIORITY_FALLBACK
-	STYLE_PROVIDER_PRIORITY_THEME                             = C.GTK_STYLE_PROVIDER_PRIORITY_THEME
-	STYLE_PROVIDER_PRIORITY_SETTINGS                          = C.GTK_STYLE_PROVIDER_PRIORITY_SETTINGS
-	STYLE_PROVIDER_PRIORITY_APPLICATION                       = C.GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
-	STYLE_PROVIDER_PRIORITY_USER                              = C.GTK_STYLE_PROVIDER_PRIORITY_USER
-)
+func init() {
+	iface.STYLE_PROVIDER_PRIORITY_FALLBACK = C.GTK_STYLE_PROVIDER_PRIORITY_FALLBACK
+	iface.STYLE_PROVIDER_PRIORITY_THEME = C.GTK_STYLE_PROVIDER_PRIORITY_THEME
+	iface.STYLE_PROVIDER_PRIORITY_SETTINGS = C.GTK_STYLE_PROVIDER_PRIORITY_SETTINGS
+	iface.STYLE_PROVIDER_PRIORITY_APPLICATION = C.GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
+	STYLEiface._PROVIDER_PRIORITY_USER = C.GTK_STYLE_PROVIDER_PRIORITY_USER
+}
 
 /*
  * GtkStyleContext
@@ -79,7 +78,7 @@ func (v *StyleContext) GetParent() (*StyleContext, error) {
 }
 
 // GetProperty is a wrapper around gtk_style_context_get_property().
-func (v *StyleContext) GetProperty(property string, state StateFlags) (interface{}, error) {
+func (v *StyleContext) GetProperty(property string, state iface.StateFlags) (interface{}, error) {
 	cstr := (*C.gchar)(C.CString(property))
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -112,12 +111,12 @@ func (v *StyleContext) GetScreen() (*gdk.Screen, error) {
 }
 
 // GetState is a wrapper around gtk_style_context_get_state().
-func (v *StyleContext) GetState() StateFlags {
-	return StateFlags(C.gtk_style_context_get_state(v.native()))
+func (v *StyleContext) GetState() iface.StateFlags {
+	return iface.StateFlags(C.gtk_style_context_get_state(v.native()))
 }
 
 // GetColor is a wrapper around gtk_style_context_get_color().
-func (v *StyleContext) GetColor(state StateFlags) *gdk.RGBA {
+func (v *StyleContext) GetColor(state iface.StateFlags) *gdk.RGBA {
 	gdkColor := gdk.NewRGBA()
 	C.gtk_style_context_get_color(v.native(), C.GtkStateFlags(state), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 	return gdkColor
@@ -166,7 +165,7 @@ func (v *StyleContext) SetScreen(s *gdk.Screen) {
 }
 
 // SetState is a wrapper around gtk_style_context_set_state().
-func (v *StyleContext) SetState(state StateFlags) {
+func (v *StyleContext) SetState(state iface.StateFlags) {
 	C.gtk_style_context_set_state(v.native(), C.GtkStateFlags(state))
 }
 
@@ -175,23 +174,23 @@ type IStyleProvider interface {
 }
 
 // AddProvider is a wrapper around gtk_style_context_add_provider().
-func (v *StyleContext) AddProvider(provider IStyleProvider, prio uint) {
-	C.gtk_style_context_add_provider(v.native(), provider.toStyleProvider(), C.guint(prio))
+func (v *StyleContext) AddProvider(provider iface.StyleProvider, prio uint) {
+	C.gtk_style_context_add_provider(v.native(), provider.(*StyleProvider), C.guint(prio))
 }
 
 // AddProviderForScreen is a wrapper around gtk_style_context_add_provider_for_screen().
-func AddProviderForScreen(s *gdk.Screen, provider IStyleProvider, prio uint) {
-	C.gtk_style_context_add_provider_for_screen((*C.GdkScreen)(unsafe.Pointer(s.Native())), provider.toStyleProvider(), C.guint(prio))
+func AddProviderForScreen(s *gdk.Screen, provider iface.StyleProvider, prio uint) {
+	C.gtk_style_context_add_provider_for_screen((*C.GdkScreen)(unsafe.Pointer(s.Native())), provider.(*StyleProvider), C.guint(prio))
 }
 
 // RemoveProvider is a wrapper around gtk_style_context_remove_provider().
-func (v *StyleContext) RemoveProvider(provider IStyleProvider) {
-	C.gtk_style_context_remove_provider(v.native(), provider.toStyleProvider())
+func (v *StyleContext) RemoveProvider(provider iface.StyleProvider) {
+	C.gtk_style_context_remove_provider(v.native(), provider.(*StyleProvider))
 }
 
 // RemoveProviderForScreen is a wrapper around gtk_style_context_remove_provider_for_screen().
-func RemoveProviderForScreen(s *gdk.Screen, provider IStyleProvider) {
-	C.gtk_style_context_remove_provider_for_screen((*C.GdkScreen)(unsafe.Pointer(s.Native())), provider.toStyleProvider())
+func RemoveProviderForScreen(s *gdk.Screen, provider iface.StyleProvider) {
+	C.gtk_style_context_remove_provider_for_screen((*C.GdkScreen)(unsafe.Pointer(s.Native())), provider.(*StyleProvider))
 }
 
 // GtkStyleContext * 	gtk_style_context_new ()

@@ -12,6 +12,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 /*
@@ -479,24 +480,24 @@ func (v *Widget) SetTooltipText(text string) {
 }
 
 // GetHAlign is a wrapper around gtk_widget_get_halign().
-func (v *Widget) GetHAlign() Align {
+func (v *Widget) GetHAlign() iface.Align {
 	c := C.gtk_widget_get_halign(v.native())
-	return Align(c)
+	return iface.Align(c)
 }
 
 // SetHAlign is a wrapper around gtk_widget_set_halign().
-func (v *Widget) SetHAlign(align Align) {
+func (v *Widget) SetHAlign(align iface.Align) {
 	C.gtk_widget_set_halign(v.native(), C.GtkAlign(align))
 }
 
 // GetVAlign is a wrapper around gtk_widget_get_valign().
-func (v *Widget) GetVAlign() Align {
+func (v *Widget) GetVAlign() iface.Align {
 	c := C.gtk_widget_get_valign(v.native())
-	return Align(c)
+	return iface.Align(c)
 }
 
 // SetVAlign is a wrapper around gtk_widget_set_valign().
-func (v *Widget) SetVAlign(align Align) {
+func (v *Widget) SetVAlign(align iface.Align) {
 	C.gtk_widget_set_valign(v.native(), C.GtkAlign(align))
 }
 
@@ -596,7 +597,7 @@ func (v *Widget) SizeAllocate(allocation *Allocation) {
 }
 
 // SetStateFlags is a wrapper around gtk_widget_set_state_flags().
-func (v *Widget) SetStateFlags(stateFlags StateFlags, clear bool) {
+func (v *Widget) SetStateFlags(stateFlags iface.StateFlags, clear bool) {
 	C.gtk_widget_set_state_flags(v.native(), C.GtkStateFlags(stateFlags), gbool(clear))
 }
 

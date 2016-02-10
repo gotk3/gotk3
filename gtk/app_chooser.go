@@ -7,6 +7,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -342,7 +343,7 @@ func wrapAppChooserDialog(obj *glib.Object) *AppChooserDialog {
 // }
 
 // AppChooserDialogNewForContentType() is a wrapper around gtk_app_chooser_dialog_new_for_content_type().
-func AppChooserDialogNewForContentType(parent *Window, flags DialogFlags, content_type string) (*AppChooserDialog, error) {
+func AppChooserDialogNewForContentType(parent *Window, flags iface.DialogFlags, content_type string) (*AppChooserDialog, error) {
 	cstr := C.CString(content_type)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_app_chooser_dialog_new_for_content_type(parent.native(), C.GtkDialogFlags(flags), (*C.gchar)(cstr))

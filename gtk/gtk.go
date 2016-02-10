@@ -58,144 +58,347 @@ import (
 
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
+	gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
-		{glib.Type(C.gtk_align_get_type()), marshalAlign},
-		{glib.Type(C.gtk_accel_flags_get_type()), marshalAccelFlags},
-		{glib.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
-		{glib.Type(C.gtk_accel_map_get_type()), marshalAccelMap},
-		{glib.Type(C.gtk_arrow_placement_get_type()), marshalArrowPlacement},
-		{glib.Type(C.gtk_arrow_type_get_type()), marshalArrowType},
-		{glib.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
-		{glib.Type(C.gtk_buttons_type_get_type()), marshalButtonsType},
-		{glib.Type(C.gtk_calendar_display_options_get_type()), marshalCalendarDisplayOptions},
-		{glib.Type(C.gtk_dest_defaults_get_type()), marshalDestDefaults},
-		{glib.Type(C.gtk_dialog_flags_get_type()), marshalDialogFlags},
-		{glib.Type(C.gtk_entry_icon_position_get_type()), marshalEntryIconPosition},
-		{glib.Type(C.gtk_file_chooser_action_get_type()), marshalFileChooserAction},
-		{glib.Type(C.gtk_icon_lookup_flags_get_type()), marshalSortType},
-		{glib.Type(C.gtk_icon_size_get_type()), marshalIconSize},
-		{glib.Type(C.gtk_image_type_get_type()), marshalImageType},
-		{glib.Type(C.gtk_input_hints_get_type()), marshalInputHints},
-		{glib.Type(C.gtk_input_purpose_get_type()), marshalInputPurpose},
-		{glib.Type(C.gtk_justification_get_type()), marshalJustification},
-		{glib.Type(C.gtk_license_get_type()), marshalLicense},
-		{glib.Type(C.gtk_message_type_get_type()), marshalMessageType},
-		{glib.Type(C.gtk_orientation_get_type()), marshalOrientation},
-		{glib.Type(C.gtk_pack_type_get_type()), marshalPackType},
-		{glib.Type(C.gtk_path_type_get_type()), marshalPathType},
-		{glib.Type(C.gtk_policy_type_get_type()), marshalPolicyType},
-		{glib.Type(C.gtk_position_type_get_type()), marshalPositionType},
-		{glib.Type(C.gtk_relief_style_get_type()), marshalReliefStyle},
-		{glib.Type(C.gtk_response_type_get_type()), marshalResponseType},
-		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
-		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
-		{glib.Type(C.gtk_sort_type_get_type()), marshalSortType},
-		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
-		{glib.Type(C.gtk_target_flags_get_type()), marshalTargetFlags},
-		{glib.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
-		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
-		{glib.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
-		{glib.Type(C.gtk_window_type_get_type()), marshalWindowType},
-		{glib.Type(C.gtk_wrap_mode_get_type()), marshalWrapMode},
+		{glib_iface.Type(C.gtk_align_get_type()), marshalAlign},
+		{glib_iface.Type(C.gtk_accel_flags_get_type()), marshalAccelFlags},
+		{glib_iface.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
+		{glib_iface.Type(C.gtk_accel_map_get_type()), marshalAccelMap},
+		{glib_iface.Type(C.gtk_arrow_placement_get_type()), marshalArrowPlacement},
+		{glib_iface.Type(C.gtk_arrow_type_get_type()), marshalArrowType},
+		{glib_iface.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
+		{glib_iface.Type(C.gtk_buttons_type_get_type()), marshalButtonsType},
+		{glib_iface.Type(C.gtk_calendar_display_options_get_type()), marshalCalendarDisplayOptions},
+		{glib_iface.Type(C.gtk_dest_defaults_get_type()), marshalDestDefaults},
+		{glib_iface.Type(C.gtk_dialog_flags_get_type()), marshalDialogFlags},
+		{glib_iface.Type(C.gtk_entry_icon_position_get_type()), marshalEntryIconPosition},
+		{glib_iface.Type(C.gtk_file_chooser_action_get_type()), marshalFileChooserAction},
+		{glib_iface.Type(C.gtk_icon_lookup_flags_get_type()), marshalSortType},
+		{glib_iface.Type(C.gtk_icon_size_get_type()), marshalIconSize},
+		{glib_iface.Type(C.gtk_image_type_get_type()), marshalImageType},
+		{glib_iface.Type(C.gtk_input_hints_get_type()), marshalInputHints},
+		{glib_iface.Type(C.gtk_input_purpose_get_type()), marshalInputPurpose},
+		{glib_iface.Type(C.gtk_justification_get_type()), marshalJustification},
+		{glib_iface.Type(C.gtk_license_get_type()), marshalLicense},
+		{glib_iface.Type(C.gtk_message_type_get_type()), marshalMessageType},
+		{glib_iface.Type(C.gtk_orientation_get_type()), marshalOrientation},
+		{glib_iface.Type(C.gtk_pack_type_get_type()), marshalPackType},
+		{glib_iface.Type(C.gtk_path_type_get_type()), marshalPathType},
+		{glib_iface.Type(C.gtk_policy_type_get_type()), marshalPolicyType},
+		{glib_iface.Type(C.gtk_position_type_get_type()), marshalPositionType},
+		{glib_iface.Type(C.gtk_relief_style_get_type()), marshalReliefStyle},
+		{glib_iface.Type(C.gtk_response_type_get_type()), marshalResponseType},
+		{glib_iface.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
+		{glib_iface.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
+		{glib_iface.Type(C.gtk_sort_type_get_type()), marshalSortType},
+		{glib_iface.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
+		{glib_iface.Type(C.gtk_target_flags_get_type()), marshalTargetFlags},
+		{glib_iface.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
+		{glib_iface.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
+		{glib_iface.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
+		{glib_iface.Type(C.gtk_window_type_get_type()), marshalWindowType},
+		{glib_iface.Type(C.gtk_wrap_mode_get_type()), marshalWrapMode},
 
 		// Objects/Interfaces
-		{glib.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
-		{glib.Type(C.gtk_accel_map_get_type()), marshalAccelMap},
-		{glib.Type(C.gtk_adjustment_get_type()), marshalAdjustment},
-		{glib.Type(C.gtk_application_window_get_type()), marshalApplicationWindow},
-		{glib.Type(C.gtk_assistant_get_type()), marshalAssistant},
-		{glib.Type(C.gtk_bin_get_type()), marshalBin},
-		{glib.Type(C.gtk_builder_get_type()), marshalBuilder},
-		{glib.Type(C.gtk_button_get_type()), marshalButton},
-		{glib.Type(C.gtk_box_get_type()), marshalBox},
-		{glib.Type(C.gtk_calendar_get_type()), marshalCalendar},
-		{glib.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},
-		{glib.Type(C.gtk_cell_renderer_get_type()), marshalCellRenderer},
-		{glib.Type(C.gtk_cell_renderer_spinner_get_type()), marshalCellRendererSpinner},
-		{glib.Type(C.gtk_cell_renderer_pixbuf_get_type()), marshalCellRendererPixbuf},
-		{glib.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
-		{glib.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
-		{glib.Type(C.gtk_check_button_get_type()), marshalCheckButton},
-		{glib.Type(C.gtk_check_menu_item_get_type()), marshalCheckMenuItem},
-		{glib.Type(C.gtk_clipboard_get_type()), marshalClipboard},
-		{glib.Type(C.gtk_container_get_type()), marshalContainer},
-		{glib.Type(C.gtk_dialog_get_type()), marshalDialog},
-		{glib.Type(C.gtk_drawing_area_get_type()), marshalDrawingArea},
-		{glib.Type(C.gtk_editable_get_type()), marshalEditable},
-		{glib.Type(C.gtk_entry_get_type()), marshalEntry},
-		{glib.Type(C.gtk_entry_buffer_get_type()), marshalEntryBuffer},
-		{glib.Type(C.gtk_entry_completion_get_type()), marshalEntryCompletion},
-		{glib.Type(C.gtk_event_box_get_type()), marshalEventBox},
-		{glib.Type(C.gtk_expander_get_type()), marshalExpander},
-		{glib.Type(C.gtk_file_chooser_get_type()), marshalFileChooser},
-		{glib.Type(C.gtk_file_chooser_button_get_type()), marshalFileChooserButton},
-		{glib.Type(C.gtk_file_chooser_dialog_get_type()), marshalFileChooserDialog},
-		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
-		{glib.Type(C.gtk_font_button_get_type()), marshalFontButton},
-		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
-		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
-		{glib.Type(C.gtk_icon_view_get_type()), marshalIconView},
-		{glib.Type(C.gtk_image_get_type()), marshalImage},
-		{glib.Type(C.gtk_label_get_type()), marshalLabel},
-		{glib.Type(C.gtk_link_button_get_type()), marshalLinkButton},
-		{glib.Type(C.gtk_layout_get_type()), marshalLayout},
-		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
-		{glib.Type(C.gtk_menu_get_type()), marshalMenu},
-		{glib.Type(C.gtk_menu_bar_get_type()), marshalMenuBar},
-		{glib.Type(C.gtk_menu_button_get_type()), marshalMenuButton},
-		{glib.Type(C.gtk_menu_item_get_type()), marshalMenuItem},
-		{glib.Type(C.gtk_menu_shell_get_type()), marshalMenuShell},
-		{glib.Type(C.gtk_message_dialog_get_type()), marshalMessageDialog},
-		{glib.Type(C.gtk_notebook_get_type()), marshalNotebook},
-		{glib.Type(C.gtk_offscreen_window_get_type()), marshalOffscreenWindow},
-		{glib.Type(C.gtk_orientable_get_type()), marshalOrientable},
-		{glib.Type(C.gtk_paned_get_type()), marshalPaned},
-		{glib.Type(C.gtk_progress_bar_get_type()), marshalProgressBar},
-		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
-		{glib.Type(C.gtk_radio_menu_item_get_type()), marshalRadioMenuItem},
-		{glib.Type(C.gtk_range_get_type()), marshalRange},
-		{glib.Type(C.gtk_scale_button_get_type()), marshalScaleButton},
-		{glib.Type(C.gtk_scale_get_type()), marshalScale},
-		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
-		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
-		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
-		{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
-		{glib.Type(C.gtk_separator_get_type()), marshalSeparator},
-		{glib.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
-		{glib.Type(C.gtk_separator_tool_item_get_type()), marshalSeparatorToolItem},
-		{glib.Type(C.gtk_spin_button_get_type()), marshalSpinButton},
-		{glib.Type(C.gtk_spinner_get_type()), marshalSpinner},
-		{glib.Type(C.gtk_statusbar_get_type()), marshalStatusbar},
-		{glib.Type(C.gtk_switch_get_type()), marshalSwitch},
-		{glib.Type(C.gtk_text_view_get_type()), marshalTextView},
-		{glib.Type(C.gtk_text_tag_get_type()), marshalTextTag},
-		{glib.Type(C.gtk_text_tag_table_get_type()), marshalTextTagTable},
-		{glib.Type(C.gtk_text_buffer_get_type()), marshalTextBuffer},
-		{glib.Type(C.gtk_toggle_button_get_type()), marshalToggleButton},
-		{glib.Type(C.gtk_toolbar_get_type()), marshalToolbar},
-		{glib.Type(C.gtk_tool_button_get_type()), marshalToolButton},
-		{glib.Type(C.gtk_tool_item_get_type()), marshalToolItem},
-		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
-		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
-		{glib.Type(C.gtk_tree_store_get_type()), marshalTreeStore},
-		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
-		{glib.Type(C.gtk_tree_view_column_get_type()), marshalTreeViewColumn},
-		{glib.Type(C.gtk_volume_button_get_type()), marshalVolumeButton},
-		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
-		{glib.Type(C.gtk_window_get_type()), marshalWindow},
+		{glib_iface.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
+		{glib_iface.Type(C.gtk_accel_map_get_type()), marshalAccelMap},
+		{glib_iface.Type(C.gtk_adjustment_get_type()), marshalAdjustment},
+		{glib_iface.Type(C.gtk_application_window_get_type()), marshalApplicationWindow},
+		{glib_iface.Type(C.gtk_assistant_get_type()), marshalAssistant},
+		{glib_iface.Type(C.gtk_bin_get_type()), marshalBin},
+		{glib_iface.Type(C.gtk_builder_get_type()), marshalBuilder},
+		{glib_iface.Type(C.gtk_button_get_type()), marshalButton},
+		{glib_iface.Type(C.gtk_box_get_type()), marshalBox},
+		{glib_iface.Type(C.gtk_calendar_get_type()), marshalCalendar},
+		{glib_iface.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},
+		{glib_iface.Type(C.gtk_cell_renderer_get_type()), marshalCellRenderer},
+		{glib_iface.Type(C.gtk_cell_renderer_spinner_get_type()), marshalCellRendererSpinner},
+		{glib_iface.Type(C.gtk_cell_renderer_pixbuf_get_type()), marshalCellRendererPixbuf},
+		{glib_iface.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
+		{glib_iface.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
+		{glib_iface.Type(C.gtk_check_button_get_type()), marshalCheckButton},
+		{glib_iface.Type(C.gtk_check_menu_item_get_type()), marshalCheckMenuItem},
+		{glib_iface.Type(C.gtk_clipboard_get_type()), marshalClipboard},
+		{glib_iface.Type(C.gtk_container_get_type()), marshalContainer},
+		{glib_iface.Type(C.gtk_dialog_get_type()), marshalDialog},
+		{glib_iface.Type(C.gtk_drawing_area_get_type()), marshalDrawingArea},
+		{glib_iface.Type(C.gtk_editable_get_type()), marshalEditable},
+		{glib_iface.Type(C.gtk_entry_get_type()), marshalEntry},
+		{glib_iface.Type(C.gtk_entry_buffer_get_type()), marshalEntryBuffer},
+		{glib_iface.Type(C.gtk_entry_completion_get_type()), marshalEntryCompletion},
+		{glib_iface.Type(C.gtk_event_box_get_type()), marshalEventBox},
+		{glib_iface.Type(C.gtk_expander_get_type()), marshalExpander},
+		{glib_iface.Type(C.gtk_file_chooser_get_type()), marshalFileChooser},
+		{glib_iface.Type(C.gtk_file_chooser_button_get_type()), marshalFileChooserButton},
+		{glib_iface.Type(C.gtk_file_chooser_dialog_get_type()), marshalFileChooserDialog},
+		{glib_iface.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
+		{glib_iface.Type(C.gtk_font_button_get_type()), marshalFontButton},
+		{glib_iface.Type(C.gtk_frame_get_type()), marshalFrame},
+		{glib_iface.Type(C.gtk_grid_get_type()), marshalGrid},
+		{glib_iface.Type(C.gtk_icon_view_get_type()), marshalIconView},
+		{glib_iface.Type(C.gtk_image_get_type()), marshalImage},
+		{glib_iface.Type(C.gtk_label_get_type()), marshalLabel},
+		{glib_iface.Type(C.gtk_link_button_get_type()), marshalLinkButton},
+		{glib_iface.Type(C.gtk_layout_get_type()), marshalLayout},
+		{glib_iface.Type(C.gtk_list_store_get_type()), marshalListStore},
+		{glib_iface.Type(C.gtk_menu_get_type()), marshalMenu},
+		{glib_iface.Type(C.gtk_menu_bar_get_type()), marshalMenuBar},
+		{glib_iface.Type(C.gtk_menu_button_get_type()), marshalMenuButton},
+		{glib_iface.Type(C.gtk_menu_item_get_type()), marshalMenuItem},
+		{glib_iface.Type(C.gtk_menu_shell_get_type()), marshalMenuShell},
+		{glib_iface.Type(C.gtk_message_dialog_get_type()), marshalMessageDialog},
+		{glib_iface.Type(C.gtk_notebook_get_type()), marshalNotebook},
+		{glib_iface.Type(C.gtk_offscreen_window_get_type()), marshalOffscreenWindow},
+		{glib_iface.Type(C.gtk_orientable_get_type()), marshalOrientable},
+		{glib_iface.Type(C.gtk_paned_get_type()), marshalPaned},
+		{glib_iface.Type(C.gtk_progress_bar_get_type()), marshalProgressBar},
+		{glib_iface.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
+		{glib_iface.Type(C.gtk_radio_menu_item_get_type()), marshalRadioMenuItem},
+		{glib_iface.Type(C.gtk_range_get_type()), marshalRange},
+		{glib_iface.Type(C.gtk_scale_button_get_type()), marshalScaleButton},
+		{glib_iface.Type(C.gtk_scale_get_type()), marshalScale},
+		{glib_iface.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
+		{glib_iface.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
+		{glib_iface.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
+		{glib_iface.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
+		{glib_iface.Type(C.gtk_separator_get_type()), marshalSeparator},
+		{glib_iface.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
+		{glib_iface.Type(C.gtk_separator_tool_item_get_type()), marshalSeparatorToolItem},
+		{glib_iface.Type(C.gtk_spin_button_get_type()), marshalSpinButton},
+		{glib_iface.Type(C.gtk_spinner_get_type()), marshalSpinner},
+		{glib_iface.Type(C.gtk_statusbar_get_type()), marshalStatusbar},
+		{glib_iface.Type(C.gtk_switch_get_type()), marshalSwitch},
+		{glib_iface.Type(C.gtk_text_view_get_type()), marshalTextView},
+		{glib_iface.Type(C.gtk_text_tag_get_type()), marshalTextTag},
+		{glib_iface.Type(C.gtk_text_tag_table_get_type()), marshalTextTagTable},
+		{glib_iface.Type(C.gtk_text_buffer_get_type()), marshalTextBuffer},
+		{glib_iface.Type(C.gtk_toggle_button_get_type()), marshalToggleButton},
+		{glib_iface.Type(C.gtk_toolbar_get_type()), marshalToolbar},
+		{glib_iface.Type(C.gtk_tool_button_get_type()), marshalToolButton},
+		{glib_iface.Type(C.gtk_tool_item_get_type()), marshalToolItem},
+		{glib_iface.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
+		{glib_iface.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
+		{glib_iface.Type(C.gtk_tree_store_get_type()), marshalTreeStore},
+		{glib_iface.Type(C.gtk_tree_view_get_type()), marshalTreeView},
+		{glib_iface.Type(C.gtk_tree_view_column_get_type()), marshalTreeViewColumn},
+		{glib_iface.Type(C.gtk_volume_button_get_type()), marshalVolumeButton},
+		{glib_iface.Type(C.gtk_widget_get_type()), marshalWidget},
+		{glib_iface.Type(C.gtk_window_get_type()), marshalWindow},
 
 		// Boxed
-		{glib.Type(C.gtk_target_entry_get_type()), marshalTargetEntry},
-		{glib.Type(C.gtk_text_iter_get_type()), marshalTextIter},
-		{glib.Type(C.gtk_tree_iter_get_type()), marshalTreeIter},
-		{glib.Type(C.gtk_tree_path_get_type()), marshalTreePath},
+		{glib_iface.Type(C.gtk_target_entry_get_type()), marshalTargetEntry},
+		{glib_iface.Type(C.gtk_text_iter_get_type()), marshalTextIter},
+		{glib_iface.Type(C.gtk_tree_iter_get_type()), marshalTreeIter},
+		{glib_iface.Type(C.gtk_tree_path_get_type()), marshalTreePath},
 	}
 	glib.RegisterGValueMarshalers(tm)
+
+	iface.ALIGN_FILL = C.GTK_ALIGN_FILL
+	iface.ALIGN_START = C.GTK_ALIGN_START
+	iface.ALIGN_END = C.GTK_ALIGN_END
+	iface.ALIGN_CENTER = C.GTK_ALIGN_CENTER
+
+	iface.ARROWS_BOTH = C.GTK_ARROWS_BOTH
+	iface.ARROWS_START = C.GTK_ARROWS_START
+	iface.ARROWS_END = C.GTK_ARROWS_END
+
+	iface.ARROW_UP = C.GTK_ARROW_UP
+	iface.ARROW_DOWN = C.GTK_ARROW_DOWN
+	iface.ARROW_LEFT = C.GTK_ARROW_LEFT
+	iface.ARROW_RIGHT = C.GTK_ARROW_RIGHT
+	iface.ARROW_NONE = C.GTK_ARROW_NONE
+
+	iface.ASSISTANT_PAGE_CONTENT = C.GTK_ASSISTANT_PAGE_CONTENT
+	iface.ASSISTANT_PAGE_INTRO = C.GTK_ASSISTANT_PAGE_INTRO
+	iface.ASSISTANT_PAGE_CONFIRM = C.GTK_ASSISTANT_PAGE_CONFIRM
+	iface.ASSISTANT_PAGE_SUMMARY = C.GTK_ASSISTANT_PAGE_SUMMARY
+	iface.ASSISTANT_PAGE_PROGRESS = C.GTK_ASSISTANT_PAGE_PROGRESS
+	iface.ASSISTANT_PAGE_CUSTOM = C.GTK_ASSISTANT_PAGE_CUSTOM
+
+	iface.BUTTONS_NONE = C.GTK_BUTTONS_NONE
+	iface.BUTTONS_OK = C.GTK_BUTTONS_OK
+	iface.BUTTONS_CLOSE = C.GTK_BUTTONS_CLOSE
+	iface.BUTTONS_CANCEL = C.GTK_BUTTONS_CANCEL
+	iface.BUTTONS_YES_NO = C.GTK_BUTTONS_YES_NO
+	iface.BUTTONS_OK_CANCEL = C.GTK_BUTTONS_OK_CANCEL
+
+	iface.CALENDAR_SHOW_HEADING = C.GTK_CALENDAR_SHOW_HEADING
+	iface.CALENDAR_SHOW_DAY_NAMES = C.GTK_CALENDAR_SHOW_DAY_NAMES
+	iface.CALENDAR_NO_MONTH_CHANGE = C.GTK_CALENDAR_NO_MONTH_CHANGE
+	iface.CALENDAR_SHOW_WEEK_NUMBERS = C.GTK_CALENDAR_SHOW_WEEK_NUMBERS
+	iface.CALENDAR_SHOW_DETAILS = C.GTK_CALENDAR_SHOW_DETAILS
+
+	iface.DEST_DEFAULT_MOTION = C.GTK_DEST_DEFAULT_MOTION
+	iface.DEST_DEFAULT_HIGHLIGHT = C.GTK_DEST_DEFAULT_HIGHLIGHT
+	iface.DEST_DEFAULT_DROP = C.GTK_DEST_DEFAULT_DROP
+	iface.DEST_DEFAULT_ALL = C.GTK_DEST_DEFAULT_ALL
+
+	iface.DIALOG_MODAL = C.GTK_DIALOG_MODAL
+	iface.DIALOG_DESTROY_WITH_PARENT = C.GTK_DIALOG_DESTROY_WITH_PARENT
+
+	iface.ENTRY_ICON_PRIMARY = C.GTK_ENTRY_ICON_PRIMARY
+	iface.ENTRY_ICON_SECONDARY = C.GTK_ENTRY_ICON_SECONDARY
+
+	iface.FILE_CHOOSER_ACTION_OPEN = C.GTK_FILE_CHOOSER_ACTION_OPEN
+	iface.FILE_CHOOSER_ACTION_SAVE = C.GTK_FILE_CHOOSER_ACTION_SAVE
+	iface.FILE_CHOOSER_ACTION_SELECT_FOLDER = C.GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
+	iface.FILE_CHOOSER_ACTION_CREATE_FOLDER = C.GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER
+
+	iface.ICON_LOOKUP_NO_SVG = C.GTK_ICON_LOOKUP_NO_SVG
+	iface.ICON_LOOKUP_FORCE_SVG = C.GTK_ICON_LOOKUP_FORCE_SVG
+	iface.ICON_LOOKUP_USE_BUILTIN = C.GTK_ICON_LOOKUP_USE_BUILTIN
+	iface.ICON_LOOKUP_GENERIC_FALLBACK = C.GTK_ICON_LOOKUP_GENERIC_FALLBACK
+	iface.ICON_LOOKUP_FORCE_SIZE = C.GTK_ICON_LOOKUP_FORCE_SIZE
+
+	iface.ICON_SIZE_INVALID = C.GTK_ICON_SIZE_INVALID
+	iface.ICON_SIZE_MENU = C.GTK_ICON_SIZE_MENU
+	iface.ICON_SIZE_SMALL_TOOLBAR = C.GTK_ICON_SIZE_SMALL_TOOLBAR
+	iface.ICON_SIZE_LARGE_TOOLBAR = C.GTK_ICON_SIZE_LARGE_TOOLBAR
+	iface.ICON_SIZE_BUTTON = C.GTK_ICON_SIZE_BUTTON
+	iface.ICON_SIZE_DND = C.GTK_ICON_SIZE_DND
+	iface.ICON_SIZE_DIALOG = C.GTK_ICON_SIZE_DIALOG
+
+	iface.IMAGE_EMPTY = C.GTK_IMAGE_EMPTY
+	iface.IMAGE_PIXBUF = C.GTK_IMAGE_PIXBUF
+	iface.IMAGE_STOCK = C.GTK_IMAGE_STOCK
+	iface.IMAGE_ICON_SET = C.GTK_IMAGE_ICON_SET
+	iface.IMAGE_ANIMATION = C.GTK_IMAGE_ANIMATION
+	iface.IMAGE_ICON_NAME = C.GTK_IMAGE_ICON_NAME
+	iface.IMAGE_GICON = C.GTK_IMAGE_GICON
+
+	iface.INPUT_HINT_NONE = C.GTK_INPUT_HINT_NONE
+	iface.INPUT_HINT_SPELLCHECK = C.GTK_INPUT_HINT_SPELLCHECK
+	iface.INPUT_HINT_NO_SPELLCHECK = C.GTK_INPUT_HINT_NO_SPELLCHECK
+	iface.INPUT_HINT_WORD_COMPLETION = C.GTK_INPUT_HINT_WORD_COMPLETION
+	iface.INPUT_HINT_LOWERCASE = C.GTK_INPUT_HINT_LOWERCASE
+	iface.INPUT_HINT_UPPERCASE_CHARS = C.GTK_INPUT_HINT_UPPERCASE_CHARS
+	iface.INPUT_HINT_UPPERCASE_WORDS = C.GTK_INPUT_HINT_UPPERCASE_WORDS
+	iface.INPUT_HINT_UPPERCASE_SENTENCES = C.GTK_INPUT_HINT_UPPERCASE_SENTENCES
+	iface.INPUT_HINT_INHIBIT_OSK = C.GTK_INPUT_HINT_INHIBIT_OSK
+
+	iface.INPUT_PURPOSE_FREE_FORM = C.GTK_INPUT_PURPOSE_FREE_FORM
+	iface.INPUT_PURPOSE_ALPHA = C.GTK_INPUT_PURPOSE_ALPHA
+	iface.INPUT_PURPOSE_DIGITS = C.GTK_INPUT_PURPOSE_DIGITS
+	iface.INPUT_PURPOSE_NUMBER = C.GTK_INPUT_PURPOSE_NUMBER
+	iface.INPUT_PURPOSE_PHONE = C.GTK_INPUT_PURPOSE_PHONE
+	iface.INPUT_PURPOSE_URL = C.GTK_INPUT_PURPOSE_URL
+	iface.INPUT_PURPOSE_EMAIL = C.GTK_INPUT_PURPOSE_EMAIL
+	iface.INPUT_PURPOSE_NAME = C.GTK_INPUT_PURPOSE_NAME
+	iface.INPUT_PURPOSE_PASSWORD = C.GTK_INPUT_PURPOSE_PASSWORD
+	iface.INPUT_PURPOSE_PIN = C.GTK_INPUT_PURPOSE_PIN
+
+	iface.JUSTIFY_LEFT = C.GTK_JUSTIFY_LEFT
+	iface.JUSTIFY_RIGHT = C.GTK_JUSTIFY_RIGHT
+	iface.JUSTIFY_CENTER = C.GTK_JUSTIFY_CENTER
+	iface.JUSTIFY_FILL = C.GTK_JUSTIFY_FILL
+
+	iface.LICENSE_UNKNOWN = C.GTK_LICENSE_UNKNOWN
+	iface.LICENSE_CUSTOM = C.GTK_LICENSE_CUSTOM
+	iface.LICENSE_GPL_2_0 = C.GTK_LICENSE_GPL_2_0
+	iface.LICENSE_GPL_3_0 = C.GTK_LICENSE_GPL_3_0
+	iface.LICENSE_LGPL_2_1 = C.GTK_LICENSE_LGPL_2_1
+	iface.LICENSE_LGPL_3_0 = C.GTK_LICENSE_LGPL_3_0
+	iface.LICENSE_BSD = C.GTK_LICENSE_BSD
+	iface.LICENSE_MIT_X11 = C.GTK_LICENSE_MIT_X11
+	iface.LICENSE_GTK_ARTISTIC = C.GTK_LICENSE_ARTISTIC
+
+	iface.MESSAGE_INFO = C.GTK_MESSAGE_INFO
+	iface.MESSAGE_WARNING = C.GTK_MESSAGE_WARNING
+	iface.MESSAGE_QUESTION = C.GTK_MESSAGE_QUESTION
+	iface.MESSAGE_ERROR = C.GTK_MESSAGE_ERROR
+	iface.MESSAGE_OTHER = C.GTK_MESSAGE_OTHER
+
+	iface.ORIENTATION_HORIZONTAL = C.GTK_ORIENTATION_HORIZONTAL
+	iface.ORIENTATION_VERTICAL = C.GTK_ORIENTATION_VERTICAL
+
+	iface.PACK_START = C.GTK_PACK_START
+	iface.PACK_END = C.GTK_PACK_END
+
+	iface.PATH_WIDGET = C.GTK_PATH_WIDGET
+	iface.PATH_WIDGET_CLASS = C.GTK_PATH_WIDGET_CLASS
+	iface.PATH_CLASS = C.GTK_PATH_CLASS
+
+	iface.POLICY_ALWAYS = C.GTK_POLICY_ALWAYS
+	iface.POLICY_AUTOMATIC = C.GTK_POLICY_AUTOMATIC
+	iface.POLICY_NEVER = C.GTK_POLICY_NEVER
+
+	iface.POS_LEFT = C.GTK_POS_LEFT
+	iface.POS_RIGHT = C.GTK_POS_RIGHT
+	iface.POS_TOP = C.GTK_POS_TOP
+	iface.POS_BOTTOM = C.GTK_POS_BOTTOM
+
+	iface.RELIEF_NORMAL = C.GTK_RELIEF_NORMAL
+	iface.RELIEF_HALF = C.GTK_RELIEF_HALF
+	iface.RELIEF_NONE = C.GTK_RELIEF_NONE
+
+	iface.RESPONSE_NONE = C.GTK_RESPONSE_NONE
+	iface.RESPONSE_REJECT = C.GTK_RESPONSE_REJECT
+	iface.RESPONSE_ACCEPT = C.GTK_RESPONSE_ACCEPT
+	iface.RESPONSE_DELETE_EVENT = C.GTK_RESPONSE_DELETE_EVENT
+	iface.RESPONSE_OK = C.GTK_RESPONSE_OK
+	iface.RESPONSE_CANCEL = C.GTK_RESPONSE_CANCEL
+	iface.RESPONSE_CLOSE = C.GTK_RESPONSE_CLOSE
+	iface.RESPONSE_YES = C.GTK_RESPONSE_YES
+	iface.RESPONSE_NO = C.GTK_RESPONSE_NO
+	iface.RESPONSE_APPLY = C.GTK_RESPONSE_APPLY
+	iface.RESPONSE_HELP = C.GTK_RESPONSE_HELP
+
+	iface.SELECTION_NONE = C.GTK_SELECTION_NONE
+	iface.SELECTION_SINGLE = C.GTK_SELECTION_SINGLE
+	iface.SELECTION_BROWSE = C.GTK_SELECTION_BROWSE
+	iface.SELECTION_MULTIPLE = C.GTK_SELECTION_MULTIPLE
+
+	iface.SHADOW_NONE = C.GTK_SHADOW_NONE
+	iface.SHADOW_IN = C.GTK_SHADOW_IN
+	iface.SHADOW_OUT = C.GTK_SHADOW_OUT
+	iface.SHADOW_ETCHED_IN = C.GTK_SHADOW_ETCHED_IN
+	iface.SHADOW_ETCHED_OUT = C.GTK_SHADOW_ETCHED_OUT
+
+	iface.SORT_ASCENDING = C.GTK_SORT_ASCENDING
+	iface.SORT_DESCENDING = C.GTK_SORT_DESCENDING
+
+	iface.STATE_FLAG_NORMAL = C.GTK_STATE_FLAG_NORMAL
+	iface.STATE_FLAG_ACTIVE = C.GTK_STATE_FLAG_ACTIVE
+	iface.STATE_FLAG_PRELIGHT = C.GTK_STATE_FLAG_PRELIGHT
+	iface.STATE_FLAG_SELECTED = C.GTK_STATE_FLAG_SELECTED
+	iface.STATE_FLAG_INSENSITIVE = C.GTK_STATE_FLAG_INSENSITIVE
+	iface.STATE_FLAG_INCONSISTENT = C.GTK_STATE_FLAG_INCONSISTENT
+	iface.STATE_FLAG_FOCUSED = C.GTK_STATE_FLAG_FOCUSED
+	iface.STATE_FLAG_BACKDROP = C.GTK_STATE_FLAG_BACKDROP
+
+	iface.TARGET_SAME_APP = C.GTK_TARGET_SAME_APP
+	iface.TARGET_SAME_WIDGET = C.GTK_TARGET_SAME_WIDGET
+	iface.TARGET_OTHER_APP = C.GTK_TARGET_OTHER_APP
+	iface.TARGET_OTHER_WIDGET = C.GTK_TARGET_OTHER_WIDGET
+
+	iface.TOOLBAR_ICONS = C.GTK_TOOLBAR_ICONS
+	iface.TOOLBAR_TEXT = C.GTK_TOOLBAR_TEXT
+	iface.TOOLBAR_BOTH = C.GTK_TOOLBAR_BOTH
+	iface.TOOLBAR_BOTH_HORIZ = C.GTK_TOOLBAR_BOTH_HORIZ
+
+	iface.TREE_MODEL_ITERS_PERSIST = C.GTK_TREE_MODEL_ITERS_PERSIST
+	iface.TREE_MODEL_LIST_ONLY = C.GTK_TREE_MODEL_LIST_ONLY
+
+	iface.WIN_POS_NONE = C.GTK_WIN_POS_NONE
+	iface.WIN_POS_CENTER = C.GTK_WIN_POS_CENTER
+	iface.WIN_POS_MOUSE = C.GTK_WIN_POS_MOUSE
+	iface.WIN_POS_CENTER_ALWAYS = C.GTK_WIN_POS_CENTER_ALWAYS
+	iface.WIN_POS_CENTER_ON_PARENT = C.GTK_WIN_POS_CENTER_ON_PARENT
+
+	iface.WINDOW_TOPLEVEL = C.GTK_WINDOW_TOPLEVEL
+	iface.WINDOW_POPUP = C.GTK_WINDOW_POPUP
+
+	iface.WRAP_NONE = C.GTK_WRAP_NONE
+	iface.WRAP_CHAR = C.GTK_WRAP_CHAR
+	iface.WRAP_WORD = C.GTK_WRAP_WORD
+	iface.WRAP_WORD_CHAR = C.GTK_WRAP_WORD_CHAR
 }
 
 /*
@@ -249,558 +452,179 @@ func testBoolConvs() error {
 
 var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 
-/*
- * Constants
- */
-
-// Align is a representation of GTK's GtkAlign.
-type Align int
-
-const (
-	ALIGN_FILL   Align = C.GTK_ALIGN_FILL
-	ALIGN_START  Align = C.GTK_ALIGN_START
-	ALIGN_END    Align = C.GTK_ALIGN_END
-	ALIGN_CENTER Align = C.GTK_ALIGN_CENTER
-)
-
 func marshalAlign(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Align(c), nil
+	return iface.Align(c), nil
 }
-
-// ArrowPlacement is a representation of GTK's GtkArrowPlacement.
-type ArrowPlacement int
-
-const (
-	ARROWS_BOTH  ArrowPlacement = C.GTK_ARROWS_BOTH
-	ARROWS_START ArrowPlacement = C.GTK_ARROWS_START
-	ARROWS_END   ArrowPlacement = C.GTK_ARROWS_END
-)
 
 func marshalArrowPlacement(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ArrowPlacement(c), nil
+	return iface.ArrowPlacement(c), nil
 }
-
-// ArrowType is a representation of GTK's GtkArrowType.
-type ArrowType int
-
-const (
-	ARROW_UP    ArrowType = C.GTK_ARROW_UP
-	ARROW_DOWN  ArrowType = C.GTK_ARROW_DOWN
-	ARROW_LEFT  ArrowType = C.GTK_ARROW_LEFT
-	ARROW_RIGHT ArrowType = C.GTK_ARROW_RIGHT
-	ARROW_NONE  ArrowType = C.GTK_ARROW_NONE
-)
 
 func marshalArrowType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ArrowType(c), nil
+	return iface.ArrowType(c), nil
 }
-
-// AssistantPageType is a representation of GTK's GtkAssistantPageType.
-type AssistantPageType int
-
-const (
-	ASSISTANT_PAGE_CONTENT  AssistantPageType = C.GTK_ASSISTANT_PAGE_CONTENT
-	ASSISTANT_PAGE_INTRO    AssistantPageType = C.GTK_ASSISTANT_PAGE_INTRO
-	ASSISTANT_PAGE_CONFIRM  AssistantPageType = C.GTK_ASSISTANT_PAGE_CONFIRM
-	ASSISTANT_PAGE_SUMMARY  AssistantPageType = C.GTK_ASSISTANT_PAGE_SUMMARY
-	ASSISTANT_PAGE_PROGRESS AssistantPageType = C.GTK_ASSISTANT_PAGE_PROGRESS
-	ASSISTANT_PAGE_CUSTOM   AssistantPageType = C.GTK_ASSISTANT_PAGE_CUSTOM
-)
 
 func marshalAssistantPageType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return AssistantPageType(c), nil
+	return iface.AssistantPageType(c), nil
 }
-
-// ButtonsType is a representation of GTK's GtkButtonsType.
-type ButtonsType int
-
-const (
-	BUTTONS_NONE      ButtonsType = C.GTK_BUTTONS_NONE
-	BUTTONS_OK        ButtonsType = C.GTK_BUTTONS_OK
-	BUTTONS_CLOSE     ButtonsType = C.GTK_BUTTONS_CLOSE
-	BUTTONS_CANCEL    ButtonsType = C.GTK_BUTTONS_CANCEL
-	BUTTONS_YES_NO    ButtonsType = C.GTK_BUTTONS_YES_NO
-	BUTTONS_OK_CANCEL ButtonsType = C.GTK_BUTTONS_OK_CANCEL
-)
 
 func marshalButtonsType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ButtonsType(c), nil
+	return iface.ButtonsType(c), nil
 }
-
-// CalendarDisplayOptions is a representation of GTK's GtkCalendarDisplayOptions
-type CalendarDisplayOptions int
-
-const (
-	CALENDAR_SHOW_HEADING      CalendarDisplayOptions = C.GTK_CALENDAR_SHOW_HEADING
-	CALENDAR_SHOW_DAY_NAMES    CalendarDisplayOptions = C.GTK_CALENDAR_SHOW_DAY_NAMES
-	CALENDAR_NO_MONTH_CHANGE   CalendarDisplayOptions = C.GTK_CALENDAR_NO_MONTH_CHANGE
-	CALENDAR_SHOW_WEEK_NUMBERS CalendarDisplayOptions = C.GTK_CALENDAR_SHOW_WEEK_NUMBERS
-	CALENDAR_SHOW_DETAILS      CalendarDisplayOptions = C.GTK_CALENDAR_SHOW_DETAILS
-)
 
 func marshalCalendarDisplayOptions(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return CalendarDisplayOptions(c), nil
+	return iface.CalendarDisplayOptions(c), nil
 }
-
-// DestDefaults is a representation of GTK's GtkDestDefaults.
-type DestDefaults int
-
-const (
-	DEST_DEFAULT_MOTION    DestDefaults = C.GTK_DEST_DEFAULT_MOTION
-	DEST_DEFAULT_HIGHLIGHT DestDefaults = C.GTK_DEST_DEFAULT_HIGHLIGHT
-	DEST_DEFAULT_DROP      DestDefaults = C.GTK_DEST_DEFAULT_DROP
-	DEST_DEFAULT_ALL       DestDefaults = C.GTK_DEST_DEFAULT_ALL
-)
 
 func marshalDestDefaults(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return DestDefaults(c), nil
+	return iface.DestDefaults(c), nil
 }
-
-// DialogFlags is a representation of GTK's GtkDialogFlags.
-type DialogFlags int
-
-const (
-	DIALOG_MODAL               DialogFlags = C.GTK_DIALOG_MODAL
-	DIALOG_DESTROY_WITH_PARENT DialogFlags = C.GTK_DIALOG_DESTROY_WITH_PARENT
-)
 
 func marshalDialogFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return DialogFlags(c), nil
+	return iface.DialogFlags(c), nil
 }
-
-// EntryIconPosition is a representation of GTK's GtkEntryIconPosition.
-type EntryIconPosition int
-
-const (
-	ENTRY_ICON_PRIMARY   EntryIconPosition = C.GTK_ENTRY_ICON_PRIMARY
-	ENTRY_ICON_SECONDARY EntryIconPosition = C.GTK_ENTRY_ICON_SECONDARY
-)
 
 func marshalEntryIconPosition(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return EntryIconPosition(c), nil
+	return iface.EntryIconPosition(c), nil
 }
-
-// FileChooserAction is a representation of GTK's GtkFileChooserAction.
-type FileChooserAction int
-
-const (
-	FILE_CHOOSER_ACTION_OPEN          FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_OPEN
-	FILE_CHOOSER_ACTION_SAVE          FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_SAVE
-	FILE_CHOOSER_ACTION_SELECT_FOLDER FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
-	FILE_CHOOSER_ACTION_CREATE_FOLDER FileChooserAction = C.GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER
-)
 
 func marshalFileChooserAction(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return FileChooserAction(c), nil
+	return iface.FileChooserAction(c), nil
 }
-
-// IconLookupFlags is a representation of GTK's GtkIconLookupFlags.
-type IconLookupFlags int
-
-const (
-	ICON_LOOKUP_NO_SVG           IconLookupFlags = C.GTK_ICON_LOOKUP_NO_SVG
-	ICON_LOOKUP_FORCE_SVG                        = C.GTK_ICON_LOOKUP_FORCE_SVG
-	ICON_LOOKUP_USE_BUILTIN                      = C.GTK_ICON_LOOKUP_USE_BUILTIN
-	ICON_LOOKUP_GENERIC_FALLBACK                 = C.GTK_ICON_LOOKUP_GENERIC_FALLBACK
-	ICON_LOOKUP_FORCE_SIZE                       = C.GTK_ICON_LOOKUP_FORCE_SIZE
-)
 
 func marshalIconLookupFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return IconLookupFlags(c), nil
+	return iface.IconLookupFlags(c), nil
 }
-
-// IconSize is a representation of GTK's GtkIconSize.
-type IconSize int
-
-const (
-	ICON_SIZE_INVALID       IconSize = C.GTK_ICON_SIZE_INVALID
-	ICON_SIZE_MENU          IconSize = C.GTK_ICON_SIZE_MENU
-	ICON_SIZE_SMALL_TOOLBAR IconSize = C.GTK_ICON_SIZE_SMALL_TOOLBAR
-	ICON_SIZE_LARGE_TOOLBAR IconSize = C.GTK_ICON_SIZE_LARGE_TOOLBAR
-	ICON_SIZE_BUTTON        IconSize = C.GTK_ICON_SIZE_BUTTON
-	ICON_SIZE_DND           IconSize = C.GTK_ICON_SIZE_DND
-	ICON_SIZE_DIALOG        IconSize = C.GTK_ICON_SIZE_DIALOG
-)
 
 func marshalIconSize(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return IconSize(c), nil
+	return iface.IconSize(c), nil
 }
-
-// ImageType is a representation of GTK's GtkImageType.
-type ImageType int
-
-const (
-	IMAGE_EMPTY     ImageType = C.GTK_IMAGE_EMPTY
-	IMAGE_PIXBUF    ImageType = C.GTK_IMAGE_PIXBUF
-	IMAGE_STOCK     ImageType = C.GTK_IMAGE_STOCK
-	IMAGE_ICON_SET  ImageType = C.GTK_IMAGE_ICON_SET
-	IMAGE_ANIMATION ImageType = C.GTK_IMAGE_ANIMATION
-	IMAGE_ICON_NAME ImageType = C.GTK_IMAGE_ICON_NAME
-	IMAGE_GICON     ImageType = C.GTK_IMAGE_GICON
-)
 
 func marshalImageType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ImageType(c), nil
+	return iface.ImageType(c), nil
 }
-
-// InputHints is a representation of GTK's GtkInputHints.
-type InputHints int
-
-const (
-	INPUT_HINT_NONE                InputHints = C.GTK_INPUT_HINT_NONE
-	INPUT_HINT_SPELLCHECK          InputHints = C.GTK_INPUT_HINT_SPELLCHECK
-	INPUT_HINT_NO_SPELLCHECK       InputHints = C.GTK_INPUT_HINT_NO_SPELLCHECK
-	INPUT_HINT_WORD_COMPLETION     InputHints = C.GTK_INPUT_HINT_WORD_COMPLETION
-	INPUT_HINT_LOWERCASE           InputHints = C.GTK_INPUT_HINT_LOWERCASE
-	INPUT_HINT_UPPERCASE_CHARS     InputHints = C.GTK_INPUT_HINT_UPPERCASE_CHARS
-	INPUT_HINT_UPPERCASE_WORDS     InputHints = C.GTK_INPUT_HINT_UPPERCASE_WORDS
-	INPUT_HINT_UPPERCASE_SENTENCES InputHints = C.GTK_INPUT_HINT_UPPERCASE_SENTENCES
-	INPUT_HINT_INHIBIT_OSK         InputHints = C.GTK_INPUT_HINT_INHIBIT_OSK
-)
 
 func marshalInputHints(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return InputHints(c), nil
+	return iface.InputHints(c), nil
 }
-
-// InputPurpose is a representation of GTK's GtkInputPurpose.
-type InputPurpose int
-
-const (
-	INPUT_PURPOSE_FREE_FORM InputPurpose = C.GTK_INPUT_PURPOSE_FREE_FORM
-	INPUT_PURPOSE_ALPHA     InputPurpose = C.GTK_INPUT_PURPOSE_ALPHA
-	INPUT_PURPOSE_DIGITS    InputPurpose = C.GTK_INPUT_PURPOSE_DIGITS
-	INPUT_PURPOSE_NUMBER    InputPurpose = C.GTK_INPUT_PURPOSE_NUMBER
-	INPUT_PURPOSE_PHONE     InputPurpose = C.GTK_INPUT_PURPOSE_PHONE
-	INPUT_PURPOSE_URL       InputPurpose = C.GTK_INPUT_PURPOSE_URL
-	INPUT_PURPOSE_EMAIL     InputPurpose = C.GTK_INPUT_PURPOSE_EMAIL
-	INPUT_PURPOSE_NAME      InputPurpose = C.GTK_INPUT_PURPOSE_NAME
-	INPUT_PURPOSE_PASSWORD  InputPurpose = C.GTK_INPUT_PURPOSE_PASSWORD
-	INPUT_PURPOSE_PIN       InputPurpose = C.GTK_INPUT_PURPOSE_PIN
-)
 
 func marshalInputPurpose(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return InputPurpose(c), nil
+	return iface.InputPurpose(c), nil
 }
-
-// Justify is a representation of GTK's GtkJustification.
-type Justification int
-
-const (
-	JUSTIFY_LEFT   Justification = C.GTK_JUSTIFY_LEFT
-	JUSTIFY_RIGHT  Justification = C.GTK_JUSTIFY_RIGHT
-	JUSTIFY_CENTER Justification = C.GTK_JUSTIFY_CENTER
-	JUSTIFY_FILL   Justification = C.GTK_JUSTIFY_FILL
-)
 
 func marshalJustification(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Justification(c), nil
+	return iface.Justification(c), nil
 }
-
-// License is a representation of GTK's GtkLicense.
-type License int
-
-const (
-	LICENSE_UNKNOWN      License = C.GTK_LICENSE_UNKNOWN
-	LICENSE_CUSTOM       License = C.GTK_LICENSE_CUSTOM
-	LICENSE_GPL_2_0      License = C.GTK_LICENSE_GPL_2_0
-	LICENSE_GPL_3_0      License = C.GTK_LICENSE_GPL_3_0
-	LICENSE_LGPL_2_1     License = C.GTK_LICENSE_LGPL_2_1
-	LICENSE_LGPL_3_0     License = C.GTK_LICENSE_LGPL_3_0
-	LICENSE_BSD          License = C.GTK_LICENSE_BSD
-	LICENSE_MIT_X11      License = C.GTK_LICENSE_MIT_X11
-	LICENSE_GTK_ARTISTIC License = C.GTK_LICENSE_ARTISTIC
-)
 
 func marshalLicense(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return License(c), nil
+	return iface.License(c), nil
 }
-
-// MessageType is a representation of GTK's GtkMessageType.
-type MessageType int
-
-const (
-	MESSAGE_INFO     MessageType = C.GTK_MESSAGE_INFO
-	MESSAGE_WARNING  MessageType = C.GTK_MESSAGE_WARNING
-	MESSAGE_QUESTION MessageType = C.GTK_MESSAGE_QUESTION
-	MESSAGE_ERROR    MessageType = C.GTK_MESSAGE_ERROR
-	MESSAGE_OTHER    MessageType = C.GTK_MESSAGE_OTHER
-)
 
 func marshalMessageType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return MessageType(c), nil
+	return iface.MessageType(c), nil
 }
-
-// Orientation is a representation of GTK's GtkOrientation.
-type Orientation int
-
-const (
-	ORIENTATION_HORIZONTAL Orientation = C.GTK_ORIENTATION_HORIZONTAL
-	ORIENTATION_VERTICAL   Orientation = C.GTK_ORIENTATION_VERTICAL
-)
 
 func marshalOrientation(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Orientation(c), nil
+	return iface.Orientation(c), nil
 }
-
-// PackType is a representation of GTK's GtkPackType.
-type PackType int
-
-const (
-	PACK_START PackType = C.GTK_PACK_START
-	PACK_END   PackType = C.GTK_PACK_END
-)
 
 func marshalPackType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return PackType(c), nil
+	return iface.PackType(c), nil
 }
-
-// PathType is a representation of GTK's GtkPathType.
-type PathType int
-
-const (
-	PATH_WIDGET       PathType = C.GTK_PATH_WIDGET
-	PATH_WIDGET_CLASS PathType = C.GTK_PATH_WIDGET_CLASS
-	PATH_CLASS        PathType = C.GTK_PATH_CLASS
-)
 
 func marshalPathType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return PathType(c), nil
+	return iface.PathType(c), nil
 }
-
-// PolicyType is a representation of GTK's GtkPolicyType.
-type PolicyType int
-
-const (
-	POLICY_ALWAYS    PolicyType = C.GTK_POLICY_ALWAYS
-	POLICY_AUTOMATIC PolicyType = C.GTK_POLICY_AUTOMATIC
-	POLICY_NEVER     PolicyType = C.GTK_POLICY_NEVER
-)
 
 func marshalPolicyType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return PolicyType(c), nil
+	return iface.PolicyType(c), nil
 }
-
-// PositionType is a representation of GTK's GtkPositionType.
-type PositionType int
-
-const (
-	POS_LEFT   PositionType = C.GTK_POS_LEFT
-	POS_RIGHT  PositionType = C.GTK_POS_RIGHT
-	POS_TOP    PositionType = C.GTK_POS_TOP
-	POS_BOTTOM PositionType = C.GTK_POS_BOTTOM
-)
 
 func marshalPositionType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return PositionType(c), nil
+	return iface.PositionType(c), nil
 }
-
-// ReliefStyle is a representation of GTK's GtkReliefStyle.
-type ReliefStyle int
-
-const (
-	RELIEF_NORMAL ReliefStyle = C.GTK_RELIEF_NORMAL
-	RELIEF_HALF   ReliefStyle = C.GTK_RELIEF_HALF
-	RELIEF_NONE   ReliefStyle = C.GTK_RELIEF_NONE
-)
 
 func marshalReliefStyle(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ReliefStyle(c), nil
+	return iface.ReliefStyle(c), nil
 }
-
-// ResponseType is a representation of GTK's GtkResponseType.
-type ResponseType int
-
-const (
-	RESPONSE_NONE         ResponseType = C.GTK_RESPONSE_NONE
-	RESPONSE_REJECT       ResponseType = C.GTK_RESPONSE_REJECT
-	RESPONSE_ACCEPT       ResponseType = C.GTK_RESPONSE_ACCEPT
-	RESPONSE_DELETE_EVENT ResponseType = C.GTK_RESPONSE_DELETE_EVENT
-	RESPONSE_OK           ResponseType = C.GTK_RESPONSE_OK
-	RESPONSE_CANCEL       ResponseType = C.GTK_RESPONSE_CANCEL
-	RESPONSE_CLOSE        ResponseType = C.GTK_RESPONSE_CLOSE
-	RESPONSE_YES          ResponseType = C.GTK_RESPONSE_YES
-	RESPONSE_NO           ResponseType = C.GTK_RESPONSE_NO
-	RESPONSE_APPLY        ResponseType = C.GTK_RESPONSE_APPLY
-	RESPONSE_HELP         ResponseType = C.GTK_RESPONSE_HELP
-)
 
 func marshalResponseType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ResponseType(c), nil
+	return iface.ResponseType(c), nil
 }
-
-// SelectionMode is a representation of GTK's GtkSelectionMode.
-type SelectionMode int
-
-const (
-	SELECTION_NONE     SelectionMode = C.GTK_SELECTION_NONE
-	SELECTION_SINGLE   SelectionMode = C.GTK_SELECTION_SINGLE
-	SELECTION_BROWSE   SelectionMode = C.GTK_SELECTION_BROWSE
-	SELECTION_MULTIPLE SelectionMode = C.GTK_SELECTION_MULTIPLE
-)
 
 func marshalSelectionMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return SelectionMode(c), nil
+	return iface.SelectionMode(c), nil
 }
-
-// ShadowType is a representation of GTK's GtkShadowType.
-type ShadowType int
-
-const (
-	SHADOW_NONE       ShadowType = C.GTK_SHADOW_NONE
-	SHADOW_IN         ShadowType = C.GTK_SHADOW_IN
-	SHADOW_OUT        ShadowType = C.GTK_SHADOW_OUT
-	SHADOW_ETCHED_IN  ShadowType = C.GTK_SHADOW_ETCHED_IN
-	SHADOW_ETCHED_OUT ShadowType = C.GTK_SHADOW_ETCHED_OUT
-)
 
 func marshalShadowType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ShadowType(c), nil
+	return iface.ShadowType(c), nil
 }
-
-// SortType is a representation of GTK's GtkSortType.
-type SortType int
-
-const (
-	SORT_ASCENDING  SortType = C.GTK_SORT_ASCENDING
-	SORT_DESCENDING          = C.GTK_SORT_DESCENDING
-)
 
 func marshalSortType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return SortType(c), nil
+	return iface.SortType(c), nil
 }
-
-// StateFlags is a representation of GTK's GtkStateFlags.
-type StateFlags int
-
-const (
-	STATE_FLAG_NORMAL       StateFlags = C.GTK_STATE_FLAG_NORMAL
-	STATE_FLAG_ACTIVE       StateFlags = C.GTK_STATE_FLAG_ACTIVE
-	STATE_FLAG_PRELIGHT     StateFlags = C.GTK_STATE_FLAG_PRELIGHT
-	STATE_FLAG_SELECTED     StateFlags = C.GTK_STATE_FLAG_SELECTED
-	STATE_FLAG_INSENSITIVE  StateFlags = C.GTK_STATE_FLAG_INSENSITIVE
-	STATE_FLAG_INCONSISTENT StateFlags = C.GTK_STATE_FLAG_INCONSISTENT
-	STATE_FLAG_FOCUSED      StateFlags = C.GTK_STATE_FLAG_FOCUSED
-	STATE_FLAG_BACKDROP     StateFlags = C.GTK_STATE_FLAG_BACKDROP
-)
 
 func marshalStateFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return StateFlags(c), nil
+	return iface.StateFlags(c), nil
 }
-
-// TargetFlags is a representation of GTK's GtkTargetFlags.
-type TargetFlags int
-
-const (
-	TARGET_SAME_APP     TargetFlags = C.GTK_TARGET_SAME_APP
-	TARGET_SAME_WIDGET  TargetFlags = C.GTK_TARGET_SAME_WIDGET
-	TARGET_OTHER_APP    TargetFlags = C.GTK_TARGET_OTHER_APP
-	TARGET_OTHER_WIDGET TargetFlags = C.GTK_TARGET_OTHER_WIDGET
-)
 
 func marshalTargetFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return TargetFlags(c), nil
+	return iface.TargetFlags(c), nil
 }
-
-// ToolbarStyle is a representation of GTK's GtkToolbarStyle.
-type ToolbarStyle int
-
-const (
-	TOOLBAR_ICONS      ToolbarStyle = C.GTK_TOOLBAR_ICONS
-	TOOLBAR_TEXT       ToolbarStyle = C.GTK_TOOLBAR_TEXT
-	TOOLBAR_BOTH       ToolbarStyle = C.GTK_TOOLBAR_BOTH
-	TOOLBAR_BOTH_HORIZ ToolbarStyle = C.GTK_TOOLBAR_BOTH_HORIZ
-)
 
 func marshalToolbarStyle(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ToolbarStyle(c), nil
+	return iface.ToolbarStyle(c), nil
 }
-
-// TreeModelFlags is a representation of GTK's GtkTreeModelFlags.
-type TreeModelFlags int
-
-const (
-	TREE_MODEL_ITERS_PERSIST TreeModelFlags = C.GTK_TREE_MODEL_ITERS_PERSIST
-	TREE_MODEL_LIST_ONLY     TreeModelFlags = C.GTK_TREE_MODEL_LIST_ONLY
-)
 
 func marshalTreeModelFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return TreeModelFlags(c), nil
+	return iface.TreeModelFlags(c), nil
 }
-
-// WindowPosition is a representation of GTK's GtkWindowPosition.
-type WindowPosition int
-
-const (
-	WIN_POS_NONE             WindowPosition = C.GTK_WIN_POS_NONE
-	WIN_POS_CENTER           WindowPosition = C.GTK_WIN_POS_CENTER
-	WIN_POS_MOUSE            WindowPosition = C.GTK_WIN_POS_MOUSE
-	WIN_POS_CENTER_ALWAYS    WindowPosition = C.GTK_WIN_POS_CENTER_ALWAYS
-	WIN_POS_CENTER_ON_PARENT WindowPosition = C.GTK_WIN_POS_CENTER_ON_PARENT
-)
 
 func marshalWindowPosition(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return WindowPosition(c), nil
+	return iface.WindowPosition(c), nil
 }
-
-// WindowType is a representation of GTK's GtkWindowType.
-type WindowType int
-
-const (
-	WINDOW_TOPLEVEL WindowType = C.GTK_WINDOW_TOPLEVEL
-	WINDOW_POPUP    WindowType = C.GTK_WINDOW_POPUP
-)
 
 func marshalWindowType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return WindowType(c), nil
+	return iface.WindowType(c), nil
 }
-
-// WrapMode is a representation of GTK's GtkWrapMode.
-type WrapMode int
-
-const (
-	WRAP_NONE      WrapMode = C.GTK_WRAP_NONE
-	WRAP_CHAR      WrapMode = C.GTK_WRAP_CHAR
-	WRAP_WORD      WrapMode = C.GTK_WRAP_WORD
-	WRAP_WORD_CHAR WrapMode = C.GTK_WRAP_WORD_CHAR
-)
 
 func marshalWrapMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return WrapMode(c), nil
+	return iface.WrapMode(c), nil
 }
 
 /*
@@ -1091,13 +915,13 @@ func (v *Assistant) RemovePage(pageNum int) {
 // TODO: gtk_assistant_set_forward_page_func
 
 // SetPageType is a wrapper around gtk_assistant_set_page_type().
-func (v *Assistant) SetPageType(page IWidget, ptype AssistantPageType) {
+func (v *Assistant) SetPageType(page iface.Widget, ptype iface.AssistantPageType) {
 	C.gtk_assistant_set_page_type(v.native(), page.toWidget(),
 		C.GtkAssistantPageType(ptype))
 }
 
 // GetPageType is a wrapper around gtk_assistant_get_page_type().
-func (v *Assistant) GetPageType(page IWidget) AssistantPageType {
+func (v *Assistant) GetPageType(page iface.Widget) iface.AssistantPageType {
 	c := C.gtk_assistant_get_page_type(v.native(), page.toWidget())
 	return AssistantPageType(c)
 }
@@ -1385,14 +1209,14 @@ func (v *Button) Clicked() {
 }
 
 // SetRelief() is a wrapper around gtk_button_set_relief().
-func (v *Button) SetRelief(newStyle ReliefStyle) {
+func (v *Button) SetRelief(newStyle iface.ReliefStyle) {
 	C.gtk_button_set_relief(v.native(), C.GtkReliefStyle(newStyle))
 }
 
 // GetRelief() is a wrapper around gtk_button_get_relief().
-func (v *Button) GetRelief() ReliefStyle {
+func (v *Button) GetRelief() iface.ReliefStyle {
 	c := C.gtk_button_get_relief(v.native())
-	return ReliefStyle(c)
+	return iface.ReliefStyle(c)
 }
 
 // SetLabel() is a wrapper around gtk_button_set_label().
@@ -1449,12 +1273,12 @@ func (v *Button) GetImage() (*Widget, error) {
 }
 
 // SetImagePosition() is a wrapper around gtk_button_set_image_position().
-func (v *Button) SetImagePosition(position PositionType) {
+func (v *Button) SetImagePosition(position iface.PositionType) {
 	C.gtk_button_set_image_position(v.native(), C.GtkPositionType(position))
 }
 
 // GetImagePosition() is a wrapper around gtk_button_get_image_position().
-func (v *Button) GetImagePosition() PositionType {
+func (v *Button) GetImagePosition() iface.PositionType {
 	c := C.gtk_button_get_image_position(v.native())
 	return PositionType(c)
 }
@@ -1555,7 +1379,7 @@ func wrapBox(obj *glib.Object) *Box {
 }
 
 // BoxNew() is a wrapper around gtk_box_new().
-func BoxNew(orientation Orientation, spacing int) (*Box, error) {
+func BoxNew(orientation iface.Orientation, spacing int) (*Box, error) {
 	c := C.gtk_box_new(C.GtkOrientation(orientation), C.gint(spacing))
 	if c == nil {
 		return nil, nilPtrErr
@@ -1604,7 +1428,7 @@ func (v *Box) ReorderChild(child IWidget, position int) {
 }
 
 // QueryChildPacking() is a wrapper around gtk_box_query_child_packing().
-func (v *Box) QueryChildPacking(child IWidget) (expand, fill bool, padding uint, packType PackType) {
+func (v *Box) QueryChildPacking(child iface.Widget) (expand, fill bool, padding uint, packType iface.PackType) {
 	var cexpand, cfill C.gboolean
 	var cpadding C.guint
 	var cpackType C.GtkPackType
@@ -1615,7 +1439,7 @@ func (v *Box) QueryChildPacking(child IWidget) (expand, fill bool, padding uint,
 }
 
 // SetChildPacking() is a wrapper around gtk_box_set_child_packing().
-func (v *Box) SetChildPacking(child IWidget, expand, fill bool, padding uint, packType PackType) {
+func (v *Box) SetChildPacking(child iface.Widget, expand, fill bool, padding uint, packType iface.PackType) {
 	C.gtk_box_set_child_packing(v.native(), child.toWidget(), gbool(expand),
 		gbool(fill), C.guint(padding), C.GtkPackType(packType))
 }
@@ -1690,13 +1514,13 @@ func (v *Calendar) ClearMarks() {
 }
 
 // GetDisplayOptions is a wrapper around gtk_calendar_get_display_options().
-func (v *Calendar) GetDisplayOptions() CalendarDisplayOptions {
+func (v *Calendar) GetDisplayOptions() iface.CalendarDisplayOptions {
 	c := C.gtk_calendar_get_display_options(v.native())
-	return CalendarDisplayOptions(c)
+	return iface.CalendarDisplayOptions(c)
 }
 
 // SetDisplayOptions is a wrapper around gtk_calendar_set_display_options().
-func (v *Calendar) SetDisplayOptions(flags CalendarDisplayOptions) {
+func (v *Calendar) SetDisplayOptions(flags iface.CalendarDisplayOptions) {
 	C.gtk_calendar_set_display_options(v.native(),
 		C.GtkCalendarDisplayOptions(flags))
 }
@@ -2225,7 +2049,7 @@ func (v *Clipboard) Store() {
 }
 
 // ClipboardGet() is a wrapper around gtk_clipboard_get().
-func ClipboardGet(atom gdk.Atom) (*Clipboard, error) {
+func ClipboardGet(atom gdk_iface.Atom) (*Clipboard, error) {
 	c := C.gtk_clipboard_get(C.GdkAtom(unsafe.Pointer(atom)))
 	if c == nil {
 		return nil, nilPtrErr
@@ -2236,7 +2060,7 @@ func ClipboardGet(atom gdk.Atom) (*Clipboard, error) {
 }
 
 // ClipboardGetForDisplay() is a wrapper around gtk_clipboard_get_for_display().
-func ClipboardGetForDisplay(display *gdk.Display, atom gdk.Atom) (*Clipboard, error) {
+func ClipboardGetForDisplay(display *gdk.Display, atom gdk_iface.Atom) (*Clipboard, error) {
 	displayPtr := (*C.GdkDisplay)(unsafe.Pointer(display.Native()))
 	c := C.gtk_clipboard_get_for_display(displayPtr,
 		C.GdkAtom(unsafe.Pointer(atom)))
@@ -2307,13 +2131,13 @@ func (v *Clipboard) WaitForImage() (*gdk.Pixbuf, error) {
 }
 
 // WaitIsTargetAvailable is a wrapper around gtk_clipboard_wait_is_target_available
-func (v *Clipboard) WaitIsTargetAvailable(target gdk.Atom) bool {
+func (v *Clipboard) WaitIsTargetAvailable(target gdk_iface.Atom) bool {
 	c := C.gtk_clipboard_wait_is_target_available(v.native(), C.GdkAtom(unsafe.Pointer(target)))
 	return gobool(c)
 }
 
 // WaitForContents is a wrapper around gtk_clipboard_wait_for_contents
-func (v *Clipboard) WaitForContents(target gdk.Atom) (*SelectionData, error) {
+func (v *Clipboard) WaitForContents(target gdk_iface.Atom) (*SelectionData, error) {
 	c := C.gtk_clipboard_wait_for_contents(v.native(), C.GdkAtom(unsafe.Pointer(target)))
 	if c == nil {
 		return nil, nilPtrErr
@@ -2352,13 +2176,13 @@ func wrapContainer(obj *glib.Object) *Container {
 }
 
 // Add is a wrapper around gtk_container_add().
-func (v *Container) Add(w IWidget) {
-	C.gtk_container_add(v.native(), w.toWidget())
+func (v *Container) Add(w iface.Widget) {
+	C.gtk_container_add(v.native(), w.(IWidget).toWidget())
 }
 
 // Remove is a wrapper around gtk_container_remove().
-func (v *Container) Remove(w IWidget) {
-	C.gtk_container_remove(v.native(), w.toWidget())
+func (v *Container) Remove(w iface.Widget) {
+	C.gtk_container_remove(v.native(), w.(IWidget).toWidget())
 }
 
 // TODO: gtk_container_add_with_properties
@@ -2373,7 +2197,7 @@ func (v *Container) CheckResize() {
 // TODO: gtk_container_get_path_for_child
 
 // GetFocusChild is a wrapper around gtk_container_get_focus_child().
-func (v *Container) GetFocusChild() *Widget {
+func (v *Container) GetFocusChild() iface.Widget {
 	c := C.gtk_container_get_focus_child(v.native())
 	if c == nil {
 		return nil
@@ -2422,9 +2246,9 @@ func (v *Container) SetFocusHAdjustment(adjustment *Adjustment) {
 }
 
 // ChildType is a wrapper around gtk_container_child_type().
-func (v *Container) ChildType() glib.Type {
+func (v *Container) ChildType() glib_iface.Type {
 	c := C.gtk_container_child_type(v.native())
-	return glib.Type(c)
+	return glib_iface.Type(c)
 }
 
 // TODO: gtk_container_child_get_valist
@@ -2478,11 +2302,11 @@ func GdkCairoSetSourcePixBuf(cr *cairo.Context, pixbuf *gdk.Pixbuf, pixbufX, pix
 }
 
 // GetFocusChain is a wrapper around gtk_container_get_focus_chain().
-func (v *Container) GetFocusChain() ([]*Widget, bool) {
+func (v *Container) GetFocusChain() ([]iface.Widget, bool) {
 	var cwlist *C.GList
 	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
 
-	var widgets []*Widget
+	var widgets []iface.Widget
 	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
 	for ; wlist.Data() != nil; wlist = wlist.Next() {
 		widgets = append(widgets, wrapWidget(wrapObject(wlist.Data().(unsafe.Pointer))))
@@ -2491,7 +2315,7 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 }
 
 // SetFocusChain is a wrapper around gtk_container_set_focus_chain().
-func (v *Container) SetFocusChain(focusableWidgets []IWidget) {
+func (v *Container) SetFocusChain(focusableWidgets []iface.Widget) {
 	var list *glib.List
 	for _, w := range focusableWidgets {
 		data := uintptr(unsafe.Pointer(w.toWidget()))
@@ -2645,14 +2469,14 @@ func (v *Dialog) Run() int {
 }
 
 // Response() is a wrapper around gtk_dialog_response().
-func (v *Dialog) Response(response ResponseType) {
+func (v *Dialog) Response(response iface.ResponseType) {
 	C.gtk_dialog_response(v.native(), C.gint(response))
 }
 
 // AddButton() is a wrapper around gtk_dialog_add_button().  text may
 // be either the literal button text, or if using GTK 3.8 or earlier, a
 // Stock type converted to a string.
-func (v *Dialog) AddButton(text string, id ResponseType) (*Button, error) {
+func (v *Dialog) AddButton(text string, id iface.ResponseType) (*Button, error) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_dialog_add_button(v.native(), (*C.gchar)(cstr), C.gint(id))
@@ -2664,32 +2488,32 @@ func (v *Dialog) AddButton(text string, id ResponseType) (*Button, error) {
 }
 
 // AddActionWidget() is a wrapper around gtk_dialog_add_action_widget().
-func (v *Dialog) AddActionWidget(child IWidget, id ResponseType) {
+func (v *Dialog) AddActionWidget(child IWidget, id iface.ResponseType) {
 	C.gtk_dialog_add_action_widget(v.native(), child.toWidget(), C.gint(id))
 }
 
 // SetDefaultResponse() is a wrapper around gtk_dialog_set_default_response().
-func (v *Dialog) SetDefaultResponse(id ResponseType) {
+func (v *Dialog) SetDefaultResponse(id iface.ResponseType) {
 	C.gtk_dialog_set_default_response(v.native(), C.gint(id))
 }
 
 // SetResponseSensitive() is a wrapper around
 // gtk_dialog_set_response_sensitive().
-func (v *Dialog) SetResponseSensitive(id ResponseType, setting bool) {
+func (v *Dialog) SetResponseSensitive(id iface.ResponseType, setting bool) {
 	C.gtk_dialog_set_response_sensitive(v.native(), C.gint(id),
 		gbool(setting))
 }
 
 // GetResponseForWidget() is a wrapper around
 // gtk_dialog_get_response_for_widget().
-func (v *Dialog) GetResponseForWidget(widget IWidget) ResponseType {
+func (v *Dialog) GetResponseForWidget(widget IWidget) iface.ResponseType {
 	c := C.gtk_dialog_get_response_for_widget(v.native(), widget.toWidget())
-	return ResponseType(c)
+	return iface.ResponseType(c)
 }
 
 // GetWidgetForResponse() is a wrapper around
 // gtk_dialog_get_widget_for_response().
-func (v *Dialog) GetWidgetForResponse(id ResponseType) (*Widget, error) {
+func (v *Dialog) GetWidgetForResponse(id iface.ResponseType) (*Widget, error) {
 	c := C.gtk_dialog_get_widget_for_response(v.native(), C.gint(id))
 	if c == nil {
 		return nil, nilPtrErr
@@ -3218,7 +3042,7 @@ func (v *Entry) SetIconFromPixbuf() {
 
 // SetIconFromIconName() is a wrapper around
 // gtk_entry_set_icon_from_icon_name().
-func (v *Entry) SetIconFromIconName(iconPos EntryIconPosition, name string) {
+func (v *Entry) SetIconFromIconName(iconPos iface.EntryIconPosition, name string) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_entry_set_icon_from_icon_name(v.native(),
@@ -3232,10 +3056,10 @@ func (v *Entry) SetIconFromGIcon() {
 */
 
 // GetIconStorageType() is a wrapper around gtk_entry_get_icon_storage_type().
-func (v *Entry) GetIconStorageType(iconPos EntryIconPosition) ImageType {
+func (v *Entry) GetIconStorageType(iconPos iface.EntryIconPosition) iface.ImageType {
 	c := C.gtk_entry_get_icon_storage_type(v.native(),
 		C.GtkEntryIconPosition(iconPos))
-	return ImageType(c)
+	return iface.ImageType(c)
 }
 
 // TODO(jrick) GdkPixbuf
@@ -3245,7 +3069,7 @@ func (v *Entry) GetIconPixbuf() {
 */
 
 // GetIconName() is a wrapper around gtk_entry_get_icon_name().
-func (v *Entry) GetIconName(iconPos EntryIconPosition) (string, error) {
+func (v *Entry) GetIconName(iconPos iface.EntryIconPosition) (string, error) {
 	c := C.gtk_entry_get_icon_name(v.native(),
 		C.GtkEntryIconPosition(iconPos))
 	if c == nil {
@@ -3261,26 +3085,26 @@ func (v *Entry) GetIconGIcon() {
 */
 
 // SetIconActivatable() is a wrapper around gtk_entry_set_icon_activatable().
-func (v *Entry) SetIconActivatable(iconPos EntryIconPosition, activatable bool) {
+func (v *Entry) SetIconActivatable(iconPos iface.EntryIconPosition, activatable bool) {
 	C.gtk_entry_set_icon_activatable(v.native(),
 		C.GtkEntryIconPosition(iconPos), gbool(activatable))
 }
 
 // GetIconActivatable() is a wrapper around gtk_entry_get_icon_activatable().
-func (v *Entry) GetIconActivatable(iconPos EntryIconPosition) bool {
+func (v *Entry) GetIconActivatable(iconPos iface.EntryIconPosition) bool {
 	c := C.gtk_entry_get_icon_activatable(v.native(),
 		C.GtkEntryIconPosition(iconPos))
 	return gobool(c)
 }
 
 // SetIconSensitive() is a wrapper around gtk_entry_set_icon_sensitive().
-func (v *Entry) SetIconSensitive(iconPos EntryIconPosition, sensitive bool) {
+func (v *Entry) SetIconSensitive(iconPos iface.EntryIconPosition, sensitive bool) {
 	C.gtk_entry_set_icon_sensitive(v.native(),
 		C.GtkEntryIconPosition(iconPos), gbool(sensitive))
 }
 
 // GetIconSensitive() is a wrapper around gtk_entry_get_icon_sensitive().
-func (v *Entry) GetIconSensitive(iconPos EntryIconPosition) bool {
+func (v *Entry) GetIconSensitive(iconPos iface.EntryIconPosition) bool {
 	c := C.gtk_entry_get_icon_sensitive(v.native(),
 		C.GtkEntryIconPosition(iconPos))
 	return gobool(c)
@@ -3293,7 +3117,7 @@ func (v *Entry) GetIconAtPos(x, y int) int {
 }
 
 // SetIconTooltipText() is a wrapper around gtk_entry_set_icon_tooltip_text().
-func (v *Entry) SetIconTooltipText(iconPos EntryIconPosition, tooltip string) {
+func (v *Entry) SetIconTooltipText(iconPos iface.EntryIconPosition, tooltip string) {
 	cstr := C.CString(tooltip)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_entry_set_icon_tooltip_text(v.native(),
@@ -3301,7 +3125,7 @@ func (v *Entry) SetIconTooltipText(iconPos EntryIconPosition, tooltip string) {
 }
 
 // GetIconTooltipText() is a wrapper around gtk_entry_get_icon_tooltip_text().
-func (v *Entry) GetIconTooltipText(iconPos EntryIconPosition) (string, error) {
+func (v *Entry) GetIconTooltipText(iconPos iface.EntryIconPosition) (string, error) {
 	c := C.gtk_entry_get_icon_tooltip_text(v.native(),
 		C.GtkEntryIconPosition(iconPos))
 	if c == nil {
@@ -3312,7 +3136,7 @@ func (v *Entry) GetIconTooltipText(iconPos EntryIconPosition) (string, error) {
 
 // SetIconTooltipMarkup() is a wrapper around
 // gtk_entry_set_icon_tooltip_markup().
-func (v *Entry) SetIconTooltipMarkup(iconPos EntryIconPosition, tooltip string) {
+func (v *Entry) SetIconTooltipMarkup(iconPos iface.EntryIconPosition, tooltip string) {
 	cstr := C.CString(tooltip)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_entry_set_icon_tooltip_markup(v.native(),
@@ -3321,7 +3145,7 @@ func (v *Entry) SetIconTooltipMarkup(iconPos EntryIconPosition, tooltip string) 
 
 // GetIconTooltipMarkup() is a wrapper around
 // gtk_entry_get_icon_tooltip_markup().
-func (v *Entry) GetIconTooltipMarkup(iconPos EntryIconPosition) (string, error) {
+func (v *Entry) GetIconTooltipMarkup(iconPos iface.EntryIconPosition) (string, error) {
 	c := C.gtk_entry_get_icon_tooltip_markup(v.native(),
 		C.GtkEntryIconPosition(iconPos))
 	if c == nil {
@@ -3350,25 +3174,25 @@ func (v *Entry) GetIconArea() {
 */
 
 // SetInputPurpose() is a wrapper around gtk_entry_set_input_purpose().
-func (v *Entry) SetInputPurpose(purpose InputPurpose) {
+func (v *Entry) SetInputPurpose(purpose iface.InputPurpose) {
 	C.gtk_entry_set_input_purpose(v.native(), C.GtkInputPurpose(purpose))
 }
 
 // GetInputPurpose() is a wrapper around gtk_entry_get_input_purpose().
-func (v *Entry) GetInputPurpose() InputPurpose {
+func (v *Entry) GetInputPurpose() iface.InputPurpose {
 	c := C.gtk_entry_get_input_purpose(v.native())
-	return InputPurpose(c)
+	return iface.InputPurpose(c)
 }
 
 // SetInputHints() is a wrapper around gtk_entry_set_input_hints().
-func (v *Entry) SetInputHints(hints InputHints) {
+func (v *Entry) SetInputHints(hints iface.InputHints) {
 	C.gtk_entry_set_input_hints(v.native(), C.GtkInputHints(hints))
 }
 
 // GetInputHints() is a wrapper around gtk_entry_get_input_hints().
-func (v *Entry) GetInputHints() InputHints {
+func (v *Entry) GetInputHints() iface.InputHints {
 	c := C.gtk_entry_get_input_hints(v.native())
-	return InputHints(c)
+	return iface.InputHints(c)
 }
 
 /*
@@ -3780,7 +3604,7 @@ func wrapFileChooserButton(obj *glib.Object) *FileChooserButton {
 }
 
 // FileChooserButtonNew is a wrapper around gtk_file_chooser_button_new().
-func FileChooserButtonNew(title string, action FileChooserAction) (*FileChooserButton, error) {
+func FileChooserButtonNew(title string, action iface.FileChooserAction) (*FileChooserButton, error) {
 	cstr := C.CString(title)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_file_chooser_button_new((*C.gchar)(cstr),
@@ -3828,9 +3652,9 @@ func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
 func FileChooserDialogNewWith1Button(
 	title string,
 	parent *Window,
-	action FileChooserAction,
+	action iface.FileChooserAction,
 	first_button_text string,
-	first_button_id ResponseType) (*FileChooserDialog, error) {
+	first_button_id iface.ResponseType) (*FileChooserDialog, error) {
 	c_title := C.CString(title)
 	defer C.free(unsafe.Pointer(c_title))
 	c_first_button_text := C.CString(first_button_text)
@@ -3849,11 +3673,11 @@ func FileChooserDialogNewWith1Button(
 func FileChooserDialogNewWith2Buttons(
 	title string,
 	parent *Window,
-	action FileChooserAction,
+	action iface.FileChooserAction,
 	first_button_text string,
-	first_button_id ResponseType,
+	first_button_id iface.ResponseType,
 	second_button_text string,
-	second_button_id ResponseType) (*FileChooserDialog, error) {
+	second_button_id iface.ResponseType) (*FileChooserDialog, error) {
 	c_title := C.CString(title)
 	defer C.free(unsafe.Pointer(c_title))
 	c_first_button_text := C.CString(first_button_text)
@@ -3904,7 +3728,7 @@ func wrapFileChooserWidget(obj *glib.Object) *FileChooserWidget {
 }
 
 // FileChooserWidgetNew is a wrapper around gtk_file_chooser_widget_new().
-func FileChooserWidgetNew(action FileChooserAction) (*FileChooserWidget, error) {
+func FileChooserWidgetNew(action iface.FileChooserAction) (*FileChooserWidget, error) {
 	c := C.gtk_file_chooser_widget_new((C.GtkFileChooserAction)(action))
 	if c == nil {
 		return nil, nilPtrErr
@@ -4097,7 +3921,7 @@ func (v *Frame) SetLabelAlign(xAlign, yAlign float32) {
 }
 
 // SetShadowType is a wrapper around gtk_frame_set_shadow_type().
-func (v *Frame) SetShadowType(t ShadowType) {
+func (v *Frame) SetShadowType(t iface.ShadowType) {
 	C.gtk_frame_set_shadow_type(v.native(), C.GtkShadowType(t))
 }
 
@@ -4125,9 +3949,9 @@ func (v *Frame) GetLabelWidget() (*Widget, error) {
 }
 
 // GetShadowType is a wrapper around gtk_frame_get_shadow_type().
-func (v *Frame) GetShadowType() ShadowType {
+func (v *Frame) GetShadowType() iface.ShadowType {
 	c := C.gtk_frame_get_shadow_type(v.native())
-	return ShadowType(c)
+	return iface.ShadowType(c)
 }
 
 /*
@@ -4186,7 +4010,7 @@ func (v *Grid) Attach(child IWidget, left, top, width, height int) {
 }
 
 // AttachNextTo() is a wrapper around gtk_grid_attach_next_to().
-func (v *Grid) AttachNextTo(child, sibling IWidget, side PositionType, width, height int) {
+func (v *Grid) AttachNextTo(child, sibling IWidget, side iface.PositionType, width, height int) {
 	C.gtk_grid_attach_next_to(v.native(), child.toWidget(),
 		sibling.toWidget(), C.GtkPositionType(side), C.gint(width),
 		C.gint(height))
@@ -4213,7 +4037,7 @@ func (v *Grid) InsertColumn(position int) {
 }
 
 // InsertNextTo() is a wrapper around gtk_grid_insert_next_to()
-func (v *Grid) InsertNextTo(sibling IWidget, side PositionType) {
+func (v *Grid) InsertNextTo(sibling IWidget, side iface.PositionType) {
 	C.gtk_grid_insert_next_to(v.native(), sibling.toWidget(),
 		C.GtkPositionType(side))
 }
@@ -4291,7 +4115,7 @@ func IconThemeGetForScreen(screen gdk.Screen) (*IconTheme, error) {
 }
 
 // LoadIcon is a wrapper around gtk_icon_theme_load_icon().
-func (v *IconTheme) LoadIcon(iconName string, size int, flags IconLookupFlags) (*gdk.Pixbuf, error) {
+func (v *IconTheme) LoadIcon(iconName string, size int, flags iface.IconLookupFlags) (*gdk.Pixbuf, error) {
 	cstr := C.CString(iconName)
 	defer C.free(unsafe.Pointer(cstr))
 	var err *C.GError = nil
@@ -4463,7 +4287,7 @@ func ImageNewFromAnimation() {
 */
 
 // ImageNewFromIconName() is a wrapper around gtk_image_new_from_icon_name().
-func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
+func ImageNewFromIconName(iconName string, size iface.IconSize) (*Image, error) {
 	cstr := C.CString(iconName)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_image_new_from_icon_name((*C.gchar)(cstr),
@@ -4519,7 +4343,7 @@ func (v *Image) SetFromAnimation() {
 */
 
 // SetFromIconName() is a wrapper around gtk_image_set_from_icon_name().
-func (v *Image) SetFromIconName(iconName string, size IconSize) {
+func (v *Image) SetFromIconName(iconName string, size iface.IconSize) {
 	cstr := C.CString(iconName)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_image_set_from_icon_name(v.native(), (*C.gchar)(cstr),
@@ -4538,9 +4362,9 @@ func (v *Image) SetPixelSize(pixelSize int) {
 }
 
 // GetStorageType() is a wrapper around gtk_image_get_storage_type().
-func (v *Image) GetStorageType() ImageType {
+func (v *Image) GetStorageType() iface.ImageType {
 	c := C.gtk_image_get_storage_type(v.native())
-	return ImageType(c)
+	return iface.ImageType(c)
 }
 
 // GetPixbuf() is a wrapper around gtk_image_get_pixbuf().
@@ -4567,7 +4391,7 @@ func (v *Image) GetAnimation() {
 */
 
 // GetIconName() is a wrapper around gtk_image_get_icon_name().
-func (v *Image) GetIconName() (string, IconSize) {
+func (v *Image) GetIconName() (string, iface.IconSize) {
 	var iconName *C.gchar
 	var size C.GtkIconSize
 	C.gtk_image_get_icon_name(v.native(), &iconName, &size)
@@ -4752,7 +4576,7 @@ func (v *ListStore) toTreeModel() *C.GtkTreeModel {
 }
 
 // ListStoreNew is a wrapper around gtk_list_store_newv().
-func ListStoreNew(types ...glib.Type) (*ListStore, error) {
+func ListStoreNew(types ...glib_iface.Type) (*ListStore, error) {
 	gtypes := C.alloc_types(C.int(len(types)))
 	for n, val := range types {
 		C.set_type(gtypes, C.int(n), C.GType(val))
@@ -4775,7 +4599,7 @@ func (v *ListStore) Remove(iter *TreeIter) bool {
 
 // TODO(jrick)
 /*
-func (v *ListStore) SetColumnTypes(types ...glib.Type) {
+func (v *ListStore) SetColumnTypes(types ...glib_iface.Type) {
 }
 */
 
@@ -4825,12 +4649,12 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 //}
 
 // SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
-func (v *ListStore) SetSortColumnId(column int, order SortType) {
+func (v *ListStore) SetSortColumnId(column int, order iface.SortType) {
 	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
 	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
 }
 
-func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
+func (v *ListStore) SetCols(iter iface.TreeIter, cols iface.Cols) error {
 	for key, value := range cols {
 		err := v.SetValue(iter, key, value)
 		if err != nil {
@@ -4839,9 +4663,6 @@ func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
 	}
 	return nil
 }
-
-// Convenient map for Columns and values (See ListStore, TreeStore)
-type Cols map[int]interface{}
 
 // TODO(jrick)
 /*
@@ -5090,14 +4911,14 @@ func (v *MenuButton) GetPopup() *Menu {
 // TODO: gtk_menu_button_get_menu_model
 
 // SetDirection is a wrapper around gtk_menu_button_set_direction().
-func (v *MenuButton) SetDirection(direction ArrowType) {
+func (v *MenuButton) SetDirection(direction iface.ArrowType) {
 	C.gtk_menu_button_set_direction(v.native(), C.GtkArrowType(direction))
 }
 
 // GetDirection is a wrapper around gtk_menu_button_get_direction().
-func (v *MenuButton) GetDirection() ArrowType {
+func (v *MenuButton) GetDirection() iface.ArrowType {
 	c := C.gtk_menu_button_get_direction(v.native())
-	return ArrowType(c)
+	return iface.ArrowType(c)
 }
 
 // SetAlignWidget is a wrapper around gtk_menu_button_set_align_widget().
@@ -5233,7 +5054,7 @@ func wrapMessageDialog(obj *glib.Object) *MessageDialog {
 // MessageDialogNew() is a wrapper around gtk_message_dialog_new().
 // The text is created and formatted by the format specifier and any
 // additional arguments.
-func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, buttons ButtonsType, format string, a ...interface{}) *MessageDialog {
+func MessageDialogNew(parent IWindow, flags iface.DialogFlags, mType iface.MessageType, buttons iface.ButtonsType, format string, a ...interface{}) *MessageDialog {
 	s := fmt.Sprintf(format, a...)
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
@@ -5249,7 +5070,7 @@ func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, butt
 
 // MessageDialogNewWithMarkup is a wrapper around
 // gtk_message_dialog_new_with_markup().
-func MessageDialogNewWithMarkup(parent IWindow, flags DialogFlags, mType MessageType, buttons ButtonsType, format string, a ...interface{}) *MessageDialog {
+func MessageDialogNewWithMarkup(parent IWindow, flags iface.DialogFlags, mType iface.MessageType, buttons iface.ButtonsType, format string, a ...interface{}) *MessageDialog {
 	s := fmt.Sprintf(format, a...)
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
@@ -5398,7 +5219,7 @@ func (v *Notebook) ReorderChild(child IWidget, position int) {
 }
 
 // SetTabPos() is a wrapper around gtk_notebook_set_tab_pos().
-func (v *Notebook) SetTabPos(pos PositionType) {
+func (v *Notebook) SetTabPos(pos iface.PositionType) {
 	C.gtk_notebook_set_tab_pos(v.native(), C.GtkPositionType(pos))
 }
 
@@ -5543,9 +5364,9 @@ func (v *Notebook) GetTabLabelText(child IWidget) (string, error) {
 }
 
 // GetTabPos() is a wrapper around gtk_notebook_get_tab_pos().
-func (v *Notebook) GetTabPos() PositionType {
+func (v *Notebook) GetTabPos() iface.PositionType {
 	c := C.gtk_notebook_get_tab_pos(v.native())
-	return PositionType(c)
+	return iface.PositionType(c)
 }
 
 // GetTabReorderable() is a wrapper around gtk_notebook_get_tab_reorderable().
@@ -5582,13 +5403,13 @@ func (v *Notebook) GetGroupName() (string, error) {
 }
 
 // SetActionWidget() is a wrapper around gtk_notebook_set_action_widget().
-func (v *Notebook) SetActionWidget(widget IWidget, packType PackType) {
+func (v *Notebook) SetActionWidget(widget IWidget, packType iface.PackType) {
 	C.gtk_notebook_set_action_widget(v.native(), widget.toWidget(),
 		C.GtkPackType(packType))
 }
 
 // GetActionWidget() is a wrapper around gtk_notebook_get_action_widget().
-func (v *Notebook) GetActionWidget(packType PackType) (*Widget, error) {
+func (v *Notebook) GetActionWidget(packType iface.PackType) (*Widget, error) {
 	c := C.gtk_notebook_get_action_widget(v.native(),
 		C.GtkPackType(packType))
 	if c == nil {
@@ -5697,13 +5518,13 @@ func wrapOrientable(obj *glib.Object) *Orientable {
 }
 
 // GetOrientation() is a wrapper around gtk_orientable_get_orientation().
-func (v *Orientable) GetOrientation() Orientation {
+func (v *Orientable) GetOrientation() iface.Orientation {
 	c := C.gtk_orientable_get_orientation(v.native())
-	return Orientation(c)
+	return iface.Orientation(c)
 }
 
 // SetOrientation() is a wrapper around gtk_orientable_set_orientation().
-func (v *Orientable) SetOrientation(orientation Orientation) {
+func (v *Orientable) SetOrientation(orientation iface.Orientation) {
 	C.gtk_orientable_set_orientation(v.native(),
 		C.GtkOrientation(orientation))
 }
@@ -5737,7 +5558,7 @@ func wrapPaned(obj *glib.Object) *Paned {
 }
 
 // PanedNew() is a wrapper around gtk_scrolled_window_new().
-func PanedNew(orientation Orientation) (*Paned, error) {
+func PanedNew(orientation iface.Orientation) (*Paned, error) {
 	c := C.gtk_paned_new(C.GtkOrientation(orientation))
 	if c == nil {
 		return nil, nilPtrErr
@@ -6335,7 +6156,7 @@ func wrapScale(obj *glib.Object) *Scale {
 }
 
 // ScaleNew is a wrapper around gtk_scale_new().
-func ScaleNew(orientation Orientation, adjustment *Adjustment) (*Scale, error) {
+func ScaleNew(orientation iface.Orientation, adjustment *Adjustment) (*Scale, error) {
 	c := C.gtk_scale_new(C.GtkOrientation(orientation), adjustment.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -6344,7 +6165,7 @@ func ScaleNew(orientation Orientation, adjustment *Adjustment) (*Scale, error) {
 }
 
 // ScaleNewWithRange is a wrapper around gtk_scale_new_with_range().
-func ScaleNewWithRange(orientation Orientation, min, max, step float64) (*Scale, error) {
+func ScaleNewWithRange(orientation iface.Orientation, min, max, step float64) (*Scale, error) {
 	c := C.gtk_scale_new_with_range(C.GtkOrientation(orientation),
 		C.gdouble(min), C.gdouble(max), C.gdouble(step))
 
@@ -6383,7 +6204,7 @@ func wrapScaleButton(obj *glib.Object) *ScaleButton {
 }
 
 // ScaleButtonNew() is a wrapper around gtk_scale_button_new().
-func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*ScaleButton, error) {
+func ScaleButtonNew(size iface.IconSize, min, max, step float64, icons []string) (*ScaleButton, error) {
 	cicons := make([]*C.gchar, len(icons))
 	for i, icon := range icons {
 		cicons[i] = (*C.gchar)(C.CString(icon))
@@ -6527,7 +6348,7 @@ func wrapScrollbar(obj *glib.Object) *Scrollbar {
 }
 
 // ScrollbarNew is a wrapper around gtk_scrollbar_new().
-func ScrollbarNew(orientation Orientation, adjustment *Adjustment) (*Scrollbar, error) {
+func ScrollbarNew(orientation iface.Orientation, adjustment *Adjustment) (*Scrollbar, error) {
 	c := C.gtk_scrollbar_new(C.GtkOrientation(orientation), adjustment.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -6574,7 +6395,7 @@ func ScrolledWindowNew(hadjustment, vadjustment *Adjustment) (*ScrolledWindow, e
 }
 
 // SetPolicy() is a wrapper around gtk_scrolled_window_set_policy().
-func (v *ScrolledWindow) SetPolicy(hScrollbarPolicy, vScrollbarPolicy PolicyType) {
+func (v *ScrolledWindow) SetPolicy(hScrollbarPolicy, vScrollbarPolicy iface.PolicyType) {
 	C.gtk_scrolled_window_set_policy(v.native(),
 		C.GtkPolicyType(hScrollbarPolicy),
 		C.GtkPolicyType(vScrollbarPolicy))
@@ -6716,7 +6537,7 @@ func wrapSeparator(obj *glib.Object) *Separator {
 }
 
 // SeparatorNew is a wrapper around gtk_separator_new().
-func SeparatorNew(orientation Orientation) (*Separator, error) {
+func SeparatorNew(orientation iface.Orientation) (*Separator, error) {
 	c := C.gtk_separator_new(C.GtkOrientation(orientation))
 	if c == nil {
 		return nil, nilPtrErr
@@ -7083,7 +6904,7 @@ func (v *TargetEntry) native() *C.GtkTargetEntry {
 }
 
 // TargetEntryNew is a wrapper aroud gtk_target_entry_new().
-func TargetEntryNew(target string, flags TargetFlags, info uint) (*TargetEntry, error) {
+func TargetEntryNew(target string, flags iface.TargetFlags, info uint) (iface.TargetEntry, error) {
 	cstr := C.CString(target)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_target_entry_new((*C.gchar)(cstr), C.guint(flags), C.guint(info))
@@ -7169,13 +6990,13 @@ func (v *TextView) GetEditable() bool {
 }
 
 // SetWrapMode is a wrapper around gtk_text_view_set_wrap_mode().
-func (v *TextView) SetWrapMode(wrapMode WrapMode) {
+func (v *TextView) SetWrapMode(wrapMode iface.WrapMode) {
 	C.gtk_text_view_set_wrap_mode(v.native(), C.GtkWrapMode(wrapMode))
 }
 
 // GetWrapMode is a wrapper around gtk_text_view_get_wrap_mode().
-func (v *TextView) GetWrapMode() WrapMode {
-	return WrapMode(C.gtk_text_view_get_wrap_mode(v.native()))
+func (v *TextView) GetWrapMode() iface.WrapMode {
+	return iface.WrapMode(C.gtk_text_view_get_wrap_mode(v.native()))
 }
 
 // SetCursorVisible is a wrapper around gtk_text_view_set_cursor_visible().
@@ -7201,14 +7022,14 @@ func (v *TextView) GetOverwrite() bool {
 }
 
 // SetJustification is a wrapper around gtk_text_view_set_justification().
-func (v *TextView) SetJustification(justify Justification) {
+func (v *TextView) SetJustification(justify iface.Justification) {
 	C.gtk_text_view_set_justification(v.native(), C.GtkJustification(justify))
 }
 
 // GetJustification is a wrapper around gtk_text_view_get_justification().
-func (v *TextView) GetJustification() Justification {
+func (v *TextView) GetJustification() iface.Justification {
 	c := C.gtk_text_view_get_justification(v.native())
-	return Justification(c)
+	return iface.Justification(c)
 }
 
 // SetAcceptsTab is a wrapper around gtk_text_view_set_accepts_tab().
@@ -7289,26 +7110,26 @@ func (v *TextView) GetIndent() int {
 }
 
 // SetInputHints is a wrapper around gtk_text_view_set_input_hints().
-func (v *TextView) SetInputHints(hints InputHints) {
+func (v *TextView) SetInputHints(hints iface.InputHints) {
 	C.gtk_text_view_set_input_hints(v.native(), C.GtkInputHints(hints))
 }
 
 // GetInputHints is a wrapper around gtk_text_view_get_input_hints().
-func (v *TextView) GetInputHints() InputHints {
+func (v *TextView) GetInputHints() iface.InputHints {
 	c := C.gtk_text_view_get_input_hints(v.native())
-	return InputHints(c)
+	return iface.InputHints(c)
 }
 
 // SetInputPurpose is a wrapper around gtk_text_view_set_input_purpose().
-func (v *TextView) SetInputPurpose(purpose InputPurpose) {
+func (v *TextView) SetInputPurpose(purpose iface.InputPurpose) {
 	C.gtk_text_view_set_input_purpose(v.native(),
 		C.GtkInputPurpose(purpose))
 }
 
 // GetInputPurpose is a wrapper around gtk_text_view_get_input_purpose().
-func (v *TextView) GetInputPurpose() InputPurpose {
+func (v *TextView) GetInputPurpose() iface.InputPurpose {
 	c := C.gtk_text_view_get_input_purpose(v.native())
-	return InputPurpose(c)
+	return iface.InputPurpose(c)
 }
 
 /*
@@ -7753,30 +7574,30 @@ func (v *Toolbar) GetShowArrow() bool {
 }
 
 // GetStyle is a wrapper around gtk_toolbar_get_style().
-func (v *Toolbar) GetStyle() ToolbarStyle {
+func (v *Toolbar) GetStyle() iface.ToolbarStyle {
 	c := C.gtk_toolbar_get_style(v.native())
-	return ToolbarStyle(c)
+	return iface.ToolbarStyle(c)
 }
 
 // GetIconSize is a wrapper around gtk_toolbar_get_icon_size().
-func (v *Toolbar) GetIconSize() IconSize {
+func (v *Toolbar) GetIconSize() iface.IconSize {
 	c := C.gtk_toolbar_get_icon_size(v.native())
-	return IconSize(c)
+	return iface.IconSize(c)
 }
 
 // GetReliefStyle is a wrapper around gtk_toolbar_get_relief_style().
-func (v *Toolbar) GetReliefStyle() ReliefStyle {
+func (v *Toolbar) GetReliefStyle() iface.ReliefStyle {
 	c := C.gtk_toolbar_get_relief_style(v.native())
-	return ReliefStyle(c)
+	return iface.ReliefStyle(c)
 }
 
 // SetStyle is a wrapper around gtk_toolbar_set_style().
-func (v *Toolbar) SetStyle(style ToolbarStyle) {
+func (v *Toolbar) SetStyle(style iface.ToolbarStyle) {
 	C.gtk_toolbar_set_style(v.native(), C.GtkToolbarStyle(style))
 }
 
 // SetIconSize is a wrapper around gtk_toolbar_set_icon_size().
-func (v *Toolbar) SetIconSize(iconSize IconSize) {
+func (v *Toolbar) SetIconSize(iconSize iface.IconSize) {
 	C.gtk_toolbar_set_icon_size(v.native(), C.GtkIconSize(iconSize))
 }
 
@@ -8025,27 +7846,27 @@ func (v *ToolItem) GetIsImportant() bool {
 // TODO: gtk_tool_item_get_ellipsize_mode
 
 // GetIconSize is a wrapper around gtk_tool_item_get_icon_size().
-func (v *ToolItem) GetIconSize() IconSize {
+func (v *ToolItem) GetIconSize() iface.IconSize {
 	c := C.gtk_tool_item_get_icon_size(v.native())
-	return IconSize(c)
+	return iface.IconSize(c)
 }
 
 // GetOrientation is a wrapper around gtk_tool_item_get_orientation().
-func (v *ToolItem) GetOrientation() Orientation {
+func (v *ToolItem) GetOrientation() iface.Orientation {
 	c := C.gtk_tool_item_get_orientation(v.native())
-	return Orientation(c)
+	return iface.Orientation(c)
 }
 
 // GetToolbarStyle is a wrapper around gtk_tool_item_get_toolbar_style().
-func (v *ToolItem) gtk_tool_item_get_toolbar_style() ToolbarStyle {
+func (v *ToolItem) gtk_tool_item_get_toolbar_style() iface.ToolbarStyle {
 	c := C.gtk_tool_item_get_toolbar_style(v.native())
-	return ToolbarStyle(c)
+	return iface.ToolbarStyle(c)
 }
 
 // GetReliefStyle is a wrapper around gtk_tool_item_get_relief_style().
-func (v *ToolItem) GetReliefStyle() ReliefStyle {
+func (v *ToolItem) GetReliefStyle() iface.ReliefStyle {
 	c := C.gtk_tool_item_get_relief_style(v.native())
-	return ReliefStyle(c)
+	return iface.ReliefStyle(c)
 }
 
 // GetTextAlignment is a wrapper around gtk_tool_item_get_text_alignment().
@@ -8055,9 +7876,9 @@ func (v *ToolItem) GetTextAlignment() float32 {
 }
 
 // GetTextOrientation is a wrapper around gtk_tool_item_get_text_orientation().
-func (v *ToolItem) GetTextOrientation() Orientation {
+func (v *ToolItem) GetTextOrientation() iface.Orientation {
 	c := C.gtk_tool_item_get_text_orientation(v.native())
-	return Orientation(c)
+	return iface.Orientation(c)
 }
 
 // RetrieveProxyMenuItem is a wrapper around
@@ -8171,9 +7992,9 @@ func wrapTreeModel(obj *glib.Object) *TreeModel {
 }
 
 // GetFlags() is a wrapper around gtk_tree_model_get_flags().
-func (v *TreeModel) GetFlags() TreeModelFlags {
+func (v *TreeModel) GetFlags() iface.TreeModelFlags {
 	c := C.gtk_tree_model_get_flags(v.native())
-	return TreeModelFlags(c)
+	return iface.TreeModelFlags(c)
 }
 
 // GetNColumns() is a wrapper around gtk_tree_model_get_n_columns().
@@ -8183,9 +8004,9 @@ func (v *TreeModel) GetNColumns() int {
 }
 
 // GetColumnType() is a wrapper around gtk_tree_model_get_column_type().
-func (v *TreeModel) GetColumnType(index int) glib.Type {
+func (v *TreeModel) GetColumnType(index int) glib_iface.Type {
 	c := C.gtk_tree_model_get_column_type(v.native(), C.gint(index))
-	return glib.Type(c)
+	return glib_iface.Type(c)
 }
 
 // GetIter() is a wrapper around gtk_tree_model_get_iter().
@@ -8431,12 +8252,12 @@ func (v *TreeSelection) SelectIter(iter *TreeIter) {
 }
 
 // SetMode() is a wrapper around gtk_tree_selection_set_mode().
-func (v *TreeSelection) SetMode(m SelectionMode) {
+func (v *TreeSelection) SetMode(m iface.SelectionMode) {
 	C.gtk_tree_selection_set_mode(v.native(), C.GtkSelectionMode(m))
 }
 
 // GetMode() is a wrapper around gtk_tree_selection_get_mode().
-func (v *TreeSelection) GetMode() SelectionMode {
+func (v *TreeSelection) GetMode() iface.SelectionMode {
 	return SelectionMode(C.gtk_tree_selection_get_mode(v.native()))
 }
 
@@ -8480,7 +8301,7 @@ func (v *TreeStore) toTreeModel() *C.GtkTreeModel {
 }
 
 // TreeStoreNew is a wrapper around gtk_tree_store_newv().
-func TreeStoreNew(types ...glib.Type) (*TreeStore, error) {
+func TreeStoreNew(types ...glib_iface.Type) (*TreeStore, error) {
 	gtypes := C.alloc_types(C.int(len(types)))
 	for n, val := range types {
 		C.set_type(gtypes, C.int(n), C.GType(val))

@@ -11,17 +11,16 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
-// ApplicationInhibitFlags is a representation of GTK's GtkApplicationInhibitFlags.
-type ApplicationInhibitFlags int
-
-const (
-	APPLICATION_INHIBIT_LOGOUT  ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_LOGOUT
-	APPLICATION_INHIBIT_SWITCH  ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_SWITCH
-	APPLICATION_INHIBIT_SUSPEND ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_SUSPEND
-	APPLICATION_INHIBIT_IDLE    ApplicationInhibitFlags = C.GTK_APPLICATION_INHIBIT_IDLE
-)
+func init() {
+	iface.APPLICATION_INHIBIT_LOGOUT = C.GTK_APPLICATION_INHIBIT_LOGOUT
+	iface.APPLICATION_INHIBIT_SWITCH = C.GTK_APPLICATION_INHIBIT_SWITCH
+	iface.APPLICATION_INHIBIT_SUSPEND = C.GTK_APPLICATION_INHIBIT_SUSPEND
+	iface.APPLICATION_INHIBIT_IDLE = C.GTK_APPLICATION_INHIBIT_IDLE
+}
 
 /*
  * GtkApplication
@@ -45,7 +44,7 @@ func wrapApplication(obj *glib.Object) *Application {
 }
 
 // ApplicationNew is a wrapper around gtk_application_new().
-func ApplicationNew(appId string, flags glib.ApplicationFlags) (*Application, error) {
+func ApplicationNew(appId string, flags glib_iface.ApplicationFlags) (*Application, error) {
 	cstr := (*C.gchar)(C.CString(appId))
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -120,12 +119,12 @@ func (v *Application) SetMenubar(m *glib.MenuModel) {
 }
 
 // IsInhibited is a wrapper around gtk_application_is_inhibited().
-func (v *Application) IsInhibited(flags ApplicationInhibitFlags) bool {
+func (v *Application) IsInhibited(flags iface.ApplicationInhibitFlags) bool {
 	return gobool(C.gtk_application_is_inhibited(v.native(), C.GtkApplicationInhibitFlags(flags)))
 }
 
 // Inhibited is a wrapper around gtk_application_inhibit().
-func (v *Application) Inhibited(w *Window, flags ApplicationInhibitFlags, reason string) uint {
+func (v *Application) Inhibited(w *Window, flags iface.ApplicationInhibitFlags, reason string) uint {
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
 

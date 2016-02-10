@@ -1294,8 +1294,6 @@ func (s *Signal) String() string {
 	return s.name
 }
 
-type Quark uint32
-
 // GetApplicationName is a wrapper around g_get_application_name().
 func GetApplicationName() string {
 	c := C.g_get_application_name()

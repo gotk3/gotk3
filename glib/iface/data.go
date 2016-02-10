@@ -15,3 +15,5 @@ type SignalHandle uint
 
 // Type is a representation of GLib's GType.
 type Type uint
+
+type Quark uint32

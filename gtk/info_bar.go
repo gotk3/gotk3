@@ -7,6 +7,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -50,30 +51,30 @@ func InfoBarNew() (*InfoBar, error) {
 	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func (v *InfoBar) AddActionWidget(w IWidget, responseId ResponseType) {
+func (v *InfoBar) AddActionWidget(w IWidget, responseId iface.ResponseType) {
 	C.gtk_info_bar_add_action_widget(v.native(), w.toWidget(), C.gint(responseId))
 }
 
-func (v *InfoBar) AddButton(buttonText string, responseId ResponseType) {
+func (v *InfoBar) AddButton(buttonText string, responseId iface.ResponseType) {
 	cstr := C.CString(buttonText)
 	defer C.free(unsafe.Pointer(cstr))
 
 	C.gtk_info_bar_add_button(v.native(), (*C.gchar)(cstr), C.gint(responseId))
 }
 
-func (v *InfoBar) SetResponseSensitive(responseId ResponseType, setting bool) {
+func (v *InfoBar) SetResponseSensitive(responseId iface.ResponseType, setting bool) {
 	C.gtk_info_bar_set_response_sensitive(v.native(), C.gint(responseId), gbool(setting))
 }
 
-func (v *InfoBar) SetDefaultResponse(responseId ResponseType) {
+func (v *InfoBar) SetDefaultResponse(responseId iface.ResponseType) {
 	C.gtk_info_bar_set_default_response(v.native(), C.gint(responseId))
 }
 
-func (v *InfoBar) SetMessageType(messageType MessageType) {
+func (v *InfoBar) SetMessageType(messageType iface.MessageType) {
 	C.gtk_info_bar_set_message_type(v.native(), C.GtkMessageType(messageType))
 }
 
-func (v *InfoBar) GetMessageType() MessageType {
+func (v *InfoBar) GetMessageType() iface.MessageType {
 	messageType := C.gtk_info_bar_get_message_type(v.native())
 	return MessageType(messageType)
 }

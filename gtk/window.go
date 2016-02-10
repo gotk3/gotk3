@@ -12,6 +12,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 /*
@@ -57,7 +58,7 @@ func wrapWindow(obj *glib.Object) *Window {
 }
 
 // WindowNew is a wrapper around gtk_window_new().
-func WindowNew(t WindowType) (*Window, error) {
+func WindowNew(t iface.WindowType) (*Window, error) {
 	c := C.gtk_window_new(C.GtkWindowType(t))
 	if c == nil {
 		return nil, nilPtrErr
@@ -153,7 +154,7 @@ func (v *Window) GetGravity() {
 */
 
 // SetPosition is a wrapper around gtk_window_set_position().
-func (v *Window) SetPosition(position WindowPosition) {
+func (v *Window) SetPosition(position iface.WindowPosition) {
 	C.gtk_window_set_position(v.native(), C.GtkWindowPosition(position))
 }
 

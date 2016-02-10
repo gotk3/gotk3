@@ -26,12 +26,13 @@ package gtk
 // #cgo pkg-config: gtk+-3.0
 // #include <gtk/gtk.h>
 import "C"
+import "github.com/gotk3/gotk3/gtk/iface"
 
 /*
  * Constants
  */
 
-const (
-	STATE_FLAG_DIR_LTR StateFlags = C.GTK_STATE_FLAG_DIR_LTR
-	STATE_FLAG_DIR_RTL StateFlags = C.GTK_STATE_FLAG_DIR_RTL
-)
+func init() {
+	iface.STATE_FLAG_DIR_LTR = C.GTK_STATE_FLAG_DIR_LTR
+	iface.STATE_FLAG_DIR_RTL = C.GTK_STATE_FLAG_DIR_RTL
+}

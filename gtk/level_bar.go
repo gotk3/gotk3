@@ -7,6 +7,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -19,15 +20,10 @@ func init() {
 	glib.RegisterGValueMarshalers(tm)
 
 	WrapMap["GtkLevelBar"] = wrapLevelBar
+
+	iface.LEVEL_BAR_MODE_CONTINUOUS = C.GTK_LEVEL_BAR_MODE_CONTINUOUS
+	iface.LEVEL_BAR_MODE_DISCRETE = C.GTK_LEVEL_BAR_MODE_DISCRETE
 }
-
-// LevelBarMode is a representation of GTK's GtkLevelBarMode.
-type LevelBarMode int
-
-const (
-	LEVEL_BAR_MODE_CONTINUOUS LevelBarMode = C.GTK_LEVEL_BAR_MODE_CONTINUOUS
-	LEVEL_BAR_MODE_DISCRETE   LevelBarMode = C.GTK_LEVEL_BAR_MODE_DISCRETE
-)
 
 func marshalLevelBarMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
@@ -80,13 +76,13 @@ func LevelBarNewForInterval(min_value, max_value float64) (*LevelBar, error) {
 }
 
 // SetMode() is a wrapper around gtk_level_bar_set_mode().
-func (v *LevelBar) SetMode(m LevelBarMode) {
+func (v *LevelBar) SetMode(m iface.LevelBarMode) {
 	C.gtk_level_bar_set_mode(v.native(), C.GtkLevelBarMode(m))
 }
 
 // GetMode() is a wrapper around gtk_level_bar_get_mode().
-func (v *LevelBar) GetMode() LevelBarMode {
-	return LevelBarMode(C.gtk_level_bar_get_mode(v.native()))
+func (v *LevelBar) GetMode() iface.LevelBarMode {
+	return iface.LevelBarMode(C.gtk_level_bar_get_mode(v.native()))
 }
 
 // SetValue() is a wrapper around gtk_level_bar_set_value().

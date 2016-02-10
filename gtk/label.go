@@ -9,7 +9,8 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/pango"
+	"github.com/gotk3/gotk3/gtk/iface"
+	pango_iface "github.com/gotk3/gotk3/pango/iface"
 
 	"github.com/gotk3/gotk3/glib"
 )
@@ -84,12 +85,12 @@ func (v *Label) SetPattern(patern string) {
 }
 
 // SetJustify is a wrapper around gtk_label_set_justify().
-func (v *Label) SetJustify(jtype Justification) {
+func (v *Label) SetJustify(jtype iface.Justification) {
 	C.gtk_label_set_justify(v.native(), C.GtkJustification(jtype))
 }
 
 // SetEllipsize is a wrapper around gtk_label_set_ellipsize().
-func (v *Label) SetEllipsize(mode pango.EllipsizeMode) {
+func (v *Label) SetEllipsize(mode pango_iface.EllipsizeMode) {
 	C.gtk_label_set_ellipsize(v.native(), C.PangoEllipsizeMode(mode))
 }
 
@@ -127,7 +128,7 @@ func (v *Label) SetLineWrap(wrap bool) {
 }
 
 // SetLineWrapMode is a wrapper around gtk_label_set_line_wrap_mode().
-func (v *Label) SetLineWrapMode(wrapMode pango.WrapMode) {
+func (v *Label) SetLineWrapMode(wrapMode pango_iface.WrapMode) {
 	C.gtk_label_set_line_wrap_mode(v.native(), C.PangoWrapMode(wrapMode))
 }
 
@@ -147,15 +148,15 @@ func (v *Label) GetText() (string, error) {
 }
 
 // GetJustify is a wrapper around gtk_label_get_justify().
-func (v *Label) GetJustify() Justification {
+func (v *Label) GetJustify() iface.Justification {
 	c := C.gtk_label_get_justify(v.native())
-	return Justification(c)
+	return iface.Justification(c)
 }
 
 // GetEllipsize is a wrapper around gtk_label_get_ellipsize().
-func (v *Label) GetEllipsize() pango.EllipsizeMode {
+func (v *Label) GetEllipsize() pango_iface.EllipsizeMode {
 	c := C.gtk_label_get_ellipsize(v.native())
-	return pango.EllipsizeMode(c)
+	return pango_iface.EllipsizeMode(c)
 }
 
 // GetCurrentUri is a wrapper around gtk_label_get_current_uri().
