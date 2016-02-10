@@ -9,6 +9,8 @@ import "C"
 import (
 	"runtime"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/cairo/iface"
 )
 
 // TODO(jrick) SetUserData (depends on UserDataKey and DestroyFunc)
@@ -31,7 +33,7 @@ func NewSurfaceFromPNG(fileName string) (*Surface, error) {
 
 	surfaceNative := C.cairo_image_surface_create_from_png(cstr)
 
-	status := Status(C.cairo_surface_status(surfaceNative))
+	status := iface.Status(C.cairo_surface_status(surfaceNative))
 	if status != STATUS_SUCCESS {
 		return nil, ErrorStatus(status)
 	}
@@ -76,7 +78,7 @@ func NewSurface(s uintptr, needsRef bool) *Surface {
 }
 
 // CreateSimilar is a wrapper around cairo_surface_create_similar().
-func (v *Surface) CreateSimilar(content Content, width, height int) *Surface {
+func (v *Surface) CreateSimilar(content iface.Content, width, height int) iface.Surface {
 	c := C.cairo_surface_create_similar(v.native(),
 		C.cairo_content_t(content), C.int(width), C.int(height))
 	s := wrapSurface(c)
@@ -87,7 +89,7 @@ func (v *Surface) CreateSimilar(content Content, width, height int) *Surface {
 // TODO cairo_surface_create_similar_image (since 1.12)
 
 // CreateForRectangle is a wrapper around cairo_surface_create_for_rectangle().
-func (v *Surface) CreateForRectangle(x, y, width, height float64) *Surface {
+func (v *Surface) CreateForRectangle(x, y, width, height float64) iface.Surface {
 	c := C.cairo_surface_create_for_rectangle(v.native(), C.double(x),
 		C.double(y), C.double(width), C.double(height))
 	s := wrapSurface(c)
@@ -106,9 +108,9 @@ func (v *Surface) destroy() {
 }
 
 // Status is a wrapper around cairo_surface_status().
-func (v *Surface) Status() Status {
+func (v *Surface) Status() iface.Status {
 	c := C.cairo_surface_status(v.native())
-	return Status(c)
+	return iface.Status(c)
 }
 
 // Flush is a wrapper around cairo_surface_flush().
@@ -161,9 +163,9 @@ func (v *Surface) GetFallbackResolution() (xPPI, yPPI float64) {
 }
 
 // GetType is a wrapper around cairo_surface_get_type().
-func (v *Surface) GetType() SurfaceType {
+func (v *Surface) GetType() iface.SurfaceType {
 	c := C.cairo_surface_get_type(v.native())
-	return SurfaceType(c)
+	return iface.SurfaceType(c)
 }
 
 // TODO(jrick) SetUserData (depends on UserDataKey and DestroyFunc)
@@ -190,7 +192,7 @@ func (v *Surface) HasShowTextGlyphs() bool {
 
 // GetMimeData is a wrapper around cairo_surface_get_mime_data().  The
 // returned mimetype data is returned as a Go byte slice.
-func (v *Surface) GetMimeData(mimeType MimeType) []byte {
+func (v *Surface) GetMimeData(mimeType iface.MimeType) []byte {
 	cstr := C.CString(string(mimeType))
 	defer C.free(unsafe.Pointer(cstr))
 	var data *C.uchar

@@ -7,15 +7,17 @@ package cairo
 import "C"
 import (
 	"unsafe"
+
+	"github.com/gotk3/gotk3/cairo/iface"
 )
 
 const (
-	LINE_JOIN_MITER LineJoin = C.CAIRO_LINE_JOIN_MITER
-	LINE_JOIN_ROUND LineJoin = C.CAIRO_LINE_JOIN_ROUND
-	LINE_JOIN_BEVEL LineJoin = C.CAIRO_LINE_JOIN_BEVEL
+	LINE_JOIN_MITER iface.LineJoin = C.CAIRO_LINE_JOIN_MITER
+	LINE_JOIN_ROUND iface.LineJoin = C.CAIRO_LINE_JOIN_ROUND
+	LINE_JOIN_BEVEL iface.LineJoin = C.CAIRO_LINE_JOIN_BEVEL
 )
 
 func marshalLineJoin(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return LineJoin(c), nil
+	return iface.LineJoin(c), nil
 }

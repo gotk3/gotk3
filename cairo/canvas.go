@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"runtime"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/cairo/iface"
 )
 
 // Context is a representation of Cairo's cairo_t.
@@ -63,9 +65,9 @@ func (v *Context) destroy() {
 }
 
 // Status is a wrapper around cairo_status().
-func (v *Context) Status() Status {
+func (v *Context) Status() iface.Status {
 	c := C.cairo_status(v.native())
-	return Status(c)
+	return iface.Status(c)
 }
 
 // Save is a wrapper around cairo_save().
@@ -79,7 +81,7 @@ func (v *Context) Restore() {
 }
 
 // GetTarget is a wrapper around cairo_get_target().
-func (v *Context) GetTarget() *Surface {
+func (v *Context) GetTarget() iface.Surface {
 	c := C.cairo_get_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
@@ -93,7 +95,7 @@ func (v *Context) PushGroup() {
 }
 
 // PushGroupWithContent is a wrapper around cairo_push_group_with_content().
-func (v *Context) PushGroupWithContent(content Content) {
+func (v *Context) PushGroupWithContent(content iface.Content) {
 	C.cairo_push_group_with_content(v.native(), C.cairo_content_t(content))
 }
 
@@ -105,7 +107,7 @@ func (v *Context) PopGroupToSource() {
 }
 
 // GetGroupTarget is a wrapper around cairo_get_group_target().
-func (v *Context) GetGroupTarget() *Surface {
+func (v *Context) GetGroupTarget() iface.Surface {
 	c := C.cairo_get_group_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
@@ -128,22 +130,22 @@ func (v *Context) SetSourceRGBA(red, green, blue, alpha float64) {
 // TODO(jrick) SetSource (depends on Pattern)
 
 // SetSourceSurface is a wrapper around cairo_set_source_surface().
-func (v *Context) SetSourceSurface(surface *Surface, x, y float64) {
-	C.cairo_set_source_surface(v.native(), surface.native(), C.double(x),
+func (v *Context) SetSourceSurface(surface iface.Surface, x, y float64) {
+	C.cairo_set_source_surface(v.native(), surface.(*Surface).native(), C.double(x),
 		C.double(y))
 }
 
 // TODO(jrick) GetSource (depends on Pattern)
 
 // SetAntialias is a wrapper around cairo_set_antialias().
-func (v *Context) SetAntialias(antialias Antialias) {
+func (v *Context) SetAntialias(antialias iface.Antialias) {
 	C.cairo_set_antialias(v.native(), C.cairo_antialias_t(antialias))
 }
 
 // GetAntialias is a wrapper around cairo_get_antialias().
-func (v *Context) GetAntialias() Antialias {
+func (v *Context) GetAntialias() iface.Antialias {
 	c := C.cairo_get_antialias(v.native())
-	return Antialias(c)
+	return iface.Antialias(c)
 }
 
 // SetDash is a wrapper around cairo_set_dash().
@@ -174,36 +176,36 @@ func (v *Context) GetDash() (dashes []float64, offset float64) {
 }
 
 // SetFillRule is a wrapper around cairo_set_fill_rule().
-func (v *Context) SetFillRule(fillRule FillRule) {
+func (v *Context) SetFillRule(fillRule iface.FillRule) {
 	C.cairo_set_fill_rule(v.native(), C.cairo_fill_rule_t(fillRule))
 }
 
 // GetFillRule is a wrapper around cairo_get_fill_rule().
-func (v *Context) GetFillRule() FillRule {
+func (v *Context) GetFillRule() iface.FillRule {
 	c := C.cairo_get_fill_rule(v.native())
-	return FillRule(c)
+	return iface.FillRule(c)
 }
 
 // SetLineCap is a wrapper around cairo_set_line_cap().
-func (v *Context) SetLineCap(lineCap LineCap) {
+func (v *Context) SetLineCap(lineCap iface.LineCap) {
 	C.cairo_set_line_cap(v.native(), C.cairo_line_cap_t(lineCap))
 }
 
 // GetLineCap is a wrapper around cairo_get_line_cap().
-func (v *Context) GetLineCap() LineCap {
+func (v *Context) GetLineCap() iface.LineCap {
 	c := C.cairo_get_line_cap(v.native())
-	return LineCap(c)
+	return iface.LineCap(c)
 }
 
 // SetLineJoin is a wrapper around cairo_set_line_join().
-func (v *Context) SetLineJoin(lineJoin LineJoin) {
+func (v *Context) SetLineJoin(lineJoin iface.LineJoin) {
 	C.cairo_set_line_join(v.native(), C.cairo_line_join_t(lineJoin))
 }
 
 // GetLineJoin is a wrapper around cairo_get_line_join().
-func (v *Context) GetLineJoin() LineJoin {
+func (v *Context) GetLineJoin() iface.LineJoin {
 	c := C.cairo_get_line_join(v.native())
-	return LineJoin(c)
+	return iface.LineJoin(c)
 }
 
 // SetLineWidth is a wrapper around cairo_set_line_width().
@@ -229,14 +231,14 @@ func (v *Context) GetMiterLimit() float64 {
 }
 
 // SetOperator is a wrapper around cairo_set_operator().
-func (v *Context) SetOperator(op Operator) {
+func (v *Context) SetOperator(op iface.Operator) {
 	C.cairo_set_operator(v.native(), C.cairo_operator_t(op))
 }
 
 // GetOperator is a wrapper around cairo_get_operator().
-func (v *Context) GetOperator() Operator {
+func (v *Context) GetOperator() iface.Operator {
 	c := C.cairo_get_operator(v.native())
-	return Operator(c)
+	return iface.Operator(c)
 }
 
 // SetTolerance is a wrapper around cairo_set_tolerance().
@@ -352,8 +354,8 @@ func (v *Context) InFill(x, y float64) bool {
 // TODO(jrick) Mask (depends on Pattern)
 
 // MaskSurface is a wrapper around cairo_mask_surface().
-func (v *Context) MaskSurface(surface *Surface, surfaceX, surfaceY float64) {
-	C.cairo_mask_surface(v.native(), surface.native(), C.double(surfaceX),
+func (v *Context) MaskSurface(surface iface.Surface, surfaceX, surfaceY float64) {
+	C.cairo_mask_surface(v.native(), surface.(*Surface).native(), C.double(surfaceX),
 		C.double(surfaceY))
 }
 
