@@ -72,7 +72,7 @@ var (
 		m: make(map[*C.GClosure]closureContext),
 	}
 
-	signals = make(map[SignalHandle]*C.GClosure)
+	signals = make(map[iface.SignalHandle]*C.GClosure)
 )
 
 /*
@@ -717,17 +717,17 @@ func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
 }
 
 // HandlerBlock is a wrapper around g_signal_handler_block().
-func (v *Object) HandlerBlock(handle SignalHandle) {
+func (v *Object) HandlerBlock(handle iface.SignalHandle) {
 	C.g_signal_handler_block(C.gpointer(v.GObject), C.gulong(handle))
 }
 
 // HandlerUnblock is a wrapper around g_signal_handler_unblock().
-func (v *Object) HandlerUnblock(handle SignalHandle) {
+func (v *Object) HandlerUnblock(handle iface.SignalHandle) {
 	C.g_signal_handler_unblock(C.gpointer(v.GObject), C.gulong(handle))
 }
 
 // HandlerDisconnect is a wrapper around g_signal_handler_disconnect().
-func (v *Object) HandlerDisconnect(handle SignalHandle) {
+func (v *Object) HandlerDisconnect(handle iface.SignalHandle) {
 	C.g_signal_handler_disconnect(C.gpointer(v.GObject), C.gulong(handle))
 	C.g_closure_invalidate(signals[handle])
 	delete(closures.m, signals[handle])

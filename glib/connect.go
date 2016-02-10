@@ -9,15 +9,15 @@ import (
 	"errors"
 	"reflect"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib/iface"
 )
 
 /*
  * Events
  */
 
-type SignalHandle uint
-
-func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}, userData ...interface{}) (SignalHandle, error) {
+func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}, userData ...interface{}) (iface.SignalHandle, error) {
 	if len(userData) > 1 {
 		return 0, errors.New("userData len must be 0 or 1")
 	}
@@ -52,7 +52,7 @@ func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}
 // C callback, or an interface type which the value may be packed in.
 // If the type is not suitable, a runtime panic will occur when the
 // signal is emitted.
-func (v *Object) Connect(detailedSignal string, f interface{}, userData ...interface{}) (SignalHandle, error) {
+func (v *Object) Connect(detailedSignal string, f interface{}, userData ...interface{}) (iface.SignalHandle, error) {
 	return v.connectClosure(false, detailedSignal, f, userData...)
 }
 
@@ -69,7 +69,7 @@ func (v *Object) Connect(detailedSignal string, f interface{}, userData ...inter
 //
 // The difference between Connect and ConnectAfter is that the latter
 // will be invoked after the default handler, not before.
-func (v *Object) ConnectAfter(detailedSignal string, f interface{}, userData ...interface{}) (SignalHandle, error) {
+func (v *Object) ConnectAfter(detailedSignal string, f interface{}, userData ...interface{}) (iface.SignalHandle, error) {
 	return v.connectClosure(true, detailedSignal, f, userData...)
 }
 
