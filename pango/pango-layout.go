@@ -71,38 +71,28 @@ func (v *LayoutLine) native() *C.PangoLayoutLine {
 	return (*C.PangoLayoutLine)(unsafe.Pointer(v.pangoLayoutLine))
 }
 
-/*
- * Constants
- */
-
-const (
-	ALIGN_LEFT   iface.Alignment = C.PANGO_ALIGN_LEFT
-	ALIGN_CENTER iface.Alignment = C.PANGO_ALIGN_CENTER
-	ALIGN_RIGHT  iface.Alignment = C.PANGO_ALIGN_RIGHT
-)
+func init() {
+	iface.ALIGN_LEFT = C.PANGO_ALIGN_LEFT
+	iface.ALIGN_CENTER = C.PANGO_ALIGN_CENTER
+	iface.ALIGN_RIGHT = C.PANGO_ALIGN_RIGHT
+	iface.WRAP_WORD = C.PANGO_WRAP_WORD
+	iface.WRAP_CHAR = C.PANGO_WRAP_CHAR
+	iface.WRAP_WORD_CHAR = C.PANGO_WRAP_WORD_CHAR
+	iface.ELLIPSIZE_NONE = C.PANGO_ELLIPSIZE_NONE
+	iface.ELLIPSIZE_START = C.PANGO_ELLIPSIZE_START
+	iface.ELLIPSIZE_MIDDLE = C.PANGO_ELLIPSIZE_MIDDLE
+	iface.ELLIPSIZE_END = C.PANGO_ELLIPSIZE_END
+}
 
 func marshalAlignment(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return iface.Alignment(c), nil
 }
 
-const (
-	WRAP_WORD      iface.WrapMode = C.PANGO_WRAP_WORD
-	WRAP_CHAR      iface.WrapMode = C.PANGO_WRAP_CHAR
-	WRAP_WORD_CHAR iface.WrapMode = C.PANGO_WRAP_WORD_CHAR
-)
-
 func marshalWrapMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return iface.WrapMode(c), nil
 }
-
-const (
-	ELLIPSIZE_NONE   iface.EllipsizeMode = C.PANGO_ELLIPSIZE_NONE
-	ELLIPSIZE_START  iface.EllipsizeMode = C.PANGO_ELLIPSIZE_START
-	ELLIPSIZE_MIDDLE iface.EllipsizeMode = C.PANGO_ELLIPSIZE_MIDDLE
-	ELLIPSIZE_END    iface.EllipsizeMode = C.PANGO_ELLIPSIZE_END
-)
 
 func marshalEllipsizeMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))

@@ -21,10 +21,10 @@ package pango
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
-import (
+import "github.com/gotk3/gotk3/pango/iface"
+
 //	"github.com/andre-hub/gotk3/glib"
 //	"unsafe"
-)
 
 func init() {
 
@@ -47,10 +47,6 @@ func gobool(b C.gboolean) bool {
 	return false
 }
 
-/*
- * Constantes
- */
-
-const (
-	SCALE int = 1024
-)
+func init() {
+	iface.SCALE = 1024
+}

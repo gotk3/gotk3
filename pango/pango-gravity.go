@@ -28,19 +28,17 @@ import "github.com/gotk3/gotk3/pango/iface"
 //	"github.com/andre-hub/gotk3/cairo"
 //	"unsafe"
 
-const (
-	GRAVITY_SOUTH iface.Gravity = C.PANGO_GRAVITY_SOUTH
-	GRAVITY_EAST  iface.Gravity = C.PANGO_GRAVITY_EAST
-	GRAVITY_NORTH iface.Gravity = C.PANGO_GRAVITY_NORTH
-	GRAVITY_WEST  iface.Gravity = C.PANGO_GRAVITY_WEST
-	GRAVITY_AUTO  iface.Gravity = C.PANGO_GRAVITY_AUTO
-)
+func init() {
+	iface.GRAVITY_SOUTH = C.PANGO_GRAVITY_SOUTH
+	iface.GRAVITY_EAST = C.PANGO_GRAVITY_EAST
+	iface.GRAVITY_NORTH = C.PANGO_GRAVITY_NORTH
+	iface.GRAVITY_WEST = C.PANGO_GRAVITY_WEST
+	iface.GRAVITY_AUTO = C.PANGO_GRAVITY_AUTO
 
-const (
-	GRAVITY_HINT_NATURAL iface.GravityHint = C.PANGO_GRAVITY_HINT_NATURAL
-	GRAVITY_HINT_STRONG  iface.GravityHint = C.PANGO_GRAVITY_HINT_STRONG
-	GRAVITY_HINT_LINE    iface.GravityHint = C.PANGO_GRAVITY_HINT_LINE
-)
+	iface.GRAVITY_HINT_NATURAL = C.PANGO_GRAVITY_HINT_NATURAL
+	iface.GRAVITY_HINT_STRONG = C.PANGO_GRAVITY_HINT_STRONG
+	iface.GRAVITY_HINT_LINE = C.PANGO_GRAVITY_HINT_LINE
+}
 
 //double       pango_gravity_to_rotation    (PangoGravity       gravity) G_GNUC_CONST;
 func GravityToRotation(gravity iface.Gravity) float64 {

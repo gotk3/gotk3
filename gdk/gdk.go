@@ -28,36 +28,187 @@ import (
 	"strconv"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
-		{glib.Type(C.gdk_drag_action_get_type()), marshalDragAction},
-		{glib.Type(C.gdk_colorspace_get_type()), marshalColorspace},
-		{glib.Type(C.gdk_event_type_get_type()), marshalEventType},
-		{glib.Type(C.gdk_interp_type_get_type()), marshalInterpType},
-		{glib.Type(C.gdk_modifier_type_get_type()), marshalModifierType},
-		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
-		{glib.Type(C.gdk_event_mask_get_type()), marshalEventMask},
+		{glib_iface.Type(C.gdk_drag_action_get_type()), marshalDragAction},
+		{glib_iface.Type(C.gdk_colorspace_get_type()), marshalColorspace},
+		{glib_iface.Type(C.gdk_event_type_get_type()), marshalEventType},
+		{glib_iface.Type(C.gdk_interp_type_get_type()), marshalInterpType},
+		{glib_iface.Type(C.gdk_modifier_type_get_type()), marshalModifierType},
+		{glib_iface.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
+		{glib_iface.Type(C.gdk_event_mask_get_type()), marshalEventMask},
 
 		// Objects/Interfaces
-		{glib.Type(C.gdk_device_get_type()), marshalDevice},
-		{glib.Type(C.gdk_cursor_get_type()), marshalCursor},
-		{glib.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
-		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
-		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
-		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
-		{glib.Type(C.gdk_rgba_get_type()), marshalRGBA},
-		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
-		{glib.Type(C.gdk_visual_get_type()), marshalVisual},
-		{glib.Type(C.gdk_window_get_type()), marshalWindow},
+		{glib_iface.Type(C.gdk_device_get_type()), marshalDevice},
+		{glib_iface.Type(C.gdk_cursor_get_type()), marshalCursor},
+		{glib_iface.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
+		{glib_iface.Type(C.gdk_display_get_type()), marshalDisplay},
+		{glib_iface.Type(C.gdk_drag_context_get_type()), marshalDragContext},
+		{glib_iface.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
+		{glib_iface.Type(C.gdk_rgba_get_type()), marshalRGBA},
+		{glib_iface.Type(C.gdk_screen_get_type()), marshalScreen},
+		{glib_iface.Type(C.gdk_visual_get_type()), marshalVisual},
+		{glib_iface.Type(C.gdk_window_get_type()), marshalWindow},
 
 		// Boxed
-		{glib.Type(C.gdk_event_get_type()), marshalEvent},
+		{glib_iface.Type(C.gdk_event_get_type()), marshalEvent},
 	}
 	glib.RegisterGValueMarshalers(tm)
+
+	iface.ACTION_DEFAULT = C.GDK_ACTION_DEFAULT
+	iface.ACTION_COPY = C.GDK_ACTION_COPY
+	iface.ACTION_MOVE = C.GDK_ACTION_MOVE
+	iface.ACTION_LINK = C.GDK_ACTION_LINK
+	iface.ACTION_PRIVATE = C.GDK_ACTION_PRIVATE
+	iface.ACTION_ASK = C.GDK_ACTION_ASK
+
+	iface.COLORSPACE_RGB = C.GDK_COLORSPACE_RGB
+
+	iface.INTERP_NEAREST = C.GDK_INTERP_NEAREST
+	iface.INTERP_TILES = C.GDK_INTERP_TILES
+	iface.INTERP_BILINEAR = C.GDK_INTERP_BILINEAR
+	iface.INTERP_HYPER = C.GDK_INTERP_HYPER
+
+	iface.PIXBUF_ROTATE_NONE = C.GDK_PIXBUF_ROTATE_NONE
+	iface.PIXBUF_ROTATE_COUNTERCLOCKWISE = C.GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE
+	iface.PIXBUF_ROTATE_UPSIDEDOWN = C.GDK_PIXBUF_ROTATE_UPSIDEDOWN
+	iface.PIXBUF_ROTATE_CLOCKWISE = C.GDK_PIXBUF_ROTATE_CLOCKWISE
+
+	iface.GDK_SHIFT_MASK = C.GDK_SHIFT_MASK
+	iface.GDK_LOCK_MASK = C.GDK_LOCK_MASK
+	iface.GDK_CONTROL_MASK = C.GDK_CONTROL_MASK
+	iface.GDK_MOD1_MASK = C.GDK_MOD1_MASK
+	iface.GDK_MOD2_MASK = C.GDK_MOD2_MASK
+	iface.GDK_MOD3_MASK = C.GDK_MOD3_MASK
+	iface.GDK_MOD4_MASK = C.GDK_MOD4_MASK
+	iface.GDK_MOD5_MASK = C.GDK_MOD5_MASK
+	iface.GDK_BUTTON1_MASK = C.GDK_BUTTON1_MASK
+	iface.GDK_BUTTON2_MASK = C.GDK_BUTTON2_MASK
+	iface.GDK_BUTTON3_MASK = C.GDK_BUTTON3_MASK
+	iface.GDK_BUTTON4_MASK = C.GDK_BUTTON4_MASK
+	iface.GDK_BUTTON5_MASK = C.GDK_BUTTON5_MASK
+	iface.GDK_SUPER_MASK = C.GDK_SUPER_MASK
+	iface.GDK_HYPER_MASK = C.GDK_HYPER_MASK
+	iface.GDK_META_MASK = C.GDK_META_MASK
+	iface.GDK_RELEASE_MASK = C.GDK_RELEASE_MASK
+	iface.GDK_MODIFIER_MASK = C.GDK_MODIFIER_MASK
+
+	iface.GDK_PIXBUF_ALPHA_BILEVEL = C.GDK_PIXBUF_ALPHA_BILEVEL
+	iface.GDK_PIXBUF_ALPHA_FULL = C.GDK_PIXBUF_ALPHA_FULL
+
+	iface.SELECTION_PRIMARY = 1
+	iface.SELECTION_SECONDARY = 2
+	iface.SELECTION_CLIPBOARD = 69
+	iface.TARGET_BITMAP = 5
+	iface.TARGET_COLORMAP = 7
+	iface.TARGET_DRAWABLE = 17
+	iface.TARGET_PIXMAP = 20
+	iface.TARGET_STRING = 31
+	iface.SELECTION_TYPE_ATOM = 4
+	iface.SELECTION_TYPE_BITMAP = 5
+	iface.SELECTION_TYPE_COLORMAP = 7
+	iface.SELECTION_TYPE_DRAWABLE = 17
+	iface.SELECTION_TYPE_INTEGER = 19
+	iface.SELECTION_TYPE_PIXMAP = 20
+	iface.SELECTION_TYPE_WINDOW = 33
+	iface.SELECTION_TYPE_STRING = 31
+
+	iface.EXPOSURE_MASK = C.GDK_EXPOSURE_MASK
+	iface.POINTER_MOTION_MASK = C.GDK_POINTER_MOTION_MASK
+	iface.POINTER_MOTION_HINT_MASK = C.GDK_POINTER_MOTION_HINT_MASK
+	iface.BUTTON_MOTION_MASK = C.GDK_BUTTON_MOTION_MASK
+	iface.BUTTON1_MOTION_MASK = C.GDK_BUTTON1_MOTION_MASK
+	iface.BUTTON2_MOTION_MASK = C.GDK_BUTTON2_MOTION_MASK
+	iface.BUTTON3_MOTION_MASK = C.GDK_BUTTON3_MOTION_MASK
+	iface.BUTTON_PRESS_MASK = C.GDK_BUTTON_PRESS_MASK
+	iface.BUTTON_RELEASE_MASK = C.GDK_BUTTON_RELEASE_MASK
+	iface.KEY_PRESS_MASK = C.GDK_KEY_PRESS_MASK
+	iface.KEY_RELEASE_MASK = C.GDK_KEY_RELEASE_MASK
+	iface.ENTER_NOTIFY_MASK = C.GDK_ENTER_NOTIFY_MASK
+	iface.LEAVE_NOTIFY_MASK = C.GDK_LEAVE_NOTIFY_MASK
+	iface.FOCUS_CHANGE_MASK = C.GDK_FOCUS_CHANGE_MASK
+	iface.STRUCTURE_MASK = C.GDK_STRUCTURE_MASK
+	iface.PROPERTY_CHANGE_MASK = C.GDK_PROPERTY_CHANGE_MASK
+	iface.VISIBILITY_NOTIFY_MASK = C.GDK_VISIBILITY_NOTIFY_MASK
+	iface.PROXIMITY_IN_MASK = C.GDK_PROXIMITY_IN_MASK
+	iface.PROXIMITY_OUT_MASK = C.GDK_PROXIMITY_OUT_MASK
+	iface.SUBSTRUCTURE_MASK = C.GDK_SUBSTRUCTURE_MASK
+	iface.SCROLL_MASK = C.GDK_SCROLL_MASK
+	iface.TOUCH_MASK = C.GDK_TOUCH_MASK
+	iface.SMOOTH_SCROLL_MASK = C.GDK_SMOOTH_SCROLL_MASK
+	iface.ALL_EVENTS_MASK = C.GDK_ALL_EVENTS_MASK
+
+	iface.SCROLL_UP = C.GDK_SCROLL_UP
+	iface.SCROLL_DOWN = C.GDK_SCROLL_DOWN
+	iface.SCROLL_LEFT = C.GDK_SCROLL_LEFT
+	iface.SCROLL_RIGHT = C.GDK_SCROLL_RIGHT
+	iface.SCROLL_SMOOTH = C.GDK_SCROLL_SMOOTH
+
+	iface.GRAB_SUCCESS = C.GDK_GRAB_SUCCESS
+	iface.GRAB_ALREADY_GRABBED = C.GDK_GRAB_ALREADY_GRABBED
+	iface.GRAB_INVALID_TIME = C.GDK_GRAB_INVALID_TIME
+	iface.GRAB_FROZEN = C.GDK_GRAB_FROZEN
+	// Only exists since 3.16
+	// GRAB_FAILED GrabStatus = C.GDK_GRAB_FAILED
+	iface.GRAB_FAILED = 5
+
+	iface.OWNERSHIP_NONE = C.GDK_OWNERSHIP_NONE
+	iface.OWNERSHIP_WINDOW = C.GDK_OWNERSHIP_WINDOW
+	iface.OWNERSHIP_APPLICATION = C.GDK_OWNERSHIP_APPLICATION
+
+	iface.DEVICE_TYPE_MASTER = C.GDK_DEVICE_TYPE_MASTER
+	iface.DEVICE_TYPE_SLAVE = C.GDK_DEVICE_TYPE_SLAVE
+	iface.DEVICE_TYPE_FLOATING = C.GDK_DEVICE_TYPE_FLOATING
+
+	iface.EVENT_NOTHING = C.GDK_NOTHING
+	iface.EVENT_DELETE = C.GDK_DELETE
+	iface.EVENT_DESTROY = C.GDK_DESTROY
+	iface.EVENT_EXPOSE = C.GDK_EXPOSE
+	iface.EVENT_MOTION_NOTIFY = C.GDK_MOTION_NOTIFY
+	iface.EVENT_BUTTON_PRESS = C.GDK_BUTTON_PRESS
+	iface.EVENT_2BUTTON_PRESS = C.GDK_2BUTTON_PRESS
+	iface.EVENT_DOUBLE_BUTTON_PRESS = C.GDK_DOUBLE_BUTTON_PRESS
+	iface.EVENT_3BUTTON_PRESS = C.GDK_3BUTTON_PRESS
+	iface.EVENT_TRIPLE_BUTTON_PRESS = C.GDK_TRIPLE_BUTTON_PRESS
+	iface.EVENT_BUTTON_RELEASE = C.GDK_BUTTON_RELEASE
+	iface.EVENT_KEY_PRESS = C.GDK_KEY_PRESS
+	iface.EVENT_KEY_RELEASE = C.GDK_KEY_RELEASE
+	iface.EVENT_LEAVE_NOTIFY = C.GDK_ENTER_NOTIFY
+	iface.EVENT_FOCUS_CHANGE = C.GDK_FOCUS_CHANGE
+	iface.EVENT_CONFIGURE = C.GDK_CONFIGURE
+	iface.EVENT_MAP = C.GDK_MAP
+	iface.EVENT_UNMAP = C.GDK_UNMAP
+	iface.EVENT_PROPERTY_NOTIFY = C.GDK_PROPERTY_NOTIFY
+	iface.EVENT_SELECTION_CLEAR = C.GDK_SELECTION_CLEAR
+	iface.EVENT_SELECTION_REQUEST = C.GDK_SELECTION_REQUEST
+	iface.EVENT_SELECTION_NOTIFY = C.GDK_SELECTION_NOTIFY
+	iface.EVENT_PROXIMITY_IN = C.GDK_PROXIMITY_IN
+	iface.EVENT_PROXIMITY_OUT = C.GDK_PROXIMITY_OUT
+	iface.EVENT_DRAG_ENTER = C.GDK_DRAG_ENTER
+	iface.EVENT_DRAG_LEAVE = C.GDK_DRAG_LEAVE
+	iface.EVENT_DRAG_MOTION = C.GDK_DRAG_MOTION
+	iface.EVENT_DRAG_STATUS = C.GDK_DRAG_STATUS
+	iface.EVENT_DROP_START = C.GDK_DROP_START
+	iface.EVENT_DROP_FINISHED = C.GDK_DROP_FINISHED
+	iface.EVENT_CLIENT_EVENT = C.GDK_CLIENT_EVENT
+	iface.EVENT_VISIBILITY_NOTIFY = C.GDK_VISIBILITY_NOTIFY
+	iface.EVENT_SCROLL = C.GDK_SCROLL
+	iface.EVENT_WINDOW_STATE = C.GDK_WINDOW_STATE
+	iface.EVENT_SETTING = C.GDK_SETTING
+	iface.EVENT_OWNER_CHANGE = C.GDK_OWNER_CHANGE
+	iface.EVENT_GRAB_BROKEN = C.GDK_GRAB_BROKEN
+	iface.EVENT_DAMAGE = C.GDK_DAMAGE
+	iface.EVENT_TOUCH_BEGIN = C.GDK_TOUCH_BEGIN
+	iface.EVENT_TOUCH_UPDATE = C.GDK_TOUCH_UPDATE
+	iface.EVENT_TOUCH_END = C.GDK_TOUCH_END
+	iface.EVENT_TOUCH_CANCEL = C.GDK_TOUCH_CANCEL
+	iface.EVENT_LAST = C.GDK_EVENT_LAST
 }
 
 /*
@@ -87,233 +238,58 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
  * Constants
  */
 
-// DragAction is a representation of GDK's GdkDragAction.
-type DragAction int
-
-const (
-	ACTION_DEFAULT DragAction = C.GDK_ACTION_DEFAULT
-	ACTION_COPY    DragAction = C.GDK_ACTION_COPY
-	ACTION_MOVE    DragAction = C.GDK_ACTION_MOVE
-	ACTION_LINK    DragAction = C.GDK_ACTION_LINK
-	ACTION_PRIVATE DragAction = C.GDK_ACTION_PRIVATE
-	ACTION_ASK     DragAction = C.GDK_ACTION_ASK
-)
-
 func marshalDragAction(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return DragAction(c), nil
+	return iface.DragAction(c), nil
 }
-
-// Colorspace is a representation of GDK's GdkColorspace.
-type Colorspace int
-
-const (
-	COLORSPACE_RGB Colorspace = C.GDK_COLORSPACE_RGB
-)
 
 func marshalColorspace(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return Colorspace(c), nil
+	return iface.Colorspace(c), nil
 }
-
-// InterpType is a representation of GDK's GdkInterpType.
-type InterpType int
-
-const (
-	INTERP_NEAREST  InterpType = C.GDK_INTERP_NEAREST
-	INTERP_TILES    InterpType = C.GDK_INTERP_TILES
-	INTERP_BILINEAR InterpType = C.GDK_INTERP_BILINEAR
-	INTERP_HYPER    InterpType = C.GDK_INTERP_HYPER
-)
-
-// PixbufRotation is a representation of GDK's GdkPixbufRotation.
-type PixbufRotation int
-
-const (
-	PIXBUF_ROTATE_NONE             PixbufRotation = C.GDK_PIXBUF_ROTATE_NONE
-	PIXBUF_ROTATE_COUNTERCLOCKWISE PixbufRotation = C.GDK_PIXBUF_ROTATE_COUNTERCLOCKWISE
-	PIXBUF_ROTATE_UPSIDEDOWN       PixbufRotation = C.GDK_PIXBUF_ROTATE_UPSIDEDOWN
-	PIXBUF_ROTATE_CLOCKWISE        PixbufRotation = C.GDK_PIXBUF_ROTATE_CLOCKWISE
-)
 
 func marshalInterpType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return InterpType(c), nil
+	return iface.InterpType(c), nil
 }
-
-// ModifierType is a representation of GDK's GdkModifierType.
-type ModifierType uint
-
-const (
-	GDK_SHIFT_MASK    ModifierType = C.GDK_SHIFT_MASK
-	GDK_LOCK_MASK                  = C.GDK_LOCK_MASK
-	GDK_CONTROL_MASK               = C.GDK_CONTROL_MASK
-	GDK_MOD1_MASK                  = C.GDK_MOD1_MASK
-	GDK_MOD2_MASK                  = C.GDK_MOD2_MASK
-	GDK_MOD3_MASK                  = C.GDK_MOD3_MASK
-	GDK_MOD4_MASK                  = C.GDK_MOD4_MASK
-	GDK_MOD5_MASK                  = C.GDK_MOD5_MASK
-	GDK_BUTTON1_MASK               = C.GDK_BUTTON1_MASK
-	GDK_BUTTON2_MASK               = C.GDK_BUTTON2_MASK
-	GDK_BUTTON3_MASK               = C.GDK_BUTTON3_MASK
-	GDK_BUTTON4_MASK               = C.GDK_BUTTON4_MASK
-	GDK_BUTTON5_MASK               = C.GDK_BUTTON5_MASK
-	GDK_SUPER_MASK                 = C.GDK_SUPER_MASK
-	GDK_HYPER_MASK                 = C.GDK_HYPER_MASK
-	GDK_META_MASK                  = C.GDK_META_MASK
-	GDK_RELEASE_MASK               = C.GDK_RELEASE_MASK
-	GDK_MODIFIER_MASK              = C.GDK_MODIFIER_MASK
-)
 
 func marshalModifierType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return ModifierType(c), nil
+	return iface.ModifierType(c), nil
 }
-
-// PixbufAlphaMode is a representation of GDK's GdkPixbufAlphaMode.
-type PixbufAlphaMode int
-
-const (
-	GDK_PIXBUF_ALPHA_BILEVEL PixbufAlphaMode = C.GDK_PIXBUF_ALPHA_BILEVEL
-	GDK_PIXBUF_ALPHA_FULL    PixbufAlphaMode = C.GDK_PIXBUF_ALPHA_FULL
-)
 
 func marshalPixbufAlphaMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return PixbufAlphaMode(c), nil
+	return iface.PixbufAlphaMode(c), nil
 }
-
-// Selections
-const (
-	SELECTION_PRIMARY       Atom = 1
-	SELECTION_SECONDARY     Atom = 2
-	SELECTION_CLIPBOARD     Atom = 69
-	TARGET_BITMAP           Atom = 5
-	TARGET_COLORMAP         Atom = 7
-	TARGET_DRAWABLE         Atom = 17
-	TARGET_PIXMAP           Atom = 20
-	TARGET_STRING           Atom = 31
-	SELECTION_TYPE_ATOM     Atom = 4
-	SELECTION_TYPE_BITMAP   Atom = 5
-	SELECTION_TYPE_COLORMAP Atom = 7
-	SELECTION_TYPE_DRAWABLE Atom = 17
-	SELECTION_TYPE_INTEGER  Atom = 19
-	SELECTION_TYPE_PIXMAP   Atom = 20
-	SELECTION_TYPE_WINDOW   Atom = 33
-	SELECTION_TYPE_STRING   Atom = 31
-)
-
-// added by terrak
-// EventMask is a representation of GDK's GdkEventMask.
-type EventMask int
-
-const (
-	EXPOSURE_MASK            EventMask = C.GDK_EXPOSURE_MASK
-	POINTER_MOTION_MASK      EventMask = C.GDK_POINTER_MOTION_MASK
-	POINTER_MOTION_HINT_MASK EventMask = C.GDK_POINTER_MOTION_HINT_MASK
-	BUTTON_MOTION_MASK       EventMask = C.GDK_BUTTON_MOTION_MASK
-	BUTTON1_MOTION_MASK      EventMask = C.GDK_BUTTON1_MOTION_MASK
-	BUTTON2_MOTION_MASK      EventMask = C.GDK_BUTTON2_MOTION_MASK
-	BUTTON3_MOTION_MASK      EventMask = C.GDK_BUTTON3_MOTION_MASK
-	BUTTON_PRESS_MASK        EventMask = C.GDK_BUTTON_PRESS_MASK
-	BUTTON_RELEASE_MASK      EventMask = C.GDK_BUTTON_RELEASE_MASK
-	KEY_PRESS_MASK           EventMask = C.GDK_KEY_PRESS_MASK
-	KEY_RELEASE_MASK         EventMask = C.GDK_KEY_RELEASE_MASK
-	ENTER_NOTIFY_MASK        EventMask = C.GDK_ENTER_NOTIFY_MASK
-	LEAVE_NOTIFY_MASK        EventMask = C.GDK_LEAVE_NOTIFY_MASK
-	FOCUS_CHANGE_MASK        EventMask = C.GDK_FOCUS_CHANGE_MASK
-	STRUCTURE_MASK           EventMask = C.GDK_STRUCTURE_MASK
-	PROPERTY_CHANGE_MASK     EventMask = C.GDK_PROPERTY_CHANGE_MASK
-	VISIBILITY_NOTIFY_MASK   EventMask = C.GDK_VISIBILITY_NOTIFY_MASK
-	PROXIMITY_IN_MASK        EventMask = C.GDK_PROXIMITY_IN_MASK
-	PROXIMITY_OUT_MASK       EventMask = C.GDK_PROXIMITY_OUT_MASK
-	SUBSTRUCTURE_MASK        EventMask = C.GDK_SUBSTRUCTURE_MASK
-	SCROLL_MASK              EventMask = C.GDK_SCROLL_MASK
-	TOUCH_MASK               EventMask = C.GDK_TOUCH_MASK
-	SMOOTH_SCROLL_MASK       EventMask = C.GDK_SMOOTH_SCROLL_MASK
-	ALL_EVENTS_MASK          EventMask = C.GDK_ALL_EVENTS_MASK
-)
 
 func marshalEventMask(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return EventMask(c), nil
+	return iface.EventMask(c), nil
 }
-
-// added by lazyshot
-// ScrollDirection is a representation of GDK's GdkScrollDirection
-
-type ScrollDirection int
-
-const (
-	SCROLL_UP     ScrollDirection = C.GDK_SCROLL_UP
-	SCROLL_DOWN   ScrollDirection = C.GDK_SCROLL_DOWN
-	SCROLL_LEFT   ScrollDirection = C.GDK_SCROLL_LEFT
-	SCROLL_RIGHT  ScrollDirection = C.GDK_SCROLL_RIGHT
-	SCROLL_SMOOTH ScrollDirection = C.GDK_SCROLL_SMOOTH
-)
-
-// CURRENT_TIME is a representation of GDK_CURRENT_TIME
-
-const CURRENT_TIME = C.GDK_CURRENT_TIME
-
-// GrabStatus is a representation of GdkGrabStatus
-
-type GrabStatus int
-
-const (
-	GRAB_SUCCESS         GrabStatus = C.GDK_GRAB_SUCCESS
-	GRAB_ALREADY_GRABBED GrabStatus = C.GDK_GRAB_ALREADY_GRABBED
-	GRAB_INVALID_TIME    GrabStatus = C.GDK_GRAB_INVALID_TIME
-	GRAB_FROZEN          GrabStatus = C.GDK_GRAB_FROZEN
-	// Only exists since 3.16
-	// GRAB_FAILED GrabStatus = C.GDK_GRAB_FAILED
-	GRAB_FAILED GrabStatus = 5
-)
-
-// GrabOwnership is a representation of GdkGrabOwnership
-
-type GrabOwnership int
-
-const (
-	OWNERSHIP_NONE        GrabOwnership = C.GDK_OWNERSHIP_NONE
-	OWNERSHIP_WINDOW      GrabOwnership = C.GDK_OWNERSHIP_WINDOW
-	OWNERSHIP_APPLICATION GrabOwnership = C.GDK_OWNERSHIP_APPLICATION
-)
-
-// DeviceType is a representation of GdkDeviceType
-
-type DeviceType int
-
-const (
-	DEVICE_TYPE_MASTER   DeviceType = C.GDK_DEVICE_TYPE_MASTER
-	DEVICE_TYPE_SLAVE    DeviceType = C.GDK_DEVICE_TYPE_SLAVE
-	DEVICE_TYPE_FLOATING DeviceType = C.GDK_DEVICE_TYPE_FLOATING
-)
 
 /*
  * GdkAtom
  */
 
-// Atom is a representation of GDK's GdkAtom.
-type Atom uintptr
-
-// native returns the underlying GdkAtom.
-func (v Atom) native() C.GdkAtom {
+// nativeAtom returns the underlying GdkAtom.
+func nativeAtom(v iface.Atom) C.GdkAtom {
 	return C.toGdkAtom(unsafe.Pointer(uintptr(v)))
 }
 
-func (v Atom) Name() string {
-	c := C.gdk_atom_name(v.native())
+// AtomName returns the name of the atom
+func AtomName(v iface.Atom) string {
+	c := C.gdk_atom_name(nativeAtom(v))
 	defer C.g_free(C.gpointer(c))
 	return C.GoString((*C.char)(c))
 }
 
 // GdkAtomIntern is a wrapper around gdk_atom_intern
-func GdkAtomIntern(atomName string, onlyIfExists bool) Atom {
+func GdkAtomIntern(atomName string, onlyIfExists bool) iface.Atom {
 	cstr := C.CString(atomName)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gdk_atom_intern((*C.gchar)(cstr), gbool(onlyIfExists))
-	return Atom(uintptr(unsafe.Pointer(c)))
+	return iface.Atom(uintptr(unsafe.Pointer(c)))
 }
 
 /*
@@ -346,17 +322,17 @@ func marshalDevice(p uintptr) (interface{}, error) {
 }
 
 // Grab() is a wrapper around gdk_device_grab().
-func (v *Device) Grab(w *Window, ownership GrabOwnership, owner_events bool, event_mask EventMask, cursor *Cursor, time uint32) GrabStatus {
+func (v *Device) Grab(w iface.Window, ownership iface.GrabOwnership, owner_events bool, event_mask iface.EventMask, cursor iface.Cursor, time uint32) iface.GrabStatus {
 	ret := C.gdk_device_grab(
 		v.native(),
-		w.native(),
+		w.(*Window).native(),
 		C.GdkGrabOwnership(ownership),
 		gbool(owner_events),
 		C.GdkEventMask(event_mask),
-		cursor.native(),
+		cursor.(*Cursor).native(),
 		C.guint32(time),
 	)
-	return GrabStatus(ret)
+	return iface.GrabStatus(ret)
 }
 
 // Ungrab() is a wrapper around gdk_device_ungrab().
@@ -423,7 +399,7 @@ func marshalDeviceManager(p uintptr) (interface{}, error) {
 }
 
 // GetClientPointer() is a wrapper around gdk_device_manager_get_client_pointer().
-func (v *DeviceManager) GetClientPointer() (*Device, error) {
+func (v *DeviceManager) GetClientPointer() (iface.Device, error) {
 	c := C.gdk_device_manager_get_client_pointer(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -435,7 +411,7 @@ func (v *DeviceManager) GetClientPointer() (*Device, error) {
 }
 
 // GetDisplay() is a wrapper around gdk_device_manager_get_display().
-func (v *DeviceManager) GetDisplay() (*Display, error) {
+func (v *DeviceManager) GetDisplay() (iface.Display, error) {
 	c := C.gdk_device_manager_get_display(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -447,7 +423,7 @@ func (v *DeviceManager) GetDisplay() (*Display, error) {
 }
 
 // ListDevices() is a wrapper around gdk_device_manager_list_devices().
-func (v *DeviceManager) ListDevices(tp DeviceType) *glib.List {
+func (v *DeviceManager) ListDevices(tp iface.DeviceType) glib_iface.List {
 	clist := C.gdk_device_manager_list_devices(v.native(), C.GdkDeviceType(tp))
 	if clist == nil {
 		return nil
@@ -537,7 +513,7 @@ func (v *Display) GetName() (string, error) {
 }
 
 // GetScreen() is a wrapper around gdk_display_get_screen().
-func (v *Display) GetScreen(screenNum int) (*Screen, error) {
+func (v *Display) GetScreen(screenNum int) (iface.Screen, error) {
 	c := C.gdk_display_get_screen(v.native(), C.gint(screenNum))
 	if c == nil {
 		return nil, nilPtrErr
@@ -550,7 +526,7 @@ func (v *Display) GetScreen(screenNum int) (*Screen, error) {
 }
 
 // GetDefaultScreen() is a wrapper around gdk_display_get_default_screen().
-func (v *Display) GetDefaultScreen() (*Screen, error) {
+func (v *Display) GetDefaultScreen() (iface.Screen, error) {
 	c := C.gdk_display_get_default_screen(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -563,7 +539,7 @@ func (v *Display) GetDefaultScreen() (*Screen, error) {
 }
 
 // GetDeviceManager() is a wrapper around gdk_display_get_device_manager().
-func (v *Display) GetDeviceManager() (*DeviceManager, error) {
+func (v *Display) GetDeviceManager() (iface.DeviceManager, error) {
 	c := C.gdk_display_get_device_manager(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -576,8 +552,8 @@ func (v *Display) GetDeviceManager() (*DeviceManager, error) {
 }
 
 // DeviceIsGrabbed() is a wrapper around gdk_display_device_is_grabbed().
-func (v *Display) DeviceIsGrabbed(device *Device) bool {
-	c := C.gdk_display_device_is_grabbed(v.native(), device.native())
+func (v *Display) DeviceIsGrabbed(device iface.Device) bool {
+	c := C.gdk_display_device_is_grabbed(v.native(), device.(*Device).native())
 	return gobool(c)
 }
 
@@ -608,7 +584,7 @@ func (v *Display) IsClosed() bool {
 }
 
 // GetEvent() is a wrapper around gdk_display_get_event().
-func (v *Display) GetEvent() (*Event, error) {
+func (v *Display) GetEvent() (iface.Event, error) {
 	c := C.gdk_display_get_event(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -619,7 +595,7 @@ func (v *Display) GetEvent() (*Event, error) {
 }
 
 // PeekEvent() is a wrapper around gdk_display_peek_event().
-func (v *Display) PeekEvent() (*Event, error) {
+func (v *Display) PeekEvent() (iface.Event, error) {
 	c := C.gdk_display_peek_event(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -630,8 +606,8 @@ func (v *Display) PeekEvent() (*Event, error) {
 }
 
 // PutEvent() is a wrapper around gdk_display_put_event().
-func (v *Display) PutEvent(event *Event) {
-	C.gdk_display_put_event(v.native(), event.native())
+func (v *Display) PutEvent(event iface.Event) {
+	C.gdk_display_put_event(v.native(), event.(*Event).native())
 }
 
 // HasPending() is a wrapper around gdk_display_has_pending().
@@ -676,7 +652,7 @@ func (v *Display) GetMaximalCursorSize() (width, height uint) {
 }
 
 // GetDefaultGroup() is a wrapper around gdk_display_get_default_group().
-func (v *Display) GetDefaultGroup() (*Window, error) {
+func (v *Display) GetDefaultGroup() (iface.Window, error) {
 	c := C.gdk_display_get_default_group(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -697,9 +673,9 @@ func (v *Display) SupportsSelectionNotification() bool {
 
 // RequestSelectionNotification() is a wrapper around
 // gdk_display_request_selection_notification().
-func (v *Display) RequestSelectionNotification(selection Atom) bool {
+func (v *Display) RequestSelectionNotification(selection iface.Atom) bool {
 	c := C.gdk_display_request_selection_notification(v.native(),
-		selection.native())
+		nativeAtom(selection))
 	return gobool(c)
 }
 
@@ -711,7 +687,7 @@ func (v *Display) SupportsClipboardPersistence() bool {
 }
 
 // TODO(jrick)
-func (v *Display) StoreClipboard(clipboardWindow *Window, time uint32, targets ...Atom) {
+func (v *Display) StoreClipboard(clipboardWindow iface.Window, time uint32, targets ...iface.Atom) {
 }
 
 // SupportsShapes() is a wrapper around gdk_display_supports_shapes().
@@ -737,60 +713,10 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 	C.gdk_display_notify_startup_complete(v.native(), (*C.gchar)(cstr))
 }
 
-// EventType is a representation of GDK's GdkEventType.
-// Do not confuse these event types with the signals that GTK+ widgets emit
-type EventType int
-
 func marshalEventType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return EventType(c), nil
+	return iface.EventType(c), nil
 }
-
-const (
-	EVENT_NOTHING             EventType = C.GDK_NOTHING
-	EVENT_DELETE              EventType = C.GDK_DELETE
-	EVENT_DESTROY             EventType = C.GDK_DESTROY
-	EVENT_EXPOSE              EventType = C.GDK_EXPOSE
-	EVENT_MOTION_NOTIFY       EventType = C.GDK_MOTION_NOTIFY
-	EVENT_BUTTON_PRESS        EventType = C.GDK_BUTTON_PRESS
-	EVENT_2BUTTON_PRESS       EventType = C.GDK_2BUTTON_PRESS
-	EVENT_DOUBLE_BUTTON_PRESS EventType = C.GDK_DOUBLE_BUTTON_PRESS
-	EVENT_3BUTTON_PRESS       EventType = C.GDK_3BUTTON_PRESS
-	EVENT_TRIPLE_BUTTON_PRESS EventType = C.GDK_TRIPLE_BUTTON_PRESS
-	EVENT_BUTTON_RELEASE      EventType = C.GDK_BUTTON_RELEASE
-	EVENT_KEY_PRESS           EventType = C.GDK_KEY_PRESS
-	EVENT_KEY_RELEASE         EventType = C.GDK_KEY_RELEASE
-	EVENT_LEAVE_NOTIFY        EventType = C.GDK_ENTER_NOTIFY
-	EVENT_FOCUS_CHANGE        EventType = C.GDK_FOCUS_CHANGE
-	EVENT_CONFIGURE           EventType = C.GDK_CONFIGURE
-	EVENT_MAP                 EventType = C.GDK_MAP
-	EVENT_UNMAP               EventType = C.GDK_UNMAP
-	EVENT_PROPERTY_NOTIFY     EventType = C.GDK_PROPERTY_NOTIFY
-	EVENT_SELECTION_CLEAR     EventType = C.GDK_SELECTION_CLEAR
-	EVENT_SELECTION_REQUEST   EventType = C.GDK_SELECTION_REQUEST
-	EVENT_SELECTION_NOTIFY    EventType = C.GDK_SELECTION_NOTIFY
-	EVENT_PROXIMITY_IN        EventType = C.GDK_PROXIMITY_IN
-	EVENT_PROXIMITY_OUT       EventType = C.GDK_PROXIMITY_OUT
-	EVENT_DRAG_ENTER          EventType = C.GDK_DRAG_ENTER
-	EVENT_DRAG_LEAVE          EventType = C.GDK_DRAG_LEAVE
-	EVENT_DRAG_MOTION         EventType = C.GDK_DRAG_MOTION
-	EVENT_DRAG_STATUS         EventType = C.GDK_DRAG_STATUS
-	EVENT_DROP_START          EventType = C.GDK_DROP_START
-	EVENT_DROP_FINISHED       EventType = C.GDK_DROP_FINISHED
-	EVENT_CLIENT_EVENT        EventType = C.GDK_CLIENT_EVENT
-	EVENT_VISIBILITY_NOTIFY   EventType = C.GDK_VISIBILITY_NOTIFY
-	EVENT_SCROLL              EventType = C.GDK_SCROLL
-	EVENT_WINDOW_STATE        EventType = C.GDK_WINDOW_STATE
-	EVENT_SETTING             EventType = C.GDK_SETTING
-	EVENT_OWNER_CHANGE        EventType = C.GDK_OWNER_CHANGE
-	EVENT_GRAB_BROKEN         EventType = C.GDK_GRAB_BROKEN
-	EVENT_DAMAGE              EventType = C.GDK_DAMAGE
-	EVENT_TOUCH_BEGIN         EventType = C.GDK_TOUCH_BEGIN
-	EVENT_TOUCH_UPDATE        EventType = C.GDK_TOUCH_UPDATE
-	EVENT_TOUCH_END           EventType = C.GDK_TOUCH_END
-	EVENT_TOUCH_CANCEL        EventType = C.GDK_TOUCH_CANCEL
-	EVENT_LAST                EventType = C.GDK_EVENT_LAST
-)
 
 /*
  * GDK Keyval
@@ -856,7 +782,7 @@ func marshalDragContext(p uintptr) (interface{}, error) {
 	return &DragContext{obj}, nil
 }
 
-func (v *DragContext) ListTargets() *glib.List {
+func (v *DragContext) ListTargets() glib_iface.List {
 	c := C.gdk_drag_context_list_targets(v.native())
 	return glib.WrapList(uintptr(unsafe.Pointer(c)))
 }
@@ -948,9 +874,9 @@ func (v *EventButton) Time() uint32 {
 	return uint32(c)
 }
 
-func (v *EventButton) Type() EventType {
+func (v *EventButton) Type() iface.EventType {
 	c := v.native()._type
-	return EventType(c)
+	return iface.EventType(c)
 }
 
 func (v *EventButton) MotionVal() (float64, float64) {
@@ -999,9 +925,9 @@ func (v *EventKey) KeyVal() uint {
 	return uint(c)
 }
 
-func (v *EventKey) Type() EventType {
+func (v *EventKey) Type() iface.EventType {
 	c := v.native()._type
-	return EventType(c)
+	return iface.EventType(c)
 }
 
 func (v *EventKey) State() uint {
@@ -1072,9 +998,9 @@ func (v *EventScroll) Y() float64 {
 	return float64(v.native().y)
 }
 
-func (v *EventScroll) Type() EventType {
+func (v *EventScroll) Type() iface.EventType {
 	c := v.native()._type
-	return EventType(c)
+	return iface.EventType(c)
 }
 
 /*
@@ -1107,9 +1033,9 @@ func marshalPixbuf(p uintptr) (interface{}, error) {
 }
 
 // GetColorspace is a wrapper around gdk_pixbuf_get_colorspace().
-func (v *Pixbuf) GetColorspace() Colorspace {
+func (v *Pixbuf) GetColorspace() iface.Colorspace {
 	c := C.gdk_pixbuf_get_colorspace(v.native())
-	return Colorspace(c)
+	return iface.Colorspace(c)
 }
 
 // GetNChannels is a wrapper around gdk_pixbuf_get_n_channels().
@@ -1185,7 +1111,7 @@ func (v *Pixbuf) GetOption(key string) (value string, ok bool) {
 }
 
 // PixbufNew is a wrapper around gdk_pixbuf_new().
-func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, height int) (*Pixbuf, error) {
+func PixbufNew(colorspace iface.Colorspace, hasAlpha bool, bitsPerSample, width, height int) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_new(C.GdkColorspace(colorspace), gbool(hasAlpha),
 		C.int(bitsPerSample), C.int(width), C.int(height))
 	if c == nil {
@@ -1265,7 +1191,7 @@ func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspect
 }
 
 // ScaleSimple is a wrapper around gdk_pixbuf_scale_simple().
-func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (*Pixbuf, error) {
+func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType iface.InterpType) (iface.Pixbuf, error) {
 	c := C.gdk_pixbuf_scale_simple(v.native(), C.int(destWidth),
 		C.int(destHeight), C.GdkInterpType(interpType))
 	if c == nil {
@@ -1278,7 +1204,7 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 }
 
 // RotateSimple is a wrapper around gdk_pixbuf_rotate_simple().
-func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
+func (v *Pixbuf) RotateSimple(angle iface.PixbufRotation) (iface.Pixbuf, error) {
 	c := C.gdk_pixbuf_rotate_simple(v.native(), C.GdkPixbufRotation(angle))
 	if c == nil {
 		return nil, nilPtrErr
@@ -1290,7 +1216,7 @@ func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 }
 
 // ApplyEmbeddedOrientation is a wrapper around gdk_pixbuf_apply_embedded_orientation().
-func (v *Pixbuf) ApplyEmbeddedOrientation() (*Pixbuf, error) {
+func (v *Pixbuf) ApplyEmbeddedOrientation() (iface.Pixbuf, error) {
 	c := C.gdk_pixbuf_apply_embedded_orientation(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -1302,7 +1228,7 @@ func (v *Pixbuf) ApplyEmbeddedOrientation() (*Pixbuf, error) {
 }
 
 // Flip is a wrapper around gdk_pixbuf_flip().
-func (v *Pixbuf) Flip(horizontal bool) (*Pixbuf, error) {
+func (v *Pixbuf) Flip(horizontal bool) (iface.Pixbuf, error) {
 	c := C.gdk_pixbuf_flip(v.native(), gbool(horizontal))
 	if c == nil {
 		return nil, nilPtrErr
@@ -1433,7 +1359,7 @@ func (v *PixbufLoader) SetSize(width, height int) {
 }
 
 // GetPixbuf is a wrapper around gdk_pixbuf_loader_get_pixbuf().
-func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
+func (v *PixbufLoader) GetPixbuf() (iface.Pixbuf, error) {
 	c := C.gdk_pixbuf_loader_get_pixbuf(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -1504,8 +1430,8 @@ func (v *RGBA) String() string {
 // guint 	gdk_rgba_hash ()
 
 // PixbufGetType is a wrapper around gdk_pixbuf_get_type().
-func PixbufGetType() glib.Type {
-	return glib.Type(C.gdk_pixbuf_get_type())
+func PixbufGetType() glib_iface.Type {
+	return glib_iface.Type(C.gdk_pixbuf_get_type())
 }
 
 /*

@@ -108,55 +108,50 @@ func (v *AttrList) native() *C.PangoAttrList {
 	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
 }
 
-const (
-	ATTR_INVALID             iface.AttrType = C.PANGO_ATTR_INVALID             /* 0 is an invalid attribute type */
-	ATTR_LANGUAGE            iface.AttrType = C.PANGO_ATTR_LANGUAGE            /* PangoAttrLanguage */
-	ATTR_FAMILY              iface.AttrType = C.PANGO_ATTR_FAMILY              /* PangoAttrString */
-	ATTR_STYLE               iface.AttrType = C.PANGO_ATTR_STYLE               /* PangoAttrInt */
-	ATTR_WEIGHT              iface.AttrType = C.PANGO_ATTR_WEIGHT              /* PangoAttrInt */
-	ATTR_VARIANT             iface.AttrType = C.PANGO_ATTR_VARIANT             /* PangoAttrInt */
-	ATTR_STRETCH             iface.AttrType = C.PANGO_ATTR_STRETCH             /* PangoAttrInt */
-	ATTR_SIZE                iface.AttrType = C.PANGO_ATTR_SIZE                /* PangoAttrSize */
-	ATTR_FONT_DESC           iface.AttrType = C.PANGO_ATTR_FONT_DESC           /* PangoAttrFontDesc */
-	ATTR_FOREGROUND          iface.AttrType = C.PANGO_ATTR_FOREGROUND          /* PangoAttrColor */
-	ATTR_BACKGROUND          iface.AttrType = C.PANGO_ATTR_BACKGROUND          /* PangoAttrColor */
-	ATTR_UNDERLINE           iface.AttrType = C.PANGO_ATTR_UNDERLINE           /* PangoAttrInt */
-	ATTR_STRIKETHROUGH       iface.AttrType = C.PANGO_ATTR_STRIKETHROUGH       /* PangoAttrInt */
-	ATTR_RISE                iface.AttrType = C.PANGO_ATTR_RISE                /* PangoAttrInt */
-	ATTR_SHAPE               iface.AttrType = C.PANGO_ATTR_SHAPE               /* PangoAttrShape */
-	ATTR_SCALE               iface.AttrType = C.PANGO_ATTR_SCALE               /* PangoAttrFloat */
-	ATTR_FALLBACK            iface.AttrType = C.PANGO_ATTR_FALLBACK            /* PangoAttrInt */
-	ATTR_LETTER_SPACING      iface.AttrType = C.PANGO_ATTR_LETTER_SPACING      /* PangoAttrInt */
-	ATTR_UNDERLINE_COLOR     iface.AttrType = C.PANGO_ATTR_UNDERLINE_COLOR     /* PangoAttrColor */
-	ATTR_STRIKETHROUGH_COLOR iface.AttrType = C.PANGO_ATTR_STRIKETHROUGH_COLOR /* PangoAttrColor */
-	ATTR_ABSOLUTE_SIZE       iface.AttrType = C.PANGO_ATTR_ABSOLUTE_SIZE       /* PangoAttrSize */
-	ATTR_GRAVITY             iface.AttrType = C.PANGO_ATTR_GRAVITY             /* PangoAttrInt */
-	ATTR_GRAVITY_HINT        iface.AttrType = C.PANGO_ATTR_GRAVITY_HINT        /* PangoAttrInt */
+func init() {
+	iface.ATTR_INVALID = C.PANGO_ATTR_INVALID                         /* 0 is an invalid attribute type */
+	iface.ATTR_LANGUAGE = C.PANGO_ATTR_LANGUAGE                       /* PangoAttrLanguage */
+	iface.ATTR_FAMILY = C.PANGO_ATTR_FAMILY                           /* PangoAttrString */
+	iface.ATTR_STYLE = C.PANGO_ATTR_STYLE                             /* PangoAttrInt */
+	iface.ATTR_WEIGHT = C.PANGO_ATTR_WEIGHT                           /* PangoAttrInt */
+	iface.ATTR_VARIANT = C.PANGO_ATTR_VARIANT                         /* PangoAttrInt */
+	iface.ATTR_STRETCH = C.PANGO_ATTR_STRETCH                         /* PangoAttrInt */
+	iface.ATTR_SIZE = C.PANGO_ATTR_SIZE                               /* PangoAttrSize */
+	iface.ATTR_FONT_DESC = C.PANGO_ATTR_FONT_DESC                     /* PangoAttrFontDesc */
+	iface.ATTR_FOREGROUND = C.PANGO_ATTR_FOREGROUND                   /* PangoAttrColor */
+	iface.ATTR_BACKGROUND = C.PANGO_ATTR_BACKGROUND                   /* PangoAttrColor */
+	iface.ATTR_UNDERLINE = C.PANGO_ATTR_UNDERLINE                     /* PangoAttrInt */
+	iface.ATTR_STRIKETHROUGH = C.PANGO_ATTR_STRIKETHROUGH             /* PangoAttrInt */
+	iface.ATTR_RISE = C.PANGO_ATTR_RISE                               /* PangoAttrInt */
+	iface.ATTR_SHAPE = C.PANGO_ATTR_SHAPE                             /* PangoAttrShape */
+	iface.ATTR_SCALE = C.PANGO_ATTR_SCALE                             /* PangoAttrFloat */
+	iface.ATTR_FALLBACK = C.PANGO_ATTR_FALLBACK                       /* PangoAttrInt */
+	iface.ATTR_LETTER_SPACING = C.PANGO_ATTR_LETTER_SPACING           /* PangoAttrInt */
+	iface.ATTR_UNDERLINE_COLOR = C.PANGO_ATTR_UNDERLINE_COLOR         /* PangoAttrColor */
+	iface.ATTR_STRIKETHROUGH_COLOR = C.PANGO_ATTR_STRIKETHROUGH_COLOR /* PangoAttrColor */
+	iface.ATTR_ABSOLUTE_SIZE = C.PANGO_ATTR_ABSOLUTE_SIZE             /* PangoAttrSize */
+	iface.ATTR_GRAVITY = C.PANGO_ATTR_GRAVITY                         /* PangoAttrInt */
+	iface.ATTR_GRAVITY_HINT = C.PANGO_ATTR_GRAVITY_HINT               /* PangoAttrInt */
 
-)
+	iface.UNDERLINE_NONE = C.PANGO_UNDERLINE_NONE
+	iface.UNDERLINE_SINGLE = C.PANGO_UNDERLINE_SINGLE
+	iface.UNDERLINE_DOUBLE = C.PANGO_UNDERLINE_DOUBLE
+	iface.UNDERLINE_LOW = C.PANGO_UNDERLINE_LOW
+	iface.UNDERLINE_ERROR = C.PANGO_UNDERLINE_ERROR
+
+	iface.ATTR_INDEX_FROM_TEXT_BEGINNING = 0
+	iface.ATTR_INDEX_TO_TEXT_END = C.G_MAXUINT
+}
 
 func marshalAttrType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return iface.AttrType(c), nil
 }
 
-const (
-	UNDERLINE_NONE   iface.Underline = C.PANGO_UNDERLINE_NONE
-	UNDERLINE_SINGLE iface.Underline = C.PANGO_UNDERLINE_SINGLE
-	UNDERLINE_DOUBLE iface.Underline = C.PANGO_UNDERLINE_DOUBLE
-	UNDERLINE_LOW    iface.Underline = C.PANGO_UNDERLINE_LOW
-	UNDERLINE_ERROR  iface.Underline = C.PANGO_UNDERLINE_ERROR
-)
-
 func marshalUnderline(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return iface.Underline(c), nil
 }
-
-const (
-	ATTR_INDEX_FROM_TEXT_BEGINNING uint = 0
-	ATTR_INDEX_TO_TEXT_END         uint = C.G_MAXUINT
-)
 
 // Attribute is a representation of Pango's PangoAttribute.
 type Attribute struct {

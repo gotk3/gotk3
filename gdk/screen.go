@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -49,7 +50,7 @@ func toScreen(s *C.GdkScreen) (*Screen, error) {
 }
 
 // GetRGBAVisual is a wrapper around gdk_screen_get_rgba_visual().
-func (v *Screen) GetRGBAVisual() (*Visual, error) {
+func (v *Screen) GetRGBAVisual() (iface.Visual, error) {
 	c := C.gdk_screen_get_rgba_visual(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -62,7 +63,7 @@ func (v *Screen) GetRGBAVisual() (*Visual, error) {
 }
 
 // GetSystemVisual is a wrapper around gdk_screen_get_system_visual().
-func (v *Screen) GetSystemVisual() (*Visual, error) {
+func (v *Screen) GetSystemVisual() (iface.Visual, error) {
 	c := C.gdk_screen_get_system_visual(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -97,12 +98,12 @@ func (v *Screen) IsComposited() bool {
 }
 
 // GetRootWindow is a wrapper around gdk_screen_get_root_window().
-func (v *Screen) GetRootWindow() (*Window, error) {
+func (v *Screen) GetRootWindow() (iface.Window, error) {
 	return toWindow(C.gdk_screen_get_root_window(v.native()))
 }
 
 // GetDisplay is a wrapper around gdk_screen_get_display().
-func (v *Screen) GetDisplay() (*Display, error) {
+func (v *Screen) GetDisplay() (iface.Display, error) {
 	return toDisplay(C.gdk_screen_get_display(v.native()))
 }
 
@@ -149,8 +150,8 @@ func (v *Screen) GetMonitorAtPoint(x, y int) int {
 }
 
 // GetMonitorAtWindow is a wrapper around gdk_screen_get_monitor_at_window().
-func (v *Screen) GetMonitorAtWindow(w *Window) int {
-	return int(C.gdk_screen_get_monitor_at_window(v.native(), w.native()))
+func (v *Screen) GetMonitorAtWindow(w iface.Window) int {
+	return int(C.gdk_screen_get_monitor_at_window(v.native(), w.(*Window).native()))
 }
 
 // GetMonitorHeightMM is a wrapper around gdk_screen_get_monitor_height_mm().
@@ -184,7 +185,7 @@ func (v *Screen) SetResolution(r float64) {
 }
 
 // GetActiveWindow is a wrapper around gdk_screen_get_active_window().
-func (v *Screen) GetActiveWindow() (*Window, error) {
+func (v *Screen) GetActiveWindow() (iface.Window, error) {
 	return toWindow(C.gdk_screen_get_active_window(v.native()))
 }
 
