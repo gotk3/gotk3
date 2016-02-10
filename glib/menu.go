@@ -6,7 +6,11 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib/iface"
+)
 
 // MenuModel is a representation of GMenuModel.
 type MenuModel struct {
@@ -45,7 +49,7 @@ func (v *MenuModel) GetNItems() int {
 }
 
 // GetItemLink is a wrapper around g_menu_model_get_item_link().
-func (v *MenuModel) GetItemLink(index int, link string) *MenuModel {
+func (v *MenuModel) GetItemLink(index int, link string) iface.MenuModel {
 	cstr := (*C.gchar)(C.CString(link))
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.g_menu_model_get_item_link(v.native(), C.gint(index), cstr)
@@ -136,66 +140,66 @@ func (v *Menu) Append(label, detailed_action string) {
 }
 
 // InsertItem is a wrapper around g_menu_insert_item().
-func (v *Menu) InsertItem(position int, item *MenuItem) {
-	C.g_menu_insert_item(v.native(), C.gint(position), item.native())
+func (v *Menu) InsertItem(position int, item iface.MenuItem) {
+	C.g_menu_insert_item(v.native(), C.gint(position), item.(*MenuItem).native())
 }
 
 // AppendItem is a wrapper around g_menu_append_item().
-func (v *Menu) AppendItem(item *MenuItem) {
-	C.g_menu_append_item(v.native(), item.native())
+func (v *Menu) AppendItem(item iface.MenuItem) {
+	C.g_menu_append_item(v.native(), item.(*MenuItem).native())
 }
 
 // PrependItem is a wrapper around g_menu_prepend_item().
-func (v *Menu) PrependItem(item *MenuItem) {
-	C.g_menu_prepend_item(v.native(), item.native())
+func (v *Menu) PrependItem(item iface.MenuItem) {
+	C.g_menu_prepend_item(v.native(), item.(*MenuItem).native())
 }
 
 // InsertSection is a wrapper around g_menu_insert_section().
-func (v *Menu) InsertSection(position int, label string, section *MenuModel) {
+func (v *Menu) InsertSection(position int, label string, section iface.MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_menu_insert_section(v.native(), C.gint(position), cstr1, section.native())
+	C.g_menu_insert_section(v.native(), C.gint(position), cstr1, section.(*MenuModel).native())
 }
 
 // PrependSection is a wrapper around g_menu_prepend_section().
-func (v *Menu) PrependSection(label string, section *MenuModel) {
+func (v *Menu) PrependSection(label string, section iface.MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_menu_prepend_section(v.native(), cstr1, section.native())
+	C.g_menu_prepend_section(v.native(), cstr1, section.(*MenuModel).native())
 }
 
 // AppendSection is a wrapper around g_menu_append_section().
-func (v *Menu) AppendSection(label string, section *MenuModel) {
+func (v *Menu) AppendSection(label string, section iface.MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_menu_append_section(v.native(), cstr1, section.native())
+	C.g_menu_append_section(v.native(), cstr1, section.(*MenuModel).native())
 }
 
 // InsertSubmenu is a wrapper around g_menu_insert_submenu().
-func (v *Menu) InsertSubmenu(position int, label string, submenu *MenuModel) {
+func (v *Menu) InsertSubmenu(position int, label string, submenu iface.MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_menu_insert_submenu(v.native(), C.gint(position), cstr1, submenu.native())
+	C.g_menu_insert_submenu(v.native(), C.gint(position), cstr1, submenu.(*MenuModel).native())
 }
 
 // PrependSubmenu is a wrapper around g_menu_prepend_submenu().
-func (v *Menu) PrependSubmenu(label string, submenu *MenuModel) {
+func (v *Menu) PrependSubmenu(label string, submenu iface.MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_menu_prepend_submenu(v.native(), cstr1, submenu.native())
+	C.g_menu_prepend_submenu(v.native(), cstr1, submenu.(*MenuModel).native())
 }
 
 // AppendSubmenu is a wrapper around g_menu_append_submenu().
-func (v *Menu) AppendSubmenu(label string, submenu *MenuModel) {
+func (v *Menu) AppendSubmenu(label string, submenu iface.MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_menu_append_submenu(v.native(), cstr1, submenu.native())
+	C.g_menu_append_submenu(v.native(), cstr1, submenu.(*MenuModel).native())
 }
 
 // Remove is a wrapper around g_menu_remove().
@@ -296,17 +300,17 @@ func (v *MenuItem) SetDetailedAction(act string) {
 }
 
 //SetSection is a wrapper around g_menu_item_set_section().
-func (v *MenuItem) SetSection(section *MenuModel) {
-	C.g_menu_item_set_section(v.native(), section.native())
+func (v *MenuItem) SetSection(section iface.MenuModel) {
+	C.g_menu_item_set_section(v.native(), section.(*MenuModel).native())
 }
 
 //SetSubmenu is a wrapper around g_menu_item_set_submenu().
-func (v *MenuItem) SetSubmenu(submenu *MenuModel) {
-	C.g_menu_item_set_submenu(v.native(), submenu.native())
+func (v *MenuItem) SetSubmenu(submenu iface.MenuModel) {
+	C.g_menu_item_set_submenu(v.native(), submenu.(*MenuModel).native())
 }
 
 //GetLink is a wrapper around g_menu_item_get_link().
-func (v *MenuItem) GetLink(link string) *MenuModel {
+func (v *MenuItem) GetLink(link string) iface.MenuModel {
 	cstr1 := (*C.gchar)(C.CString(link))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -318,11 +322,11 @@ func (v *MenuItem) GetLink(link string) *MenuModel {
 }
 
 //SetLink is a wrapper around g_menu_item_Set_link().
-func (v *MenuItem) SetLink(link string, model *MenuModel) {
+func (v *MenuItem) SetLink(link string, model iface.MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(link))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_menu_item_set_link(v.native(), cstr1, model.native())
+	C.g_menu_item_set_link(v.native(), cstr1, model.(*MenuModel).native())
 }
 
 // void 	g_menu_item_set_action_and_target_value ()

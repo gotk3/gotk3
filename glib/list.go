@@ -5,7 +5,11 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib/iface"
+)
 
 /*
  * Linked Lists
@@ -63,19 +67,19 @@ func (v *List) DataWrapper(fn func(unsafe.Pointer) interface{}) {
 }
 
 // Append is a wrapper around g_list_append().
-func (v *List) Append(data uintptr) *List {
+func (v *List) Append(data uintptr) iface.List {
 	glist := C.g_list_append(v.native(), C.gpointer(data))
 	return v.wrapNewHead(glist)
 }
 
 // Prepend is a wrapper around g_list_prepend().
-func (v *List) Prepend(data uintptr) *List {
+func (v *List) Prepend(data uintptr) iface.List {
 	glist := C.g_list_prepend(v.native(), C.gpointer(data))
 	return v.wrapNewHead(glist)
 }
 
 // Insert is a wrapper around g_list_insert().
-func (v *List) Insert(data uintptr, position int) *List {
+func (v *List) Insert(data uintptr, position int) iface.List {
 	glist := C.g_list_insert(v.native(), C.gpointer(data), C.gint(position))
 	return v.wrapNewHead(glist)
 }
@@ -91,7 +95,7 @@ func (v *List) nthDataRaw(n uint) unsafe.Pointer {
 }
 
 // Nth() is a wrapper around g_list_nth().
-func (v *List) Nth(n uint) *List {
+func (v *List) Nth(n uint) iface.List {
 	list := wrapList(C.g_list_nth(v.native(), C.guint(n)))
 	list.DataWrapper(v.dataWrap)
 	return list
@@ -114,12 +118,12 @@ func (v *List) Free() {
 }
 
 // Next is a wrapper around the next struct field
-func (v *List) Next() *List {
+func (v *List) Next() iface.List {
 	return v.wrapNewHead(v.native().next)
 }
 
 // Previous is a wrapper around the prev struct field
-func (v *List) Previous() *List {
+func (v *List) Previous() iface.List {
 	return v.wrapNewHead(v.native().prev)
 }
 
@@ -142,7 +146,8 @@ func (v *List) Data() interface{} {
 // Foreach acts the same as g_list_foreach().
 // No user_data arguement is implemented because of Go clojure capabilities.
 func (v *List) Foreach(fn func(item interface{})) {
-	for l := v; l != nil; l = l.Next() {
+	var l iface.List
+	for l = v; l != nil; l = l.Next() {
 		fn(l.Data())
 	}
 }

@@ -5,7 +5,11 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib/iface"
+)
 
 // SList is a representation of Glib's GSList.
 type SList struct {
@@ -31,7 +35,7 @@ func (v *SList) native() *C.struct__GSList {
 	return v.list
 }
 
-func (v *SList) Append(data uintptr) *SList {
+func (v *SList) Append(data uintptr) iface.SList {
 	ret := C.g_slist_append(v.native(), C.gpointer(data))
 	if ret == v.native() {
 		return v

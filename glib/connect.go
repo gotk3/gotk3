@@ -34,7 +34,7 @@ func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}
 
 	c := C.g_signal_connect_closure(C.gpointer(v.native()),
 		(*C.gchar)(cstr), closure, gbool(after))
-	handle := SignalHandle(c)
+	handle := iface.SignalHandle(c)
 
 	// Map the signal handle to the closure.
 	signals[handle] = closure

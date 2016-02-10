@@ -226,15 +226,13 @@ func gValueSlice(values *C.GValue, nValues int) (slice []C.GValue) {
  * Main event loop
  */
 
-type SourceHandle uint
-
 // IdleAdd adds an idle source to the default main event loop
 // context.  After running once, the source func will be removed
 // from the main event loop, unless f returns a single bool true.
 //
 // This function will cause a panic when f eventually runs if the
 // types of args do not match those of f.
-func IdleAdd(f interface{}, args ...interface{}) (SourceHandle, error) {
+func IdleAdd(f interface{}, args ...interface{}) (iface.SourceHandle, error) {
 	// f must be a func with no parameters.
 	rf := reflect.ValueOf(f)
 	if rf.Type().Kind() != reflect.Func {
@@ -256,7 +254,7 @@ func IdleAdd(f interface{}, args ...interface{}) (SourceHandle, error) {
 // This function will cause a panic when f eventually runs if the
 // types of args do not match those of f.
 // timeout is in milliseconds
-func TimeoutAdd(timeout uint, f interface{}, args ...interface{}) (SourceHandle, error) {
+func TimeoutAdd(timeout uint, f interface{}, args ...interface{}) (iface.SourceHandle, error) {
 	// f must be a func with no parameters.
 	rf := reflect.ValueOf(f)
 	if rf.Type().Kind() != reflect.Func {
@@ -273,7 +271,7 @@ func TimeoutAdd(timeout uint, f interface{}, args ...interface{}) (SourceHandle,
 }
 
 // sourceAttach attaches a source to the default main loop context.
-func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{}) (SourceHandle, error) {
+func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{}) (iface.SourceHandle, error) {
 	if src == nil {
 		return 0, errNilPtr
 	}
@@ -318,7 +316,7 @@ func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{})
 	// Attach the idle source func to the default main event loop
 	// context.
 	cid := C.g_source_attach(src, nil)
-	return SourceHandle(cid), nil
+	return iface.SourceHandle(cid), nil
 }
 
 /*

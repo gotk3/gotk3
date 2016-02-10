@@ -148,11 +148,11 @@ func (v *Application) Activate() {
 }
 
 // SendNotification is a wrapper around g_application_send_notification().
-func (v *Application) SendNotification(id string, notification *Notification) {
+func (v *Application) SendNotification(id string, notification iface.Notification) {
 	cstr1 := (*C.gchar)(C.CString(id))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_application_send_notification(v.native(), cstr1, notification.native())
+	C.g_application_send_notification(v.native(), cstr1, notification.(*Notification).native())
 }
 
 // WithdrawNotification is a wrapper around g_application_withdraw_notification().
