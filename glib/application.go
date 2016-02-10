@@ -6,7 +6,11 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib/iface"
+)
 
 // Application is a representation of GApplication.
 type Application struct {
@@ -43,7 +47,7 @@ func ApplicationIDIsValid(id string) bool {
 }
 
 // ApplicationNew is a wrapper around g_application_new().
-func ApplicationNew(appID string, flags ApplicationFlags) *Application {
+func ApplicationNew(appID string, flags iface.ApplicationFlags) *Application {
 	cstr1 := (*C.gchar)(C.CString(appID))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -80,12 +84,12 @@ func (v *Application) SetInactivityTimeout(timeout uint) {
 }
 
 // GetFlags is a wrapper around g_application_get_flags().
-func (v *Application) GetFlags() ApplicationFlags {
-	return ApplicationFlags(C.g_application_get_flags(v.native()))
+func (v *Application) GetFlags() iface.ApplicationFlags {
+	return iface.ApplicationFlags(C.g_application_get_flags(v.native()))
 }
 
 // SetFlags is a wrapper around g_application_set_flags().
-func (v *Application) SetFlags(flags ApplicationFlags) {
+func (v *Application) SetFlags(flags iface.ApplicationFlags) {
 	C.g_application_set_flags(v.native(), C.GApplicationFlags(flags))
 }
 

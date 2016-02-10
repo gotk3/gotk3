@@ -32,6 +32,8 @@ import (
 	"runtime"
 	"sync"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib/iface"
 )
 
 /*
@@ -77,78 +79,66 @@ var (
  * Constants
  */
 
-// Type is a representation of GLib's GType.
-type Type uint
-
 const (
-	TYPE_INVALID   Type = C.G_TYPE_INVALID
-	TYPE_NONE      Type = C.G_TYPE_NONE
-	TYPE_INTERFACE Type = C.G_TYPE_INTERFACE
-	TYPE_CHAR      Type = C.G_TYPE_CHAR
-	TYPE_UCHAR     Type = C.G_TYPE_UCHAR
-	TYPE_BOOLEAN   Type = C.G_TYPE_BOOLEAN
-	TYPE_INT       Type = C.G_TYPE_INT
-	TYPE_UINT      Type = C.G_TYPE_UINT
-	TYPE_LONG      Type = C.G_TYPE_LONG
-	TYPE_ULONG     Type = C.G_TYPE_ULONG
-	TYPE_INT64     Type = C.G_TYPE_INT64
-	TYPE_UINT64    Type = C.G_TYPE_UINT64
-	TYPE_ENUM      Type = C.G_TYPE_ENUM
-	TYPE_FLAGS     Type = C.G_TYPE_FLAGS
-	TYPE_FLOAT     Type = C.G_TYPE_FLOAT
-	TYPE_DOUBLE    Type = C.G_TYPE_DOUBLE
-	TYPE_STRING    Type = C.G_TYPE_STRING
-	TYPE_POINTER   Type = C.G_TYPE_POINTER
-	TYPE_BOXED     Type = C.G_TYPE_BOXED
-	TYPE_PARAM     Type = C.G_TYPE_PARAM
-	TYPE_OBJECT    Type = C.G_TYPE_OBJECT
-	TYPE_VARIANT   Type = C.G_TYPE_VARIANT
+	TYPE_INVALID   iface.Type = C.G_TYPE_INVALID
+	TYPE_NONE      iface.Type = C.G_TYPE_NONE
+	TYPE_INTERFACE iface.Type = C.G_TYPE_INTERFACE
+	TYPE_CHAR      iface.Type = C.G_TYPE_CHAR
+	TYPE_UCHAR     iface.Type = C.G_TYPE_UCHAR
+	TYPE_BOOLEAN   iface.Type = C.G_TYPE_BOOLEAN
+	TYPE_INT       iface.Type = C.G_TYPE_INT
+	TYPE_UINT      iface.Type = C.G_TYPE_UINT
+	TYPE_LONG      iface.Type = C.G_TYPE_LONG
+	TYPE_ULONG     iface.Type = C.G_TYPE_ULONG
+	TYPE_INT64     iface.Type = C.G_TYPE_INT64
+	TYPE_UINT64    iface.Type = C.G_TYPE_UINT64
+	TYPE_ENUM      iface.Type = C.G_TYPE_ENUM
+	TYPE_FLAGS     iface.Type = C.G_TYPE_FLAGS
+	TYPE_FLOAT     iface.Type = C.G_TYPE_FLOAT
+	TYPE_DOUBLE    iface.Type = C.G_TYPE_DOUBLE
+	TYPE_STRING    iface.Type = C.G_TYPE_STRING
+	TYPE_POINTER   iface.Type = C.G_TYPE_POINTER
+	TYPE_BOXED     iface.Type = C.G_TYPE_BOXED
+	TYPE_PARAM     iface.Type = C.G_TYPE_PARAM
+	TYPE_OBJECT    iface.Type = C.G_TYPE_OBJECT
+	TYPE_VARIANT   iface.Type = C.G_TYPE_VARIANT
 )
 
-// Name is a wrapper around g_type_name().
-func (t Type) Name() string {
+// TypeName is a wrapper around g_type_name().
+func TypeName(t iface.Type) string {
 	return C.GoString((*C.char)(C.g_type_name(C.GType(t))))
 }
 
-// Depth is a wrapper around g_type_depth().
-func (t Type) Depth() uint {
+// TypeDepth is a wrapper around g_type_depth().
+func TypeDepth(t iface.Type) uint {
 	return uint(C.g_type_depth(C.GType(t)))
 }
 
-// Parent is a wrapper around g_type_parent().
-func (t Type) Parent() Type {
-	return Type(C.g_type_parent(C.GType(t)))
+// TypeParent is a wrapper around g_type_parent().
+func TypeParent(t iface.Type) iface.Type {
+	return iface.Type(C.g_type_parent(C.GType(t)))
 }
 
-// UserDirectory is a representation of GLib's GUserDirectory.
-type UserDirectory int
-
 const (
-	USER_DIRECTORY_DESKTOP      UserDirectory = C.G_USER_DIRECTORY_DESKTOP
-	USER_DIRECTORY_DOCUMENTS    UserDirectory = C.G_USER_DIRECTORY_DOCUMENTS
-	USER_DIRECTORY_DOWNLOAD     UserDirectory = C.G_USER_DIRECTORY_DOWNLOAD
-	USER_DIRECTORY_MUSIC        UserDirectory = C.G_USER_DIRECTORY_MUSIC
-	USER_DIRECTORY_PICTURES     UserDirectory = C.G_USER_DIRECTORY_PICTURES
-	USER_DIRECTORY_PUBLIC_SHARE UserDirectory = C.G_USER_DIRECTORY_PUBLIC_SHARE
-	USER_DIRECTORY_TEMPLATES    UserDirectory = C.G_USER_DIRECTORY_TEMPLATES
-	USER_DIRECTORY_VIDEOS       UserDirectory = C.G_USER_DIRECTORY_VIDEOS
+	USER_DIRECTORY_DESKTOP      iface.UserDirectory = C.G_USER_DIRECTORY_DESKTOP
+	USER_DIRECTORY_DOCUMENTS    iface.UserDirectory = C.G_USER_DIRECTORY_DOCUMENTS
+	USER_DIRECTORY_DOWNLOAD     iface.UserDirectory = C.G_USER_DIRECTORY_DOWNLOAD
+	USER_DIRECTORY_MUSIC        iface.UserDirectory = C.G_USER_DIRECTORY_MUSIC
+	USER_DIRECTORY_PICTURES     iface.UserDirectory = C.G_USER_DIRECTORY_PICTURES
+	USER_DIRECTORY_PUBLIC_SHARE iface.UserDirectory = C.G_USER_DIRECTORY_PUBLIC_SHARE
+	USER_DIRECTORY_TEMPLATES    iface.UserDirectory = C.G_USER_DIRECTORY_TEMPLATES
+	USER_DIRECTORY_VIDEOS       iface.UserDirectory = C.G_USER_DIRECTORY_VIDEOS
 )
 
 const USER_N_DIRECTORIES int = C.G_USER_N_DIRECTORIES
 
-/*
- * GApplicationFlags
- */
-
-type ApplicationFlags int
-
 const (
-	APPLICATION_FLAGS_NONE           ApplicationFlags = C.G_APPLICATION_FLAGS_NONE
-	APPLICATION_IS_SERVICE           ApplicationFlags = C.G_APPLICATION_IS_SERVICE
-	APPLICATION_HANDLES_OPEN         ApplicationFlags = C.G_APPLICATION_HANDLES_OPEN
-	APPLICATION_HANDLES_COMMAND_LINE ApplicationFlags = C.G_APPLICATION_HANDLES_COMMAND_LINE
-	APPLICATION_SEND_ENVIRONMENT     ApplicationFlags = C.G_APPLICATION_SEND_ENVIRONMENT
-	APPLICATION_NON_UNIQUE           ApplicationFlags = C.G_APPLICATION_NON_UNIQUE
+	APPLICATION_FLAGS_NONE           iface.ApplicationFlags = C.G_APPLICATION_FLAGS_NONE
+	APPLICATION_IS_SERVICE           iface.ApplicationFlags = C.G_APPLICATION_IS_SERVICE
+	APPLICATION_HANDLES_OPEN         iface.ApplicationFlags = C.G_APPLICATION_HANDLES_OPEN
+	APPLICATION_HANDLES_COMMAND_LINE iface.ApplicationFlags = C.G_APPLICATION_HANDLES_COMMAND_LINE
+	APPLICATION_SEND_ENVIRONMENT     iface.ApplicationFlags = C.G_APPLICATION_SEND_ENVIRONMENT
+	APPLICATION_NON_UNIQUE           iface.ApplicationFlags = C.G_APPLICATION_NON_UNIQUE
 )
 
 // goMarshal is called by the GLib runtime when a closure needs to be invoked.
@@ -338,7 +328,7 @@ func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{})
 // GetUserSpecialDir is a wrapper around g_get_user_special_dir().  A
 // non-nil error is returned in the case that g_get_user_special_dir()
 // returns NULL to differentiate between NULL and an empty string.
-func GetUserSpecialDir(directory UserDirectory) (string, error) {
+func GetUserSpecialDir(directory iface.UserDirectory) (string, error) {
 	c := C.g_get_user_special_dir(C.GUserDirectory(directory))
 	if c == nil {
 		return "", errNilPtr
@@ -394,14 +384,14 @@ func (v *Object) Native() uintptr {
 }
 
 // IsA is a wrapper around g_type_is_a().
-func (v *Object) IsA(typ Type) bool {
+func (v *Object) IsA(typ iface.Type) bool {
 	return gobool(C.g_type_is_a(C.GType(v.TypeFromInstance()), C.GType(typ)))
 }
 
 // TypeFromInstance is a wrapper around g_type_from_instance().
-func (v *Object) TypeFromInstance() Type {
+func (v *Object) TypeFromInstance() iface.Type {
 	c := C._g_type_from_instance(C.gpointer(unsafe.Pointer(v.native())))
-	return Type(c)
+	return iface.Type(c)
 }
 
 // ToGObject type converts an unsafe.Pointer as a native C GObject.
@@ -547,7 +537,7 @@ func (v *Object) Set(name string, value interface{}) error {
 
 // GetPropertyType returns the Type of a property of the underlying GObject.
 // If the property is missing it will return TYPE_INVALID and an error.
-func (v *Object) GetPropertyType(name string) (Type, error) {
+func (v *Object) GetPropertyType(name string) (iface.Type, error) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -555,7 +545,7 @@ func (v *Object) GetPropertyType(name string) (Type, error) {
 	if paramSpec == nil {
 		return TYPE_INVALID, errors.New("couldn't find Property")
 	}
-	return Type(paramSpec.value_type), nil
+	return iface.Type(paramSpec.value_type), nil
 }
 
 // GetProperty is a wrapper around g_object_get_property().
@@ -834,7 +824,7 @@ func ValueAlloc() (*Value, error) {
 // initializes a new Value with the Type t.  A runtime finalizer is set
 // to call g_value_unset() on the underlying GValue after leaving scope.
 // ValueInit() returns a non-nil error if the allocation failed.
-func ValueInit(t Type) (*Value, error) {
+func ValueInit(t iface.Type) (*Value, error) {
 	c := C._g_value_init(C.GType(t))
 	if c == nil {
 		return nil, errNilPtr
@@ -859,13 +849,13 @@ func (v *Value) unset() {
 // Type is a wrapper around the G_VALUE_HOLDS_GTYPE() macro and
 // the g_value_get_gtype() function.  GetType() returns TYPE_INVALID if v
 // does not hold a Type, or otherwise returns the Type of v.
-func (v *Value) Type() (actual Type, fundamental Type, err error) {
+func (v *Value) Type() (actual iface.Type, fundamental iface.Type, err error) {
 	if !gobool(C._g_is_value(v.native())) {
 		return actual, fundamental, errors.New("invalid GValue")
 	}
 	cActual := C._g_value_type(v.native())
 	cFundamental := C._g_value_fundamental(cActual)
-	return Type(cActual), Type(cFundamental), nil
+	return iface.Type(cActual), iface.Type(cFundamental), nil
 }
 
 // GValue converts a Go type to a comparable GValue.  GValue()
@@ -1022,7 +1012,7 @@ type GValueMarshaler func(uintptr) (interface{}, error)
 
 // TypeMarshaler represents an actual type and it's associated marshaler.
 type TypeMarshaler struct {
-	T Type
+	T iface.Type
 	F GValueMarshaler
 }
 
@@ -1034,7 +1024,7 @@ func RegisterGValueMarshalers(tm []TypeMarshaler) {
 	gValueMarshalers.register(tm)
 }
 
-type marshalMap map[Type]GValueMarshaler
+type marshalMap map[iface.Type]GValueMarshaler
 
 // gValueMarshalers is a map of Glib types to functions to marshal a
 // GValue to a native Go type.
