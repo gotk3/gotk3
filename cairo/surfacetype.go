@@ -9,9 +9,6 @@ import (
 	"unsafe"
 )
 
-// SurfaceType is a representation of Cairo's cairo_surface_type_t.
-type SurfaceType int
-
 const (
 	SURFACE_TYPE_IMAGE          SurfaceType = C.CAIRO_SURFACE_TYPE_IMAGE
 	SURFACE_TYPE_PDF            SurfaceType = C.CAIRO_SURFACE_TYPE_PDF

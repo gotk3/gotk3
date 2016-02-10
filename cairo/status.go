@@ -9,9 +9,6 @@ import (
 	"unsafe"
 )
 
-// Status is a representation of Cairo's cairo_status_t.
-type Status int
-
 const (
 	STATUS_SUCCESS                   Status = C.CAIRO_STATUS_SUCCESS
 	STATUS_NO_MEMORY                 Status = C.CAIRO_STATUS_NO_MEMORY

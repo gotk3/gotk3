@@ -9,9 +9,6 @@ import (
 	"unsafe"
 )
 
-// LineJoin is a representation of Cairo's cairo_line_join_t.
-type LineJoin int
-
 const (
 	LINE_JOIN_MITER LineJoin = C.CAIRO_LINE_JOIN_MITER
 	LINE_JOIN_ROUND LineJoin = C.CAIRO_LINE_JOIN_ROUND

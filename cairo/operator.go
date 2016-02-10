@@ -9,9 +9,6 @@ import (
 	"unsafe"
 )
 
-// Operator is a representation of Cairo's cairo_operator_t.
-type Operator int
-
 const (
 	OPERATOR_CLEAR          Operator = C.CAIRO_OPERATOR_CLEAR
 	OPERATOR_SOURCE         Operator = C.CAIRO_OPERATOR_SOURCE

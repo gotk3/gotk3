@@ -50,9 +50,6 @@ func init() {
 
 // Constants
 
-// Content is a representation of Cairo's cairo_content_t.
-type Content int
-
 const (
 	CONTENT_COLOR       Content = C.CAIRO_CONTENT_COLOR
 	CONTENT_ALPHA       Content = C.CAIRO_CONTENT_ALPHA

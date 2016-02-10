@@ -9,9 +9,6 @@ import (
 	"unsafe"
 )
 
-// Antialias is a representation of Cairo's cairo_antialias_t.
-type Antialias int
-
 const (
 	ANTIALIAS_DEFAULT  Antialias = C.CAIRO_ANTIALIAS_DEFAULT
 	ANTIALIAS_NONE     Antialias = C.CAIRO_ANTIALIAS_NONE
