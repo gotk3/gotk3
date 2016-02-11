@@ -10,6 +10,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 /*
@@ -41,18 +42,18 @@ func wrapMenuShell(obj *glib.Object) *MenuShell {
 }
 
 // Append is a wrapper around gtk_menu_shell_append().
-func (v *MenuShell) Append(child IMenuItem) {
-	C.gtk_menu_shell_append(v.native(), child.toWidget())
+func (v *MenuShell) Append(child iface.MenuItem) {
+	C.gtk_menu_shell_append(v.native(), child.(IMenuItem).toWidget())
 }
 
 // Prepend is a wrapper around gtk_menu_shell_prepend().
-func (v *MenuShell) Prepend(child IMenuItem) {
-	C.gtk_menu_shell_prepend(v.native(), child.toWidget())
+func (v *MenuShell) Prepend(child iface.MenuItem) {
+	C.gtk_menu_shell_prepend(v.native(), child.(IMenuItem).toWidget())
 }
 
 // Insert is a wrapper around gtk_menu_shell_insert().
-func (v *MenuShell) Insert(child IMenuItem, position int) {
-	C.gtk_menu_shell_insert(v.native(), child.toWidget(), C.gint(position))
+func (v *MenuShell) Insert(child iface.MenuItem, position int) {
+	C.gtk_menu_shell_insert(v.native(), child.(IMenuItem).toWidget(), C.gint(position))
 }
 
 // Deactivate is a wrapper around gtk_menu_shell_deactivate().
@@ -61,8 +62,8 @@ func (v *MenuShell) Deactivate() {
 }
 
 // SelectItem is a wrapper around gtk_menu_shell_select_item().
-func (v *MenuShell) SelectItem(child IMenuItem) {
-	C.gtk_menu_shell_select_item(v.native(), child.toWidget())
+func (v *MenuShell) SelectItem(child iface.MenuItem) {
+	C.gtk_menu_shell_select_item(v.native(), child.(IMenuItem).toWidget())
 }
 
 // SelectFirst is a wrapper around gtk_menu_shell_select_first().
@@ -76,8 +77,8 @@ func (v *MenuShell) Deselect() {
 }
 
 // ActivateItem is a wrapper around gtk_menu_shell_activate_item().
-func (v *MenuShell) ActivateItem(child IMenuItem, forceDeactivate bool) {
-	C.gtk_menu_shell_activate_item(v.native(), child.toWidget(), gbool(forceDeactivate))
+func (v *MenuShell) ActivateItem(child iface.MenuItem, forceDeactivate bool) {
+	C.gtk_menu_shell_activate_item(v.native(), child.(IMenuItem).toWidget(), gbool(forceDeactivate))
 }
 
 // Cancel is a wrapper around gtk_menu_shell_cancel().

@@ -7,13 +7,15 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
+	gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_about_dialog_get_type()), marshalAboutDialog},
+		{glib_iface.Type(C.gtk_about_dialog_get_type()), marshalAboutDialog},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -101,7 +103,7 @@ func (v *AboutDialog) SetLicense(license string) {
 // GetLicenseType is a wrapper around gtk_about_dialog_get_license_type().
 func (v *AboutDialog) GetLicenseType() iface.License {
 	c := C.gtk_about_dialog_get_license_type(v.native())
-	return License(c)
+	return iface.License(c)
 }
 
 // SetLicenseType is a wrapper around gtk_about_dialog_set_license_type().
@@ -110,8 +112,8 @@ func (v *AboutDialog) SetLicenseType(license iface.License) {
 }
 
 // SetLogo is a wrapper around gtk_about_dialog_set_logo().
-func (v *AboutDialog) SetLogo(logo *gdk.Pixbuf) {
-	logoPtr := (*C.GdkPixbuf)(unsafe.Pointer(logo.Native()))
+func (v *AboutDialog) SetLogo(logo gdk_iface.Pixbuf) {
+	logoPtr := (*C.GdkPixbuf)(unsafe.Pointer(logo.(*gdk.Pixbuf).Native()))
 	C.gtk_about_dialog_set_logo(v.native(), logoPtr)
 }
 

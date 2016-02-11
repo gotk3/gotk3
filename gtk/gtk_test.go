@@ -26,6 +26,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -42,7 +43,7 @@ func TestBoolConvs(t *testing.T) {
 
 // TestBox tests creating and adding widgets to a Box
 func TestBox(t *testing.T) {
-	vbox, err := BoxNew(ORIENTATION_VERTICAL, 0)
+	vbox, err := BoxNew(iface.ORIENTATION_VERTICAL, 0)
 	if err != nil {
 		t.Error("Unable to create box")
 	}
@@ -128,7 +129,7 @@ func TestTextView_WhenSetEditableTrue_ExpectGetEditableReturnsTrue(t *testing.T)
 	}
 }
 
-func testTextViewWrapMode(set WrapMode) error {
+func testTextViewWrapMode(set iface.WrapMode) error {
 	tv, err := TextViewNew()
 	if err != nil {
 		return err
@@ -144,13 +145,13 @@ func testTextViewWrapMode(set WrapMode) error {
 }
 
 func TestTextView_WhenSetWrapModeNone_ExpectGetWrapModeReturnsNone(t *testing.T) {
-	if err := testTextViewWrapMode(WRAP_NONE); err != nil {
+	if err := testTextViewWrapMode(iface.WRAP_NONE); err != nil {
 		t.Error(err)
 	}
 }
 
 func TestTextView_WhenSetWrapModeWord_ExpectGetWrapModeReturnsWord(t *testing.T) {
-	if err := testTextViewWrapMode(WRAP_WORD); err != nil {
+	if err := testTextViewWrapMode(iface.WRAP_WORD); err != nil {
 		t.Error(err)
 	}
 }
@@ -209,7 +210,7 @@ func TestTextView_WhenSetOverwriteTrue_ExpectGetOverwriteReturnsTrue(t *testing.
 	}
 }
 
-func testTextViewJustification(justify Justification) error {
+func testTextViewJustification(justify iface.Justification) error {
 	tv, err := TextViewNew()
 	if err != nil {
 		return err
@@ -225,13 +226,13 @@ func testTextViewJustification(justify Justification) error {
 }
 
 func TestTextView_WhenSetJustificationLeft_ExpectGetJustificationReturnsLeft(t *testing.T) {
-	if err := testTextViewJustification(JUSTIFY_LEFT); err != nil {
+	if err := testTextViewJustification(iface.JUSTIFY_LEFT); err != nil {
 		t.Error(err)
 	}
 }
 
 func TestTextView_WhenSetJustificationRight_ExpectGetJustificationReturnsRight(t *testing.T) {
-	if err := testTextViewJustification(JUSTIFY_RIGHT); err != nil {
+	if err := testTextViewJustification(iface.JUSTIFY_RIGHT); err != nil {
 		t.Error(err)
 	}
 }
@@ -394,7 +395,7 @@ func TestTextView_WhenSetIndent11_ExpectGetIndentReturns11(t *testing.T) {
 	}
 }
 
-func testTextViewInputHints(hint InputHints) error {
+func testTextViewInputHints(hint iface.InputHints) error {
 	tv, err := TextViewNew()
 	if err != nil {
 		return err
@@ -408,18 +409,18 @@ func testTextViewInputHints(hint InputHints) error {
 }
 
 func TestTextView_WhenSetInputHintsNone_ExpectGetInputHintsReturnsNone(t *testing.T) {
-	if err := testTextViewInputHints(INPUT_HINT_NONE); err != nil {
+	if err := testTextViewInputHints(iface.INPUT_HINT_NONE); err != nil {
 		t.Error(err)
 	}
 }
 
 func TestTextView_WhenSetInputHintsSpellCheck_ExpectGetInputHintsReturnsSpellCheck(t *testing.T) {
-	if err := testTextViewInputHints(INPUT_HINT_SPELLCHECK); err != nil {
+	if err := testTextViewInputHints(iface.INPUT_HINT_SPELLCHECK); err != nil {
 		t.Error(err)
 	}
 }
 
-func testTextViewInputPurpose(purpose InputPurpose) error {
+func testTextViewInputPurpose(purpose iface.InputPurpose) error {
 	tv, err := TextViewNew()
 	if err != nil {
 		return err
@@ -433,13 +434,13 @@ func testTextViewInputPurpose(purpose InputPurpose) error {
 }
 
 func TestTextView_WhenSetInputPurposeURL_ExpectGetInputPurposeReturnsURL(t *testing.T) {
-	if err := testTextViewInputPurpose(INPUT_PURPOSE_URL); err != nil {
+	if err := testTextViewInputPurpose(iface.INPUT_PURPOSE_URL); err != nil {
 		t.Error(err)
 	}
 }
 
 func TestTextView_WhenSetInputPurposeALPHA_ExpectGetInputPurposeReturnsALPHA(t *testing.T) {
-	if err := testTextViewInputPurpose(INPUT_PURPOSE_ALPHA); err != nil {
+	if err := testTextViewInputPurpose(iface.INPUT_PURPOSE_ALPHA); err != nil {
 		t.Error(err)
 	}
 }
@@ -527,12 +528,13 @@ func setupListStore() *ListStore {
 	return ls
 }
 
-func getLastIter(ls *ListStore) (*TreeIter, bool) {
-	iter, listIsntEmpty := ls.GetIterFirst()
+func getLastIter(ls *ListStore) (iface.TreeIter, bool) {
+	iterx, listIsntEmpty := ls.GetIterFirst()
 	if !listIsntEmpty {
-		return iter, listIsntEmpty
+		return iterx, listIsntEmpty
 	}
 
+	iter := iterx.(*TreeIter)
 	for {
 		temp := *iter
 		last := &temp
@@ -571,7 +573,7 @@ func TestListStoreInsertBefore(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *firstIter != *newIter {
+	if *(firstIter.(*TreeIter)) != *(newIter.(*TreeIter)) {
 		t.Fatal("Expected the new iter added to front of list")
 	}
 }
@@ -593,7 +595,7 @@ func TestListStoreInsertBefore_WhenNilSibling(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *lastIter != *newIter {
+	if *(lastIter.(*TreeIter)) != *(newIter.(*TreeIter)) {
 		t.Fatal("Expected the new iter added to end of list")
 	}
 }
@@ -613,7 +615,7 @@ func TestListStoreInsertAfter(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *lastIter != *newIter {
+	if *(lastIter.(*TreeIter)) != *(newIter.(*TreeIter)) {
 		t.Fatal("Expected the new iter added to end of list")
 	}
 }
@@ -635,7 +637,7 @@ func TestListStoreInsertAfter_WhenNilSibling(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *first != *newIter {
+	if *(first.(*TreeIter)) != *(newIter.(*TreeIter)) {
 		t.Fatal("Expected the new iter was prepended to liststore")
 	}
 }

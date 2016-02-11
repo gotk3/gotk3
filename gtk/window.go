@@ -11,6 +11,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
+	gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
@@ -113,7 +114,7 @@ func (v *Window) SetDefaultGeometry(width, height int) {
 }
 
 // GetScreen is a wrapper around gtk_window_get_screen().
-func (v *Window) GetScreen() (*gdk.Screen, error) {
+func (v *Window) GetScreen() (gdk_iface.Screen, error) {
 	c := C.gtk_window_get_screen(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -124,14 +125,14 @@ func (v *Window) GetScreen() (*gdk.Screen, error) {
 }
 
 // SetIcon is a wrapper around gtk_window_set_icon().
-func (v *Window) SetIcon(icon *gdk.Pixbuf) {
-	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.Native()))
+func (v *Window) SetIcon(icon gdk_iface.Pixbuf) {
+	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.(*gdk.Pixbuf).Native()))
 	C.gtk_window_set_icon(v.native(), iconPtr)
 }
 
 // WindowSetDefaultIcon is a wrapper around gtk_window_set_default_icon().
-func WindowSetDefaultIcon(icon *gdk.Pixbuf) {
-	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.Native()))
+func WindowSetDefaultIcon(icon gdk_iface.Pixbuf) {
+	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.(*gdk.Pixbuf).Native()))
 	C.gtk_window_set_default_icon(iconPtr)
 }
 
@@ -159,10 +160,10 @@ func (v *Window) SetPosition(position iface.WindowPosition) {
 }
 
 // SetTransientFor is a wrapper around gtk_window_set_transient_for().
-func (v *Window) SetTransientFor(parent IWindow) {
+func (v *Window) SetTransientFor(parent iface.Window) {
 	var pw *C.GtkWindow = nil
 	if parent != nil {
-		pw = parent.toWindow()
+		pw = parent.(IWindow).toWindow()
 	}
 	C.gtk_window_set_transient_for(v.native(), pw)
 }
@@ -193,7 +194,7 @@ func (v *Window) HasToplevelFocus() bool {
 }
 
 // GetFocus is a wrapper around gtk_window_get_focus().
-func (v *Window) GetFocus() (*Widget, error) {
+func (v *Window) GetFocus() (iface.Widget, error) {
 	c := C.gtk_window_get_focus(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -202,12 +203,12 @@ func (v *Window) GetFocus() (*Widget, error) {
 }
 
 // SetFocus is a wrapper around gtk_window_set_focus().
-func (v *Window) SetFocus(w *Widget) {
-	C.gtk_window_set_focus(v.native(), w.native())
+func (v *Window) SetFocus(w iface.Widget) {
+	C.gtk_window_set_focus(v.native(), w.(*Widget).native())
 }
 
 // GetDefaultWidget is a wrapper arround gtk_window_get_default_widget().
-func (v *Window) GetDefaultWidget() *Widget {
+func (v *Window) GetDefaultWidget() iface.Widget {
 	c := C.gtk_window_get_default_widget(v.native())
 	if c == nil {
 		return nil
@@ -217,8 +218,8 @@ func (v *Window) GetDefaultWidget() *Widget {
 }
 
 // SetDefault is a wrapper arround gtk_window_set_default().
-func (v *Window) SetDefault(widget IWidget) {
-	C.gtk_window_set_default(v.native(), widget.toWidget())
+func (v *Window) SetDefault(widget iface.Widget) {
+	C.gtk_window_set_default(v.native(), widget.(IWidget).toWidget())
 }
 
 // Present is a wrapper around gtk_window_present().
@@ -378,7 +379,7 @@ func (v *Window) GetHideTitlebarWhenMaximized() bool {
 }
 
 // GetIcon is a wrapper around gtk_window_get_icon().
-func (v *Window) GetIcon() (*gdk.Pixbuf, error) {
+func (v *Window) GetIcon() (gdk_iface.Pixbuf, error) {
 	c := C.gtk_window_get_icon(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -431,7 +432,7 @@ func (v *Window) GetTitle() (string, error) {
 }
 
 // GetTransientFor is a wrapper around gtk_window_get_transient_for().
-func (v *Window) GetTransientFor() (*Window, error) {
+func (v *Window) GetTransientFor() (iface.Window, error) {
 	c := C.gtk_window_get_transient_for(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -440,7 +441,7 @@ func (v *Window) GetTransientFor() (*Window, error) {
 }
 
 // GetAttachedTo is a wrapper around gtk_window_get_attached_to().
-func (v *Window) GetAttachedTo() (*Widget, error) {
+func (v *Window) GetAttachedTo() (iface.Widget, error) {
 	c := C.gtk_window_get_attached_to(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -573,7 +574,7 @@ func (v *Window) SetFocusVisible(setting bool) {
 }
 
 // GetApplication is a wrapper around gtk_window_get_application().
-func (v *Window) GetApplication() (*Application, error) {
+func (v *Window) GetApplication() (iface.Application, error) {
 	c := C.gtk_window_get_application(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -583,8 +584,8 @@ func (v *Window) GetApplication() (*Application, error) {
 }
 
 // SetApplication is a wrapper around gtk_window_set_application().
-func (v *Window) SetApplication(a *Application) {
-	C.gtk_window_set_application(v.native(), a.native())
+func (v *Window) SetApplication(a iface.Application) {
+	C.gtk_window_set_application(v.native(), a.(*Application).native())
 }
 
 // TODO gtk_window_activate_key().

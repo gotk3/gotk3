@@ -10,6 +10,7 @@ type ComboBoxText interface {
 	InsertText(int, string)
 	Prepend(string, string)
 	PrependText(string)
+	Remove2(int)
 	RemoveAll()
 } // end of ComboBoxText
 

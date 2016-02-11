@@ -14,6 +14,7 @@ type ListStore interface {
 	MoveBefore(TreeIter, TreeIter)
 	Prepend() TreeIter
 	Remove(TreeIter) bool
+	Set2(TreeIter, []int, []interface{}) error
 	SetCols(TreeIter, Cols) error
 	SetSortColumnId(int, SortType)
 	SetValue(TreeIter, int, interface{}) error

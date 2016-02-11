@@ -16,23 +16,24 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
 		// Enums
-		{glib.Type(C.gtk_revealer_transition_type_get_type()), marshalRevealerTransitionType},
-		{glib.Type(C.gtk_stack_transition_type_get_type()), marshalStackTransitionType},
+		{glib_iface.Type(C.gtk_revealer_transition_type_get_type()), marshalRevealerTransitionType},
+		{glib_iface.Type(C.gtk_stack_transition_type_get_type()), marshalStackTransitionType},
 
 		// Objects/Interfaces
-		{glib.Type(C.gtk_header_bar_get_type()), marshalHeaderBar},
-		{glib.Type(C.gtk_list_box_get_type()), marshalListBox},
-		{glib.Type(C.gtk_list_box_row_get_type()), marshalListBoxRow},
-		{glib.Type(C.gtk_revealer_get_type()), marshalRevealer},
-		{glib.Type(C.gtk_search_bar_get_type()), marshalSearchBar},
-		{glib.Type(C.gtk_stack_get_type()), marshalStack},
-		{glib.Type(C.gtk_stack_switcher_get_type()), marshalStackSwitcher},
+		{glib_iface.Type(C.gtk_header_bar_get_type()), marshalHeaderBar},
+		{glib_iface.Type(C.gtk_list_box_get_type()), marshalListBox},
+		{glib_iface.Type(C.gtk_list_box_row_get_type()), marshalListBoxRow},
+		{glib_iface.Type(C.gtk_revealer_get_type()), marshalRevealer},
+		{glib_iface.Type(C.gtk_search_bar_get_type()), marshalSearchBar},
+		{glib_iface.Type(C.gtk_stack_get_type()), marshalStack},
+		{glib_iface.Type(C.gtk_stack_switcher_get_type()), marshalStackSwitcher},
 	}
 	glib.RegisterGValueMarshalers(tm)
 
@@ -69,12 +70,12 @@ func init() {
 
 func marshalRevealerTransitionType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return RevealerTransitionType(c), nil
+	return iface.RevealerTransitionType(c), nil
 }
 
 func marshalStackTransitionType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return StackTransitionType(c), nil
+	return iface.StackTransitionType(c), nil
 }
 
 /*
@@ -156,8 +157,8 @@ func (v *HeaderBar) GetSubtitle() string {
 }
 
 // SetCustomTitle is a wrapper around gtk_header_bar_set_custom_title().
-func (v *HeaderBar) SetCustomTitle(titleWidget IWidget) {
-	C.gtk_header_bar_set_custom_title(v.native(), titleWidget.toWidget())
+func (v *HeaderBar) SetCustomTitle(titleWidget iface.Widget) {
+	C.gtk_header_bar_set_custom_title(v.native(), titleWidget.(IWidget).toWidget())
 }
 
 // GetCustomTitle is a wrapper around gtk_header_bar_get_custom_title().
@@ -170,13 +171,13 @@ func (v *HeaderBar) GetCustomTitle() (*Widget, error) {
 }
 
 // PackStart is a wrapper around gtk_header_bar_pack_start().
-func (v *HeaderBar) PackStart(child IWidget) {
-	C.gtk_header_bar_pack_start(v.native(), child.toWidget())
+func (v *HeaderBar) PackStart(child iface.Widget) {
+	C.gtk_header_bar_pack_start(v.native(), child.(IWidget).toWidget())
 }
 
 // PackEnd is a wrapper around gtk_header_bar_pack_end().
-func (v *HeaderBar) PackEnd(child IWidget) {
-	C.gtk_header_bar_pack_end(v.native(), child.toWidget())
+func (v *HeaderBar) PackEnd(child iface.Widget) {
+	C.gtk_header_bar_pack_end(v.native(), child.(IWidget).toWidget())
 }
 
 // SetShowCloseButton is a wrapper around gtk_header_bar_set_show_close_button().
@@ -243,13 +244,13 @@ func ListBoxNew() (*ListBox, error) {
 }
 
 // Prepend is a wrapper around gtk_list_box_prepend().
-func (v *ListBox) Prepend(child IWidget) {
-	C.gtk_list_box_prepend(v.native(), child.toWidget())
+func (v *ListBox) Prepend(child iface.Widget) {
+	C.gtk_list_box_prepend(v.native(), child.(IWidget).toWidget())
 }
 
 // Insert is a wrapper around gtk_list_box_insert().
-func (v *ListBox) Insert(child IWidget, position int) {
-	C.gtk_list_box_insert(v.native(), child.toWidget(), C.gint(position))
+func (v *ListBox) Insert(child iface.Widget, position int) {
+	C.gtk_list_box_insert(v.native(), child.(IWidget).toWidget(), C.gint(position))
 }
 
 // SelectRow is a wrapper around gtk_list_box_select_row().
@@ -274,7 +275,7 @@ func (v *ListBox) SetSelectionMode(mode iface.SelectionMode) {
 // GetSelectionMode is a wrapper around gtk_list_box_get_selection_mode()
 func (v *ListBox) GetSelectionMode() iface.SelectionMode {
 	c := C.gtk_list_box_get_selection_mode(v.native())
-	return SelectionMode(c)
+	return iface.SelectionMode(c)
 }
 
 // SetActivateOnSingleClick is a wrapper around gtk_list_box_set_activate_on_single_click().
@@ -301,8 +302,8 @@ func (v *ListBox) SetAdjuctment(adjustment *Adjustment) {
 }
 
 // SetPlaceholder is a wrapper around gtk_list_box_set_placeholder().
-func (v *ListBox) SetPlaceholder(placeholder IWidget) {
-	C.gtk_list_box_set_placeholder(v.native(), placeholder.toWidget())
+func (v *ListBox) SetPlaceholder(placeholder iface.Widget) {
+	C.gtk_list_box_set_placeholder(v.native(), placeholder.(IWidget).toWidget())
 }
 
 // GetRowAtIndex is a wrapper around gtk_list_box_get_row_at_index().
@@ -398,8 +399,8 @@ func (v *ListBoxRow) GetHeader() *Widget {
 }
 
 // SetHeader is a wrapper around gtk_list_box_row_get_header().
-func (v *ListBoxRow) SetHeader(header IWidget) {
-	C.gtk_list_box_row_set_header(v.native(), header.toWidget())
+func (v *ListBoxRow) SetHeader(header iface.Widget) {
+	C.gtk_list_box_row_set_header(v.native(), header.(IWidget).toWidget())
 }
 
 // GetIndex is a wrapper around gtk_list_box_row_get_index()
@@ -476,7 +477,7 @@ func (v *Revealer) SetTransitionDuration(duration uint) {
 // GetTransitionType is a wrapper around gtk_revealer_get_transition_type()
 func (v *Revealer) GetTransitionType() iface.RevealerTransitionType {
 	c := C.gtk_revealer_get_transition_type(v.native())
-	return RevealerTransitionType(c)
+	return iface.RevealerTransitionType(c)
 }
 
 // SetTransitionType is a wrapper around gtk_revealer_set_transition_type()
@@ -593,25 +594,25 @@ func StackNew() (*Stack, error) {
 }
 
 // AddNamed is a wrapper around gtk_stack_add_named().
-func (v *Stack) AddNamed(child IWidget, name string) {
+func (v *Stack) AddNamed(child iface.Widget, name string) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_stack_add_named(v.native(), child.toWidget(), (*C.gchar)(cstr))
+	C.gtk_stack_add_named(v.native(), child.(IWidget).toWidget(), (*C.gchar)(cstr))
 }
 
 // AddTitled is a wrapper around gtk_stack_add_titled().
-func (v *Stack) AddTitled(child IWidget, name, title string) {
+func (v *Stack) AddTitled(child iface.Widget, name, title string) {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	cTitle := C.CString(title)
 	defer C.free(unsafe.Pointer(cTitle))
-	C.gtk_stack_add_titled(v.native(), child.toWidget(), (*C.gchar)(cName),
+	C.gtk_stack_add_titled(v.native(), child.(IWidget).toWidget(), (*C.gchar)(cName),
 		(*C.gchar)(cTitle))
 }
 
 // SetVisibleChild is a wrapper around gtk_stack_set_visible_child().
-func (v *Stack) SetVisibleChild(child IWidget) {
-	C.gtk_stack_set_visible_child(v.native(), child.toWidget())
+func (v *Stack) SetVisibleChild(child iface.Widget) {
+	C.gtk_stack_set_visible_child(v.native(), child.(IWidget).toWidget())
 }
 
 // GetVisibleChild is a wrapper around gtk_stack_get_visible_child().

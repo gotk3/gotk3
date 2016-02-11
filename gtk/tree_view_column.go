@@ -10,6 +10,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 /*
@@ -66,11 +67,11 @@ func TreeViewColumnNewWithAttribute(title string, renderer ICellRenderer, attrib
 }
 
 // AddAttribute() is a wrapper around gtk_tree_view_column_add_attribute().
-func (v *TreeViewColumn) AddAttribute(renderer ICellRenderer, attribute string, column int) {
+func (v *TreeViewColumn) AddAttribute(renderer iface.CellRenderer, attribute string, column int) {
 	cstr := C.CString(attribute)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_tree_view_column_add_attribute(v.native(),
-		renderer.toCellRenderer(), (*C.gchar)(cstr), C.gint(column))
+		renderer.(ICellRenderer).toCellRenderer(), (*C.gchar)(cstr), C.gint(column))
 }
 
 // SetExpand() is a wrapper around gtk_tree_view_column_set_expand().
@@ -96,13 +97,13 @@ func (v *TreeViewColumn) GetMinWidth() int {
 }
 
 // PackStart() is a wrapper around gtk_tree_view_column_pack_start().
-func (v *TreeViewColumn) PackStart(cell *CellRenderer, expand bool) {
-	C.gtk_tree_view_column_pack_start(v.native(), cell.native(), gbool(expand))
+func (v *TreeViewColumn) PackStart(cell iface.CellRenderer, expand bool) {
+	C.gtk_tree_view_column_pack_start(v.native(), cell.(*CellRenderer).native(), gbool(expand))
 }
 
 // PackEnd() is a wrapper around gtk_tree_view_column_pack_end().
-func (v *TreeViewColumn) PackEnd(cell *CellRenderer, expand bool) {
-	C.gtk_tree_view_column_pack_end(v.native(), cell.native(), gbool(expand))
+func (v *TreeViewColumn) PackEnd(cell iface.CellRenderer, expand bool) {
+	C.gtk_tree_view_column_pack_end(v.native(), cell.(*CellRenderer).native(), gbool(expand))
 }
 
 // Clear() is a wrapper around gtk_tree_view_column_clear().
@@ -111,8 +112,8 @@ func (v *TreeViewColumn) Clear() {
 }
 
 // ClearAttributes() is a wrapper around gtk_tree_view_column_clear_attributes().
-func (v *TreeViewColumn) ClearAttributes(cell *CellRenderer) {
-	C.gtk_tree_view_column_clear_attributes(v.native(), cell.native())
+func (v *TreeViewColumn) ClearAttributes(cell iface.CellRenderer) {
+	C.gtk_tree_view_column_clear_attributes(v.native(), cell.(*CellRenderer).native())
 }
 
 // SetSpacing() is a wrapper around gtk_tree_view_column_set_spacing().
@@ -233,8 +234,8 @@ func (v *TreeViewColumn) CellIsVisible() bool {
 }
 
 // FocusCell() is a wrapper around gtk_tree_view_column_focus_cell().
-func (v *TreeViewColumn) FocusCell(cell *CellRenderer) {
-	C.gtk_tree_view_column_focus_cell(v.native(), cell.native())
+func (v *TreeViewColumn) FocusCell(cell iface.CellRenderer) {
+	C.gtk_tree_view_column_focus_cell(v.native(), cell.(*CellRenderer).native())
 }
 
 // QueueResize() is a wrapper around gtk_tree_view_column_queue_resize().

@@ -7,15 +7,16 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_app_chooser_get_type()), marshalAppChooser},
-		{glib.Type(C.gtk_app_chooser_button_get_type()), marshalAppChooserButton},
-		{glib.Type(C.gtk_app_chooser_widget_get_type()), marshalAppChooserWidget},
-		{glib.Type(C.gtk_app_chooser_dialog_get_type()), marshalAppChooserDialog},
+		{glib_iface.Type(C.gtk_app_chooser_get_type()), marshalAppChooser},
+		{glib_iface.Type(C.gtk_app_chooser_button_get_type()), marshalAppChooserButton},
+		{glib_iface.Type(C.gtk_app_chooser_widget_get_type()), marshalAppChooserWidget},
+		{glib_iface.Type(C.gtk_app_chooser_dialog_get_type()), marshalAppChooserDialog},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -354,7 +355,7 @@ func AppChooserDialogNewForContentType(parent *Window, flags iface.DialogFlags, 
 }
 
 // GetWidget() is a wrapper around gtk_app_chooser_dialog_get_widget().
-func (v *AppChooserDialog) GetWidget() *AppChooserWidget {
+func (v *AppChooserDialog) GetWidget() iface.AppChooserWidget {
 	c := C.gtk_app_chooser_dialog_get_widget(v.native())
 	return wrapAppChooserWidget(wrapObject(unsafe.Pointer(c)))
 }

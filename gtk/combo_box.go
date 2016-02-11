@@ -8,12 +8,14 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_combo_box_get_type()), marshalComboBox},
-		{glib.Type(C.gtk_combo_box_text_get_type()), marshalComboBoxText},
+		{glib_iface.Type(C.gtk_combo_box_get_type()), marshalComboBox},
+		{glib_iface.Type(C.gtk_combo_box_text_get_type()), marshalComboBoxText},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -103,7 +105,7 @@ func (v *ComboBox) SetActive(index int) {
 }
 
 // GetActiveIter is a wrapper around gtk_combo_box_get_active_iter().
-func (v *ComboBox) GetActiveIter() (*TreeIter, error) {
+func (v *ComboBox) GetActiveIter() (iface.TreeIter, error) {
 	var cIter C.GtkTreeIter
 	c := C.gtk_combo_box_get_active_iter(v.native(), &cIter)
 	if !gobool(c) {
@@ -113,10 +115,10 @@ func (v *ComboBox) GetActiveIter() (*TreeIter, error) {
 }
 
 // SetActiveIter is a wrapper around gtk_combo_box_set_active_iter().
-func (v *ComboBox) SetActiveIter(iter *TreeIter) {
+func (v *ComboBox) SetActiveIter(iter iface.TreeIter) {
 	var cIter *C.GtkTreeIter
 	if iter != nil {
-		cIter = &iter.GtkTreeIter
+		cIter = &iter.(*TreeIter).GtkTreeIter
 	}
 	C.gtk_combo_box_set_active_iter(v.native(), cIter)
 }
@@ -136,7 +138,7 @@ func (v *ComboBox) SetActiveID(id string) bool {
 }
 
 // GetModel is a wrapper around gtk_combo_box_get_model().
-func (v *ComboBox) GetModel() (*TreeModel, error) {
+func (v *ComboBox) GetModel() (iface.TreeModel, error) {
 	c := C.gtk_combo_box_get_model(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -146,8 +148,8 @@ func (v *ComboBox) GetModel() (*TreeModel, error) {
 }
 
 // SetModel is a wrapper around gtk_combo_box_set_model().
-func (v *ComboBox) SetModel(model ITreeModel) {
-	C.gtk_combo_box_set_model(v.native(), model.toTreeModel())
+func (v *ComboBox) SetModel(model iface.TreeModel) {
+	C.gtk_combo_box_set_model(v.native(), model.(ITreeModel).toTreeModel())
 }
 
 /*
@@ -247,7 +249,7 @@ func (v *ComboBoxText) InsertText(position int, text string) {
 }
 
 // Remove is a wrapper around gtk_combo_box_text_remove().
-func (v *ComboBoxText) Remove(position int) {
+func (v *ComboBoxText) Remove2(position int) {
 	C.gtk_combo_box_text_remove(v.native(), C.gint(position))
 }
 

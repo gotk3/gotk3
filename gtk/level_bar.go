@@ -7,14 +7,15 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_level_bar_mode_get_type()), marshalLevelBarMode},
+		{glib_iface.Type(C.gtk_level_bar_mode_get_type()), marshalLevelBarMode},
 
-		{glib.Type(C.gtk_level_bar_get_type()), marshalLevelBar},
+		{glib_iface.Type(C.gtk_level_bar_get_type()), marshalLevelBar},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -27,7 +28,7 @@ func init() {
 
 func marshalLevelBarMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return LevelBarMode(c), nil
+	return iface.LevelBarMode(c), nil
 }
 
 /*

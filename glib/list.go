@@ -24,18 +24,18 @@ type List struct {
 	dataWrap func(unsafe.Pointer) interface{}
 }
 
-func WrapList(obj uintptr) *List {
+func WrapList(obj uintptr) iface.List {
 	return wrapList((*C.struct__GList)(unsafe.Pointer(obj)))
 }
 
-func wrapList(obj *C.struct__GList) *List {
+func wrapList(obj *C.struct__GList) iface.List {
 	if obj == nil {
 		return nil
 	}
 	return &List{list: obj}
 }
 
-func (v *List) wrapNewHead(obj *C.struct__GList) *List {
+func (v *List) wrapNewHead(obj *C.struct__GList) iface.List {
 	if obj == nil {
 		return nil
 	}

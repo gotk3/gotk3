@@ -7,14 +7,16 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
+	gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_color_chooser_get_type()), marshalColorChooser},
-		{glib.Type(C.gtk_color_chooser_dialog_get_type()), marshalColorChooserDialog},
+		{glib_iface.Type(C.gtk_color_chooser_get_type()), marshalColorChooser},
+		{glib_iface.Type(C.gtk_color_chooser_dialog_get_type()), marshalColorChooserDialog},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -67,15 +69,15 @@ func (v *ColorChooser) toColorChooser() *C.GtkColorChooser {
 }
 
 // GetRGBA() is a wrapper around gtk_color_chooser_get_rgba().
-func (v *ColorChooser) GetRGBA() *gdk.RGBA {
+func (v *ColorChooser) GetRGBA() gdk_iface.RGBA {
 	gdkColor := gdk.NewRGBA()
 	C.gtk_color_chooser_get_rgba(v.native(), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 	return gdkColor
 }
 
 // SetRGBA() is a wrapper around gtk_color_chooser_set_rgba().
-func (v *ColorChooser) SetRGBA(gdkColor *gdk.RGBA) {
-	C.gtk_color_chooser_set_rgba(v.native(), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
+func (v *ColorChooser) SetRGBA(gdkColor gdk_iface.RGBA) {
+	C.gtk_color_chooser_set_rgba(v.native(), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.(*gdk.RGBA).Native())))
 }
 
 // GetUseAlpha() is a wrapper around gtk_color_chooser_get_use_alpha().
@@ -89,11 +91,11 @@ func (v *ColorChooser) SetUseAlpha(use_alpha bool) {
 }
 
 // AddPalette() is a wrapper around gtk_color_chooser_add_palette().
-func (v *ColorChooser) AddPalette(orientation iface.Orientation, colors_per_line int, colors []*gdk.RGBA) {
+func (v *ColorChooser) AddPalette(orientation iface.Orientation, colors_per_line int, colors []gdk_iface.RGBA) {
 	n_colors := len(colors)
 	var c_colors []C.GdkRGBA
 	for _, c := range colors {
-		c_colors = append(c_colors, *(*C.GdkRGBA)(unsafe.Pointer(c.Native())))
+		c_colors = append(c_colors, *(*C.GdkRGBA)(unsafe.Pointer(c.(*gdk.RGBA).Native())))
 	}
 	C.gtk_color_chooser_add_palette(
 		v.native(),

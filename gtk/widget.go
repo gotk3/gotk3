@@ -11,6 +11,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
+	gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
@@ -248,9 +249,9 @@ func (v *Widget) GetAllocatedHeight() int {
 }
 
 // Event() is a wrapper around gtk_widget_event().
-func (v *Widget) Event(event *gdk.Event) bool {
+func (v *Widget) Event(event gdk_iface.Event) bool {
 	c := C.gtk_widget_event(v.native(),
-		(*C.GdkEvent)(unsafe.Pointer(event.Native())))
+		(*C.GdkEvent)(unsafe.Pointer(event.(*gdk.Event).Native())))
 	return gobool(c)
 }
 
@@ -327,12 +328,12 @@ func (v *Widget) SetVisible(visible bool) {
 }
 
 // SetParent is a wrapper around gtk_widget_set_parent().
-func (v *Widget) SetParent(parent IWidget) {
-	C.gtk_widget_set_parent(v.native(), parent.toWidget())
+func (v *Widget) SetParent(parent iface.Widget) {
+	C.gtk_widget_set_parent(v.native(), parent.(IWidget).toWidget())
 }
 
 // GetParent is a wrapper around gtk_widget_get_parent().
-func (v *Widget) GetParent() (*Widget, error) {
+func (v *Widget) GetParent() (iface.Widget, error) {
 	c := C.gtk_widget_get_parent(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -353,13 +354,13 @@ func (v *Widget) GetSizeRequest() (width, height int) {
 }
 
 // SetParentWindow is a wrapper around gtk_widget_set_parent_window().
-func (v *Widget) SetParentWindow(parentWindow *gdk.Window) {
+func (v *Widget) SetParentWindow(parentWindow gdk_iface.Window) {
 	C.gtk_widget_set_parent_window(v.native(),
-		(*C.GdkWindow)(unsafe.Pointer(parentWindow.Native())))
+		(*C.GdkWindow)(unsafe.Pointer(parentWindow.(*gdk.Window).Native())))
 }
 
 // GetParentWindow is a wrapper around gtk_widget_get_parent_window().
-func (v *Widget) GetParentWindow() (*gdk.Window, error) {
+func (v *Widget) GetParentWindow() (gdk_iface.Window, error) {
 	c := C.gtk_widget_get_parent_window(v.native())
 	if v == nil {
 		return nil, nilPtrErr
@@ -439,20 +440,20 @@ func (v *Widget) AddDeviceEvents() {
 */
 
 // SetDeviceEnabled is a wrapper around gtk_widget_set_device_enabled().
-func (v *Widget) SetDeviceEnabled(device *gdk.Device, enabled bool) {
+func (v *Widget) SetDeviceEnabled(device gdk_iface.Device, enabled bool) {
 	C.gtk_widget_set_device_enabled(v.native(),
-		(*C.GdkDevice)(unsafe.Pointer(device.Native())), gbool(enabled))
+		(*C.GdkDevice)(unsafe.Pointer(device.(*gdk.Device).Native())), gbool(enabled))
 }
 
 // GetDeviceEnabled is a wrapper around gtk_widget_get_device_enabled().
-func (v *Widget) GetDeviceEnabled(device *gdk.Device) bool {
+func (v *Widget) GetDeviceEnabled(device gdk_iface.Device) bool {
 	c := C.gtk_widget_get_device_enabled(v.native(),
-		(*C.GdkDevice)(unsafe.Pointer(device.Native())))
+		(*C.GdkDevice)(unsafe.Pointer(device.(*gdk.Device).Native())))
 	return gobool(c)
 }
 
 // GetToplevel is a wrapper around gtk_widget_get_toplevel().
-func (v *Widget) GetToplevel() (*Widget, error) {
+func (v *Widget) GetToplevel() (iface.Widget, error) {
 	c := C.gtk_widget_get_toplevel(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -546,8 +547,8 @@ func (v *Widget) SetVExpand(expand bool) {
 }
 
 // TranslateCoordinates is a wrapper around gtk_widget_translate_coordinates().
-func (v *Widget) TranslateCoordinates(dest IWidget, srcX, srcY int) (destX, destY int, e error) {
-	cdest := nullableWidget(dest)
+func (v *Widget) TranslateCoordinates(dest iface.Widget, srcX, srcY int) (destX, destY int, e error) {
+	cdest := nullableWidget(dest.(IWidget))
 
 	var cdestX, cdestY C.gint
 	c := C.gtk_widget_translate_coordinates(v.native(), cdest, C.gint(srcX), C.gint(srcY), &cdestX, &cdestY)
@@ -558,9 +559,9 @@ func (v *Widget) TranslateCoordinates(dest IWidget, srcX, srcY int) (destX, dest
 }
 
 // SetVisual is a wrapper around gtk_widget_set_visual().
-func (v *Widget) SetVisual(visual *gdk.Visual) {
+func (v *Widget) SetVisual(visual gdk_iface.Visual) {
 	C.gtk_widget_set_visual(v.native(),
-		(*C.GdkVisual)(unsafe.Pointer(visual.Native())))
+		(*C.GdkVisual)(unsafe.Pointer(visual.(*gdk.Visual).Native())))
 }
 
 // SetAppPaintable is a wrapper around gtk_widget_set_app_paintable().
@@ -580,20 +581,20 @@ func (v *Widget) QueueDraw() {
 }
 
 // GetAllocation is a wrapper around gtk_widget_get_allocation().
-func (v *Widget) GetAllocation() *Allocation {
+func (v *Widget) GetAllocation() iface.Allocation {
 	var a Allocation
 	C.gtk_widget_get_allocation(v.native(), a.native())
 	return &a
 }
 
 // SetAllocation is a wrapper around gtk_widget_set_allocation().
-func (v *Widget) SetAllocation(allocation *Allocation) {
-	C.gtk_widget_set_allocation(v.native(), allocation.native())
+func (v *Widget) SetAllocation(allocation iface.Allocation) {
+	C.gtk_widget_set_allocation(v.native(), allocation.(*Allocation).native())
 }
 
 // SizeAllocate is a wrapper around gtk_widget_size_allocate().
-func (v *Widget) SizeAllocate(allocation *Allocation) {
-	C.gtk_widget_size_allocate(v.native(), allocation.native())
+func (v *Widget) SizeAllocate(allocation iface.Allocation) {
+	C.gtk_widget_size_allocate(v.native(), allocation.(*Allocation).native())
 }
 
 // SetStateFlags is a wrapper around gtk_widget_set_state_flags().
@@ -602,7 +603,7 @@ func (v *Widget) SetStateFlags(stateFlags iface.StateFlags, clear bool) {
 }
 
 // GetWindow is a wrapper around gtk_widget_get_window().
-func (v *Widget) GetWindow() (*gdk.Window, error) {
+func (v *Widget) GetWindow() (gdk_iface.Window, error) {
 	c := C.gtk_widget_get_window(v.native())
 	if c == nil {
 		return nil, nilPtrErr

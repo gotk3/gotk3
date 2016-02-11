@@ -7,12 +7,13 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_info_bar_get_type()), marshalInfoBar},
+		{glib_iface.Type(C.gtk_info_bar_get_type()), marshalInfoBar},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -51,8 +52,8 @@ func InfoBarNew() (*InfoBar, error) {
 	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func (v *InfoBar) AddActionWidget(w IWidget, responseId iface.ResponseType) {
-	C.gtk_info_bar_add_action_widget(v.native(), w.toWidget(), C.gint(responseId))
+func (v *InfoBar) AddActionWidget(w iface.Widget, responseId iface.ResponseType) {
+	C.gtk_info_bar_add_action_widget(v.native(), w.(IWidget).toWidget(), C.gint(responseId))
 }
 
 func (v *InfoBar) AddButton(buttonText string, responseId iface.ResponseType) {
@@ -76,10 +77,10 @@ func (v *InfoBar) SetMessageType(messageType iface.MessageType) {
 
 func (v *InfoBar) GetMessageType() iface.MessageType {
 	messageType := C.gtk_info_bar_get_message_type(v.native())
-	return MessageType(messageType)
+	return iface.MessageType(messageType)
 }
 
-func (v *InfoBar) GetActionArea() (*Widget, error) {
+func (v *InfoBar) GetActionArea() (iface.Widget, error) {
 	c := C.gtk_info_bar_get_action_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -88,7 +89,7 @@ func (v *InfoBar) GetActionArea() (*Widget, error) {
 	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func (v *InfoBar) GetContentArea() (*Box, error) {
+func (v *InfoBar) GetContentArea() (iface.Box, error) {
 	c := C.gtk_info_bar_get_content_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr

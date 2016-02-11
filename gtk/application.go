@@ -56,17 +56,17 @@ func ApplicationNew(appId string, flags glib_iface.ApplicationFlags) (*Applicati
 }
 
 // AddWindow is a wrapper around gtk_application_add_window().
-func (v *Application) AddWindow(w *Window) {
-	C.gtk_application_add_window(v.native(), w.native())
+func (v *Application) AddWindow(w iface.Window) {
+	C.gtk_application_add_window(v.native(), w.(*Window).native())
 }
 
 // RemoveWindow is a wrapper around gtk_application_remove_window().
-func (v *Application) RemoveWindow(w *Window) {
-	C.gtk_application_remove_window(v.native(), w.native())
+func (v *Application) RemoveWindow(w iface.Window) {
+	C.gtk_application_remove_window(v.native(), w.(*Window).native())
 }
 
 // GetWindowByID is a wrapper around gtk_application_get_window_by_id().
-func (v *Application) GetWindowByID(id uint) *Window {
+func (v *Application) GetWindowByID(id uint) iface.Window {
 	c := C.gtk_application_get_window_by_id(v.native(), C.guint(id))
 	if c == nil {
 		return nil
@@ -75,7 +75,7 @@ func (v *Application) GetWindowByID(id uint) *Window {
 }
 
 // GetActiveWindow is a wrapper around gtk_application_get_active_window().
-func (v *Application) GetActiveWindow() *Window {
+func (v *Application) GetActiveWindow() iface.Window {
 	c := C.gtk_application_get_active_window(v.native())
 	if c == nil {
 		return nil
@@ -89,7 +89,7 @@ func (v *Application) Uninhibit(cookie uint) {
 }
 
 // GetAppMenu is a wrapper around gtk_application_get_app_menu().
-func (v *Application) GetAppMenu() *glib.MenuModel {
+func (v *Application) GetAppMenu() glib_iface.MenuModel {
 	c := C.gtk_application_get_app_menu(v.native())
 	if c == nil {
 		return nil
@@ -98,13 +98,13 @@ func (v *Application) GetAppMenu() *glib.MenuModel {
 }
 
 // SetAppMenu is a wrapper around gtk_application_set_app_menu().
-func (v *Application) SetAppMenu(m *glib.MenuModel) {
-	mptr := (*C.GMenuModel)(unsafe.Pointer(m.Native()))
+func (v *Application) SetAppMenu(m glib_iface.MenuModel) {
+	mptr := (*C.GMenuModel)(unsafe.Pointer(m.(*glib.MenuModel).Native()))
 	C.gtk_application_set_app_menu(v.native(), mptr)
 }
 
 // GetMenubar is a wrapper around gtk_application_get_menubar().
-func (v *Application) GetMenubar() *glib.MenuModel {
+func (v *Application) GetMenubar() glib_iface.MenuModel {
 	c := C.gtk_application_get_menubar(v.native())
 	if c == nil {
 		return nil
@@ -113,8 +113,8 @@ func (v *Application) GetMenubar() *glib.MenuModel {
 }
 
 // SetMenubar is a wrapper around gtk_application_set_menubar().
-func (v *Application) SetMenubar(m *glib.MenuModel) {
-	mptr := (*C.GMenuModel)(unsafe.Pointer(m.Native()))
+func (v *Application) SetMenubar(m glib_iface.MenuModel) {
+	mptr := (*C.GMenuModel)(unsafe.Pointer(m.(*glib.MenuModel).Native()))
 	C.gtk_application_set_menubar(v.native(), mptr)
 }
 
@@ -124,11 +124,11 @@ func (v *Application) IsInhibited(flags iface.ApplicationInhibitFlags) bool {
 }
 
 // Inhibited is a wrapper around gtk_application_inhibit().
-func (v *Application) Inhibited(w *Window, flags iface.ApplicationInhibitFlags, reason string) uint {
+func (v *Application) Inhibited(w iface.Window, flags iface.ApplicationInhibitFlags, reason string) uint {
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	return uint(C.gtk_application_inhibit(v.native(), w.native(), C.GtkApplicationInhibitFlags(flags), cstr1))
+	return uint(C.gtk_application_inhibit(v.native(), w.(*Window).native(), C.GtkApplicationInhibitFlags(flags), cstr1))
 }
 
 // void 	gtk_application_add_accelerator () // deprecated and uses a gvariant paramater
@@ -136,7 +136,7 @@ func (v *Application) Inhibited(w *Window, flags iface.ApplicationInhibitFlags, 
 
 // GetWindows is a wrapper around gtk_application_get_windows().
 // Returned list is wrapped to return *gtk.Window elements.
-func (v *Application) GetWindows() *glib.List {
+func (v *Application) GetWindows() glib_iface.List {
 	glist := C.gtk_application_get_windows(v.native())
 	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
 	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {

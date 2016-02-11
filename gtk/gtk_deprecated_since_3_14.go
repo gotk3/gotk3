@@ -56,8 +56,8 @@ func (v *Window) GetHasResizeGrip() bool {
 }
 
 // Reparent() is a wrapper around gtk_widget_reparent().
-func (v *Widget) Reparent(newParent IWidget) {
-	C.gtk_widget_reparent(v.native(), newParent.toWidget())
+func (v *Widget) Reparent(newParent Widget) {
+	C.gtk_widget_reparent(v.native(), newParent.(IWidget).toWidget())
 }
 
 // GetPadding is a wrapper around gtk_alignment_get_padding().

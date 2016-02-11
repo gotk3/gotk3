@@ -11,17 +11,18 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 //void
 //gtk_popover_set_default_widget (GtkPopover *popover, GtkWidget *widget);
-func (p *Popover) SetDefaultWidget(widget IWidget) {
-	C.gtk_popover_set_default_widget(p.native(), widget.toWidget())
+func (p *Popover) SetDefaultWidget(widget iface.Widget) {
+	C.gtk_popover_set_default_widget(p.native(), widget.(IWidget).toWidget())
 }
 
 //GtkWidget *
 //gtk_popover_get_default_widget (GtkPopover *popover);
-func (p *Popover) GetDefaultWidget() *Widget {
+func (p *Popover) GetDefaultWidget() iface.Widget {
 	w := C.gtk_popover_get_default_widget(p.native())
 	if w == nil {
 		return nil

@@ -7,11 +7,12 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_settings_get_type()), marshalSettings},
+		{glib_iface.Type(C.gtk_settings_get_type()), marshalSettings},
 	}
 
 	glib.RegisterGValueMarshalers(tm)

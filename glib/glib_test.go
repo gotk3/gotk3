@@ -6,6 +6,7 @@ import (
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	gtk_iface "github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
@@ -27,7 +28,7 @@ func TestConnectNotifySignal(t *testing.T) {
 
 	// Create any GObject that has defined properties.
 	spacing := 0
-	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, spacing)
+	box, _ := gtk.BoxNew(gtk_iface.ORIENTATION_HORIZONTAL, spacing)
 
 	// Connect to a "notify::" signal to listen on property changes.
 	box.Connect("notify::spacing", func() {

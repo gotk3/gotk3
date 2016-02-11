@@ -10,6 +10,7 @@ type StyleContext interface {
 	AddProvider(StyleProvider, uint)
 	GetColor(StateFlags) gdk_iface.RGBA
 	GetParent() (StyleContext, error)
+	GetProperty2(string, StateFlags) (interface{}, error)
 	GetScreen() (gdk_iface.Screen, error)
 	GetState() StateFlags
 	GetStyleProperty(string) (interface{}, error)

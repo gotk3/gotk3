@@ -1,6 +1,11 @@
 package gtk
 
-import "github.com/gotk3/gotk3/gtk/iface"
+import (
+	"github.com/gotk3/gotk3/cairo"
+	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
+)
 import gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 import cairo_iface "github.com/gotk3/gotk3/cairo/iface"
 import glib_iface "github.com/gotk3/gotk3/glib/iface"
@@ -22,11 +27,11 @@ func (*RealGtk) AccelGroupNew() (iface.AccelGroup, error) {
 }
 
 func (*RealGtk) AccelGroupsActivate(obj glib_iface.Object, key uint, mods gdk_iface.ModifierType) bool {
-	return AccelGroupsActivate(obj, key, mods)
+	return AccelGroupsActivate(obj.(*glib.Object), key, mods)
 }
 
 func (*RealGtk) AccelGroupsFromObject(obj glib_iface.Object) glib_iface.SList {
-	return AccelGroupsFromObject(obj)
+	return AccelGroupsFromObject(obj.(*glib.Object))
 }
 
 func (*RealGtk) AccelMapAddEntry(path string, key uint, mods gdk_iface.ModifierType) {
@@ -97,8 +102,8 @@ func (*RealGtk) AcceleratorValid(key uint, mods gdk_iface.ModifierType) bool {
 	return AcceleratorValid(key, mods)
 }
 
-func (*RealGtk) AddProviderForScreen(s gdk_iface.Screen, provider StyleProvider, prio uint) {
-	AddProviderForScreen(s, provider, prio)
+func (*RealGtk) AddProviderForScreen(s gdk_iface.Screen, provider iface.StyleProvider, prio uint) {
+	AddProviderForScreen(s.(*gdk.Screen), provider, prio)
 }
 
 func (*RealGtk) AdjustmentNew(value float64, lower float64, upper float64, stepIncrement float64, pageIncrement float64, pageSize float64) (iface.Adjustment, error) {
@@ -110,7 +115,7 @@ func (*RealGtk) AppChooserButtonNew(content_type string) (iface.AppChooserButton
 }
 
 func (*RealGtk) AppChooserDialogNewForContentType(parent iface.Window, flags iface.DialogFlags, content_type string) (iface.AppChooserDialog, error) {
-	return AppChooserDialogNewForContentType(parent, flags, content_type)
+	return AppChooserDialogNewForContentType(parent.(*Window), flags, content_type)
 }
 
 func (*RealGtk) AppChooserWidgetNew(content_type string) (iface.AppChooserWidget, error) {
@@ -122,7 +127,7 @@ func (*RealGtk) ApplicationNew(appId string, flags glib_iface.ApplicationFlags) 
 }
 
 func (*RealGtk) ApplicationWindowNew(app iface.Application) (iface.ApplicationWindow, error) {
-	return ApplicationWindowNew(app)
+	return ApplicationWindowNew(app.(*Application))
 }
 
 func (*RealGtk) AssistantNew() (iface.Assistant, error) {
@@ -202,7 +207,7 @@ func (*RealGtk) ClipboardGet(atom gdk_iface.Atom) (iface.Clipboard, error) {
 }
 
 func (*RealGtk) ClipboardGetForDisplay(display gdk_iface.Display, atom gdk_iface.Atom) (iface.Clipboard, error) {
-	return ClipboardGetForDisplay(display, atom)
+	return ClipboardGetForDisplay(display.(*gdk.Display), atom)
 }
 
 func (*RealGtk) ColorButtonNew() (iface.ColorButton, error) {
@@ -210,11 +215,11 @@ func (*RealGtk) ColorButtonNew() (iface.ColorButton, error) {
 }
 
 func (*RealGtk) ColorButtonNewWithRGBA(gdkColor gdk_iface.RGBA) (iface.ColorButton, error) {
-	return ColorButtonNewWithRGBA(gdkColor)
+	return ColorButtonNewWithRGBA(gdkColor.(*gdk.RGBA))
 }
 
 func (*RealGtk) ColorChooserDialogNew(title string, parent iface.Window) (iface.ColorChooserDialog, error) {
-	return ColorChooserDialogNew(title, parent)
+	return ColorChooserDialogNew(title, parent.(*Window))
 }
 
 func (*RealGtk) ComboBoxNew() (iface.ComboBox, error) {
@@ -225,8 +230,8 @@ func (*RealGtk) ComboBoxNewWithEntry() (iface.ComboBox, error) {
 	return ComboBoxNewWithEntry()
 }
 
-func (*RealGtk) ComboBoxNewWithModel(model ITreeModel) (iface.ComboBox, error) {
-	return ComboBoxNewWithModel(model)
+func (*RealGtk) ComboBoxNewWithModel(model iface.TreeModel) (iface.ComboBox, error) {
+	return ComboBoxNewWithModel(model.(ITreeModel))
 }
 
 func (*RealGtk) ComboBoxTextNew() (iface.ComboBoxText, error) {
@@ -266,7 +271,7 @@ func (*RealGtk) EntryNew() (iface.Entry, error) {
 }
 
 func (*RealGtk) EntryNewWithBuffer(buffer iface.EntryBuffer) (iface.Entry, error) {
-	return EntryNewWithBuffer(buffer)
+	return EntryNewWithBuffer(buffer.(*EntryBuffer))
 }
 
 func (*RealGtk) EventBoxNew() (iface.EventBox, error) {
@@ -286,11 +291,11 @@ func (*RealGtk) FileChooserButtonNew(title string, action iface.FileChooserActio
 }
 
 func (*RealGtk) FileChooserDialogNewWith1Button(title string, parent iface.Window, action iface.FileChooserAction, first_button_text string, first_button_id iface.ResponseType) (iface.FileChooserDialog, error) {
-	return FileChooserDialogNewWith1Button(title, parent, action, first_button_text, first_button_id)
+	return FileChooserDialogNewWith1Button(title, parent.(*Window), action, first_button_text, first_button_id)
 }
 
 func (*RealGtk) FileChooserDialogNewWith2Buttons(title string, parent iface.Window, action iface.FileChooserAction, first_button_text string, first_button_id iface.ResponseType, second_button_text string, second_button_id iface.ResponseType) (iface.FileChooserDialog, error) {
-	return FileChooserDialogNewWith2Buttons(title, parent, action, first_button_text, first_button_id, second_button_text, second_button_id)
+	return FileChooserDialogNewWith2Buttons(title, parent.(*Window), action, first_button_text, first_button_id, second_button_text, second_button_id)
 }
 
 func (*RealGtk) FileChooserWidgetNew(action iface.FileChooserAction) (iface.FileChooserWidget, error) {
@@ -314,7 +319,7 @@ func (*RealGtk) FrameNew(label string) (iface.Frame, error) {
 }
 
 func (*RealGtk) GdkCairoSetSourcePixBuf(cr cairo_iface.Context, pixbuf gdk_iface.Pixbuf, pixbufX float64, pixbufY float64) {
-	GdkCairoSetSourcePixBuf(cr, pixbuf, pixbufX, pixbufY)
+	GdkCairoSetSourcePixBuf(cr.(*cairo.Context), pixbuf.(*gdk.Pixbuf), pixbufX, pixbufY)
 }
 
 func (*RealGtk) GetMajorVersion() uint {
@@ -338,15 +343,15 @@ func (*RealGtk) IconThemeGetDefault() (iface.IconTheme, error) {
 }
 
 func (*RealGtk) IconThemeGetForScreen(screen gdk_iface.Screen) (iface.IconTheme, error) {
-	return IconThemeGetForScreen(screen)
+	return IconThemeGetForScreen(screen.(*gdk.Screen))
 }
 
 func (*RealGtk) IconViewNew() (iface.IconView, error) {
 	return IconViewNew()
 }
 
-func (*RealGtk) IconViewNewWithModel(model TreeModel) (iface.IconView, error) {
-	return IconViewNewWithModel(model)
+func (*RealGtk) IconViewNewWithModel(model iface.TreeModel) (iface.IconView, error) {
+	return IconViewNewWithModel(model.(ITreeModel))
 }
 
 func (*RealGtk) ImageNew() (iface.Image, error) {
@@ -362,7 +367,7 @@ func (*RealGtk) ImageNewFromIconName(iconName string, size iface.IconSize) (ifac
 }
 
 func (*RealGtk) ImageNewFromPixbuf(pixbuf gdk_iface.Pixbuf) (iface.Image, error) {
-	return ImageNewFromPixbuf(pixbuf)
+	return ImageNewFromPixbuf(pixbuf.(*gdk.Pixbuf))
 }
 
 func (*RealGtk) ImageNewFromResource(resourcePath string) (iface.Image, error) {
@@ -386,7 +391,7 @@ func (*RealGtk) LabelNewWithMnemonic(str string) (iface.Label, error) {
 }
 
 func (*RealGtk) LayoutNew(hadjustment iface.Adjustment, vadjustment iface.Adjustment) (iface.Layout, error) {
-	return LayoutNew(hadjustment, vadjustment)
+	return LayoutNew(hadjustment.(*Adjustment), vadjustment.(*Adjustment))
 }
 
 func (*RealGtk) LevelBarNew() (iface.LevelBar, error) {
@@ -450,11 +455,11 @@ func (*RealGtk) MenuNew() (iface.Menu, error) {
 }
 
 func (*RealGtk) MessageDialogNew(parent iface.Window, flags iface.DialogFlags, mType iface.MessageType, buttons iface.ButtonsType, format string, a ...interface{}) iface.MessageDialog {
-	return MessageDialogNew(parent, flags, mType, buttons, format, a...)
+	return MessageDialogNew(parent.(IWindow), flags, mType, buttons, format, a...)
 }
 
 func (*RealGtk) MessageDialogNewWithMarkup(parent iface.Window, flags iface.DialogFlags, mType iface.MessageType, buttons iface.ButtonsType, format string, a ...interface{}) iface.MessageDialog {
-	return MessageDialogNewWithMarkup(parent, flags, mType, buttons, format, a...)
+	return MessageDialogNewWithMarkup(parent.(IWindow), flags, mType, buttons, format, a...)
 }
 
 func (*RealGtk) NotebookNew() (iface.Notebook, error) {
@@ -474,51 +479,51 @@ func (*RealGtk) ProgressBarNew() (iface.ProgressBar, error) {
 }
 
 func (*RealGtk) RadioButtonNew(group glib_iface.SList) (iface.RadioButton, error) {
-	return RadioButtonNew(group)
+	return RadioButtonNew(group.(*glib.SList))
 }
 
 func (*RealGtk) RadioButtonNewFromWidget(radioGroupMember iface.RadioButton) (iface.RadioButton, error) {
-	return RadioButtonNewFromWidget(radioGroupMember)
+	return RadioButtonNewFromWidget(radioGroupMember.(*RadioButton))
 }
 
 func (*RealGtk) RadioButtonNewWithLabel(group glib_iface.SList, label string) (iface.RadioButton, error) {
-	return RadioButtonNewWithLabel(group, label)
+	return RadioButtonNewWithLabel(group.(*glib.SList), label)
 }
 
 func (*RealGtk) RadioButtonNewWithLabelFromWidget(radioGroupMember iface.RadioButton, label string) (iface.RadioButton, error) {
-	return RadioButtonNewWithLabelFromWidget(radioGroupMember, label)
+	return RadioButtonNewWithLabelFromWidget(radioGroupMember.(*RadioButton), label)
 }
 
 func (*RealGtk) RadioButtonNewWithMnemonic(group glib_iface.SList, label string) (iface.RadioButton, error) {
-	return RadioButtonNewWithMnemonic(group, label)
+	return RadioButtonNewWithMnemonic(group.(*glib.SList), label)
 }
 
 func (*RealGtk) RadioButtonNewWithMnemonicFromWidget(radioGroupMember iface.RadioButton, label string) (iface.RadioButton, error) {
-	return RadioButtonNewWithMnemonicFromWidget(radioGroupMember, label)
+	return RadioButtonNewWithMnemonicFromWidget(radioGroupMember.(*RadioButton), label)
 }
 
 func (*RealGtk) RadioMenuItemNew(group glib_iface.SList) (iface.RadioMenuItem, error) {
-	return RadioMenuItemNew(group)
+	return RadioMenuItemNew(group.(*glib.SList))
 }
 
 func (*RealGtk) RadioMenuItemNewFromWidget(group iface.RadioMenuItem) (iface.RadioMenuItem, error) {
-	return RadioMenuItemNewFromWidget(group)
+	return RadioMenuItemNewFromWidget(group.(*RadioMenuItem))
 }
 
 func (*RealGtk) RadioMenuItemNewWithLabel(group glib_iface.SList, label string) (iface.RadioMenuItem, error) {
-	return RadioMenuItemNewWithLabel(group, label)
+	return RadioMenuItemNewWithLabel(group.(*glib.SList), label)
 }
 
 func (*RealGtk) RadioMenuItemNewWithLabelFromWidget(group iface.RadioMenuItem, label string) (iface.RadioMenuItem, error) {
-	return RadioMenuItemNewWithLabelFromWidget(group, label)
+	return RadioMenuItemNewWithLabelFromWidget(group.(*RadioMenuItem), label)
 }
 
 func (*RealGtk) RadioMenuItemNewWithMnemonic(group glib_iface.SList, label string) (iface.RadioMenuItem, error) {
-	return RadioMenuItemNewWithMnemonic(group, label)
+	return RadioMenuItemNewWithMnemonic(group.(*glib.SList), label)
 }
 
 func (*RealGtk) RadioMenuItemNewWithMnemonicFromWidget(group iface.RadioMenuItem, label string) (iface.RadioMenuItem, error) {
-	return RadioMenuItemNewWithMnemonicFromWidget(group, label)
+	return RadioMenuItemNewWithMnemonicFromWidget(group.(*RadioMenuItem), label)
 }
 
 func (*RealGtk) RecentFilterNew() (iface.RecentFilter, error) {
@@ -529,8 +534,8 @@ func (*RealGtk) RecentManagerGetDefault() (iface.RecentManager, error) {
 	return RecentManagerGetDefault()
 }
 
-func (*RealGtk) RemoveProviderForScreen(s gdk_iface.Screen, provider IStyleProvider) {
-	RemoveProviderForScreen(s, provider)
+func (*RealGtk) RemoveProviderForScreen(s gdk_iface.Screen, provider iface.StyleProvider) {
+	RemoveProviderForScreen(s.(*gdk.Screen), provider)
 }
 
 func (*RealGtk) ScaleButtonNew(size iface.IconSize, min float64, max float64, step float64, icons []string) (iface.ScaleButton, error) {
@@ -538,7 +543,7 @@ func (*RealGtk) ScaleButtonNew(size iface.IconSize, min float64, max float64, st
 }
 
 func (*RealGtk) ScaleNew(orientation iface.Orientation, adjustment iface.Adjustment) (iface.Scale, error) {
-	return ScaleNew(orientation, adjustment)
+	return ScaleNew(orientation, adjustment.(*Adjustment))
 }
 
 func (*RealGtk) ScaleNewWithRange(orientation iface.Orientation, min float64, max float64, step float64) (iface.Scale, error) {
@@ -546,11 +551,11 @@ func (*RealGtk) ScaleNewWithRange(orientation iface.Orientation, min float64, ma
 }
 
 func (*RealGtk) ScrollbarNew(orientation iface.Orientation, adjustment iface.Adjustment) (iface.Scrollbar, error) {
-	return ScrollbarNew(orientation, adjustment)
+	return ScrollbarNew(orientation, adjustment.(*Adjustment))
 }
 
 func (*RealGtk) ScrolledWindowNew(hadjustment iface.Adjustment, vadjustment iface.Adjustment) (iface.ScrolledWindow, error) {
-	return ScrolledWindowNew(hadjustment, vadjustment)
+	return ScrolledWindowNew(hadjustment.(*Adjustment), vadjustment.(*Adjustment))
 }
 
 func (*RealGtk) SearchEntryNew() (iface.SearchEntry, error) {
@@ -574,7 +579,7 @@ func (*RealGtk) SettingsGetDefault() (iface.Settings, error) {
 }
 
 func (*RealGtk) SpinButtonNew(adjustment iface.Adjustment, climbRate float64, digits uint) (iface.SpinButton, error) {
-	return SpinButtonNew(adjustment, climbRate, digits)
+	return SpinButtonNew(adjustment.(*Adjustment), climbRate, digits)
 }
 
 func (*RealGtk) SpinButtonNewWithRange(min float64, max float64, step float64) (iface.SpinButton, error) {
@@ -590,7 +595,7 @@ func (*RealGtk) StatusbarNew() (iface.Statusbar, error) {
 }
 
 func (*RealGtk) StyleContextResetWidgets(v gdk_iface.Screen) {
-	StyleContextResetWidgets(v)
+	StyleContextResetWidgets(v.(*gdk.Screen))
 }
 
 func (*RealGtk) SwitchNew() (iface.Switch, error) {
@@ -602,7 +607,7 @@ func (*RealGtk) TargetEntryNew(target string, flags iface.TargetFlags, info uint
 }
 
 func (*RealGtk) TextBufferNew(table iface.TextTagTable) (iface.TextBuffer, error) {
-	return TextBufferNew(table)
+	return TextBufferNew(table.(*TextTagTable))
 }
 
 func (*RealGtk) TextTagNew(name string) (iface.TextTag, error) {
@@ -618,7 +623,7 @@ func (*RealGtk) TextViewNew() (iface.TextView, error) {
 }
 
 func (*RealGtk) TextViewNewWithBuffer(buf iface.TextBuffer) (iface.TextView, error) {
-	return TextViewNewWithBuffer(buf)
+	return TextViewNewWithBuffer(buf.(*TextBuffer))
 }
 
 func (*RealGtk) ToggleButtonNew() (iface.ToggleButton, error) {
@@ -634,7 +639,7 @@ func (*RealGtk) ToggleButtonNewWithMnemonic(label string) (iface.ToggleButton, e
 }
 
 func (*RealGtk) ToolButtonNew(iconWidget iface.Widget, label string) (iface.ToolButton, error) {
-	return ToolButtonNew(iconWidget, label)
+	return ToolButtonNew(iconWidget.(*Widget), label)
 }
 
 func (*RealGtk) ToolItemNew() (iface.ToolItem, error) {
@@ -646,7 +651,7 @@ func (*RealGtk) ToolbarNew() (iface.Toolbar, error) {
 }
 
 func (*RealGtk) TreePathFromList(list glib_iface.List) iface.TreePath {
-	return TreePathFromList(list)
+	return TreePathFromList(list.(*glib.List))
 }
 
 func (*RealGtk) TreePathNewFromString(path string) (iface.TreePath, error) {
@@ -662,7 +667,7 @@ func (*RealGtk) TreeViewColumnNew() (iface.TreeViewColumn, error) {
 }
 
 func (*RealGtk) TreeViewColumnNewWithAttribute(title string, renderer iface.CellRenderer, attribute string, column int) (iface.TreeViewColumn, error) {
-	return TreeViewColumnNewWithAttribute(title, renderer, attribute, column)
+	return TreeViewColumnNewWithAttribute(title, renderer.(ICellRenderer), attribute, column)
 }
 
 func (*RealGtk) TreeViewNew() (iface.TreeView, error) {
@@ -670,11 +675,11 @@ func (*RealGtk) TreeViewNew() (iface.TreeView, error) {
 }
 
 func (*RealGtk) TreeViewNewWithModel(model iface.TreeModel) (iface.TreeView, error) {
-	return TreeViewNewWithModel(model)
+	return TreeViewNewWithModel(model.(ITreeModel))
 }
 
 func (*RealGtk) ViewportNew(hadjustment iface.Adjustment, vadjustment iface.Adjustment) (iface.Viewport, error) {
-	return ViewportNew(hadjustment, vadjustment)
+	return ViewportNew(hadjustment.(*Adjustment), vadjustment.(*Adjustment))
 }
 
 func (*RealGtk) VolumeButtonNew() (iface.VolumeButton, error) {

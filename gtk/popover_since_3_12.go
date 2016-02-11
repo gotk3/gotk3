@@ -32,11 +32,13 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 func init() {
 	tm := []glib.TypeMarshaler{
-		{glib.Type(C.gtk_popover_get_type()), marshalPopover},
+		{glib_iface.Type(C.gtk_popover_get_type()), marshalPopover},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -68,13 +70,13 @@ func wrapPopover(obj *glib.Object) *Popover {
 }
 
 //gtk_popover_new()
-func PopoverNew(relative IWidget) (*Popover, error) {
+func PopoverNew(relative iface.Widget) (*Popover, error) {
 	//Takes relative to widget
 	var c *C.struct__GtkWidget
 	if relative == nil {
 		c = C.gtk_popover_new(nil)
 	} else {
-		c = C.gtk_popover_new(relative.toWidget())
+		c = C.gtk_popover_new(relative.(IWidget).toWidget())
 	}
 	if c == nil {
 		return nil, nilPtrErr

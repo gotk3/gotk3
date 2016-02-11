@@ -58,7 +58,7 @@ type Widget interface {
 	QueueDrawArea(int, int, int, int)
 	RemoveAccelerator(AccelGroup, uint, gdk_iface.ModifierType) bool
 	ResetStyle()
-	SetAccelPath(string, AccelGroup)
+	SetAccelPath2(string, AccelGroup)
 	SetAllocation(Allocation)
 	SetAppPaintable(bool)
 	SetCanDefault(bool)

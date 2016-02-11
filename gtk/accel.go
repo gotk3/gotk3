@@ -9,7 +9,6 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/gdk"
 	gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
 	glib_iface "github.com/gotk3/gotk3/glib/iface"
@@ -24,7 +23,7 @@ func init() {
 
 func marshalAccelFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return AccelFlags(c), nil
+	return iface.AccelFlags(c), nil
 }
 
 // AcceleratorName is a wrapper around gtk_accelerator_name().
@@ -41,7 +40,7 @@ func AcceleratorValid(key uint, mods gdk_iface.ModifierType) bool {
 
 // AcceleratorGetDefaultModMask is a wrapper around gtk_accelerator_get_default_mod_mask().
 func AcceleratorGetDefaultModMask() gdk_iface.ModifierType {
-	return gdk.ModifierType(C.gtk_accelerator_get_default_mod_mask())
+	return gdk_iface.ModifierType(C.gtk_accelerator_get_default_mod_mask())
 }
 
 // AcceleratorParse is a wrapper around gtk_accelerator_parse().
@@ -53,7 +52,7 @@ func AcceleratorParse(acc string) (key uint, mods gdk_iface.ModifierType) {
 	m := C.GdkModifierType(0)
 
 	C.gtk_accelerator_parse((*C.gchar)(cstr), &k, &m)
-	return uint(k), gdk.ModifierType(m)
+	return uint(k), gdk_iface.ModifierType(m)
 }
 
 // AcceleratorGetLabel is a wrapper around gtk_accelerator_get_label().
@@ -107,7 +106,7 @@ func AccelGroupNew() (*AccelGroup, error) {
 }
 
 // Connect is a wrapper around gtk_accel_group_connect().
-func (v *AccelGroup) Connect(key uint, mods gdk_iface.ModifierType, flags iface.AccelFlags, f interface{}) {
+func (v *AccelGroup) Connect2(key uint, mods gdk_iface.ModifierType, flags iface.AccelFlags, f interface{}) {
 	closure, _ := glib.ClosureNew(f)
 	cl := (*C.struct__GClosure)(unsafe.Pointer(closure))
 	C.gtk_accel_group_connect(
@@ -172,7 +171,7 @@ func AccelGroupFromClosure(f interface{}) *AccelGroup {
 
 // GetModifierMask is a wrapper around gtk_accel_group_get_modifier_mask().
 func (v *AccelGroup) GetModifierMask() gdk_iface.ModifierType {
-	return gdk.ModifierType(C.gtk_accel_group_get_modifier_mask(v.native()))
+	return gdk_iface.ModifierType(C.gtk_accel_group_get_modifier_mask(v.native()))
 }
 
 // AccelGroupsActivate is a wrapper around gtk_accel_groups_activate().
@@ -181,8 +180,8 @@ func AccelGroupsActivate(obj *glib.Object, key uint, mods gdk_iface.ModifierType
 }
 
 // Activate is a wrapper around gtk_accel_group_activate().
-func (v *AccelGroup) Activate(quark glib_iface.Quark, acceleratable *glib.Object, key uint, mods gdk_iface.ModifierType) bool {
-	return gobool(C.gtk_accel_group_activate(v.native(), C.GQuark(quark), (*C.GObject)(unsafe.Pointer(acceleratable.Native())), C.guint(key), C.GdkModifierType(mods)))
+func (v *AccelGroup) Activate(quark glib_iface.Quark, acceleratable glib_iface.Object, key uint, mods gdk_iface.ModifierType) bool {
+	return gobool(C.gtk_accel_group_activate(v.native(), C.GQuark(quark), (*C.GObject)(unsafe.Pointer(acceleratable.(*glib.Object).Native())), C.guint(key), C.GdkModifierType(mods)))
 }
 
 // AccelGroupsFromObject is a wrapper around gtk_accel_groups_from_object().
@@ -252,7 +251,7 @@ func wrapAccelKey(obj *C.struct__GtkAccelKey) *AccelKey {
 	var v AccelKey
 
 	v.key = uint(obj.accel_key)
-	v.mods = gdk.ModifierType(obj.accel_mods)
+	v.mods = gdk_iface.ModifierType(obj.accel_mods)
 	v.flags = uint16(obj.accel_flags)
 
 	return &v
@@ -337,12 +336,12 @@ func AccelMapUnlockPath(path string) {
 }
 
 // SetAccelGroup is a wrapper around gtk_menu_set_accel_group().
-func (v *Menu) SetAccelGroup(accelGroup *AccelGroup) {
-	C.gtk_menu_set_accel_group(v.native(), accelGroup.native())
+func (v *Menu) SetAccelGroup(accelGroup iface.AccelGroup) {
+	C.gtk_menu_set_accel_group(v.native(), accelGroup.(*AccelGroup).native())
 }
 
 // GetAccelGroup is a wrapper around gtk_menu_get_accel_group().
-func (v *Menu) GetAccelGroup() *AccelGroup {
+func (v *Menu) GetAccelGroup() iface.AccelGroup {
 	c := C.gtk_menu_get_accel_group(v.native())
 	if c == nil {
 		return nil
@@ -385,26 +384,26 @@ func (v *Widget) AddAccelerator(signal string, group iface.AccelGroup, key uint,
 
 	C.gtk_widget_add_accelerator(v.native(),
 		csignal,
-		group.native(),
+		group.(*AccelGroup).native(),
 		C.guint(key),
 		C.GdkModifierType(mods),
 		C.GtkAccelFlags(flags))
 }
 
 // RemoveAccelerator is a wrapper around gtk_widget_remove_accelerator().
-func (v *Widget) RemoveAccelerator(group *AccelGroup, key uint, mods gdk_iface.ModifierType) bool {
+func (v *Widget) RemoveAccelerator(group iface.AccelGroup, key uint, mods gdk_iface.ModifierType) bool {
 	return gobool(C.gtk_widget_remove_accelerator(v.native(),
-		group.native(),
+		group.(*AccelGroup).native(),
 		C.guint(key),
 		C.GdkModifierType(mods)))
 }
 
 // SetAccelPath is a wrapper around gtk_widget_set_accel_path().
-func (v *Widget) SetAccelPath(path string, group *AccelGroup) {
+func (v *Widget) SetAccelPath2(path string, group iface.AccelGroup) {
 	cstr := (*C.gchar)(C.CString(path))
 	defer C.free(unsafe.Pointer(cstr))
 
-	C.gtk_widget_set_accel_path(v.native(), cstr, group.native())
+	C.gtk_widget_set_accel_path(v.native(), cstr, group.(*AccelGroup).native())
 }
 
 // CanActivateAccel is a wrapper around gtk_widget_can_activate_accel().
@@ -414,12 +413,12 @@ func (v *Widget) CanActivateAccel(signalId uint) bool {
 
 // AddAccelGroup() is a wrapper around gtk_window_add_accel_group().
 func (v *Window) AddAccelGroup(accelGroup iface.AccelGroup) {
-	C.gtk_window_add_accel_group(v.native(), accelGroup.native())
+	C.gtk_window_add_accel_group(v.native(), accelGroup.(*AccelGroup).native())
 }
 
 // RemoveAccelGroup() is a wrapper around gtk_window_add_accel_group().
 func (v *Window) RemoveAccelGroup(accelGroup iface.AccelGroup) {
-	C.gtk_window_remove_accel_group(v.native(), accelGroup.native())
+	C.gtk_window_remove_accel_group(v.native(), accelGroup.(*AccelGroup).native())
 }
 
 // These three functions are for system level access - thus not as high priority to implement

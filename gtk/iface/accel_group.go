@@ -7,6 +7,8 @@ type AccelGroup interface {
 	glib_iface.Object
 
 	Activate(glib_iface.Quark, glib_iface.Object, uint, gdk_iface.ModifierType) bool
+
+	Connect2(uint, gdk_iface.ModifierType, AccelFlags, interface{})
 	ConnectByPath(string, interface{})
 	Disconnect(interface{})
 	DisconnectKey(uint, gdk_iface.ModifierType)

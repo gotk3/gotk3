@@ -11,7 +11,9 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
+	gdk_iface "github.com/gotk3/gotk3/gdk/iface"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/gtk/iface"
 )
 
 /*
@@ -61,7 +63,7 @@ func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
 }
 
 // GetModel() is a wrapper around gtk_tree_view_get_model().
-func (v *TreeView) GetModel() (*TreeModel, error) {
+func (v *TreeView) GetModel() (iface.TreeModel, error) {
 	c := C.gtk_tree_view_get_model(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -70,12 +72,12 @@ func (v *TreeView) GetModel() (*TreeModel, error) {
 }
 
 // SetModel() is a wrapper around gtk_tree_view_set_model().
-func (v *TreeView) SetModel(model ITreeModel) {
-	C.gtk_tree_view_set_model(v.native(), model.toTreeModel())
+func (v *TreeView) SetModel(model iface.TreeModel) {
+	C.gtk_tree_view_set_model(v.native(), model.(ITreeModel).toTreeModel())
 }
 
 // GetSelection() is a wrapper around gtk_tree_view_get_selection().
-func (v *TreeView) GetSelection() (*TreeSelection, error) {
+func (v *TreeView) GetSelection() (iface.TreeSelection, error) {
 	c := C.gtk_tree_view_get_selection(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -84,23 +86,23 @@ func (v *TreeView) GetSelection() (*TreeSelection, error) {
 }
 
 // AppendColumn() is a wrapper around gtk_tree_view_append_column().
-func (v *TreeView) AppendColumn(column *TreeViewColumn) int {
-	c := C.gtk_tree_view_append_column(v.native(), column.native())
+func (v *TreeView) AppendColumn(column iface.TreeViewColumn) int {
+	c := C.gtk_tree_view_append_column(v.native(), column.(*TreeViewColumn).native())
 	return int(c)
 }
 
 // GetPathAtPos() is a wrapper around gtk_tree_view_get_path_at_pos().
-func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn, cellX, cellY *int) bool {
+func (v *TreeView) GetPathAtPos(x, y int, path iface.TreePath, column iface.TreeViewColumn, cellX, cellY *int) bool {
 	var ctp **C.GtkTreePath
 	if path != nil {
-		ctp = (**C.GtkTreePath)(unsafe.Pointer(&path.GtkTreePath))
+		ctp = (**C.GtkTreePath)(unsafe.Pointer(&path.(*TreePath).GtkTreePath))
 	} else {
 		ctp = nil
 	}
 
 	var pctvcol **C.GtkTreeViewColumn
 	if column != nil {
-		ctvcol := column.native()
+		ctvcol := column.(*TreeViewColumn).native()
 		pctvcol = &ctvcol
 	} else {
 		pctvcol = nil
@@ -172,13 +174,13 @@ func (v *TreeView) SetActivateOnSingleClick(show bool) {
 }
 
 // RemoveColumn() is a wrapper around gtk_tree_view_remove_column().
-func (v *TreeView) RemoveColumn(column *TreeViewColumn) int {
-	return int(C.gtk_tree_view_remove_column(v.native(), column.native()))
+func (v *TreeView) RemoveColumn(column iface.TreeViewColumn) int {
+	return int(C.gtk_tree_view_remove_column(v.native(), column.(*TreeViewColumn).native()))
 }
 
 // InsertColumn() is a wrapper around gtk_tree_view_insert_column().
-func (v *TreeView) InsertColumn(column *TreeViewColumn, pos int) int {
-	return int(C.gtk_tree_view_insert_column(v.native(), column.native(), C.gint(pos)))
+func (v *TreeView) InsertColumn(column iface.TreeViewColumn, pos int) int {
+	return int(C.gtk_tree_view_insert_column(v.native(), column.(*TreeViewColumn).native(), C.gint(pos)))
 }
 
 // GetNColumns() is a wrapper around gtk_tree_view_get_n_columns().
@@ -187,7 +189,7 @@ func (v *TreeView) GetNColumns() uint {
 }
 
 // GetColumn() is a wrapper around gtk_tree_view_get_column().
-func (v *TreeView) GetColumn(n int) *TreeViewColumn {
+func (v *TreeView) GetColumn(n int) iface.TreeViewColumn {
 	c := C.gtk_tree_view_get_column(v.native(), C.gint(n))
 	if c == nil {
 		return nil
@@ -196,17 +198,17 @@ func (v *TreeView) GetColumn(n int) *TreeViewColumn {
 }
 
 // MoveColumnAfter() is a wrapper around gtk_tree_view_move_column_after().
-func (v *TreeView) MoveColumnAfter(column *TreeViewColumn, baseColumn *TreeViewColumn) {
-	C.gtk_tree_view_move_column_after(v.native(), column.native(), baseColumn.native())
+func (v *TreeView) MoveColumnAfter(column iface.TreeViewColumn, baseColumn iface.TreeViewColumn) {
+	C.gtk_tree_view_move_column_after(v.native(), column.(*TreeViewColumn).native(), baseColumn.(*TreeViewColumn).native())
 }
 
 // SetExpanderColumn() is a wrapper around gtk_tree_view_set_expander_column().
-func (v *TreeView) SetExpanderColumn(column *TreeViewColumn) {
-	C.gtk_tree_view_set_expander_column(v.native(), column.native())
+func (v *TreeView) SetExpanderColumn(column iface.TreeViewColumn) {
+	C.gtk_tree_view_set_expander_column(v.native(), column.(*TreeViewColumn).native())
 }
 
 // GetExpanderColumn() is a wrapper around gtk_tree_view_get_expander_column().
-func (v *TreeView) GetExpanderColumn() *TreeViewColumn {
+func (v *TreeView) GetExpanderColumn() iface.TreeViewColumn {
 	c := C.gtk_tree_view_get_expander_column(v.native())
 	if c == nil {
 		return nil
@@ -220,17 +222,17 @@ func (v *TreeView) ScrollToPoint(treeX, treeY int) {
 }
 
 // SetCursor() is a wrapper around gtk_tree_view_set_cursor().
-func (v *TreeView) SetCursor(path *TreePath, focusColumn *TreeViewColumn, startEditing bool) {
-	C.gtk_tree_view_set_cursor(v.native(), path.native(), focusColumn.native(), gbool(startEditing))
+func (v *TreeView) SetCursor(path iface.TreePath, focusColumn iface.TreeViewColumn, startEditing bool) {
+	C.gtk_tree_view_set_cursor(v.native(), path.(*TreePath).native(), focusColumn.(*TreeViewColumn).native(), gbool(startEditing))
 }
 
 // SetCursorOnCell() is a wrapper around gtk_tree_view_set_cursor_on_cell().
-func (v *TreeView) SetCursorOnCell(path *TreePath, focusColumn *TreeViewColumn, focusCell *CellRenderer, startEditing bool) {
-	C.gtk_tree_view_set_cursor_on_cell(v.native(), path.native(), focusColumn.native(), focusCell.native(), gbool(startEditing))
+func (v *TreeView) SetCursorOnCell(path iface.TreePath, focusColumn iface.TreeViewColumn, focusCell iface.CellRenderer, startEditing bool) {
+	C.gtk_tree_view_set_cursor_on_cell(v.native(), path.(*TreePath).native(), focusColumn.(*TreeViewColumn).native(), focusCell.(*CellRenderer).native(), gbool(startEditing))
 }
 
 // GetCursor() is a wrapper around gtk_tree_view_get_cursor().
-func (v *TreeView) GetCursor() (p *TreePath, c *TreeViewColumn) {
+func (v *TreeView) GetCursor() (p iface.TreePath, c iface.TreeViewColumn) {
 	var path *C.GtkTreePath
 	var col *C.GtkTreeViewColumn
 
@@ -249,8 +251,8 @@ func (v *TreeView) GetCursor() (p *TreePath, c *TreeViewColumn) {
 }
 
 // RowActivated() is a wrapper around gtk_tree_view_row_activated().
-func (v *TreeView) RowActivated(path *TreePath, column *TreeViewColumn) {
-	C.gtk_tree_view_row_activated(v.native(), path.native(), column.native())
+func (v *TreeView) RowActivated(path iface.TreePath, column iface.TreeViewColumn) {
+	C.gtk_tree_view_row_activated(v.native(), path.(*TreePath).native(), column.(*TreeViewColumn).native())
 }
 
 // ExpandAll() is a wrapper around gtk_tree_view_expand_all().
@@ -264,23 +266,23 @@ func (v *TreeView) CollapseAll() {
 }
 
 // ExpandToPath() is a wrapper around gtk_tree_view_expand_to_path().
-func (v *TreeView) ExpandToPath(path *TreePath) {
-	C.gtk_tree_view_expand_to_path(v.native(), path.native())
+func (v *TreeView) ExpandToPath(path iface.TreePath) {
+	C.gtk_tree_view_expand_to_path(v.native(), path.(*TreePath).native())
 }
 
 // ExpandRow() is a wrapper around gtk_tree_view_expand_row().
-func (v *TreeView) ExpandRow(path *TreePath, openAll bool) bool {
-	return gobool(C.gtk_tree_view_expand_row(v.native(), path.native(), gbool(openAll)))
+func (v *TreeView) ExpandRow(path iface.TreePath, openAll bool) bool {
+	return gobool(C.gtk_tree_view_expand_row(v.native(), path.(*TreePath).native(), gbool(openAll)))
 }
 
 // CollapseRow() is a wrapper around gtk_tree_view_collapse_row().
-func (v *TreeView) CollapseRow(path *TreePath) bool {
-	return gobool(C.gtk_tree_view_collapse_row(v.native(), path.native()))
+func (v *TreeView) CollapseRow(path iface.TreePath) bool {
+	return gobool(C.gtk_tree_view_collapse_row(v.native(), path.(*TreePath).native()))
 }
 
 // RowExpanded() is a wrapper around gtk_tree_view_row_expanded().
-func (v *TreeView) RowExpanded(path *TreePath) bool {
-	return gobool(C.gtk_tree_view_row_expanded(v.native(), path.native()))
+func (v *TreeView) RowExpanded(path iface.TreePath) bool {
+	return gobool(C.gtk_tree_view_row_expanded(v.native(), path.(*TreePath).native()))
 }
 
 // SetReorderable is a wrapper around gtk_tree_view_set_reorderable().
@@ -294,7 +296,7 @@ func (v *TreeView) GetReorderable() bool {
 }
 
 // GetBinWindow() is a wrapper around gtk_tree_view_get_bin_window().
-func (v *TreeView) GetBinWindow() *gdk.Window {
+func (v *TreeView) GetBinWindow() gdk_iface.Window {
 	c := C.gtk_tree_view_get_bin_window(v.native())
 	if c == nil {
 		return nil
@@ -325,7 +327,7 @@ func (v *TreeView) GetSearchColumn() int {
 }
 
 // GetSearchEntry() is a wrapper around gtk_tree_view_get_search_entry().
-func (v *TreeView) GetSearchEntry() *Entry {
+func (v *TreeView) GetSearchEntry() iface.Entry {
 	c := C.gtk_tree_view_get_search_entry(v.native())
 	if c == nil {
 		return nil
@@ -334,8 +336,8 @@ func (v *TreeView) GetSearchEntry() *Entry {
 }
 
 // SetSearchEntry() is a wrapper around gtk_tree_view_set_search_entry().
-func (v *TreeView) SetSearchEntry(e *Entry) {
-	C.gtk_tree_view_set_search_entry(v.native(), e.native())
+func (v *TreeView) SetSearchEntry(e iface.Entry) {
+	C.gtk_tree_view_set_search_entry(v.native(), e.(*Entry).native())
 }
 
 // SetFixedHeightMode is a wrapper around gtk_tree_view_set_fixed_height_mode().

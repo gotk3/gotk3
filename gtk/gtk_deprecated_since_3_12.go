@@ -26,7 +26,11 @@ package gtk
 // #cgo pkg-config: gtk+-3.0
 // #include <gtk/gtk.h>
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/gtk/iface"
+)
 
 /*
  * GtkDialog
@@ -55,8 +59,8 @@ func (v *MessageDialog) GetImage() (*Widget, error) {
 }
 
 // SetImage is a wrapper around gtk_message_dialog_set_image().
-func (v *MessageDialog) SetImage(image IWidget) {
-	C.gtk_message_dialog_set_image(v.native(), image.toWidget())
+func (v *MessageDialog) SetImage(image iface.Widget) {
+	C.gtk_message_dialog_set_image(v.native(), image.(IWidget).toWidget())
 }
 
 /*
