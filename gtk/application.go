@@ -57,12 +57,12 @@ func ApplicationNew(appId string, flags glib_iface.ApplicationFlags) (*Applicati
 
 // AddWindow is a wrapper around gtk_application_add_window().
 func (v *Application) AddWindow(w iface.Window) {
-	C.gtk_application_add_window(v.native(), w.(*Window).native())
+	C.gtk_application_add_window(v.native(), asWindowImpl(w).native())
 }
 
 // RemoveWindow is a wrapper around gtk_application_remove_window().
 func (v *Application) RemoveWindow(w iface.Window) {
-	C.gtk_application_remove_window(v.native(), w.(*Window).native())
+	C.gtk_application_remove_window(v.native(), asWindowImpl(w).native())
 }
 
 // GetWindowByID is a wrapper around gtk_application_get_window_by_id().
@@ -128,7 +128,7 @@ func (v *Application) Inhibited(w iface.Window, flags iface.ApplicationInhibitFl
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	return uint(C.gtk_application_inhibit(v.native(), w.(*Window).native(), C.GtkApplicationInhibitFlags(flags), cstr1))
+	return uint(C.gtk_application_inhibit(v.native(), asWindowImpl(w).native(), C.GtkApplicationInhibitFlags(flags), cstr1))
 }
 
 // void 	gtk_application_add_accelerator () // deprecated and uses a gvariant paramater

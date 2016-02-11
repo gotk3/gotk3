@@ -836,6 +836,10 @@ func (v *EventButton) native() *C.GdkEventButton {
 	return (*C.GdkEventButton)(unsafe.Pointer(v.Event.native()))
 }
 
+func EventButtonFrom(ev *Event) iface.EventButton {
+	return &EventButton{ev}
+}
+
 func (v *EventButton) X() float64 {
 	c := v.native().x
 	return float64(c)

@@ -29,6 +29,7 @@ type Window struct {
 // Window.  It is meant to be used as an argument type for wrapper
 // functions that wrap around a C GTK function taking a GtkWindow.
 type IWindow interface {
+	asWindowImpl() *Window
 	toWindow() *C.GtkWindow
 }
 
@@ -39,6 +40,20 @@ func (v *Window) native() *C.GtkWindow {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkWindow(p)
+}
+
+func asWindowImpl(v iface.Window) *Window {
+	if v == nil {
+		return nil
+	}
+	return v.(IWindow).asWindowImpl()
+}
+
+func (v *Window) asWindowImpl() *Window {
+	if v == nil {
+		return nil
+	}
+	return v
 }
 
 func (v *Window) toWindow() *C.GtkWindow {
@@ -204,7 +219,7 @@ func (v *Window) GetFocus() (iface.Widget, error) {
 
 // SetFocus is a wrapper around gtk_window_set_focus().
 func (v *Window) SetFocus(w iface.Widget) {
-	C.gtk_window_set_focus(v.native(), w.(*Widget).native())
+	C.gtk_window_set_focus(v.native(), asWidgetImpl(w).native())
 }
 
 // GetDefaultWidget is a wrapper arround gtk_window_get_default_widget().

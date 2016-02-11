@@ -35,15 +35,16 @@ type IWidget interface {
 }
 
 type IWidgetable interface {
+	asWidgetImpl() *Widget
 	toWidget() *C.GtkWidget
 }
 
-func nullableWidget(v IWidgetable) *C.GtkWidget {
+func nullableWidget(v interface{}) *C.GtkWidget {
 	if v == nil {
 		return nil
 	}
 
-	return v.toWidget()
+	return v.(IWidgetable).toWidget()
 }
 
 // native returns a pointer to the underlying GtkWidget.
@@ -53,6 +54,20 @@ func (v *Widget) native() *C.GtkWidget {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkWidget(p)
+}
+
+func asWidgetImpl(v iface.Widget) *Widget {
+	if v == nil {
+		return nil
+	}
+	return v.(IWidgetable).asWidgetImpl()
+}
+
+func (v *Widget) asWidgetImpl() *Widget {
+	if v == nil {
+		return nil
+	}
+	return v
 }
 
 func (v *Widget) toWidget() *C.GtkWidget {
@@ -548,7 +563,7 @@ func (v *Widget) SetVExpand(expand bool) {
 
 // TranslateCoordinates is a wrapper around gtk_widget_translate_coordinates().
 func (v *Widget) TranslateCoordinates(dest iface.Widget, srcX, srcY int) (destX, destY int, e error) {
-	cdest := nullableWidget(dest.(IWidget))
+	cdest := nullableWidget(dest)
 
 	var cdestX, cdestY C.gint
 	c := C.gtk_widget_translate_coordinates(v.native(), cdest, C.gint(srcX), C.gint(srcY), &cdestX, &cdestY)

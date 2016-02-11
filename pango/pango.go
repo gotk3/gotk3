@@ -26,10 +26,6 @@ import "github.com/gotk3/gotk3/pango/iface"
 //	"github.com/andre-hub/gotk3/glib"
 //	"unsafe"
 
-func init() {
-
-}
-
 /*
  * Type conversions
  */

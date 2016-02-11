@@ -15,6 +15,10 @@ func (*RealGdk) DisplayOpen(displayName string) (iface.Display, error) {
 	return DisplayOpen(displayName)
 }
 
+func (*RealGdk) EventButtonFrom(ev iface.Event) iface.EventButton {
+	return EventButtonFrom(ev.(*Event))
+}
+
 func (*RealGdk) EventKeyNew() iface.EventKey {
 	return EventKeyNew()
 }

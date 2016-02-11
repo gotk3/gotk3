@@ -4804,8 +4804,8 @@ func MenuNew() (*Menu, error) {
 
 // PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
 func (v *Menu) PopupAtMouseCursor(parentMenuShell iface.Menu, parentMenuItem iface.MenuItem, button int, activateTime uint32) {
-	wshell := nullableWidget(parentMenuShell.(IMenu))
-	witem := nullableWidget(parentMenuItem.(IMenuItem))
+	wshell := nullableWidget(parentMenuShell)
+	witem := nullableWidget(parentMenuItem)
 
 	C.gtk_menu_popup(v.native(),
 		wshell,
@@ -5158,7 +5158,7 @@ func NotebookNew() (*Notebook, error) {
 
 // AppendPage() is a wrapper around gtk_notebook_append_page().
 func (v *Notebook) AppendPage(child iface.Widget, tabLabel iface.Widget) int {
-	cTabLabel := nullableWidget(tabLabel.(IWidget))
+	cTabLabel := nullableWidget(tabLabel)
 	c := C.gtk_notebook_append_page(v.native(), child.(IWidget).toWidget(), cTabLabel)
 	return int(c)
 }
@@ -5172,7 +5172,7 @@ func (v *Notebook) AppendPageMenu(child iface.Widget, tabLabel iface.Widget, men
 
 // PrependPage() is a wrapper around gtk_notebook_prepend_page().
 func (v *Notebook) PrependPage(child iface.Widget, tabLabel iface.Widget) int {
-	cTabLabel := nullableWidget(tabLabel.(IWidget))
+	cTabLabel := nullableWidget(tabLabel)
 	c := C.gtk_notebook_prepend_page(v.native(), child.(IWidget).toWidget(), cTabLabel)
 	return int(c)
 }
@@ -5186,7 +5186,7 @@ func (v *Notebook) PrependPageMenu(child iface.Widget, tabLabel iface.Widget, me
 
 // InsertPage() is a wrapper around gtk_notebook_insert_page().
 func (v *Notebook) InsertPage(child iface.Widget, tabLabel iface.Widget, position int) int {
-	label := nullableWidget(tabLabel.(IWidget))
+	label := nullableWidget(tabLabel)
 	c := C.gtk_notebook_insert_page(v.native(), child.(IWidget).toWidget(), label, C.gint(position))
 
 	return int(c)
@@ -7647,7 +7647,7 @@ func wrapToolButton(obj *glib.Object) *ToolButton {
 func ToolButtonNew(iconWidget iface.Widget, label string) (*ToolButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	w := nullableWidget(iconWidget.(IWidget))
+	w := nullableWidget(iconWidget)
 	c := C.gtk_tool_button_new(w, (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
@@ -7945,6 +7945,12 @@ func (v *TreeIter) free() {
 	C.gtk_tree_iter_free(v.native())
 }
 
+// TreeIterNew creates a new TreeIter
+func TreeIterNew() iface.TreeIter {
+	var iter TreeIter
+	return &iter
+}
+
 // Copy() is a wrapper around gtk_tree_iter_copy().
 func (v *TreeIter) Copy() (iface.TreeIter, error) {
 	c := C.gtk_tree_iter_copy(v.native())
@@ -8144,6 +8150,11 @@ func marshalTreePath(p uintptr) (interface{}, error) {
 
 func (v *TreePath) free() {
 	C.gtk_tree_path_free(v.native())
+}
+
+// TreePathNew creates a new TreePath
+func TreePathNew() iface.TreePath {
+	return new(TreePath)
 }
 
 // String is a wrapper around gtk_tree_path_to_string().

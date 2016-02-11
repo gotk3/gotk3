@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
+	glib_iface "github.com/gotk3/gotk3/glib/iface"
 	"github.com/gotk3/gotk3/gtk/iface"
 )
 
@@ -521,7 +521,7 @@ func TestCellRendererToggle_WhenSetActivatableTrue_ExpectGetActivatableReturnsTr
 }
 
 func setupListStore() *ListStore {
-	ls, err := ListStoreNew(glib.TYPE_STRING)
+	ls, err := ListStoreNew(glib_iface.TYPE_STRING)
 	if err != nil {
 		log.Fatal("Unexpected err:", err)
 	}

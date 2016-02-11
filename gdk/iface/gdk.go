@@ -5,6 +5,7 @@ import glib_iface "github.com/gotk3/gotk3/glib/iface"
 type Gdk interface {
 	DisplayGetDefault() (Display, error)
 	DisplayOpen(string) (Display, error)
+	EventButtonFrom(Event) EventButton
 	EventKeyNew() EventKey
 	GdkAtomIntern(string, bool) Atom
 	KeyvalConvertCase(uint) (uint, uint)

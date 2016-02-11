@@ -75,34 +75,48 @@ var (
 	signals = make(map[iface.SignalHandle]*C.GClosure)
 )
 
-/*
- * Constants
- */
+func init() {
+	iface.USER_DIRECTORY_DESKTOP = C.G_USER_DIRECTORY_DESKTOP
+	iface.USER_DIRECTORY_DOCUMENTS = C.G_USER_DIRECTORY_DOCUMENTS
+	iface.USER_DIRECTORY_DOWNLOAD = C.G_USER_DIRECTORY_DOWNLOAD
+	iface.USER_DIRECTORY_MUSIC = C.G_USER_DIRECTORY_MUSIC
+	iface.USER_DIRECTORY_PICTURES = C.G_USER_DIRECTORY_PICTURES
+	iface.USER_DIRECTORY_PUBLIC_SHARE = C.G_USER_DIRECTORY_PUBLIC_SHARE
+	iface.USER_DIRECTORY_TEMPLATES = C.G_USER_DIRECTORY_TEMPLATES
+	iface.USER_DIRECTORY_VIDEOS = C.G_USER_DIRECTORY_VIDEOS
 
-const (
-	TYPE_INVALID   iface.Type = C.G_TYPE_INVALID
-	TYPE_NONE      iface.Type = C.G_TYPE_NONE
-	TYPE_INTERFACE iface.Type = C.G_TYPE_INTERFACE
-	TYPE_CHAR      iface.Type = C.G_TYPE_CHAR
-	TYPE_UCHAR     iface.Type = C.G_TYPE_UCHAR
-	TYPE_BOOLEAN   iface.Type = C.G_TYPE_BOOLEAN
-	TYPE_INT       iface.Type = C.G_TYPE_INT
-	TYPE_UINT      iface.Type = C.G_TYPE_UINT
-	TYPE_LONG      iface.Type = C.G_TYPE_LONG
-	TYPE_ULONG     iface.Type = C.G_TYPE_ULONG
-	TYPE_INT64     iface.Type = C.G_TYPE_INT64
-	TYPE_UINT64    iface.Type = C.G_TYPE_UINT64
-	TYPE_ENUM      iface.Type = C.G_TYPE_ENUM
-	TYPE_FLAGS     iface.Type = C.G_TYPE_FLAGS
-	TYPE_FLOAT     iface.Type = C.G_TYPE_FLOAT
-	TYPE_DOUBLE    iface.Type = C.G_TYPE_DOUBLE
-	TYPE_STRING    iface.Type = C.G_TYPE_STRING
-	TYPE_POINTER   iface.Type = C.G_TYPE_POINTER
-	TYPE_BOXED     iface.Type = C.G_TYPE_BOXED
-	TYPE_PARAM     iface.Type = C.G_TYPE_PARAM
-	TYPE_OBJECT    iface.Type = C.G_TYPE_OBJECT
-	TYPE_VARIANT   iface.Type = C.G_TYPE_VARIANT
-)
+	iface.USER_N_DIRECTORIES = C.G_USER_N_DIRECTORIES
+
+	iface.APPLICATION_FLAGS_NONE = C.G_APPLICATION_FLAGS_NONE
+	iface.APPLICATION_IS_SERVICE = C.G_APPLICATION_IS_SERVICE
+	iface.APPLICATION_HANDLES_OPEN = C.G_APPLICATION_HANDLES_OPEN
+	iface.APPLICATION_HANDLES_COMMAND_LINE = C.G_APPLICATION_HANDLES_COMMAND_LINE
+	iface.APPLICATION_SEND_ENVIRONMENT = C.G_APPLICATION_SEND_ENVIRONMENT
+	iface.APPLICATION_NON_UNIQUE = C.G_APPLICATION_NON_UNIQUE
+
+	iface.TYPE_INVALID = C.G_TYPE_INVALID
+	iface.TYPE_NONE = C.G_TYPE_NONE
+	iface.TYPE_INTERFACE = C.G_TYPE_INTERFACE
+	iface.TYPE_CHAR = C.G_TYPE_CHAR
+	iface.TYPE_UCHAR = C.G_TYPE_UCHAR
+	iface.TYPE_BOOLEAN = C.G_TYPE_BOOLEAN
+	iface.TYPE_INT = C.G_TYPE_INT
+	iface.TYPE_UINT = C.G_TYPE_UINT
+	iface.TYPE_LONG = C.G_TYPE_LONG
+	iface.TYPE_ULONG = C.G_TYPE_ULONG
+	iface.TYPE_INT64 = C.G_TYPE_INT64
+	iface.TYPE_UINT64 = C.G_TYPE_UINT64
+	iface.TYPE_ENUM = C.G_TYPE_ENUM
+	iface.TYPE_FLAGS = C.G_TYPE_FLAGS
+	iface.TYPE_FLOAT = C.G_TYPE_FLOAT
+	iface.TYPE_DOUBLE = C.G_TYPE_DOUBLE
+	iface.TYPE_STRING = C.G_TYPE_STRING
+	iface.TYPE_POINTER = C.G_TYPE_POINTER
+	iface.TYPE_BOXED = C.G_TYPE_BOXED
+	iface.TYPE_PARAM = C.G_TYPE_PARAM
+	iface.TYPE_OBJECT = C.G_TYPE_OBJECT
+	iface.TYPE_VARIANT = C.G_TYPE_VARIANT
+}
 
 // TypeName is a wrapper around g_type_name().
 func TypeName(t iface.Type) string {
@@ -118,28 +132,6 @@ func TypeDepth(t iface.Type) uint {
 func TypeParent(t iface.Type) iface.Type {
 	return iface.Type(C.g_type_parent(C.GType(t)))
 }
-
-const (
-	USER_DIRECTORY_DESKTOP      iface.UserDirectory = C.G_USER_DIRECTORY_DESKTOP
-	USER_DIRECTORY_DOCUMENTS    iface.UserDirectory = C.G_USER_DIRECTORY_DOCUMENTS
-	USER_DIRECTORY_DOWNLOAD     iface.UserDirectory = C.G_USER_DIRECTORY_DOWNLOAD
-	USER_DIRECTORY_MUSIC        iface.UserDirectory = C.G_USER_DIRECTORY_MUSIC
-	USER_DIRECTORY_PICTURES     iface.UserDirectory = C.G_USER_DIRECTORY_PICTURES
-	USER_DIRECTORY_PUBLIC_SHARE iface.UserDirectory = C.G_USER_DIRECTORY_PUBLIC_SHARE
-	USER_DIRECTORY_TEMPLATES    iface.UserDirectory = C.G_USER_DIRECTORY_TEMPLATES
-	USER_DIRECTORY_VIDEOS       iface.UserDirectory = C.G_USER_DIRECTORY_VIDEOS
-)
-
-const USER_N_DIRECTORIES int = C.G_USER_N_DIRECTORIES
-
-const (
-	APPLICATION_FLAGS_NONE           iface.ApplicationFlags = C.G_APPLICATION_FLAGS_NONE
-	APPLICATION_IS_SERVICE           iface.ApplicationFlags = C.G_APPLICATION_IS_SERVICE
-	APPLICATION_HANDLES_OPEN         iface.ApplicationFlags = C.G_APPLICATION_HANDLES_OPEN
-	APPLICATION_HANDLES_COMMAND_LINE iface.ApplicationFlags = C.G_APPLICATION_HANDLES_COMMAND_LINE
-	APPLICATION_SEND_ENVIRONMENT     iface.ApplicationFlags = C.G_APPLICATION_SEND_ENVIRONMENT
-	APPLICATION_NON_UNIQUE           iface.ApplicationFlags = C.G_APPLICATION_NON_UNIQUE
-)
 
 // goMarshal is called by the GLib runtime when a closure needs to be invoked.
 // The closure will be invoked with as many arguments as it can take, from 0 to
@@ -541,7 +533,7 @@ func (v *Object) GetPropertyType(name string) (iface.Type, error) {
 
 	paramSpec := C.g_object_class_find_property(C._g_object_get_class(v.native()), (*C.gchar)(cstr))
 	if paramSpec == nil {
-		return TYPE_INVALID, errors.New("couldn't find Property")
+		return iface.TYPE_INVALID, errors.New("couldn't find Property")
 	}
 	return iface.Type(paramSpec.value_type), nil
 }
@@ -807,7 +799,7 @@ func ValueAlloc() (*Value, error) {
 	//We need to double check before unsetting, to prevent:
 	//`g_value_unset: assertion 'G_IS_VALUE (value)' failed`
 	runtime.SetFinalizer(v, func(f *Value) {
-		if t, _, err := f.Type(); err != nil || t == TYPE_INVALID || t == TYPE_NONE {
+		if t, _, err := f.Type(); err != nil || t == iface.TYPE_INVALID || t == iface.TYPE_NONE {
 			C.g_free(C.gpointer(f.native()))
 			return
 		}
@@ -860,7 +852,7 @@ func (v *Value) Type() (actual iface.Type, fundamental iface.Type, err error) {
 // returns a non-nil error if the conversion was unsuccessful.
 func GValue(v interface{}) (gvalue *Value, err error) {
 	if v == nil {
-		val, err := ValueInit(TYPE_POINTER)
+		val, err := ValueInit(iface.TYPE_POINTER)
 		if err != nil {
 			return nil, err
 		}
@@ -870,7 +862,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 
 	switch e := v.(type) {
 	case bool:
-		val, err := ValueInit(TYPE_BOOLEAN)
+		val, err := ValueInit(iface.TYPE_BOOLEAN)
 		if err != nil {
 			return nil, err
 		}
@@ -878,7 +870,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case int8:
-		val, err := ValueInit(TYPE_CHAR)
+		val, err := ValueInit(iface.TYPE_CHAR)
 		if err != nil {
 			return nil, err
 		}
@@ -886,7 +878,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case int64:
-		val, err := ValueInit(TYPE_INT64)
+		val, err := ValueInit(iface.TYPE_INT64)
 		if err != nil {
 			return nil, err
 		}
@@ -894,7 +886,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case int:
-		val, err := ValueInit(TYPE_INT)
+		val, err := ValueInit(iface.TYPE_INT)
 		if err != nil {
 			return nil, err
 		}
@@ -902,7 +894,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case uint8:
-		val, err := ValueInit(TYPE_UCHAR)
+		val, err := ValueInit(iface.TYPE_UCHAR)
 		if err != nil {
 			return nil, err
 		}
@@ -910,7 +902,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case uint64:
-		val, err := ValueInit(TYPE_UINT64)
+		val, err := ValueInit(iface.TYPE_UINT64)
 		if err != nil {
 			return nil, err
 		}
@@ -918,7 +910,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case uint:
-		val, err := ValueInit(TYPE_UINT)
+		val, err := ValueInit(iface.TYPE_UINT)
 		if err != nil {
 			return nil, err
 		}
@@ -926,7 +918,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case float32:
-		val, err := ValueInit(TYPE_FLOAT)
+		val, err := ValueInit(iface.TYPE_FLOAT)
 		if err != nil {
 			return nil, err
 		}
@@ -934,7 +926,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case float64:
-		val, err := ValueInit(TYPE_DOUBLE)
+		val, err := ValueInit(iface.TYPE_DOUBLE)
 		if err != nil {
 			return nil, err
 		}
@@ -942,7 +934,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case string:
-		val, err := ValueInit(TYPE_STRING)
+		val, err := ValueInit(iface.TYPE_STRING)
 		if err != nil {
 			return nil, err
 		}
@@ -950,7 +942,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		return val, nil
 
 	case *Object:
-		val, err := ValueInit(TYPE_OBJECT)
+		val, err := ValueInit(iface.TYPE_OBJECT)
 		if err != nil {
 			return nil, err
 		}
@@ -962,7 +954,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 		rval := reflect.ValueOf(v)
 		switch rval.Kind() {
 		case reflect.Int8:
-			val, err := ValueInit(TYPE_CHAR)
+			val, err := ValueInit(iface.TYPE_CHAR)
 			if err != nil {
 				return nil, err
 			}
@@ -976,7 +968,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			return nil, errors.New("Type not implemented")
 
 		case reflect.Int64:
-			val, err := ValueInit(TYPE_INT64)
+			val, err := ValueInit(iface.TYPE_INT64)
 			if err != nil {
 				return nil, err
 			}
@@ -984,7 +976,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			return val, nil
 
 		case reflect.Int:
-			val, err := ValueInit(TYPE_INT)
+			val, err := ValueInit(iface.TYPE_INT)
 			if err != nil {
 				return nil, err
 			}
@@ -992,7 +984,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 			return val, nil
 
 		case reflect.Uintptr, reflect.Ptr:
-			val, err := ValueInit(TYPE_POINTER)
+			val, err := ValueInit(iface.TYPE_POINTER)
 			if err != nil {
 				return nil, err
 			}
@@ -1027,27 +1019,27 @@ type marshalMap map[iface.Type]GValueMarshaler
 // gValueMarshalers is a map of Glib types to functions to marshal a
 // GValue to a native Go type.
 var gValueMarshalers = marshalMap{
-	TYPE_INVALID:   marshalInvalid,
-	TYPE_NONE:      marshalNone,
-	TYPE_INTERFACE: marshalInterface,
-	TYPE_CHAR:      marshalChar,
-	TYPE_UCHAR:     marshalUchar,
-	TYPE_BOOLEAN:   marshalBoolean,
-	TYPE_INT:       marshalInt,
-	TYPE_LONG:      marshalLong,
-	TYPE_ENUM:      marshalEnum,
-	TYPE_INT64:     marshalInt64,
-	TYPE_UINT:      marshalUint,
-	TYPE_ULONG:     marshalUlong,
-	TYPE_FLAGS:     marshalFlags,
-	TYPE_UINT64:    marshalUint64,
-	TYPE_FLOAT:     marshalFloat,
-	TYPE_DOUBLE:    marshalDouble,
-	TYPE_STRING:    marshalString,
-	TYPE_POINTER:   marshalPointer,
-	TYPE_BOXED:     marshalBoxed,
-	TYPE_OBJECT:    marshalObject,
-	TYPE_VARIANT:   marshalVariant,
+	iface.TYPE_INVALID:   marshalInvalid,
+	iface.TYPE_NONE:      marshalNone,
+	iface.TYPE_INTERFACE: marshalInterface,
+	iface.TYPE_CHAR:      marshalChar,
+	iface.TYPE_UCHAR:     marshalUchar,
+	iface.TYPE_BOOLEAN:   marshalBoolean,
+	iface.TYPE_INT:       marshalInt,
+	iface.TYPE_LONG:      marshalLong,
+	iface.TYPE_ENUM:      marshalEnum,
+	iface.TYPE_INT64:     marshalInt64,
+	iface.TYPE_UINT:      marshalUint,
+	iface.TYPE_ULONG:     marshalUlong,
+	iface.TYPE_FLAGS:     marshalFlags,
+	iface.TYPE_UINT64:    marshalUint64,
+	iface.TYPE_FLOAT:     marshalFloat,
+	iface.TYPE_DOUBLE:    marshalDouble,
+	iface.TYPE_STRING:    marshalString,
+	iface.TYPE_POINTER:   marshalPointer,
+	iface.TYPE_BOXED:     marshalBoxed,
+	iface.TYPE_OBJECT:    marshalObject,
+	iface.TYPE_VARIANT:   marshalVariant,
 }
 
 func (m marshalMap) register(tm []TypeMarshaler) {

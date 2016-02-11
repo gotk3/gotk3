@@ -115,7 +115,7 @@ func (*RealGtk) AppChooserButtonNew(content_type string) (iface.AppChooserButton
 }
 
 func (*RealGtk) AppChooserDialogNewForContentType(parent iface.Window, flags iface.DialogFlags, content_type string) (iface.AppChooserDialog, error) {
-	return AppChooserDialogNewForContentType(parent.(*Window), flags, content_type)
+	return AppChooserDialogNewForContentType(asWindowImpl(parent), flags, content_type)
 }
 
 func (*RealGtk) AppChooserWidgetNew(content_type string) (iface.AppChooserWidget, error) {
@@ -219,7 +219,7 @@ func (*RealGtk) ColorButtonNewWithRGBA(gdkColor gdk_iface.RGBA) (iface.ColorButt
 }
 
 func (*RealGtk) ColorChooserDialogNew(title string, parent iface.Window) (iface.ColorChooserDialog, error) {
-	return ColorChooserDialogNew(title, parent.(*Window))
+	return ColorChooserDialogNew(title, asWindowImpl(parent))
 }
 
 func (*RealGtk) ComboBoxNew() (iface.ComboBox, error) {
@@ -291,11 +291,11 @@ func (*RealGtk) FileChooserButtonNew(title string, action iface.FileChooserActio
 }
 
 func (*RealGtk) FileChooserDialogNewWith1Button(title string, parent iface.Window, action iface.FileChooserAction, first_button_text string, first_button_id iface.ResponseType) (iface.FileChooserDialog, error) {
-	return FileChooserDialogNewWith1Button(title, parent.(*Window), action, first_button_text, first_button_id)
+	return FileChooserDialogNewWith1Button(title, asWindowImpl(parent), action, first_button_text, first_button_id)
 }
 
 func (*RealGtk) FileChooserDialogNewWith2Buttons(title string, parent iface.Window, action iface.FileChooserAction, first_button_text string, first_button_id iface.ResponseType, second_button_text string, second_button_id iface.ResponseType) (iface.FileChooserDialog, error) {
-	return FileChooserDialogNewWith2Buttons(title, parent.(*Window), action, first_button_text, first_button_id, second_button_text, second_button_id)
+	return FileChooserDialogNewWith2Buttons(title, asWindowImpl(parent), action, first_button_text, first_button_id, second_button_text, second_button_id)
 }
 
 func (*RealGtk) FileChooserWidgetNew(action iface.FileChooserAction) (iface.FileChooserWidget, error) {
@@ -639,7 +639,7 @@ func (*RealGtk) ToggleButtonNewWithMnemonic(label string) (iface.ToggleButton, e
 }
 
 func (*RealGtk) ToolButtonNew(iconWidget iface.Widget, label string) (iface.ToolButton, error) {
-	return ToolButtonNew(iconWidget.(*Widget), label)
+	return ToolButtonNew(asWidgetImpl(iconWidget), label)
 }
 
 func (*RealGtk) ToolItemNew() (iface.ToolItem, error) {
@@ -650,8 +650,16 @@ func (*RealGtk) ToolbarNew() (iface.Toolbar, error) {
 	return ToolbarNew()
 }
 
+func (*RealGtk) TreeIterNew() iface.TreeIter {
+	return TreeIterNew()
+}
+
 func (*RealGtk) TreePathFromList(list glib_iface.List) iface.TreePath {
 	return TreePathFromList(list.(*glib.List))
+}
+
+func (*RealGtk) TreePathNew() iface.TreePath {
+	return TreePathNew()
 }
 
 func (*RealGtk) TreePathNewFromString(path string) (iface.TreePath, error) {

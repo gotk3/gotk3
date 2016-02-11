@@ -163,8 +163,10 @@ type Gtk interface {
 	ToggleButtonNewWithMnemonic(string) (ToggleButton, error)
 	ToolButtonNew(Widget, string) (ToolButton, error)
 	ToolItemNew() (ToolItem, error)
+	TreeIterNew() TreeIter
 	ToolbarNew() (Toolbar, error)
 	TreePathFromList(glib_iface.List) TreePath
+	TreePathNew() TreePath
 	TreePathNewFromString(string) (TreePath, error)
 	TreeStoreNew(...glib_iface.Type) (TreeStore, error)
 	TreeViewColumnNew() (TreeViewColumn, error)
