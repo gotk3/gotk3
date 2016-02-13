@@ -8365,17 +8365,15 @@ func wrapTreeSelection(obj *glib.Object) *TreeSelection {
 }
 
 // GetSelected() is a wrapper around gtk_tree_selection_get_selected().
-func (v *TreeSelection) GetSelected(model *ITreeModel, iter *TreeIter) bool {
-	var pcmodel **C.GtkTreeModel
-	if model != nil {
-		cmodel := (*model).toTreeModel()
-		pcmodel = &cmodel
-	} else {
-		pcmodel = nil
-	}
+func (v *TreeSelection) GetSelected() (model ITreeModel, iter TreeIter, ok bool) {
+	var cmodel *C.GtkTreeModel
+	var citer C.GtkTreeIter
 	c := C.gtk_tree_selection_get_selected(v.native(),
-		pcmodel, iter.native())
-	return gobool(c)
+		&cmodel, &citer)
+	model = wrapTreeModel(wrapObject(unsafe.Pointer(cmodel)))
+	iter = TreeIter{citer}
+	ok = gobool(c)
+	return
 }
 
 // SelectPath is a wrapper around gtk_tree_selection_select_path().
