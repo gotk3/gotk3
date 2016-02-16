@@ -27,3 +27,37 @@ type Status int
 
 // SurfaceType is a representation of Cairo's cairo_surface_type_t.
 type SurfaceType int
+
+// FontSlant is a representation of Cairo's cairo_font_slant_t
+type FontSlant int
+
+// FontWeight is a representation of Cairo's cairo_font_weight_t
+type FontWeight int
+
+var (
+	FONT_SLANT_NORMAL  FontSlant
+	FONT_SLANT_ITALIC  FontSlant
+	FONT_SLANT_OBLIQUE FontSlant
+)
+
+var (
+	FONT_WEIGHT_NORMAL FontWeight
+	FONT_WEIGHT_BOLD   FontWeight
+)
+
+type FontExtents struct {
+	Ascent      float64
+	Descent     float64
+	Height      float64
+	MaxXAdvance float64
+	MaxYAdvance float64
+}
+
+type TextExtents struct {
+	XBearing float64
+	YBearing float64
+	Width    float64
+	Height   float64
+	XAdvance float64
+	YAdvance float64
+}
