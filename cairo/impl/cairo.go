@@ -48,15 +48,11 @@ func init() {
 		{glib.Type(C.cairo_gobject_surface_get_type()), marshalSurface},
 	}
 	glib_impl.RegisterGValueMarshalers(tm)
+
+	cairo.CONTENT_COLOR = C.CAIRO_CONTENT_COLOR
+	cairo.CONTENT_ALPHA = C.CAIRO_CONTENT_ALPHA
+	cairo.CONTENT_COLOR_ALPHA = C.CAIRO_CONTENT_COLOR_ALPHA
 }
-
-// Constants
-
-const (
-	CONTENT_COLOR       cairo.Content = C.CAIRO_CONTENT_COLOR
-	CONTENT_ALPHA       cairo.Content = C.CAIRO_CONTENT_ALPHA
-	CONTENT_COLOR_ALPHA cairo.Content = C.CAIRO_CONTENT_COLOR_ALPHA
-)
 
 func marshalContent(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))

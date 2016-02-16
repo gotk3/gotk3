@@ -64,3 +64,26 @@ var (
 	TYPE_OBJECT    Type
 	TYPE_VARIANT   Type
 )
+
+type VariantClass int
+
+var (
+	VARIANT_CLASS_BOOLEAN     VariantClass
+	VARIANT_CLASS_BYTE        VariantClass
+	VARIANT_CLASS_INT16       VariantClass
+	VARIANT_CLASS_UINT16      VariantClass
+	VARIANT_CLASS_INT32       VariantClass
+	VARIANT_CLASS_UINT32      VariantClass
+	VARIANT_CLASS_INT64       VariantClass
+	VARIANT_CLASS_UINT64      VariantClass
+	VARIANT_CLASS_HANDLE      VariantClass
+	VARIANT_CLASS_DOUBLE      VariantClass
+	VARIANT_CLASS_STRING      VariantClass
+	VARIANT_CLASS_OBJECT_PATH VariantClass
+	VARIANT_CLASS_SIGNATURE   VariantClass
+	VARIANT_CLASS_VARIANT     VariantClass
+	VARIANT_CLASS_MAYBE       VariantClass
+	VARIANT_CLASS_ARRAY       VariantClass
+	VARIANT_CLASS_TUPLE       VariantClass
+	VARIANT_CLASS_DICT_ENTRY  VariantClass
+)

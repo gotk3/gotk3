@@ -11,11 +11,11 @@ import (
 	"github.com/gotk3/gotk3/cairo"
 )
 
-const (
-	LINE_JOIN_MITER cairo.LineJoin = C.CAIRO_LINE_JOIN_MITER
-	LINE_JOIN_ROUND cairo.LineJoin = C.CAIRO_LINE_JOIN_ROUND
-	LINE_JOIN_BEVEL cairo.LineJoin = C.CAIRO_LINE_JOIN_BEVEL
-)
+func init() {
+	cairo.LINE_JOIN_MITER = C.CAIRO_LINE_JOIN_MITER
+	cairo.LINE_JOIN_ROUND = C.CAIRO_LINE_JOIN_ROUND
+	cairo.LINE_JOIN_BEVEL = C.CAIRO_LINE_JOIN_BEVEL
+}
 
 func marshalLineJoin(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))

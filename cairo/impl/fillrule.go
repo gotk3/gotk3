@@ -11,10 +11,10 @@ import (
 	"github.com/gotk3/gotk3/cairo"
 )
 
-const (
-	FILL_RULE_WINDING  cairo.FillRule = C.CAIRO_FILL_RULE_WINDING
-	FILL_RULE_EVEN_ODD cairo.FillRule = C.CAIRO_FILL_RULE_EVEN_ODD
-)
+func init() {
+	cairo.FILL_RULE_WINDING = C.CAIRO_FILL_RULE_WINDING
+	cairo.FILL_RULE_EVEN_ODD = C.CAIRO_FILL_RULE_EVEN_ODD
+}
 
 func marshalFillRule(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))

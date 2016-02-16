@@ -564,3 +564,8 @@ var (
 	STATE_FLAG_DIR_LTR StateFlags
 	STATE_FLAG_DIR_RTL StateFlags
 )
+
+var (
+	LEVEL_BAR_OFFSET_LOW  string
+	LEVEL_BAR_OFFSET_HIGH string
+)

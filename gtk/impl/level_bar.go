@@ -24,6 +24,9 @@ func init() {
 
 	gtk.LEVEL_BAR_MODE_CONTINUOUS = C.GTK_LEVEL_BAR_MODE_CONTINUOUS
 	gtk.LEVEL_BAR_MODE_DISCRETE = C.GTK_LEVEL_BAR_MODE_DISCRETE
+
+	gtk.LEVEL_BAR_OFFSET_LOW = C.GTK_LEVEL_BAR_OFFSET_LOW
+	gtk.LEVEL_BAR_OFFSET_HIGH = C.GTK_LEVEL_BAR_OFFSET_HIGH
 }
 
 func marshalLevelBarMode(p uintptr) (interface{}, error) {
@@ -118,11 +121,6 @@ func (v *LevelBar) GetMaxValue() float64 {
 	c := C.gtk_level_bar_get_max_value(v.native())
 	return float64(c)
 }
-
-const (
-	LEVEL_BAR_OFFSET_LOW  string = C.GTK_LEVEL_BAR_OFFSET_LOW
-	LEVEL_BAR_OFFSET_HIGH string = C.GTK_LEVEL_BAR_OFFSET_HIGH
-)
 
 // AddOffsetValue() is a wrapper around gtk_level_bar_add_offset_value().
 func (v *LevelBar) AddOffsetValue(name string, value float64) {

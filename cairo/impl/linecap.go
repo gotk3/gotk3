@@ -11,11 +11,11 @@ import (
 	"github.com/gotk3/gotk3/cairo"
 )
 
-const (
-	LINE_CAP_BUTT   cairo.LineCap = C.CAIRO_LINE_CAP_BUTT
-	LINE_CAP_ROUND  cairo.LineCap = C.CAIRO_LINE_CAP_ROUND
-	LINE_CAP_SQUARE cairo.LineCap = C.CAIRO_LINE_CAP_SQUARE
-)
+func init() {
+	cairo.LINE_CAP_BUTT = C.CAIRO_LINE_CAP_BUTT
+	cairo.LINE_CAP_ROUND = C.CAIRO_LINE_CAP_ROUND
+	cairo.LINE_CAP_SQUARE = C.CAIRO_LINE_CAP_SQUARE
+}
 
 func marshalLineCap(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))

@@ -34,7 +34,7 @@ func NewSurfaceFromPNG(fileName string) (*Surface, error) {
 	surfaceNative := C.cairo_image_surface_create_from_png(cstr)
 
 	status := cairo.Status(C.cairo_surface_status(surfaceNative))
-	if status != STATUS_SUCCESS {
+	if status != cairo.STATUS_SUCCESS {
 		return nil, ErrorStatus(status)
 	}
 
