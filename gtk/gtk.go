@@ -7370,7 +7370,9 @@ func (v *TextBuffer) GetText(start, end iface.TextIter, includeHiddenChars bool)
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	gostr := C.GoString((*C.char)(c))
+	C.g_free(C.gpointer(c))
+	return gostr, nil
 }
 
 // Insert() is a wrapper around gtk_text_buffer_insert().
@@ -8205,17 +8207,15 @@ func wrapTreeSelection(obj *glib.Object) *TreeSelection {
 }
 
 // GetSelected() is a wrapper around gtk_tree_selection_get_selected().
-func (v *TreeSelection) GetSelected(model *iface.TreeModel, iter iface.TreeIter) bool {
-	var pcmodel **C.GtkTreeModel
-	if model != nil {
-		cmodel := (*model).(ITreeModel).toTreeModel()
-		pcmodel = &cmodel
-	} else {
-		pcmodel = nil
-	}
+func (v *TreeSelection) GetSelected() (model iface.TreeModel, iter iface.TreeIter, ok bool) {
+	var cmodel *C.GtkTreeModel
+	var citer C.GtkTreeIter
 	c := C.gtk_tree_selection_get_selected(v.native(),
-		pcmodel, castOrNilTreeIter(iter).native())
-	return gobool(c)
+		&cmodel, &citer)
+	model = wrapTreeModel(wrapObject(unsafe.Pointer(cmodel)))
+	iter = &TreeIter{citer}
+	ok = gobool(c)
+	return
 }
 
 // SelectPath is a wrapper around gtk_tree_selection_select_path().

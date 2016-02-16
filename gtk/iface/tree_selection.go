@@ -7,7 +7,7 @@ type TreeSelection interface {
 
 	CountSelectedRows() int
 	GetMode() SelectionMode
-	GetSelected(*TreeModel, TreeIter) bool
+	GetSelected() (TreeModel, TreeIter, bool)
 	GetSelectedRows(TreeModel) glib_iface.List
 	SelectIter(TreeIter)
 	SelectPath(TreePath)
