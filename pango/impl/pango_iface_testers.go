@@ -1,0 +1,36 @@
+package impl
+
+import "github.com/gotk3/gotk3/pango"
+
+func init() {
+	pango.AssertPango(&RealPango{})
+	pango.AssertAttrClass(&attrClass{})
+	pango.AssertAttrColor(&attrColor{})
+	pango.AssertAttrFloat(&attrFloat{})
+	pango.AssertAttrFontDesc(&attrFontDesc{})
+	pango.AssertAttrInt(&attrInt{})
+	pango.AssertAttrLanguage(&attrLanguage{})
+	pango.AssertAttrList(&attrList{})
+	pango.AssertAttrShape(&attrShape{})
+	pango.AssertAttrSize(&attrSize{})
+	pango.AssertAttrString(&attrString{})
+	pango.AssertAttribute(&attribute{})
+	pango.AssertColor(&color{})
+	pango.AssertContext(&context{})
+	pango.AssertEngineLang(&engineLang{})
+	pango.AssertEngineShape(&engineShape{})
+	pango.AssertFont(&font{})
+	pango.AssertFontDescription(&fontDescription{})
+	pango.AssertFontMap(&fontMap{})
+	pango.AssertFontMetrics(&fontMetrics{})
+	pango.AssertGlyphGeometry(&glyphGeometry{})
+	pango.AssertGlyphInfo(&glyphInfo{})
+	pango.AssertGlyphItem(&glyphItem{})
+	pango.AssertGlyphString(&glyphString{})
+	pango.AssertGlyphVisAttr(&glyphVisAttr{})
+	pango.AssertLayout(&layout{})
+	pango.AssertLayoutLine(&layoutLine{})
+	pango.AssertLogAttr(&logAttr{})
+	pango.AssertRealPango(&RealPango{})
+	pango.AssertRectangle(&rectangle{})
+}

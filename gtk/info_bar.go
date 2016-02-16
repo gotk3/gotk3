@@ -1,108 +1,18 @@
 package gtk
 
-// #include <gtk/gtk.h>
-// #include "gtk.go.h"
-import "C"
-import (
-	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
-	glib_iface "github.com/gotk3/gotk3/glib/iface"
-	"github.com/gotk3/gotk3/gtk/iface"
-)
-
-func init() {
-	tm := []glib.TypeMarshaler{
-		{glib_iface.Type(C.gtk_info_bar_get_type()), marshalInfoBar},
-	}
-
-	glib.RegisterGValueMarshalers(tm)
-
-	WrapMap["GtkInfoBar"] = wrapInfoBar
-}
-
-type InfoBar struct {
+type InfoBar interface {
 	Box
-}
 
-func (v *InfoBar) native() *C.GtkInfoBar {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
+	AddActionWidget(Widget, ResponseType)
+	AddButton(string, ResponseType)
+	GetActionArea() (Widget, error)
+	GetContentArea() (Box, error)
+	GetMessageType() MessageType
+	GetShowCloseButton() bool
+	SetDefaultResponse(ResponseType)
+	SetMessageType(MessageType)
+	SetResponseSensitive(ResponseType, bool)
+	SetShowCloseButton(bool)
+} // end of InfoBar
 
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkInfoBar(p)
-}
-
-func marshalInfoBar(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
-}
-
-func wrapInfoBar(obj *glib.Object) *InfoBar {
-	return &InfoBar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
-}
-
-func InfoBarNew() (*InfoBar, error) {
-	c := C.gtk_info_bar_new()
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
-}
-
-func (v *InfoBar) AddActionWidget(w iface.Widget, responseId iface.ResponseType) {
-	C.gtk_info_bar_add_action_widget(v.native(), w.(IWidget).toWidget(), C.gint(responseId))
-}
-
-func (v *InfoBar) AddButton(buttonText string, responseId iface.ResponseType) {
-	cstr := C.CString(buttonText)
-	defer C.free(unsafe.Pointer(cstr))
-
-	C.gtk_info_bar_add_button(v.native(), (*C.gchar)(cstr), C.gint(responseId))
-}
-
-func (v *InfoBar) SetResponseSensitive(responseId iface.ResponseType, setting bool) {
-	C.gtk_info_bar_set_response_sensitive(v.native(), C.gint(responseId), gbool(setting))
-}
-
-func (v *InfoBar) SetDefaultResponse(responseId iface.ResponseType) {
-	C.gtk_info_bar_set_default_response(v.native(), C.gint(responseId))
-}
-
-func (v *InfoBar) SetMessageType(messageType iface.MessageType) {
-	C.gtk_info_bar_set_message_type(v.native(), C.GtkMessageType(messageType))
-}
-
-func (v *InfoBar) GetMessageType() iface.MessageType {
-	messageType := C.gtk_info_bar_get_message_type(v.native())
-	return iface.MessageType(messageType)
-}
-
-func (v *InfoBar) GetActionArea() (iface.Widget, error) {
-	c := C.gtk_info_bar_get_action_area(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
-}
-
-func (v *InfoBar) GetContentArea() (iface.Box, error) {
-	c := C.gtk_info_bar_get_content_area(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	return wrapBox(wrapObject(unsafe.Pointer(c))), nil
-}
-
-func (v *InfoBar) GetShowCloseButton() bool {
-	b := C.gtk_info_bar_get_show_close_button(v.native())
-	return gobool(b)
-}
-
-func (v *InfoBar) SetShowCloseButton(setting bool) {
-	C.gtk_info_bar_set_show_close_button(v.native(), gbool(setting))
-}
+func AssertInfoBar(_ InfoBar) {}
