@@ -38,12 +38,12 @@ func marshalLevelBarMode(p uintptr) (interface{}, error) {
  * GtkLevelBar
  */
 
-type LevelBar struct {
-	Widget
+type levelBar struct {
+	widget
 }
 
 // native returns a pointer to the underlying GtkLevelBar.
-func (v *LevelBar) native() *C.GtkLevelBar {
+func (v *levelBar) native() *C.GtkLevelBar {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -57,12 +57,12 @@ func marshalLevelBar(p uintptr) (interface{}, error) {
 	return wrapLevelBar(obj), nil
 }
 
-func wrapLevelBar(obj *glib_impl.Object) *LevelBar {
-	return &LevelBar{Widget{glib_impl.InitiallyUnowned{obj}}}
+func wrapLevelBar(obj *glib_impl.Object) *levelBar {
+	return &levelBar{widget{glib_impl.InitiallyUnowned{obj}}}
 }
 
 // LevelBarNew() is a wrapper around gtk_level_bar_new().
-func LevelBarNew() (*LevelBar, error) {
+func LevelBarNew() (*levelBar, error) {
 	c := C.gtk_level_bar_new()
 	if c == nil {
 		return nil, nilPtrErr
@@ -71,7 +71,7 @@ func LevelBarNew() (*LevelBar, error) {
 }
 
 // LevelBarNewForInterval() is a wrapper around gtk_level_bar_new_for_interval().
-func LevelBarNewForInterval(min_value, max_value float64) (*LevelBar, error) {
+func LevelBarNewForInterval(min_value, max_value float64) (*levelBar, error) {
 	c := C.gtk_level_bar_new_for_interval(C.gdouble(min_value), C.gdouble(max_value))
 	if c == nil {
 		return nil, nilPtrErr
@@ -80,64 +80,64 @@ func LevelBarNewForInterval(min_value, max_value float64) (*LevelBar, error) {
 }
 
 // SetMode() is a wrapper around gtk_level_bar_set_mode().
-func (v *LevelBar) SetMode(m gtk.LevelBarMode) {
+func (v *levelBar) SetMode(m gtk.LevelBarMode) {
 	C.gtk_level_bar_set_mode(v.native(), C.GtkLevelBarMode(m))
 }
 
 // GetMode() is a wrapper around gtk_level_bar_get_mode().
-func (v *LevelBar) GetMode() gtk.LevelBarMode {
+func (v *levelBar) GetMode() gtk.LevelBarMode {
 	return gtk.LevelBarMode(C.gtk_level_bar_get_mode(v.native()))
 }
 
 // SetValue() is a wrapper around gtk_level_bar_set_value().
-func (v *LevelBar) SetValue(value float64) {
+func (v *levelBar) SetValue(value float64) {
 	C.gtk_level_bar_set_value(v.native(), C.gdouble(value))
 }
 
 // GetValue() is a wrapper around gtk_level_bar_get_value().
-func (v *LevelBar) GetValue() float64 {
+func (v *levelBar) GetValue() float64 {
 	c := C.gtk_level_bar_get_value(v.native())
 	return float64(c)
 }
 
 // SetMinValue() is a wrapper around gtk_level_bar_set_min_value().
-func (v *LevelBar) SetMinValue(value float64) {
+func (v *levelBar) SetMinValue(value float64) {
 	C.gtk_level_bar_set_min_value(v.native(), C.gdouble(value))
 }
 
 // GetMinValue() is a wrapper around gtk_level_bar_get_min_value().
-func (v *LevelBar) GetMinValue() float64 {
+func (v *levelBar) GetMinValue() float64 {
 	c := C.gtk_level_bar_get_min_value(v.native())
 	return float64(c)
 }
 
 // SetMaxValue() is a wrapper around gtk_level_bar_set_max_value().
-func (v *LevelBar) SetMaxValue(value float64) {
+func (v *levelBar) SetMaxValue(value float64) {
 	C.gtk_level_bar_set_max_value(v.native(), C.gdouble(value))
 }
 
 // GetMaxValue() is a wrapper around gtk_level_bar_get_max_value().
-func (v *LevelBar) GetMaxValue() float64 {
+func (v *levelBar) GetMaxValue() float64 {
 	c := C.gtk_level_bar_get_max_value(v.native())
 	return float64(c)
 }
 
 // AddOffsetValue() is a wrapper around gtk_level_bar_add_offset_value().
-func (v *LevelBar) AddOffsetValue(name string, value float64) {
+func (v *levelBar) AddOffsetValue(name string, value float64) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_level_bar_add_offset_value(v.native(), (*C.gchar)(cstr), C.gdouble(value))
 }
 
 // RemoveOffsetValue() is a wrapper around gtk_level_bar_remove_offset_value().
-func (v *LevelBar) RemoveOffsetValue(name string) {
+func (v *levelBar) RemoveOffsetValue(name string) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_level_bar_remove_offset_value(v.native(), (*C.gchar)(cstr))
 }
 
 // GetOffsetValue() is a wrapper around gtk_level_bar_get_offset_value().
-func (v *LevelBar) GetOffsetValue(name string) (float64, bool) {
+func (v *levelBar) GetOffsetValue(name string) (float64, bool) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	var value C.gdouble

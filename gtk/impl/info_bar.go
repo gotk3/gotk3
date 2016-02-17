@@ -21,11 +21,11 @@ func init() {
 	WrapMap["GtkInfoBar"] = wrapInfoBar
 }
 
-type InfoBar struct {
-	Box
+type infoBar struct {
+	box
 }
 
-func (v *InfoBar) native() *C.GtkInfoBar {
+func (v *infoBar) native() *C.GtkInfoBar {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -39,11 +39,11 @@ func marshalInfoBar(p uintptr) (interface{}, error) {
 	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapInfoBar(obj *glib_impl.Object) *InfoBar {
-	return &InfoBar{Box{Container{Widget{glib_impl.InitiallyUnowned{obj}}}}}
+func wrapInfoBar(obj *glib_impl.Object) *infoBar {
+	return &infoBar{box{container{widget{glib_impl.InitiallyUnowned{obj}}}}}
 }
 
-func InfoBarNew() (*InfoBar, error) {
+func InfoBarNew() (*infoBar, error) {
 	c := C.gtk_info_bar_new()
 	if c == nil {
 		return nil, nilPtrErr
@@ -52,35 +52,35 @@ func InfoBarNew() (*InfoBar, error) {
 	return wrapInfoBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func (v *InfoBar) AddActionWidget(w gtk.Widget, responseId gtk.ResponseType) {
+func (v *infoBar) AddActionWidget(w gtk.Widget, responseId gtk.ResponseType) {
 	C.gtk_info_bar_add_action_widget(v.native(), w.(IWidget).toWidget(), C.gint(responseId))
 }
 
-func (v *InfoBar) AddButton(buttonText string, responseId gtk.ResponseType) {
+func (v *infoBar) AddButton(buttonText string, responseId gtk.ResponseType) {
 	cstr := C.CString(buttonText)
 	defer C.free(unsafe.Pointer(cstr))
 
 	C.gtk_info_bar_add_button(v.native(), (*C.gchar)(cstr), C.gint(responseId))
 }
 
-func (v *InfoBar) SetResponseSensitive(responseId gtk.ResponseType, setting bool) {
+func (v *infoBar) SetResponseSensitive(responseId gtk.ResponseType, setting bool) {
 	C.gtk_info_bar_set_response_sensitive(v.native(), C.gint(responseId), gbool(setting))
 }
 
-func (v *InfoBar) SetDefaultResponse(responseId gtk.ResponseType) {
+func (v *infoBar) SetDefaultResponse(responseId gtk.ResponseType) {
 	C.gtk_info_bar_set_default_response(v.native(), C.gint(responseId))
 }
 
-func (v *InfoBar) SetMessageType(messageType gtk.MessageType) {
+func (v *infoBar) SetMessageType(messageType gtk.MessageType) {
 	C.gtk_info_bar_set_message_type(v.native(), C.GtkMessageType(messageType))
 }
 
-func (v *InfoBar) GetMessageType() gtk.MessageType {
+func (v *infoBar) GetMessageType() gtk.MessageType {
 	messageType := C.gtk_info_bar_get_message_type(v.native())
 	return gtk.MessageType(messageType)
 }
 
-func (v *InfoBar) GetActionArea() (gtk.Widget, error) {
+func (v *infoBar) GetActionArea() (gtk.Widget, error) {
 	c := C.gtk_info_bar_get_action_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -89,7 +89,7 @@ func (v *InfoBar) GetActionArea() (gtk.Widget, error) {
 	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func (v *InfoBar) GetContentArea() (gtk.Box, error) {
+func (v *infoBar) GetContentArea() (gtk.Box, error) {
 	c := C.gtk_info_bar_get_content_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -98,11 +98,11 @@ func (v *InfoBar) GetContentArea() (gtk.Box, error) {
 	return wrapBox(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func (v *InfoBar) GetShowCloseButton() bool {
+func (v *infoBar) GetShowCloseButton() bool {
 	b := C.gtk_info_bar_get_show_close_button(v.native())
 	return gobool(b)
 }
 
-func (v *InfoBar) SetShowCloseButton(setting bool) {
+func (v *infoBar) SetShowCloseButton(setting bool) {
 	C.gtk_info_bar_set_show_close_button(v.native(), gbool(setting))
 }

@@ -37,7 +37,7 @@ import (
  */
 
 // GetActionArea() is a wrapper around gtk_dialog_get_action_area().
-func (v *Dialog) GetActionArea() (*Widget, error) {
+func (v *dialog) GetActionArea() (*widget, error) {
 	c := C.gtk_dialog_get_action_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -50,7 +50,7 @@ func (v *Dialog) GetActionArea() (*Widget, error) {
  */
 
 // GetImage is a wrapper around gtk_message_dialog_get_image().
-func (v *MessageDialog) GetImage() (*Widget, error) {
+func (v *messageDialog) GetImage() (*widget, error) {
 	c := C.gtk_message_dialog_get_image(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -59,7 +59,7 @@ func (v *MessageDialog) GetImage() (*Widget, error) {
 }
 
 // SetImage is a wrapper around gtk_message_dialog_set_image().
-func (v *MessageDialog) SetImage(image gtk.Widget) {
+func (v *messageDialog) SetImage(image gtk.Widget) {
 	C.gtk_message_dialog_set_image(v.native(), image.(IWidget).toWidget())
 }
 
@@ -68,23 +68,23 @@ func (v *MessageDialog) SetImage(image gtk.Widget) {
  */
 
 // GetMarginLeft is a wrapper around gtk_widget_get_margin_left().
-func (v *Widget) GetMarginLeft() int {
+func (v *widget) GetMarginLeft() int {
 	c := C.gtk_widget_get_margin_left(v.native())
 	return int(c)
 }
 
 // SetMarginLeft is a wrapper around gtk_widget_set_margin_left().
-func (v *Widget) SetMarginLeft(margin int) {
+func (v *widget) SetMarginLeft(margin int) {
 	C.gtk_widget_set_margin_left(v.native(), C.gint(margin))
 }
 
 // GetMarginRight is a wrapper around gtk_widget_get_margin_right().
-func (v *Widget) GetMarginRight() int {
+func (v *widget) GetMarginRight() int {
 	c := C.gtk_widget_get_margin_right(v.native())
 	return int(c)
 }
 
 // SetMarginRight is a wrapper around gtk_widget_set_margin_right().
-func (v *Widget) SetMarginRight(margin int) {
+func (v *widget) SetMarginRight(margin int) {
 	C.gtk_widget_set_margin_right(v.native(), C.gint(margin))
 }

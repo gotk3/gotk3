@@ -16,7 +16,7 @@ import (
 )
 
 // GetChildByName is a wrapper around gtk_stack_get_child_by_name().
-func (v *Stack) GetChildByName(name string) *Widget {
+func (v *stack) GetChildByName(name string) *widget {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_stack_get_child_by_name(v.native(), (*C.gchar)(cstr))

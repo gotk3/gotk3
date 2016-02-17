@@ -21,12 +21,12 @@ import (
  */
 
 // TreeView is a representation of GTK's GtkTreeView.
-type TreeView struct {
-	Container
+type treeView struct {
+	container
 }
 
 // native returns a pointer to the underlying GtkTreeView.
-func (v *TreeView) native() *C.GtkTreeView {
+func (v *treeView) native() *C.GtkTreeView {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -40,11 +40,11 @@ func marshalTreeView(p uintptr) (interface{}, error) {
 	return wrapTreeView(obj), nil
 }
 
-func wrapTreeView(obj *glib_impl.Object) *TreeView {
-	return &TreeView{Container{Widget{glib_impl.InitiallyUnowned{obj}}}}
+func wrapTreeView(obj *glib_impl.Object) *treeView {
+	return &treeView{container{widget{glib_impl.InitiallyUnowned{obj}}}}
 }
 
-func setupTreeView(c unsafe.Pointer) (*TreeView, error) {
+func setupTreeView(c unsafe.Pointer) (*treeView, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -53,17 +53,17 @@ func setupTreeView(c unsafe.Pointer) (*TreeView, error) {
 }
 
 // TreeViewNew() is a wrapper around gtk_tree_view_new().
-func TreeViewNew() (*TreeView, error) {
+func TreeViewNew() (*treeView, error) {
 	return setupTreeView(unsafe.Pointer(C.gtk_tree_view_new()))
 }
 
 // TreeViewNewWithModel() is a wrapper around gtk_tree_view_new_with_model().
-func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
+func TreeViewNewWithModel(model ITreeModel) (*treeView, error) {
 	return setupTreeView(unsafe.Pointer(C.gtk_tree_view_new_with_model(model.toTreeModel())))
 }
 
 // GetModel() is a wrapper around gtk_tree_view_get_model().
-func (v *TreeView) GetModel() (gtk.TreeModel, error) {
+func (v *treeView) GetModel() (gtk.TreeModel, error) {
 	c := C.gtk_tree_view_get_model(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -72,12 +72,12 @@ func (v *TreeView) GetModel() (gtk.TreeModel, error) {
 }
 
 // SetModel() is a wrapper around gtk_tree_view_set_model().
-func (v *TreeView) SetModel(model gtk.TreeModel) {
+func (v *treeView) SetModel(model gtk.TreeModel) {
 	C.gtk_tree_view_set_model(v.native(), model.(ITreeModel).toTreeModel())
 }
 
 // GetSelection() is a wrapper around gtk_tree_view_get_selection().
-func (v *TreeView) GetSelection() (gtk.TreeSelection, error) {
+func (v *treeView) GetSelection() (gtk.TreeSelection, error) {
 	c := C.gtk_tree_view_get_selection(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -86,13 +86,13 @@ func (v *TreeView) GetSelection() (gtk.TreeSelection, error) {
 }
 
 // AppendColumn() is a wrapper around gtk_tree_view_append_column().
-func (v *TreeView) AppendColumn(column gtk.TreeViewColumn) int {
+func (v *treeView) AppendColumn(column gtk.TreeViewColumn) int {
 	c := C.gtk_tree_view_append_column(v.native(), castToTreeViewColumn(column).native())
 	return int(c)
 }
 
 // GetPathAtPos() is a wrapper around gtk_tree_view_get_path_at_pos().
-func (v *TreeView) GetPathAtPos(x, y int, path gtk.TreePath, column gtk.TreeViewColumn, cellX, cellY *int) bool {
+func (v *treeView) GetPathAtPos(x, y int, path gtk.TreePath, column gtk.TreeViewColumn, cellX, cellY *int) bool {
 	var ctp **C.GtkTreePath
 	if path != nil {
 		ctp = (**C.GtkTreePath)(unsafe.Pointer(&castToTreePath(path).GtkTreePath))
@@ -119,77 +119,77 @@ func (v *TreeView) GetPathAtPos(x, y int, path gtk.TreePath, column gtk.TreeView
 }
 
 // GetLevelIndentation is a wrapper around gtk_tree_view_get_level_indentation().
-func (v *TreeView) GetLevelIndentation() int {
+func (v *treeView) GetLevelIndentation() int {
 	return int(C.gtk_tree_view_get_level_indentation(v.native()))
 }
 
 // GetShowExpanders is a wrapper around gtk_tree_view_get_show_expanders().
-func (v *TreeView) GetShowExpanders() bool {
+func (v *treeView) GetShowExpanders() bool {
 	return gobool(C.gtk_tree_view_get_show_expanders(v.native()))
 }
 
 // SetLevelIndentation is a wrapper around gtk_tree_view_set_level_indentation().
-func (v *TreeView) SetLevelIndentation(indent int) {
+func (v *treeView) SetLevelIndentation(indent int) {
 	C.gtk_tree_view_set_level_indentation(v.native(), C.gint(indent))
 }
 
 // SetShowExpanders is a wrapper around gtk_tree_view_set_show_expanders().
-func (v *TreeView) SetShowExpanders(show bool) {
+func (v *treeView) SetShowExpanders(show bool) {
 	C.gtk_tree_view_set_show_expanders(v.native(), gbool(show))
 }
 
 // GetHeadersVisible is a wrapper around gtk_tree_view_get_headers_visible().
-func (v *TreeView) GetHeadersVisible() bool {
+func (v *treeView) GetHeadersVisible() bool {
 	return gobool(C.gtk_tree_view_get_headers_visible(v.native()))
 }
 
 // SetHeadersVisible is a wrapper around gtk_tree_view_set_headers_visible().
-func (v *TreeView) SetHeadersVisible(show bool) {
+func (v *treeView) SetHeadersVisible(show bool) {
 	C.gtk_tree_view_set_headers_visible(v.native(), gbool(show))
 }
 
 // ColumnsAutosize is a wrapper around gtk_tree_view_columns_autosize().
-func (v *TreeView) ColumnsAutosize() {
+func (v *treeView) ColumnsAutosize() {
 	C.gtk_tree_view_columns_autosize(v.native())
 }
 
 // GetHeadersClickable is a wrapper around gtk_tree_view_get_headers_clickable().
-func (v *TreeView) GetHeadersClickable() bool {
+func (v *treeView) GetHeadersClickable() bool {
 	return gobool(C.gtk_tree_view_get_headers_clickable(v.native()))
 }
 
 // SetHeadersClickable is a wrapper around gtk_tree_view_set_headers_clickable().
-func (v *TreeView) SetHeadersClickable(show bool) {
+func (v *treeView) SetHeadersClickable(show bool) {
 	C.gtk_tree_view_set_headers_clickable(v.native(), gbool(show))
 }
 
 // GetActivateOnSingleClick is a wrapper around gtk_tree_view_get_activate_on_single_click().
-func (v *TreeView) GetActivateOnSingleClick() bool {
+func (v *treeView) GetActivateOnSingleClick() bool {
 	return gobool(C.gtk_tree_view_get_activate_on_single_click(v.native()))
 }
 
 // SetActivateOnSingleClick is a wrapper around gtk_tree_view_set_activate_on_single_click().
-func (v *TreeView) SetActivateOnSingleClick(show bool) {
+func (v *treeView) SetActivateOnSingleClick(show bool) {
 	C.gtk_tree_view_set_activate_on_single_click(v.native(), gbool(show))
 }
 
 // RemoveColumn() is a wrapper around gtk_tree_view_remove_column().
-func (v *TreeView) RemoveColumn(column gtk.TreeViewColumn) int {
+func (v *treeView) RemoveColumn(column gtk.TreeViewColumn) int {
 	return int(C.gtk_tree_view_remove_column(v.native(), castToTreeViewColumn(column).native()))
 }
 
 // InsertColumn() is a wrapper around gtk_tree_view_insert_column().
-func (v *TreeView) InsertColumn(column gtk.TreeViewColumn, pos int) int {
+func (v *treeView) InsertColumn(column gtk.TreeViewColumn, pos int) int {
 	return int(C.gtk_tree_view_insert_column(v.native(), castToTreeViewColumn(column).native(), C.gint(pos)))
 }
 
 // GetNColumns() is a wrapper around gtk_tree_view_get_n_columns().
-func (v *TreeView) GetNColumns() uint {
+func (v *treeView) GetNColumns() uint {
 	return uint(C.gtk_tree_view_get_n_columns(v.native()))
 }
 
 // GetColumn() is a wrapper around gtk_tree_view_get_column().
-func (v *TreeView) GetColumn(n int) gtk.TreeViewColumn {
+func (v *treeView) GetColumn(n int) gtk.TreeViewColumn {
 	c := C.gtk_tree_view_get_column(v.native(), C.gint(n))
 	if c == nil {
 		return nil
@@ -198,17 +198,17 @@ func (v *TreeView) GetColumn(n int) gtk.TreeViewColumn {
 }
 
 // MoveColumnAfter() is a wrapper around gtk_tree_view_move_column_after().
-func (v *TreeView) MoveColumnAfter(column gtk.TreeViewColumn, baseColumn gtk.TreeViewColumn) {
+func (v *treeView) MoveColumnAfter(column gtk.TreeViewColumn, baseColumn gtk.TreeViewColumn) {
 	C.gtk_tree_view_move_column_after(v.native(), castToTreeViewColumn(column).native(), castToTreeViewColumn(baseColumn).native())
 }
 
 // SetExpanderColumn() is a wrapper around gtk_tree_view_set_expander_column().
-func (v *TreeView) SetExpanderColumn(column gtk.TreeViewColumn) {
+func (v *treeView) SetExpanderColumn(column gtk.TreeViewColumn) {
 	C.gtk_tree_view_set_expander_column(v.native(), castToTreeViewColumn(column).native())
 }
 
 // GetExpanderColumn() is a wrapper around gtk_tree_view_get_expander_column().
-func (v *TreeView) GetExpanderColumn() gtk.TreeViewColumn {
+func (v *treeView) GetExpanderColumn() gtk.TreeViewColumn {
 	c := C.gtk_tree_view_get_expander_column(v.native())
 	if c == nil {
 		return nil
@@ -217,30 +217,30 @@ func (v *TreeView) GetExpanderColumn() gtk.TreeViewColumn {
 }
 
 // ScrollToPoint() is a wrapper around gtk_tree_view_scroll_to_point().
-func (v *TreeView) ScrollToPoint(treeX, treeY int) {
+func (v *treeView) ScrollToPoint(treeX, treeY int) {
 	C.gtk_tree_view_scroll_to_point(v.native(), C.gint(treeX), C.gint(treeY))
 }
 
 // SetCursor() is a wrapper around gtk_tree_view_set_cursor().
-func (v *TreeView) SetCursor(path gtk.TreePath, focusColumn gtk.TreeViewColumn, startEditing bool) {
+func (v *treeView) SetCursor(path gtk.TreePath, focusColumn gtk.TreeViewColumn, startEditing bool) {
 	C.gtk_tree_view_set_cursor(v.native(), castToTreePath(path).native(), castToTreeViewColumn(focusColumn).native(), gbool(startEditing))
 }
 
 // SetCursorOnCell() is a wrapper around gtk_tree_view_set_cursor_on_cell().
-func (v *TreeView) SetCursorOnCell(path gtk.TreePath, focusColumn gtk.TreeViewColumn, focusCell gtk.CellRenderer, startEditing bool) {
+func (v *treeView) SetCursorOnCell(path gtk.TreePath, focusColumn gtk.TreeViewColumn, focusCell gtk.CellRenderer, startEditing bool) {
 	C.gtk_tree_view_set_cursor_on_cell(v.native(), castToTreePath(path).native(), castToTreeViewColumn(focusColumn).native(), castToCellRenderer(focusCell).native(), gbool(startEditing))
 }
 
 // GetCursor() is a wrapper around gtk_tree_view_get_cursor().
-func (v *TreeView) GetCursor() (p gtk.TreePath, c gtk.TreeViewColumn) {
+func (v *treeView) GetCursor() (p gtk.TreePath, c gtk.TreeViewColumn) {
 	var path *C.GtkTreePath
 	var col *C.GtkTreeViewColumn
 
 	C.gtk_tree_view_get_cursor(v.native(), &path, &col)
 
 	if path != nil {
-		p = &TreePath{path}
-		runtime.SetFinalizer(p, (*TreePath).free)
+		p = &treePath{path}
+		runtime.SetFinalizer(p, (*treePath).free)
 	}
 
 	if col != nil {
@@ -251,52 +251,52 @@ func (v *TreeView) GetCursor() (p gtk.TreePath, c gtk.TreeViewColumn) {
 }
 
 // RowActivated() is a wrapper around gtk_tree_view_row_activated().
-func (v *TreeView) RowActivated(path gtk.TreePath, column gtk.TreeViewColumn) {
+func (v *treeView) RowActivated(path gtk.TreePath, column gtk.TreeViewColumn) {
 	C.gtk_tree_view_row_activated(v.native(), castToTreePath(path).native(), castToTreeViewColumn(column).native())
 }
 
 // ExpandAll() is a wrapper around gtk_tree_view_expand_all().
-func (v *TreeView) ExpandAll() {
+func (v *treeView) ExpandAll() {
 	C.gtk_tree_view_expand_all(v.native())
 }
 
 // CollapseAll() is a wrapper around gtk_tree_view_collapse_all().
-func (v *TreeView) CollapseAll() {
+func (v *treeView) CollapseAll() {
 	C.gtk_tree_view_collapse_all(v.native())
 }
 
 // ExpandToPath() is a wrapper around gtk_tree_view_expand_to_path().
-func (v *TreeView) ExpandToPath(path gtk.TreePath) {
+func (v *treeView) ExpandToPath(path gtk.TreePath) {
 	C.gtk_tree_view_expand_to_path(v.native(), castToTreePath(path).native())
 }
 
 // ExpandRow() is a wrapper around gtk_tree_view_expand_row().
-func (v *TreeView) ExpandRow(path gtk.TreePath, openAll bool) bool {
+func (v *treeView) ExpandRow(path gtk.TreePath, openAll bool) bool {
 	return gobool(C.gtk_tree_view_expand_row(v.native(), castToTreePath(path).native(), gbool(openAll)))
 }
 
 // CollapseRow() is a wrapper around gtk_tree_view_collapse_row().
-func (v *TreeView) CollapseRow(path gtk.TreePath) bool {
+func (v *treeView) CollapseRow(path gtk.TreePath) bool {
 	return gobool(C.gtk_tree_view_collapse_row(v.native(), castToTreePath(path).native()))
 }
 
 // RowExpanded() is a wrapper around gtk_tree_view_row_expanded().
-func (v *TreeView) RowExpanded(path gtk.TreePath) bool {
+func (v *treeView) RowExpanded(path gtk.TreePath) bool {
 	return gobool(C.gtk_tree_view_row_expanded(v.native(), castToTreePath(path).native()))
 }
 
 // SetReorderable is a wrapper around gtk_tree_view_set_reorderable().
-func (v *TreeView) SetReorderable(b bool) {
+func (v *treeView) SetReorderable(b bool) {
 	C.gtk_tree_view_set_reorderable(v.native(), gbool(b))
 }
 
 // GetReorderable() is a wrapper around gtk_tree_view_get_reorderable().
-func (v *TreeView) GetReorderable() bool {
+func (v *treeView) GetReorderable() bool {
 	return gobool(C.gtk_tree_view_get_reorderable(v.native()))
 }
 
 // GetBinWindow() is a wrapper around gtk_tree_view_get_bin_window().
-func (v *TreeView) GetBinWindow() gdk.Window {
+func (v *treeView) GetBinWindow() gdk.Window {
 	c := C.gtk_tree_view_get_bin_window(v.native())
 	if c == nil {
 		return nil
@@ -307,27 +307,27 @@ func (v *TreeView) GetBinWindow() gdk.Window {
 }
 
 // SetEnableSearch is a wrapper around gtk_tree_view_set_enable_search().
-func (v *TreeView) SetEnableSearch(b bool) {
+func (v *treeView) SetEnableSearch(b bool) {
 	C.gtk_tree_view_set_enable_search(v.native(), gbool(b))
 }
 
 // GetEnableSearch() is a wrapper around gtk_tree_view_get_enable_search().
-func (v *TreeView) GetEnableSearch() bool {
+func (v *treeView) GetEnableSearch() bool {
 	return gobool(C.gtk_tree_view_get_enable_search(v.native()))
 }
 
 // SetSearchColumn is a wrapper around gtk_tree_view_set_search_column().
-func (v *TreeView) SetSearchColumn(c int) {
+func (v *treeView) SetSearchColumn(c int) {
 	C.gtk_tree_view_set_search_column(v.native(), C.gint(c))
 }
 
 // GetSearchColumn() is a wrapper around gtk_tree_view_get_search_column().
-func (v *TreeView) GetSearchColumn() int {
+func (v *treeView) GetSearchColumn() int {
 	return int(C.gtk_tree_view_get_search_column(v.native()))
 }
 
 // GetSearchEntry() is a wrapper around gtk_tree_view_get_search_entry().
-func (v *TreeView) GetSearchEntry() gtk.Entry {
+func (v *treeView) GetSearchEntry() gtk.Entry {
 	c := C.gtk_tree_view_get_search_entry(v.native())
 	if c == nil {
 		return nil
@@ -336,72 +336,72 @@ func (v *TreeView) GetSearchEntry() gtk.Entry {
 }
 
 // SetSearchEntry() is a wrapper around gtk_tree_view_set_search_entry().
-func (v *TreeView) SetSearchEntry(e gtk.Entry) {
+func (v *treeView) SetSearchEntry(e gtk.Entry) {
 	C.gtk_tree_view_set_search_entry(v.native(), castToEntry(e).native())
 }
 
 // SetFixedHeightMode is a wrapper around gtk_tree_view_set_fixed_height_mode().
-func (v *TreeView) SetFixedHeightMode(b bool) {
+func (v *treeView) SetFixedHeightMode(b bool) {
 	C.gtk_tree_view_set_fixed_height_mode(v.native(), gbool(b))
 }
 
 // GetFixedHeightMode() is a wrapper around gtk_tree_view_get_fixed_height_mode().
-func (v *TreeView) GetFixedHeightMode() bool {
+func (v *treeView) GetFixedHeightMode() bool {
 	return gobool(C.gtk_tree_view_get_fixed_height_mode(v.native()))
 }
 
 // SetHoverSelection is a wrapper around gtk_tree_view_set_hover_selection().
-func (v *TreeView) SetHoverSelection(b bool) {
+func (v *treeView) SetHoverSelection(b bool) {
 	C.gtk_tree_view_set_hover_selection(v.native(), gbool(b))
 }
 
 // GetHoverSelection() is a wrapper around gtk_tree_view_get_hover_selection().
-func (v *TreeView) GetHoverSelection() bool {
+func (v *treeView) GetHoverSelection() bool {
 	return gobool(C.gtk_tree_view_get_hover_selection(v.native()))
 }
 
 // SetHoverExpand is a wrapper around gtk_tree_view_set_hover_expand().
-func (v *TreeView) SetHoverExpand(b bool) {
+func (v *treeView) SetHoverExpand(b bool) {
 	C.gtk_tree_view_set_hover_expand(v.native(), gbool(b))
 }
 
 // GetHoverExpand() is a wrapper around gtk_tree_view_get_hover_expand().
-func (v *TreeView) GetHoverExpand() bool {
+func (v *treeView) GetHoverExpand() bool {
 	return gobool(C.gtk_tree_view_get_hover_expand(v.native()))
 }
 
 // SetRubberBanding is a wrapper around gtk_tree_view_set_rubber_banding().
-func (v *TreeView) SetRubberBanding(b bool) {
+func (v *treeView) SetRubberBanding(b bool) {
 	C.gtk_tree_view_set_rubber_banding(v.native(), gbool(b))
 }
 
 // GetRubberBanding() is a wrapper around gtk_tree_view_get_rubber_banding().
-func (v *TreeView) GetRubberBanding() bool {
+func (v *treeView) GetRubberBanding() bool {
 	return gobool(C.gtk_tree_view_get_rubber_banding(v.native()))
 }
 
 // IsRubberBandingActive() is a wrapper around gtk_tree_view_is_rubber_banding_active().
-func (v *TreeView) IsRubberBandingActive() bool {
+func (v *treeView) IsRubberBandingActive() bool {
 	return gobool(C.gtk_tree_view_is_rubber_banding_active(v.native()))
 }
 
 // SetEnableTreeLines is a wrapper around gtk_tree_view_set_enable_tree_lines().
-func (v *TreeView) SetEnableTreeLines(b bool) {
+func (v *treeView) SetEnableTreeLines(b bool) {
 	C.gtk_tree_view_set_enable_tree_lines(v.native(), gbool(b))
 }
 
 // GetEnableTreeLines() is a wrapper around gtk_tree_view_get_enable_tree_lines().
-func (v *TreeView) GetEnableTreeLines() bool {
+func (v *treeView) GetEnableTreeLines() bool {
 	return gobool(C.gtk_tree_view_get_enable_tree_lines(v.native()))
 }
 
 // GetTooltipColumn() is a wrapper around gtk_tree_view_get_tooltip_column().
-func (v *TreeView) GetTooltipColumn() int {
+func (v *treeView) GetTooltipColumn() int {
 	return int(C.gtk_tree_view_get_tooltip_column(v.native()))
 }
 
 // SetTooltipColumn() is a wrapper around gtk_tree_view_set_tooltip_column().
-func (v *TreeView) SetTooltipColumn(c int) {
+func (v *treeView) SetTooltipColumn(c int) {
 	C.gtk_tree_view_set_tooltip_column(v.native(), C.gint(c))
 }
 

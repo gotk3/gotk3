@@ -47,11 +47,11 @@ func init() {
 
 //TODO(sjon): Implement GtkPopover
 //GtkPopover
-type Popover struct {
-	Bin
+type popover struct {
+	bin
 }
 
-func (v *Popover) native() *C.GtkPopover {
+func (v *popover) native() *C.GtkPopover {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -65,12 +65,12 @@ func marshalPopover(p uintptr) (interface{}, error) {
 	return wrapPopover(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapPopover(obj *glib_impl.Object) *Popover {
-	return &Popover{Bin{Container{Widget{glib_impl.InitiallyUnowned{obj}}}}}
+func wrapPopover(obj *glib_impl.Object) *popover {
+	return &popover{bin{container{widget{glib_impl.InitiallyUnowned{obj}}}}}
 }
 
 //gtk_popover_new()
-func PopoverNew(relative gtk.Widget) (*Popover, error) {
+func PopoverNew(relative gtk.Widget) (*popover, error) {
 	//Takes relative to widget
 	var c *C.struct__GtkWidget
 	if relative == nil {

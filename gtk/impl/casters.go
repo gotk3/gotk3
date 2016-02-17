@@ -2,142 +2,142 @@ package impl
 
 import "github.com/gotk3/gotk3/gtk"
 
-func castToApplication(s gtk.Application) *Application {
+func castToApplication(s gtk.Application) *application {
 	if s == nil {
 		return nil
 	}
-	return s.(*Application)
+	return s.(*application)
 }
 
-func castToAdjustment(s gtk.Adjustment) *Adjustment {
+func castToAdjustment(s gtk.Adjustment) *adjustment {
 	if s == nil {
 		return nil
 	}
-	return s.(*Adjustment)
+	return s.(*adjustment)
 }
 
-func castToEntryBuffer(s gtk.EntryBuffer) *EntryBuffer {
+func castToEntryBuffer(s gtk.EntryBuffer) *entryBuffer {
 	if s == nil {
 		return nil
 	}
-	return s.(*EntryBuffer)
+	return s.(*entryBuffer)
 }
 
-func castToEntryCompletion(s gtk.EntryCompletion) *EntryCompletion {
+func castToEntryCompletion(s gtk.EntryCompletion) *entryCompletion {
 	if s == nil {
 		return nil
 	}
-	return s.(*EntryCompletion)
+	return s.(*entryCompletion)
 }
 
-func castToFileFilter(s gtk.FileFilter) *FileFilter {
+func castToFileFilter(s gtk.FileFilter) *fileFilter {
 	if s == nil {
 		return nil
 	}
-	return s.(*FileFilter)
+	return s.(*fileFilter)
 }
 
-func castToRadioButton(s gtk.RadioButton) *RadioButton {
+func castToRadioButton(s gtk.RadioButton) *radioButton {
 	if s == nil {
 		return nil
 	}
-	return s.(*RadioButton)
+	return s.(*radioButton)
 }
 
-func castToRadioMenuItem(s gtk.RadioMenuItem) *RadioMenuItem {
+func castToRadioMenuItem(s gtk.RadioMenuItem) *radioMenuItem {
 	if s == nil {
 		return nil
 	}
-	return s.(*RadioMenuItem)
+	return s.(*radioMenuItem)
 }
 
-func castToRecentFilter(s gtk.RecentFilter) *RecentFilter {
+func castToRecentFilter(s gtk.RecentFilter) *recentFilter {
 	if s == nil {
 		return nil
 	}
-	return s.(*RecentFilter)
+	return s.(*recentFilter)
 }
 
-func castToTextBuffer(s gtk.TextBuffer) *TextBuffer {
+func castToTextBuffer(s gtk.TextBuffer) *textBuffer {
 	if s == nil {
 		return nil
 	}
-	return s.(*TextBuffer)
+	return s.(*textBuffer)
 }
 
-func castToTextIter(s gtk.TextIter) *TextIter {
+func castToTextIter(s gtk.TextIter) *textIter {
 	if s == nil {
 		return nil
 	}
-	return s.(*TextIter)
+	return s.(*textIter)
 }
 
-func castToTextTag(s gtk.TextTag) *TextTag {
+func castToTextTag(s gtk.TextTag) *textTag {
 	if s == nil {
 		return nil
 	}
-	return s.(*TextTag)
+	return s.(*textTag)
 }
 
-func castToTextTagTable(s gtk.TextTagTable) *TextTagTable {
+func castToTextTagTable(s gtk.TextTagTable) *textTagTable {
 	if s == nil {
 		return nil
 	}
-	return s.(*TextTagTable)
+	return s.(*textTagTable)
 }
 
-func castToTreeIter(s gtk.TreeIter) *TreeIter {
+func castToTreeIter(s gtk.TreeIter) *treeIter {
 	if s == nil {
 		return nil
 	}
-	return s.(*TreeIter)
+	return s.(*treeIter)
 }
 
-func castToTreePath(s gtk.TreePath) *TreePath {
+func castToTreePath(s gtk.TreePath) *treePath {
 	if s == nil {
 		return nil
 	}
-	return s.(*TreePath)
+	return s.(*treePath)
 }
 
-func castToAccelGroup(s gtk.AccelGroup) *AccelGroup {
+func castToAccelGroup(s gtk.AccelGroup) *accelGroup {
 	if s == nil {
 		return nil
 	}
-	return s.(*AccelGroup)
+	return s.(*accelGroup)
 }
 
-func castToStyleContext(s gtk.StyleContext) *StyleContext {
+func castToStyleContext(s gtk.StyleContext) *styleContext {
 	if s == nil {
 		return nil
 	}
-	return s.(*StyleContext)
+	return s.(*styleContext)
 }
 
-func castToTreeViewColumn(s gtk.TreeViewColumn) *TreeViewColumn {
+func castToTreeViewColumn(s gtk.TreeViewColumn) *treeViewColumn {
 	if s == nil {
 		return nil
 	}
-	return s.(*TreeViewColumn)
+	return s.(*treeViewColumn)
 }
 
-func castToCellRenderer(s gtk.CellRenderer) *CellRenderer {
+func castToCellRenderer(s gtk.CellRenderer) *cellRenderer {
 	if s == nil {
 		return nil
 	}
-	return s.(*CellRenderer)
+	return s.(*cellRenderer)
 }
 
-func castToEntry(s gtk.Entry) *Entry {
+func castToEntry(s gtk.Entry) *entry {
 	if s == nil {
 		return nil
 	}
-	return s.(*Entry)
+	return s.(*entry)
 }
 
-func castToAllocation(s gtk.Allocation) *Allocation {
+func castToAllocation(s gtk.Allocation) *allocation {
 	if s == nil {
 		return nil
 	}
-	return s.(*Allocation)
+	return s.(*allocation)
 }

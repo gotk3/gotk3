@@ -10,7 +10,7 @@ import "C"
 import "unsafe"
 
 // GetAccelsForAction is a wrapper around gtk_application_get_accels_for_action().
-func (v *Application) GetAccelsForAction(act string) []string {
+func (v *application) GetAccelsForAction(act string) []string {
 	cstr1 := (*C.gchar)(C.CString(act))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -28,7 +28,7 @@ func (v *Application) GetAccelsForAction(act string) []string {
 }
 
 // SetAccelsForAction is a wrapper around gtk_application_set_accels_for_action().
-func (v *Application) SetAccelsForAction(act string, accels []string) {
+func (v *application) SetAccelsForAction(act string, accels []string) {
 	cstr1 := (*C.gchar)(C.CString(act))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -47,7 +47,7 @@ func (v *Application) SetAccelsForAction(act string, accels []string) {
 }
 
 // ListActionDescriptions is a wrapper around gtk_application_list_action_descriptions().
-func (v *Application) ListActionDescriptions() []string {
+func (v *application) ListActionDescriptions() []string {
 	var descs []string
 	c := C.gtk_application_list_action_descriptions(v.native())
 	originalc := c

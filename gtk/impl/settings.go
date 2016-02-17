@@ -21,11 +21,11 @@ func init() {
 }
 
 //GtkSettings
-type Settings struct {
+type settings struct {
 	*glib_impl.Object
 }
 
-func (v *Settings) native() *C.GtkSettings {
+func (v *settings) native() *C.GtkSettings {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -39,12 +39,12 @@ func marshalSettings(p uintptr) (interface{}, error) {
 	return wrapSettings(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapSettings(obj *glib_impl.Object) *Settings {
-	return &Settings{obj}
+func wrapSettings(obj *glib_impl.Object) *settings {
+	return &settings{obj}
 }
 
 //Get the global non window specific settings
-func SettingsGetDefault() (*Settings, error) {
+func SettingsGetDefault() (*settings, error) {
 	c := C.gtk_settings_get_default()
 	if c == nil {
 		return nil, nilPtrErr

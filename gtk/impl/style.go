@@ -28,12 +28,12 @@ func init() {
  */
 
 // StyleContext is a representation of GTK's GtkStyleContext.
-type StyleContext struct {
+type styleContext struct {
 	*glib_impl.Object
 }
 
 // native returns a pointer to the underlying GtkStyleContext.
-func (v *StyleContext) native() *C.GtkStyleContext {
+func (v *styleContext) native() *C.GtkStyleContext {
 	if v == nil || v.Object == nil {
 		return nil
 	}
@@ -41,25 +41,25 @@ func (v *StyleContext) native() *C.GtkStyleContext {
 	return C.toGtkStyleContext(p)
 }
 
-func wrapStyleContext(obj *glib_impl.Object) *StyleContext {
-	return &StyleContext{obj}
+func wrapStyleContext(obj *glib_impl.Object) *styleContext {
+	return &styleContext{obj}
 }
 
-func (v *StyleContext) AddClass(class_name string) {
+func (v *styleContext) AddClass(class_name string) {
 	cstr := C.CString(class_name)
 	defer C.free(unsafe.Pointer(cstr))
 
 	C.gtk_style_context_add_class(v.native(), (*C.gchar)(cstr))
 }
 
-func (v *StyleContext) RemoveClass(class_name string) {
+func (v *styleContext) RemoveClass(class_name string) {
 	cstr := C.CString(class_name)
 	defer C.free(unsafe.Pointer(cstr))
 
 	C.gtk_style_context_remove_class(v.native(), (*C.gchar)(cstr))
 }
 
-func fromNativeStyleContext(c *C.GtkStyleContext) (*StyleContext, error) {
+func fromNativeStyleContext(c *C.GtkStyleContext) (*styleContext, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -69,17 +69,17 @@ func fromNativeStyleContext(c *C.GtkStyleContext) (*StyleContext, error) {
 }
 
 // GetStyleContext is a wrapper around gtk_widget_get_style_context().
-func (v *Widget) GetStyleContext() (gtk.StyleContext, error) {
+func (v *widget) GetStyleContext() (gtk.StyleContext, error) {
 	return fromNativeStyleContext(C.gtk_widget_get_style_context(v.native()))
 }
 
 // GetParent is a wrapper around gtk_style_context_get_parent().
-func (v *StyleContext) GetParent() (gtk.StyleContext, error) {
+func (v *styleContext) GetParent() (gtk.StyleContext, error) {
 	return fromNativeStyleContext(C.gtk_style_context_get_parent(v.native()))
 }
 
 // GetProperty is a wrapper around gtk_style_context_get_property().
-func (v *StyleContext) GetProperty2(property string, state gtk.StateFlags) (interface{}, error) {
+func (v *styleContext) GetProperty2(property string, state gtk.StateFlags) (interface{}, error) {
 	cstr := (*C.gchar)(C.CString(property))
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -90,7 +90,7 @@ func (v *StyleContext) GetProperty2(property string, state gtk.StateFlags) (inte
 }
 
 // GetStyleProperty is a wrapper around gtk_style_context_get_style_property().
-func (v *StyleContext) GetStyleProperty(property string) (interface{}, error) {
+func (v *styleContext) GetStyleProperty(property string) (interface{}, error) {
 	cstr := (*C.gchar)(C.CString(property))
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -101,7 +101,7 @@ func (v *StyleContext) GetStyleProperty(property string) (interface{}, error) {
 }
 
 // GetScreen is a wrapper around gtk_style_context_get_screen().
-func (v *StyleContext) GetScreen() (gdk.Screen, error) {
+func (v *styleContext) GetScreen() (gdk.Screen, error) {
 	c := C.gtk_style_context_get_screen(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -112,19 +112,19 @@ func (v *StyleContext) GetScreen() (gdk.Screen, error) {
 }
 
 // GetState is a wrapper around gtk_style_context_get_state().
-func (v *StyleContext) GetState() gtk.StateFlags {
+func (v *styleContext) GetState() gtk.StateFlags {
 	return gtk.StateFlags(C.gtk_style_context_get_state(v.native()))
 }
 
 // GetColor is a wrapper around gtk_style_context_get_color().
-func (v *StyleContext) GetColor(state gtk.StateFlags) gdk.RGBA {
+func (v *styleContext) GetColor(state gtk.StateFlags) gdk.RGBA {
 	gdkColor := gdk_impl.NewRGBA()
 	C.gtk_style_context_get_color(v.native(), C.GtkStateFlags(state), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 	return gdkColor
 }
 
 // LookupColor is a wrapper around gtk_style_context_lookup_color().
-func (v *StyleContext) LookupColor(colorName string) (gdk.RGBA, bool) {
+func (v *styleContext) LookupColor(colorName string) (gdk.RGBA, bool) {
 	cstr := (*C.gchar)(C.CString(colorName))
 	defer C.free(unsafe.Pointer(cstr))
 	gdkColor := gdk_impl.NewRGBA()
@@ -138,22 +138,22 @@ func StyleContextResetWidgets(v *gdk_impl.Screen) {
 }
 
 // Restore is a wrapper around gtk_style_context_restore().
-func (v *StyleContext) Restore() {
+func (v *styleContext) Restore() {
 	C.gtk_style_context_restore(v.native())
 }
 
 // Save is a wrapper around gtk_style_context_save().
-func (v *StyleContext) Save() {
+func (v *styleContext) Save() {
 	C.gtk_style_context_save(v.native())
 }
 
 // SetParent is a wrapper around gtk_style_context_set_parent().
-func (v *StyleContext) SetParent(p gtk.StyleContext) {
+func (v *styleContext) SetParent(p gtk.StyleContext) {
 	C.gtk_style_context_set_parent(v.native(), castToStyleContext(p).native())
 }
 
 // HasClass is a wrapper around gtk_style_context_has_class().
-func (v *StyleContext) HasClass(className string) bool {
+func (v *styleContext) HasClass(className string) bool {
 	cstr := C.CString(className)
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -161,12 +161,12 @@ func (v *StyleContext) HasClass(className string) bool {
 }
 
 // SetScreen is a wrapper around gtk_style_context_set_screen().
-func (v *StyleContext) SetScreen(s gdk.Screen) {
+func (v *styleContext) SetScreen(s gdk.Screen) {
 	C.gtk_style_context_set_screen(v.native(), (*C.GdkScreen)(unsafe.Pointer(gdk_impl.CastToScreen(s).Native())))
 }
 
 // SetState is a wrapper around gtk_style_context_set_state().
-func (v *StyleContext) SetState(state gtk.StateFlags) {
+func (v *styleContext) SetState(state gtk.StateFlags) {
 	C.gtk_style_context_set_state(v.native(), C.GtkStateFlags(state))
 }
 
@@ -175,7 +175,7 @@ type IStyleProvider interface {
 }
 
 // AddProvider is a wrapper around gtk_style_context_add_provider().
-func (v *StyleContext) AddProvider(provider gtk.StyleProvider, prio uint) {
+func (v *styleContext) AddProvider(provider gtk.StyleProvider, prio uint) {
 	C.gtk_style_context_add_provider(v.native(), provider.(IStyleProvider).toStyleProvider(), C.guint(prio))
 }
 
@@ -185,7 +185,7 @@ func AddProviderForScreen(s *gdk_impl.Screen, provider gtk.StyleProvider, prio u
 }
 
 // RemoveProvider is a wrapper around gtk_style_context_remove_provider().
-func (v *StyleContext) RemoveProvider(provider gtk.StyleProvider) {
+func (v *styleContext) RemoveProvider(provider gtk.StyleProvider) {
 	C.gtk_style_context_remove_provider(v.native(), provider.(IStyleProvider).toStyleProvider())
 }
 

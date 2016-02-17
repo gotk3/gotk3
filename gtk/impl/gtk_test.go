@@ -520,7 +520,7 @@ func TestCellRendererToggle_WhenSetActivatableTrue_ExpectGetActivatableReturnsTr
 	}
 }
 
-func setupListStore() *ListStore {
+func setupListStore() *listStore {
 	ls, err := ListStoreNew(glib.TYPE_STRING)
 	if err != nil {
 		log.Fatal("Unexpected err:", err)
@@ -528,7 +528,7 @@ func setupListStore() *ListStore {
 	return ls
 }
 
-func getLastIter(ls *ListStore) (gtk.TreeIter, bool) {
+func getLastIter(ls *listStore) (gtk.TreeIter, bool) {
 	iterx, listIsntEmpty := ls.GetIterFirst()
 	if !listIsntEmpty {
 		return iterx, listIsntEmpty
@@ -682,7 +682,7 @@ func TestBuilder(t *testing.T) {
 		t.Error("Unable to get widget from string")
 	}
 
-	button, ok := castToButton(widget)
+	button, ok := widget.(*button)
 	if !ok {
 		t.Error("Unable to cast to gtk.Button")
 	}
@@ -721,7 +721,7 @@ func TestTextTagEvent(t *testing.T) {
 
 	evk := gdk_impl.EventKeyNew()
 
-	var iter TextIter
+	var iter textIter
 	ok := textTag.Event(textTag.Object, evk.Event, &iter)
 
 	if ok {

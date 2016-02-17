@@ -31,12 +31,12 @@ func init() {
  */
 
 // StackSwitcher is a representation of GTK's GtkStackSwitcher
-type StackSwitcher struct {
-	Box
+type stackSwitcher struct {
+	box
 }
 
 // native returns a pointer to the underlying GtkStackSwitcher.
-func (v *StackSwitcher) native() *C.GtkStackSwitcher {
+func (v *stackSwitcher) native() *C.GtkStackSwitcher {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -50,12 +50,12 @@ func marshalStackSwitcher(p uintptr) (interface{}, error) {
 	return wrapStackSwitcher(obj), nil
 }
 
-func wrapStackSwitcher(obj *glib_impl.Object) *StackSwitcher {
-	return &StackSwitcher{Box{Container{Widget{glib_impl.InitiallyUnowned{obj}}}}}
+func wrapStackSwitcher(obj *glib_impl.Object) *stackSwitcher {
+	return &stackSwitcher{box{container{widget{glib_impl.InitiallyUnowned{obj}}}}}
 }
 
 // StackSwitcherNew is a wrapper around gtk_stack_switcher_new().
-func StackSwitcherNew() (*StackSwitcher, error) {
+func StackSwitcherNew() (*stackSwitcher, error) {
 	c := C.gtk_stack_switcher_new()
 	if c == nil {
 		return nil, nilPtrErr
@@ -64,12 +64,12 @@ func StackSwitcherNew() (*StackSwitcher, error) {
 }
 
 // SetStack is a wrapper around gtk_stack_switcher_set_stack().
-func (v *StackSwitcher) SetStack(stack *Stack) {
+func (v *stackSwitcher) SetStack(stack *stack) {
 	C.gtk_stack_switcher_set_stack(v.native(), stack.native())
 }
 
 // GetStack is a wrapper around gtk_stack_switcher_get_stack().
-func (v *StackSwitcher) GetStack() *Stack {
+func (v *stackSwitcher) GetStack() *stack {
 	c := C.gtk_stack_switcher_get_stack(v.native())
 	if c == nil {
 		return nil

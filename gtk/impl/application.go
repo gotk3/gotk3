@@ -27,24 +27,24 @@ func init() {
  */
 
 // Application is a representation of GTK's GtkApplication.
-type Application struct {
+type application struct {
 	glib_impl.Application
 }
 
 // native returns a pointer to the underlying GtkApplication.
-func (v *Application) native() *C.GtkApplication {
+func (v *application) native() *C.GtkApplication {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
 	return C.toGtkApplication(unsafe.Pointer(v.GObject))
 }
 
-func wrapApplication(obj *glib_impl.Object) *Application {
-	return &Application{glib_impl.Application{obj}}
+func wrapApplication(obj *glib_impl.Object) *application {
+	return &application{glib_impl.Application{obj}}
 }
 
 // ApplicationNew is a wrapper around gtk_application_new().
-func ApplicationNew(appId string, flags glib.ApplicationFlags) (*Application, error) {
+func ApplicationNew(appId string, flags glib.ApplicationFlags) (*application, error) {
 	cstr := (*C.gchar)(C.CString(appId))
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -56,17 +56,17 @@ func ApplicationNew(appId string, flags glib.ApplicationFlags) (*Application, er
 }
 
 // AddWindow is a wrapper around gtk_application_add_window().
-func (v *Application) AddWindow(w gtk.Window) {
+func (v *application) AddWindow(w gtk.Window) {
 	C.gtk_application_add_window(v.native(), asWindowImpl(w).native())
 }
 
 // RemoveWindow is a wrapper around gtk_application_remove_window().
-func (v *Application) RemoveWindow(w gtk.Window) {
+func (v *application) RemoveWindow(w gtk.Window) {
 	C.gtk_application_remove_window(v.native(), asWindowImpl(w).native())
 }
 
 // GetWindowByID is a wrapper around gtk_application_get_window_by_id().
-func (v *Application) GetWindowByID(id uint) gtk.Window {
+func (v *application) GetWindowByID(id uint) gtk.Window {
 	c := C.gtk_application_get_window_by_id(v.native(), C.guint(id))
 	if c == nil {
 		return nil
@@ -75,7 +75,7 @@ func (v *Application) GetWindowByID(id uint) gtk.Window {
 }
 
 // GetActiveWindow is a wrapper around gtk_application_get_active_window().
-func (v *Application) GetActiveWindow() gtk.Window {
+func (v *application) GetActiveWindow() gtk.Window {
 	c := C.gtk_application_get_active_window(v.native())
 	if c == nil {
 		return nil
@@ -84,12 +84,12 @@ func (v *Application) GetActiveWindow() gtk.Window {
 }
 
 // Uninhibit is a wrapper around gtk_application_uninhibit().
-func (v *Application) Uninhibit(cookie uint) {
+func (v *application) Uninhibit(cookie uint) {
 	C.gtk_application_uninhibit(v.native(), C.guint(cookie))
 }
 
 // GetAppMenu is a wrapper around gtk_application_get_app_menu().
-func (v *Application) GetAppMenu() glib.MenuModel {
+func (v *application) GetAppMenu() glib.MenuModel {
 	c := C.gtk_application_get_app_menu(v.native())
 	if c == nil {
 		return nil
@@ -98,13 +98,13 @@ func (v *Application) GetAppMenu() glib.MenuModel {
 }
 
 // SetAppMenu is a wrapper around gtk_application_set_app_menu().
-func (v *Application) SetAppMenu(m glib.MenuModel) {
+func (v *application) SetAppMenu(m glib.MenuModel) {
 	mptr := (*C.GMenuModel)(unsafe.Pointer(glib_impl.CastToMenuModel(m).Native()))
 	C.gtk_application_set_app_menu(v.native(), mptr)
 }
 
 // GetMenubar is a wrapper around gtk_application_get_menubar().
-func (v *Application) GetMenubar() glib.MenuModel {
+func (v *application) GetMenubar() glib.MenuModel {
 	c := C.gtk_application_get_menubar(v.native())
 	if c == nil {
 		return nil
@@ -113,18 +113,18 @@ func (v *Application) GetMenubar() glib.MenuModel {
 }
 
 // SetMenubar is a wrapper around gtk_application_set_menubar().
-func (v *Application) SetMenubar(m glib.MenuModel) {
+func (v *application) SetMenubar(m glib.MenuModel) {
 	mptr := (*C.GMenuModel)(unsafe.Pointer(glib_impl.CastToMenuModel(m).Native()))
 	C.gtk_application_set_menubar(v.native(), mptr)
 }
 
 // IsInhibited is a wrapper around gtk_application_is_inhibited().
-func (v *Application) IsInhibited(flags gtk.ApplicationInhibitFlags) bool {
+func (v *application) IsInhibited(flags gtk.ApplicationInhibitFlags) bool {
 	return gobool(C.gtk_application_is_inhibited(v.native(), C.GtkApplicationInhibitFlags(flags)))
 }
 
 // Inhibited is a wrapper around gtk_application_inhibit().
-func (v *Application) Inhibited(w gtk.Window, flags gtk.ApplicationInhibitFlags, reason string) uint {
+func (v *application) Inhibited(w gtk.Window, flags gtk.ApplicationInhibitFlags, reason string) uint {
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -136,7 +136,7 @@ func (v *Application) Inhibited(w gtk.Window, flags gtk.ApplicationInhibitFlags,
 
 // GetWindows is a wrapper around gtk_application_get_windows().
 // Returned list is wrapped to return *gtk.Window elements.
-func (v *Application) GetWindows() glib.List {
+func (v *application) GetWindows() glib.List {
 	glist := C.gtk_application_get_windows(v.native())
 	list := glib_impl.WrapList(uintptr(unsafe.Pointer(glist)))
 	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {

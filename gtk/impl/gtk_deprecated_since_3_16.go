@@ -11,10 +11,11 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 // OverrideColor is a wrapper around gtk_widget_override_color().
-func (v *Widget) OverrideColor(state StateFlags, color *gdk.RGBA) {
+func (v *widget) OverrideColor(state gtk.StateFlags, color *gdk.RGBA) {
 	var cColor *C.GdkRGBA
 	if color != nil {
 		cColor = (*C.GdkRGBA)(unsafe.Pointer(color.Native()))
@@ -23,7 +24,7 @@ func (v *Widget) OverrideColor(state StateFlags, color *gdk.RGBA) {
 }
 
 // OverrideFont is a wrapper around gtk_widget_override_font().
-func (v *Widget) OverrideFont(description string) {
+func (v *widget) OverrideFont(description string) {
 	cstr := C.CString(description)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.pango_font_description_from_string(cstr)

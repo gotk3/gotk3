@@ -17,11 +17,11 @@ import "C"
  */
 
 // SetTitlebar is a wrapper around gtk_window_set_titlebar().
-func (v *Window) SetTitlebar(titlebar IWidget) {
+func (v *window) SetTitlebar(titlebar IWidget) {
 	C.gtk_window_set_titlebar(v.native(), titlebar.toWidget())
 }
 
 // Close is a wrapper around gtk_window_close().
-func (v *Window) Close() {
+func (v *window) Close() {
 	C.gtk_window_close(v.native())
 }

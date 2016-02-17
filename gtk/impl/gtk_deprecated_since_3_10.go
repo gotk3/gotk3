@@ -27,10 +27,14 @@ package impl
 // #include <stdlib.h>
 // #include <gtk/gtk.h>
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/gtk"
+)
 
 // ButtonNewFromStock is a wrapper around gtk_button_new_from_stock().
-func ButtonNewFromStock(stock Stock) (*Button, error) {
+func ButtonNewFromStock(stock gtk.Stock) (*button, error) {
 	cstr := C.CString(string(stock))
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_button_new_from_stock((*C.gchar)(cstr))
@@ -41,18 +45,18 @@ func ButtonNewFromStock(stock Stock) (*Button, error) {
 }
 
 // SetUseStock is a wrapper around gtk_button_set_use_stock().
-func (v *Button) SetUseStock(useStock bool) {
+func (v *button) SetUseStock(useStock bool) {
 	C.gtk_button_set_use_stock(v.native(), gbool(useStock))
 }
 
 // GetUseStock is a wrapper around gtk_button_get_use_stock().
-func (v *Button) GetUseStock() bool {
+func (v *button) GetUseStock() bool {
 	c := C.gtk_button_get_use_stock(v.native())
 	return gobool(c)
 }
 
 // GetIconStock is a wrapper around gtk_entry_get_icon_stock().
-func (v *Entry) GetIconStock(iconPos EntryIconPosition) (string, error) {
+func (v *entry) GetIconStock(iconPos entryIconPosition) (string, error) {
 	c := C.gtk_entry_get_icon_stock(v.native(),
 		C.GtkEntryIconPosition(iconPos))
 	if c == nil {
@@ -62,7 +66,7 @@ func (v *Entry) GetIconStock(iconPos EntryIconPosition) (string, error) {
 }
 
 // SetIconFromStock is a wrapper around gtk_entry_set_icon_from_stock().
-func (v *Entry) SetIconFromStock(iconPos EntryIconPosition, stockID string) {
+func (v *entry) SetIconFromStock(iconPos entryIconPosition, stockID string) {
 	cstr := C.CString(stockID)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_entry_set_icon_from_stock(v.native(),
@@ -70,7 +74,7 @@ func (v *Entry) SetIconFromStock(iconPos EntryIconPosition, stockID string) {
 }
 
 // ImageNewFromStock is a wrapper around gtk_image_new_from_stock().
-func ImageNewFromStock(stock Stock, size IconSize) (*Image, error) {
+func ImageNewFromStock(stock gtk.Stock, size iconSize) (*image, error) {
 	cstr := C.CString(string(stock))
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_image_new_from_stock((*C.gchar)(cstr), C.GtkIconSize(size))
@@ -81,7 +85,7 @@ func ImageNewFromStock(stock Stock, size IconSize) (*Image, error) {
 }
 
 // SetFromStock is a wrapper around gtk_image_set_from_stock().
-func (v *Image) SetFromStock(stock Stock, size IconSize) {
+func (v *image) SetFromStock(stock gtk.Stock, size IconSize) {
 	cstr := C.CString(string(stock))
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_image_set_from_stock(v.native(), (*C.gchar)(cstr),
@@ -89,115 +93,115 @@ func (v *Image) SetFromStock(stock Stock, size IconSize) {
 }
 
 const (
-	STOCK_ABOUT                         Stock = C.GTK_STOCK_ABOUT
-	STOCK_ADD                           Stock = C.GTK_STOCK_ADD
-	STOCK_APPLY                         Stock = C.GTK_STOCK_APPLY
-	STOCK_BOLD                          Stock = C.GTK_STOCK_BOLD
-	STOCK_CANCEL                        Stock = C.GTK_STOCK_CANCEL
-	STOCK_CAPS_LOCK_WARNING             Stock = C.GTK_STOCK_CAPS_LOCK_WARNING
-	STOCK_CDROM                         Stock = C.GTK_STOCK_CDROM
-	STOCK_CLEAR                         Stock = C.GTK_STOCK_CLEAR
-	STOCK_CLOSE                         Stock = C.GTK_STOCK_CLOSE
-	STOCK_COLOR_PICKER                  Stock = C.GTK_STOCK_COLOR_PICKER
-	STOCK_CONNECT                       Stock = C.GTK_STOCK_CONNECT
-	STOCK_CONVERT                       Stock = C.GTK_STOCK_CONVERT
-	STOCK_COPY                          Stock = C.GTK_STOCK_COPY
-	STOCK_CUT                           Stock = C.GTK_STOCK_CUT
-	STOCK_DELETE                        Stock = C.GTK_STOCK_DELETE
-	STOCK_DIALOG_AUTHENTICATION         Stock = C.GTK_STOCK_DIALOG_AUTHENTICATION
-	STOCK_DIALOG_INFO                   Stock = C.GTK_STOCK_DIALOG_INFO
-	STOCK_DIALOG_WARNING                Stock = C.GTK_STOCK_DIALOG_WARNING
-	STOCK_DIALOG_ERROR                  Stock = C.GTK_STOCK_DIALOG_ERROR
-	STOCK_DIALOG_QUESTION               Stock = C.GTK_STOCK_DIALOG_QUESTION
-	STOCK_DIRECTORY                     Stock = C.GTK_STOCK_DIRECTORY
-	STOCK_DISCARD                       Stock = C.GTK_STOCK_DISCARD
-	STOCK_DISCONNECT                    Stock = C.GTK_STOCK_DISCONNECT
-	STOCK_DND                           Stock = C.GTK_STOCK_DND
-	STOCK_DND_MULTIPLE                  Stock = C.GTK_STOCK_DND_MULTIPLE
-	STOCK_EDIT                          Stock = C.GTK_STOCK_EDIT
-	STOCK_EXECUTE                       Stock = C.GTK_STOCK_EXECUTE
-	STOCK_FILE                          Stock = C.GTK_STOCK_FILE
-	STOCK_FIND                          Stock = C.GTK_STOCK_FIND
-	STOCK_FIND_AND_REPLACE              Stock = C.GTK_STOCK_FIND_AND_REPLACE
-	STOCK_FLOPPY                        Stock = C.GTK_STOCK_FLOPPY
-	STOCK_FULLSCREEN                    Stock = C.GTK_STOCK_FULLSCREEN
-	STOCK_GOTO_BOTTOM                   Stock = C.GTK_STOCK_GOTO_BOTTOM
-	STOCK_GOTO_FIRST                    Stock = C.GTK_STOCK_GOTO_FIRST
-	STOCK_GOTO_LAST                     Stock = C.GTK_STOCK_GOTO_LAST
-	STOCK_GOTO_TOP                      Stock = C.GTK_STOCK_GOTO_TOP
-	STOCK_GO_BACK                       Stock = C.GTK_STOCK_GO_BACK
-	STOCK_GO_DOWN                       Stock = C.GTK_STOCK_GO_DOWN
-	STOCK_GO_FORWARD                    Stock = C.GTK_STOCK_GO_FORWARD
-	STOCK_GO_UP                         Stock = C.GTK_STOCK_GO_UP
-	STOCK_HARDDISK                      Stock = C.GTK_STOCK_HARDDISK
-	STOCK_HELP                          Stock = C.GTK_STOCK_HELP
-	STOCK_HOME                          Stock = C.GTK_STOCK_HOME
-	STOCK_INDEX                         Stock = C.GTK_STOCK_INDEX
-	STOCK_INDENT                        Stock = C.GTK_STOCK_INDENT
-	STOCK_INFO                          Stock = C.GTK_STOCK_INFO
-	STOCK_ITALIC                        Stock = C.GTK_STOCK_ITALIC
-	STOCK_JUMP_TO                       Stock = C.GTK_STOCK_JUMP_TO
-	STOCK_JUSTIFY_CENTER                Stock = C.GTK_STOCK_JUSTIFY_CENTER
-	STOCK_JUSTIFY_FILL                  Stock = C.GTK_STOCK_JUSTIFY_FILL
-	STOCK_JUSTIFY_LEFT                  Stock = C.GTK_STOCK_JUSTIFY_LEFT
-	STOCK_JUSTIFY_RIGHT                 Stock = C.GTK_STOCK_JUSTIFY_RIGHT
-	STOCK_LEAVE_FULLSCREEN              Stock = C.GTK_STOCK_LEAVE_FULLSCREEN
-	STOCK_MISSING_IMAGE                 Stock = C.GTK_STOCK_MISSING_IMAGE
-	STOCK_MEDIA_FORWARD                 Stock = C.GTK_STOCK_MEDIA_FORWARD
-	STOCK_MEDIA_NEXT                    Stock = C.GTK_STOCK_MEDIA_NEXT
-	STOCK_MEDIA_PAUSE                   Stock = C.GTK_STOCK_MEDIA_PAUSE
-	STOCK_MEDIA_PLAY                    Stock = C.GTK_STOCK_MEDIA_PLAY
-	STOCK_MEDIA_PREVIOUS                Stock = C.GTK_STOCK_MEDIA_PREVIOUS
-	STOCK_MEDIA_RECORD                  Stock = C.GTK_STOCK_MEDIA_RECORD
-	STOCK_MEDIA_REWIND                  Stock = C.GTK_STOCK_MEDIA_REWIND
-	STOCK_MEDIA_STOP                    Stock = C.GTK_STOCK_MEDIA_STOP
-	STOCK_NETWORK                       Stock = C.GTK_STOCK_NETWORK
-	STOCK_NEW                           Stock = C.GTK_STOCK_NEW
-	STOCK_NO                            Stock = C.GTK_STOCK_NO
-	STOCK_OK                            Stock = C.GTK_STOCK_OK
-	STOCK_OPEN                          Stock = C.GTK_STOCK_OPEN
-	STOCK_ORIENTATION_PORTRAIT          Stock = C.GTK_STOCK_ORIENTATION_PORTRAIT
-	STOCK_ORIENTATION_LANDSCAPE         Stock = C.GTK_STOCK_ORIENTATION_LANDSCAPE
-	STOCK_ORIENTATION_REVERSE_LANDSCAPE Stock = C.GTK_STOCK_ORIENTATION_REVERSE_LANDSCAPE
-	STOCK_ORIENTATION_REVERSE_PORTRAIT  Stock = C.GTK_STOCK_ORIENTATION_REVERSE_PORTRAIT
-	STOCK_PAGE_SETUP                    Stock = C.GTK_STOCK_PAGE_SETUP
-	STOCK_PASTE                         Stock = C.GTK_STOCK_PASTE
-	STOCK_PREFERENCES                   Stock = C.GTK_STOCK_PREFERENCES
-	STOCK_PRINT                         Stock = C.GTK_STOCK_PRINT
-	STOCK_PRINT_ERROR                   Stock = C.GTK_STOCK_PRINT_ERROR
-	STOCK_PRINT_PAUSED                  Stock = C.GTK_STOCK_PRINT_PAUSED
-	STOCK_PRINT_PREVIEW                 Stock = C.GTK_STOCK_PRINT_PREVIEW
-	STOCK_PRINT_REPORT                  Stock = C.GTK_STOCK_PRINT_REPORT
-	STOCK_PRINT_WARNING                 Stock = C.GTK_STOCK_PRINT_WARNING
-	STOCK_PROPERTIES                    Stock = C.GTK_STOCK_PROPERTIES
-	STOCK_QUIT                          Stock = C.GTK_STOCK_QUIT
-	STOCK_REDO                          Stock = C.GTK_STOCK_REDO
-	STOCK_REFRESH                       Stock = C.GTK_STOCK_REFRESH
-	STOCK_REMOVE                        Stock = C.GTK_STOCK_REMOVE
-	STOCK_REVERT_TO_SAVED               Stock = C.GTK_STOCK_REVERT_TO_SAVED
-	STOCK_SAVE                          Stock = C.GTK_STOCK_SAVE
-	STOCK_SAVE_AS                       Stock = C.GTK_STOCK_SAVE_AS
-	STOCK_SELECT_ALL                    Stock = C.GTK_STOCK_SELECT_ALL
-	STOCK_SELECT_COLOR                  Stock = C.GTK_STOCK_SELECT_COLOR
-	STOCK_SELECT_FONT                   Stock = C.GTK_STOCK_SELECT_FONT
-	STOCK_SORT_ASCENDING                Stock = C.GTK_STOCK_SORT_ASCENDING
-	STOCK_SORT_DESCENDING               Stock = C.GTK_STOCK_SORT_DESCENDING
-	STOCK_SPELL_CHECK                   Stock = C.GTK_STOCK_SPELL_CHECK
-	STOCK_STOP                          Stock = C.GTK_STOCK_STOP
-	STOCK_STRIKETHROUGH                 Stock = C.GTK_STOCK_STRIKETHROUGH
-	STOCK_UNDELETE                      Stock = C.GTK_STOCK_UNDELETE
-	STOCK_UNDERLINE                     Stock = C.GTK_STOCK_UNDERLINE
-	STOCK_UNDO                          Stock = C.GTK_STOCK_UNDO
-	STOCK_UNINDENT                      Stock = C.GTK_STOCK_UNINDENT
-	STOCK_YES                           Stock = C.GTK_STOCK_YES
-	STOCK_ZOOM_100                      Stock = C.GTK_STOCK_ZOOM_100
-	STOCK_ZOOM_FIT                      Stock = C.GTK_STOCK_ZOOM_FIT
-	STOCK_ZOOM_IN                       Stock = C.GTK_STOCK_ZOOM_IN
-	STOCK_ZOOM_OUT                      Stock = C.GTK_STOCK_ZOOM_OUT
+	STOCK_ABOUT                         gtk.Stock = C.GTK_STOCK_ABOUT
+	STOCK_ADD                           gtk.Stock = C.GTK_STOCK_ADD
+	STOCK_APPLY                         gtk.Stock = C.GTK_STOCK_APPLY
+	STOCK_BOLD                          gtk.Stock = C.GTK_STOCK_BOLD
+	STOCK_CANCEL                        gtk.Stock = C.GTK_STOCK_CANCEL
+	STOCK_CAPS_LOCK_WARNING             gtk.Stock = C.GTK_STOCK_CAPS_LOCK_WARNING
+	STOCK_CDROM                         gtk.Stock = C.GTK_STOCK_CDROM
+	STOCK_CLEAR                         gtk.Stock = C.GTK_STOCK_CLEAR
+	STOCK_CLOSE                         gtk.Stock = C.GTK_STOCK_CLOSE
+	STOCK_COLOR_PICKER                  gtk.Stock = C.GTK_STOCK_COLOR_PICKER
+	STOCK_CONNECT                       gtk.Stock = C.GTK_STOCK_CONNECT
+	STOCK_CONVERT                       gtk.Stock = C.GTK_STOCK_CONVERT
+	STOCK_COPY                          gtk.Stock = C.GTK_STOCK_COPY
+	STOCK_CUT                           gtk.Stock = C.GTK_STOCK_CUT
+	STOCK_DELETE                        gtk.Stock = C.GTK_STOCK_DELETE
+	STOCK_DIALOG_AUTHENTICATION         gtk.Stock = C.GTK_STOCK_DIALOG_AUTHENTICATION
+	STOCK_DIALOG_INFO                   gtk.Stock = C.GTK_STOCK_DIALOG_INFO
+	STOCK_DIALOG_WARNING                gtk.Stock = C.GTK_STOCK_DIALOG_WARNING
+	STOCK_DIALOG_ERROR                  gtk.Stock = C.GTK_STOCK_DIALOG_ERROR
+	STOCK_DIALOG_QUESTION               gtk.Stock = C.GTK_STOCK_DIALOG_QUESTION
+	STOCK_DIRECTORY                     gtk.Stock = C.GTK_STOCK_DIRECTORY
+	STOCK_DISCARD                       gtk.Stock = C.GTK_STOCK_DISCARD
+	STOCK_DISCONNECT                    gtk.Stock = C.GTK_STOCK_DISCONNECT
+	STOCK_DND                           gtk.Stock = C.GTK_STOCK_DND
+	STOCK_DND_MULTIPLE                  gtk.Stock = C.GTK_STOCK_DND_MULTIPLE
+	STOCK_EDIT                          gtk.Stock = C.GTK_STOCK_EDIT
+	STOCK_EXECUTE                       gtk.Stock = C.GTK_STOCK_EXECUTE
+	STOCK_FILE                          gtk.Stock = C.GTK_STOCK_FILE
+	STOCK_FIND                          gtk.Stock = C.GTK_STOCK_FIND
+	STOCK_FIND_AND_REPLACE              gtk.Stock = C.GTK_STOCK_FIND_AND_REPLACE
+	STOCK_FLOPPY                        gtk.Stock = C.GTK_STOCK_FLOPPY
+	STOCK_FULLSCREEN                    gtk.Stock = C.GTK_STOCK_FULLSCREEN
+	STOCK_GOTO_BOTTOM                   gtk.Stock = C.GTK_STOCK_GOTO_BOTTOM
+	STOCK_GOTO_FIRST                    gtk.Stock = C.GTK_STOCK_GOTO_FIRST
+	STOCK_GOTO_LAST                     gtk.Stock = C.GTK_STOCK_GOTO_LAST
+	STOCK_GOTO_TOP                      gtk.Stock = C.GTK_STOCK_GOTO_TOP
+	STOCK_GO_BACK                       gtk.Stock = C.GTK_STOCK_GO_BACK
+	STOCK_GO_DOWN                       gtk.Stock = C.GTK_STOCK_GO_DOWN
+	STOCK_GO_FORWARD                    gtk.Stock = C.GTK_STOCK_GO_FORWARD
+	STOCK_GO_UP                         gtk.Stock = C.GTK_STOCK_GO_UP
+	STOCK_HARDDISK                      gtk.Stock = C.GTK_STOCK_HARDDISK
+	STOCK_HELP                          gtk.Stock = C.GTK_STOCK_HELP
+	STOCK_HOME                          gtk.Stock = C.GTK_STOCK_HOME
+	STOCK_INDEX                         gtk.Stock = C.GTK_STOCK_INDEX
+	STOCK_INDENT                        gtk.Stock = C.GTK_STOCK_INDENT
+	STOCK_INFO                          gtk.Stock = C.GTK_STOCK_INFO
+	STOCK_ITALIC                        gtk.Stock = C.GTK_STOCK_ITALIC
+	STOCK_JUMP_TO                       gtk.Stock = C.GTK_STOCK_JUMP_TO
+	STOCK_JUSTIFY_CENTER                gtk.Stock = C.GTK_STOCK_JUSTIFY_CENTER
+	STOCK_JUSTIFY_FILL                  gtk.Stock = C.GTK_STOCK_JUSTIFY_FILL
+	STOCK_JUSTIFY_LEFT                  gtk.Stock = C.GTK_STOCK_JUSTIFY_LEFT
+	STOCK_JUSTIFY_RIGHT                 gtk.Stock = C.GTK_STOCK_JUSTIFY_RIGHT
+	STOCK_LEAVE_FULLSCREEN              gtk.Stock = C.GTK_STOCK_LEAVE_FULLSCREEN
+	STOCK_MISSING_IMAGE                 gtk.Stock = C.GTK_STOCK_MISSING_IMAGE
+	STOCK_MEDIA_FORWARD                 gtk.Stock = C.GTK_STOCK_MEDIA_FORWARD
+	STOCK_MEDIA_NEXT                    gtk.Stock = C.GTK_STOCK_MEDIA_NEXT
+	STOCK_MEDIA_PAUSE                   gtk.Stock = C.GTK_STOCK_MEDIA_PAUSE
+	STOCK_MEDIA_PLAY                    gtk.Stock = C.GTK_STOCK_MEDIA_PLAY
+	STOCK_MEDIA_PREVIOUS                gtk.Stock = C.GTK_STOCK_MEDIA_PREVIOUS
+	STOCK_MEDIA_RECORD                  gtk.Stock = C.GTK_STOCK_MEDIA_RECORD
+	STOCK_MEDIA_REWIND                  gtk.Stock = C.GTK_STOCK_MEDIA_REWIND
+	STOCK_MEDIA_STOP                    gtk.Stock = C.GTK_STOCK_MEDIA_STOP
+	STOCK_NETWORK                       gtk.Stock = C.GTK_STOCK_NETWORK
+	STOCK_NEW                           gtk.Stock = C.GTK_STOCK_NEW
+	STOCK_NO                            gtk.Stock = C.GTK_STOCK_NO
+	STOCK_OK                            gtk.Stock = C.GTK_STOCK_OK
+	STOCK_OPEN                          gtk.Stock = C.GTK_STOCK_OPEN
+	STOCK_ORIENTATION_PORTRAIT          gtk.Stock = C.GTK_STOCK_ORIENTATION_PORTRAIT
+	STOCK_ORIENTATION_LANDSCAPE         gtk.Stock = C.GTK_STOCK_ORIENTATION_LANDSCAPE
+	STOCK_ORIENTATION_REVERSE_LANDSCAPE gtk.Stock = C.GTK_STOCK_ORIENTATION_REVERSE_LANDSCAPE
+	STOCK_ORIENTATION_REVERSE_PORTRAIT  gtk.Stock = C.GTK_STOCK_ORIENTATION_REVERSE_PORTRAIT
+	STOCK_PAGE_SETUP                    gtk.Stock = C.GTK_STOCK_PAGE_SETUP
+	STOCK_PASTE                         gtk.Stock = C.GTK_STOCK_PASTE
+	STOCK_PREFERENCES                   gtk.Stock = C.GTK_STOCK_PREFERENCES
+	STOCK_PRINT                         gtk.Stock = C.GTK_STOCK_PRINT
+	STOCK_PRINT_ERROR                   gtk.Stock = C.GTK_STOCK_PRINT_ERROR
+	STOCK_PRINT_PAUSED                  gtk.Stock = C.GTK_STOCK_PRINT_PAUSED
+	STOCK_PRINT_PREVIEW                 gtk.Stock = C.GTK_STOCK_PRINT_PREVIEW
+	STOCK_PRINT_REPORT                  gtk.Stock = C.GTK_STOCK_PRINT_REPORT
+	STOCK_PRINT_WARNING                 gtk.Stock = C.GTK_STOCK_PRINT_WARNING
+	STOCK_PROPERTIES                    gtk.Stock = C.GTK_STOCK_PROPERTIES
+	STOCK_QUIT                          gtk.Stock = C.GTK_STOCK_QUIT
+	STOCK_REDO                          gtk.Stock = C.GTK_STOCK_REDO
+	STOCK_REFRESH                       gtk.Stock = C.GTK_STOCK_REFRESH
+	STOCK_REMOVE                        gtk.Stock = C.GTK_STOCK_REMOVE
+	STOCK_REVERT_TO_SAVED               gtk.Stock = C.GTK_STOCK_REVERT_TO_SAVED
+	STOCK_SAVE                          gtk.Stock = C.GTK_STOCK_SAVE
+	STOCK_SAVE_AS                       gtk.Stock = C.GTK_STOCK_SAVE_AS
+	STOCK_SELECT_ALL                    gtk.Stock = C.GTK_STOCK_SELECT_ALL
+	STOCK_SELECT_COLOR                  gtk.Stock = C.GTK_STOCK_SELECT_COLOR
+	STOCK_SELECT_FONT                   gtk.Stock = C.GTK_STOCK_SELECT_FONT
+	STOCK_SORT_ASCENDING                gtk.Stock = C.GTK_STOCK_SORT_ASCENDING
+	STOCK_SORT_DESCENDING               gtk.Stock = C.GTK_STOCK_SORT_DESCENDING
+	STOCK_SPELL_CHECK                   gtk.Stock = C.GTK_STOCK_SPELL_CHECK
+	STOCK_STOP                          gtk.Stock = C.GTK_STOCK_STOP
+	STOCK_STRIKETHROUGH                 gtk.Stock = C.GTK_STOCK_STRIKETHROUGH
+	STOCK_UNDELETE                      gtk.Stock = C.GTK_STOCK_UNDELETE
+	STOCK_UNDERLINE                     gtk.Stock = C.GTK_STOCK_UNDERLINE
+	STOCK_UNDO                          gtk.Stock = C.GTK_STOCK_UNDO
+	STOCK_UNINDENT                      gtk.Stock = C.GTK_STOCK_UNINDENT
+	STOCK_YES                           gtk.Stock = C.GTK_STOCK_YES
+	STOCK_ZOOM_100                      gtk.Stock = C.GTK_STOCK_ZOOM_100
+	STOCK_ZOOM_FIT                      gtk.Stock = C.GTK_STOCK_ZOOM_FIT
+	STOCK_ZOOM_IN                       gtk.Stock = C.GTK_STOCK_ZOOM_IN
+	STOCK_ZOOM_OUT                      gtk.Stock = C.GTK_STOCK_ZOOM_OUT
 )
 
 // ReshowWithInitialSize is a wrapper around
 // gtk_window_reshow_with_initial_size().
-func (v *Window) ReshowWithInitialSize() {
+func (v *window) ReshowWithInitialSize() {
 	C.gtk_window_reshow_with_initial_size(v.native())
 }

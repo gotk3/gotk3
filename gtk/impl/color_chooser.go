@@ -30,7 +30,7 @@ func init() {
  */
 
 // ColorChooser is a representation of GTK's GtkColorChooser GInterface.
-type ColorChooser struct {
+type colorChooser struct {
 	*glib_impl.Object
 }
 
@@ -43,7 +43,7 @@ type IColorChooser interface {
 }
 
 // native returns a pointer to the underlying GtkAppChooser.
-func (v *ColorChooser) native() *C.GtkColorChooser {
+func (v *colorChooser) native() *C.GtkColorChooser {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -57,11 +57,11 @@ func marshalColorChooser(p uintptr) (interface{}, error) {
 	return wrapColorChooser(obj), nil
 }
 
-func wrapColorChooser(obj *glib_impl.Object) *ColorChooser {
-	return &ColorChooser{obj}
+func wrapColorChooser(obj *glib_impl.Object) *colorChooser {
+	return &colorChooser{obj}
 }
 
-func (v *ColorChooser) toColorChooser() *C.GtkColorChooser {
+func (v *colorChooser) toColorChooser() *C.GtkColorChooser {
 	if v == nil {
 		return nil
 	}
@@ -69,29 +69,29 @@ func (v *ColorChooser) toColorChooser() *C.GtkColorChooser {
 }
 
 // GetRGBA() is a wrapper around gtk_color_chooser_get_rgba().
-func (v *ColorChooser) GetRGBA() gdk.RGBA {
+func (v *colorChooser) GetRGBA() gdk.RGBA {
 	gdkColor := gdk_impl.NewRGBA()
 	C.gtk_color_chooser_get_rgba(v.native(), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.Native())))
 	return gdkColor
 }
 
 // SetRGBA() is a wrapper around gtk_color_chooser_set_rgba().
-func (v *ColorChooser) SetRGBA(gdkColor gdk.RGBA) {
+func (v *colorChooser) SetRGBA(gdkColor gdk.RGBA) {
 	C.gtk_color_chooser_set_rgba(v.native(), (*C.GdkRGBA)(unsafe.Pointer(gdk_impl.CastToRGBA(gdkColor).Native())))
 }
 
 // GetUseAlpha() is a wrapper around gtk_color_chooser_get_use_alpha().
-func (v *ColorChooser) GetUseAlpha() bool {
+func (v *colorChooser) GetUseAlpha() bool {
 	return gobool(C.gtk_color_chooser_get_use_alpha(v.native()))
 }
 
 // SetUseAlpha() is a wrapper around gtk_color_chooser_set_use_alpha().
-func (v *ColorChooser) SetUseAlpha(use_alpha bool) {
+func (v *colorChooser) SetUseAlpha(use_alpha bool) {
 	C.gtk_color_chooser_set_use_alpha(v.native(), gbool(use_alpha))
 }
 
 // AddPalette() is a wrapper around gtk_color_chooser_add_palette().
-func (v *ColorChooser) AddPalette(orientation gtk.Orientation, colors_per_line int, colors []gdk.RGBA) {
+func (v *colorChooser) AddPalette(orientation gtk.Orientation, colors_per_line int, colors []gdk.RGBA) {
 	n_colors := len(colors)
 	var c_colors []C.GdkRGBA
 	for _, c := range colors {
@@ -111,15 +111,15 @@ func (v *ColorChooser) AddPalette(orientation gtk.Orientation, colors_per_line i
  */
 
 // ColorChooserDialog is a representation of GTK's GtkColorChooserDialog.
-type ColorChooserDialog struct {
-	Dialog
+type colorChooserDialog struct {
+	dialog
 
 	// Interfaces
-	ColorChooser
+	colorChooser
 }
 
 // native returns a pointer to the underlying GtkColorChooserButton.
-func (v *ColorChooserDialog) native() *C.GtkColorChooserDialog {
+func (v *colorChooserDialog) native() *C.GtkColorChooserDialog {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -133,14 +133,14 @@ func marshalColorChooserDialog(p uintptr) (interface{}, error) {
 	return wrapColorChooserDialog(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapColorChooserDialog(obj *glib_impl.Object) *ColorChooserDialog {
+func wrapColorChooserDialog(obj *glib_impl.Object) *colorChooserDialog {
 	dialog := wrapDialog(obj)
 	cc := wrapColorChooser(obj)
-	return &ColorChooserDialog{*dialog, *cc}
+	return &colorChooserDialog{*dialog, *cc}
 }
 
 // ColorChooserDialogNew() is a wrapper around gtk_color_chooser_dialog_new().
-func ColorChooserDialogNew(title string, parent *Window) (*ColorChooserDialog, error) {
+func ColorChooserDialogNew(title string, parent *window) (*colorChooserDialog, error) {
 	cstr := C.CString(title)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_color_chooser_dialog_new((*C.gchar)(cstr), parent.native())

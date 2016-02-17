@@ -28,12 +28,12 @@ func init() {
  */
 
 // AboutDialog is a representation of GTK's GtkAboutDialog.
-type AboutDialog struct {
-	Dialog
+type aboutDialog struct {
+	dialog
 }
 
 // native returns a pointer to the underlying GtkAboutDialog.
-func (v *AboutDialog) native() *C.GtkAboutDialog {
+func (v *aboutDialog) native() *C.GtkAboutDialog {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -47,12 +47,12 @@ func marshalAboutDialog(p uintptr) (interface{}, error) {
 	return wrapAboutDialog(obj), nil
 }
 
-func wrapAboutDialog(obj *glib_impl.Object) *AboutDialog {
-	return &AboutDialog{Dialog{Window{Bin{Container{Widget{glib_impl.InitiallyUnowned{obj}}}}}}}
+func wrapAboutDialog(obj *glib_impl.Object) *aboutDialog {
+	return &aboutDialog{dialog{window{bin{container{widget{glib_impl.InitiallyUnowned{obj}}}}}}}
 }
 
 // AboutDialogNew is a wrapper around gtk_about_dialog_new().
-func AboutDialogNew() (*AboutDialog, error) {
+func AboutDialogNew() (*aboutDialog, error) {
 	c := C.gtk_about_dialog_new()
 	if c == nil {
 		return nil, nilPtrErr
@@ -62,89 +62,89 @@ func AboutDialogNew() (*AboutDialog, error) {
 }
 
 // GetComments is a wrapper around gtk_about_dialog_get_comments().
-func (v *AboutDialog) GetComments() string {
+func (v *aboutDialog) GetComments() string {
 	c := C.gtk_about_dialog_get_comments(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetComments is a wrapper around gtk_about_dialog_set_comments().
-func (v *AboutDialog) SetComments(comments string) {
+func (v *aboutDialog) SetComments(comments string) {
 	cstr := C.CString(comments)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_comments(v.native(), (*C.gchar)(cstr))
 }
 
 // GetCopyright is a wrapper around gtk_about_dialog_get_copyright().
-func (v *AboutDialog) GetCopyright() string {
+func (v *aboutDialog) GetCopyright() string {
 	c := C.gtk_about_dialog_get_copyright(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetCopyright is a wrapper around gtk_about_dialog_set_copyright().
-func (v *AboutDialog) SetCopyright(copyright string) {
+func (v *aboutDialog) SetCopyright(copyright string) {
 	cstr := C.CString(copyright)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_copyright(v.native(), (*C.gchar)(cstr))
 }
 
 // GetLicense is a wrapper around gtk_about_dialog_get_license().
-func (v *AboutDialog) GetLicense() string {
+func (v *aboutDialog) GetLicense() string {
 	c := C.gtk_about_dialog_get_license(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetLicense is a wrapper around gtk_about_dialog_set_license().
-func (v *AboutDialog) SetLicense(license string) {
+func (v *aboutDialog) SetLicense(license string) {
 	cstr := C.CString(license)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_license(v.native(), (*C.gchar)(cstr))
 }
 
 // GetLicenseType is a wrapper around gtk_about_dialog_get_license_type().
-func (v *AboutDialog) GetLicenseType() gtk.License {
+func (v *aboutDialog) GetLicenseType() gtk.License {
 	c := C.gtk_about_dialog_get_license_type(v.native())
 	return gtk.License(c)
 }
 
 // SetLicenseType is a wrapper around gtk_about_dialog_set_license_type().
-func (v *AboutDialog) SetLicenseType(license gtk.License) {
+func (v *aboutDialog) SetLicenseType(license gtk.License) {
 	C.gtk_about_dialog_set_license_type(v.native(), C.GtkLicense(license))
 }
 
 // SetLogo is a wrapper around gtk_about_dialog_set_logo().
-func (v *AboutDialog) SetLogo(logo gdk.Pixbuf) {
+func (v *aboutDialog) SetLogo(logo gdk.Pixbuf) {
 	logoPtr := (*C.GdkPixbuf)(unsafe.Pointer(gdk_impl.CastToPixbuf(logo).Native()))
 	C.gtk_about_dialog_set_logo(v.native(), logoPtr)
 }
 
 // GetLogoIconName is a wrapper around gtk_about_dialog_get_logo_icon_name().
-func (v *AboutDialog) GetLogoIconName() string {
+func (v *aboutDialog) GetLogoIconName() string {
 	c := C.gtk_about_dialog_get_logo_icon_name(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetLogoIconName is a wrapper around gtk_about_dialog_set_logo_icon_name().
-func (v *AboutDialog) SetLogoIconName(name string) {
+func (v *aboutDialog) SetLogoIconName(name string) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_logo_icon_name(v.native(), (*C.gchar)(cstr))
 }
 
 // GetProgramName is a wrapper around gtk_about_dialog_get_program_name().
-func (v *AboutDialog) GetProgramName() string {
+func (v *aboutDialog) GetProgramName() string {
 	c := C.gtk_about_dialog_get_program_name(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetProgramName is a wrapper around gtk_about_dialog_set_program_name().
-func (v *AboutDialog) SetProgramName(name string) {
+func (v *aboutDialog) SetProgramName(name string) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_program_name(v.native(), (*C.gchar)(cstr))
 }
 
 // GetAuthors is a wrapper around gtk_about_dialog_get_authors().
-func (v *AboutDialog) GetAuthors() []string {
+func (v *aboutDialog) GetAuthors() []string {
 	var authors []string
 	cauthors := C.gtk_about_dialog_get_authors(v.native())
 	if cauthors == nil {
@@ -161,7 +161,7 @@ func (v *AboutDialog) GetAuthors() []string {
 }
 
 // SetAuthors is a wrapper around gtk_about_dialog_set_authors().
-func (v *AboutDialog) SetAuthors(authors []string) {
+func (v *aboutDialog) SetAuthors(authors []string) {
 	cauthors := C.make_strings(C.int(len(authors) + 1))
 	for i, author := range authors {
 		cstr := C.CString(author)
@@ -175,7 +175,7 @@ func (v *AboutDialog) SetAuthors(authors []string) {
 }
 
 // GetArtists is a wrapper around gtk_about_dialog_get_artists().
-func (v *AboutDialog) GetArtists() []string {
+func (v *aboutDialog) GetArtists() []string {
 	var artists []string
 	cartists := C.gtk_about_dialog_get_artists(v.native())
 	if cartists == nil {
@@ -192,7 +192,7 @@ func (v *AboutDialog) GetArtists() []string {
 }
 
 // SetArtists is a wrapper around gtk_about_dialog_set_artists().
-func (v *AboutDialog) SetArtists(artists []string) {
+func (v *aboutDialog) SetArtists(artists []string) {
 	cartists := C.make_strings(C.int(len(artists) + 1))
 	for i, artist := range artists {
 		cstr := C.CString(artist)
@@ -206,7 +206,7 @@ func (v *AboutDialog) SetArtists(artists []string) {
 }
 
 // GetDocumenters is a wrapper around gtk_about_dialog_get_documenters().
-func (v *AboutDialog) GetDocumenters() []string {
+func (v *aboutDialog) GetDocumenters() []string {
 	var documenters []string
 	cdocumenters := C.gtk_about_dialog_get_documenters(v.native())
 	if cdocumenters == nil {
@@ -223,7 +223,7 @@ func (v *AboutDialog) GetDocumenters() []string {
 }
 
 // SetDocumenters is a wrapper around gtk_about_dialog_set_documenters().
-func (v *AboutDialog) SetDocumenters(documenters []string) {
+func (v *aboutDialog) SetDocumenters(documenters []string) {
 	cdocumenters := C.make_strings(C.int(len(documenters) + 1))
 	for i, doc := range documenters {
 		cstr := C.CString(doc)
@@ -237,69 +237,69 @@ func (v *AboutDialog) SetDocumenters(documenters []string) {
 }
 
 // GetTranslatorCredits is a wrapper around gtk_about_dialog_get_translator_credits().
-func (v *AboutDialog) GetTranslatorCredits() string {
+func (v *aboutDialog) GetTranslatorCredits() string {
 	c := C.gtk_about_dialog_get_translator_credits(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetTranslatorCredits is a wrapper around gtk_about_dialog_set_translator_credits().
-func (v *AboutDialog) SetTranslatorCredits(translatorCredits string) {
+func (v *aboutDialog) SetTranslatorCredits(translatorCredits string) {
 	cstr := C.CString(translatorCredits)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_translator_credits(v.native(), (*C.gchar)(cstr))
 }
 
 // GetVersion is a wrapper around gtk_about_dialog_get_version().
-func (v *AboutDialog) GetVersion() string {
+func (v *aboutDialog) GetVersion() string {
 	c := C.gtk_about_dialog_get_version(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetVersion is a wrapper around gtk_about_dialog_set_version().
-func (v *AboutDialog) SetVersion(version string) {
+func (v *aboutDialog) SetVersion(version string) {
 	cstr := C.CString(version)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_version(v.native(), (*C.gchar)(cstr))
 }
 
 // GetWebsite is a wrapper around gtk_about_dialog_get_website().
-func (v *AboutDialog) GetWebsite() string {
+func (v *aboutDialog) GetWebsite() string {
 	c := C.gtk_about_dialog_get_website(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetWebsite is a wrapper around gtk_about_dialog_set_website().
-func (v *AboutDialog) SetWebsite(website string) {
+func (v *aboutDialog) SetWebsite(website string) {
 	cstr := C.CString(website)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_website(v.native(), (*C.gchar)(cstr))
 }
 
 // GetWebsiteLabel is a wrapper around gtk_about_dialog_get_website_label().
-func (v *AboutDialog) GetWebsiteLabel() string {
+func (v *aboutDialog) GetWebsiteLabel() string {
 	c := C.gtk_about_dialog_get_website_label(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 // SetWebsiteLabel is a wrapper around gtk_about_dialog_set_website_label().
-func (v *AboutDialog) SetWebsiteLabel(websiteLabel string) {
+func (v *aboutDialog) SetWebsiteLabel(websiteLabel string) {
 	cstr := C.CString(websiteLabel)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_about_dialog_set_website_label(v.native(), (*C.gchar)(cstr))
 }
 
 // GetWrapLicense is a wrapper around gtk_about_dialog_get_wrap_license().
-func (v *AboutDialog) GetWrapLicense() bool {
+func (v *aboutDialog) GetWrapLicense() bool {
 	return gobool(C.gtk_about_dialog_get_wrap_license(v.native()))
 }
 
 // SetWrapLicense is a wrapper around gtk_about_dialog_set_wrap_license().
-func (v *AboutDialog) SetWrapLicense(wrapLicense bool) {
+func (v *aboutDialog) SetWrapLicense(wrapLicense bool) {
 	C.gtk_about_dialog_set_wrap_license(v.native(), gbool(wrapLicense))
 }
 
 // AddCreditSection is a wrapper around gtk_about_dialog_add_credit_section().
-func (v *AboutDialog) AddCreditSection(sectionName string, people []string) {
+func (v *aboutDialog) AddCreditSection(sectionName string, people []string) {
 	cname := (*C.gchar)(C.CString(sectionName))
 	defer C.free(unsafe.Pointer(cname))
 

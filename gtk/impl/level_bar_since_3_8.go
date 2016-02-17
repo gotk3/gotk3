@@ -7,12 +7,12 @@ package impl
 import "C"
 
 // SetInverted() is a wrapper around gtk_level_bar_set_inverted().
-func (v *LevelBar) SetInverted(inverted bool) {
+func (v *levelBar) SetInverted(inverted bool) {
 	C.gtk_level_bar_set_inverted(v.native(), gbool(inverted))
 }
 
 // GetInverted() is a wrapper around gtk_level_bar_get_inverted().
-func (v *LevelBar) GetInverted() bool {
+func (v *levelBar) GetInverted() bool {
 	c := C.gtk_level_bar_get_inverted(v.native())
 	return gobool(c)
 }

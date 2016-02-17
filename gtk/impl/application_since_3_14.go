@@ -15,12 +15,12 @@ import (
 )
 
 // PrefersAppMenu is a wrapper around gtk_application_prefers_app_menu().
-func (v *Application) PrefersAppMenu() bool {
+func (v *application) PrefersAppMenu() bool {
 	return gobool(C.gtk_application_prefers_app_menu(v.native()))
 }
 
 // GetActionsForAccel is a wrapper around gtk_application_get_actions_for_accel().
-func (v *Application) GetActionsForAccel(acc string) []string {
+func (v *application) GetActionsForAccel(acc string) []string {
 	cstr1 := (*C.gchar)(C.CString(acc))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -38,7 +38,7 @@ func (v *Application) GetActionsForAccel(acc string) []string {
 }
 
 // GetMenuByID is a wrapper around gtk_application_get_menu_by_id().
-func (v *Application) GetMenuByID(id string) glib.Menu {
+func (v *application) GetMenuByID(id string) glib.Menu {
 	cstr1 := (*C.gchar)(C.CString(id))
 	defer C.free(unsafe.Pointer(cstr1))
 

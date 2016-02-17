@@ -48,11 +48,11 @@ func init() {
 }
 
 //GtkActionBar
-type ActionBar struct {
-	Bin
+type actionBar struct {
+	bin
 }
 
-func (v *ActionBar) native() *C.GtkActionBar {
+func (v *actionBar) native() *C.GtkActionBar {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -66,12 +66,12 @@ func marshalActionBar(p uintptr) (interface{}, error) {
 	return wrapActionBar(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapActionBar(obj *glib_impl.Object) *ActionBar {
-	return &ActionBar{Bin{Container{Widget{glib_impl.InitiallyUnowned{obj}}}}}
+func wrapActionBar(obj *glib_impl.Object) *actionBar {
+	return &actionBar{bin{container{widget{glib_impl.InitiallyUnowned{obj}}}}}
 }
 
 //gtk_action_bar_new()
-func ActionBarNew() (*ActionBar, error) {
+func ActionBarNew() (*actionBar, error) {
 	c := C.gtk_action_bar_new()
 	if c == nil {
 		return nil, nilPtrErr
@@ -80,17 +80,17 @@ func ActionBarNew() (*ActionBar, error) {
 }
 
 //gtk_action_bar_pack_start(GtkActionBar *action_bar,GtkWidget *child)
-func (a *ActionBar) PackStart(child gtk.Widget) {
+func (a *actionBar) PackStart(child gtk.Widget) {
 	C.gtk_action_bar_pack_start(a.native(), child.(IWidget).toWidget())
 }
 
 //gtk_action_bar_pack_end(GtkActionBar *action_bar,GtkWidget *child)
-func (a *ActionBar) PackEnd(child gtk.Widget) {
+func (a *actionBar) PackEnd(child gtk.Widget) {
 	C.gtk_action_bar_pack_end(a.native(), child.(IWidget).toWidget())
 }
 
 //gtk_action_bar_set_center_widget(GtkActionBar *action_bar,GtkWidget *center_widget)
-func (a *ActionBar) SetCenterWidget(child gtk.Widget) {
+func (a *actionBar) SetCenterWidget(child gtk.Widget) {
 	if child == nil {
 		C.gtk_action_bar_set_center_widget(a.native(), nil)
 	} else {
@@ -99,10 +99,10 @@ func (a *ActionBar) SetCenterWidget(child gtk.Widget) {
 }
 
 //gtk_action_bar_get_center_widget(GtkActionBar *action_bar)
-func (a *ActionBar) GetCenterWidget() *Widget {
+func (a *actionBar) GetCenterWidget() *widget {
 	w := C.gtk_action_bar_get_center_widget(a.native())
 	if w == nil {
 		return nil
 	}
-	return &Widget{glib_impl.InitiallyUnowned{wrapObject(unsafe.Pointer(w))}}
+	return &widget{glib_impl.InitiallyUnowned{wrapObject(unsafe.Pointer(w))}}
 }

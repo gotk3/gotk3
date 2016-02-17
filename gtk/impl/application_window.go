@@ -17,12 +17,12 @@ import (
  */
 
 // ApplicationWindow is a representation of GTK's GtkApplicationWindow.
-type ApplicationWindow struct {
-	Window
+type applicationWindow struct {
+	window
 }
 
 // native returns a pointer to the underlying GtkApplicationWindow.
-func (v *ApplicationWindow) native() *C.GtkApplicationWindow {
+func (v *applicationWindow) native() *C.GtkApplicationWindow {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -36,12 +36,12 @@ func marshalApplicationWindow(p uintptr) (interface{}, error) {
 	return wrapApplicationWindow(obj), nil
 }
 
-func wrapApplicationWindow(obj *glib_impl.Object) *ApplicationWindow {
-	return &ApplicationWindow{Window{Bin{Container{Widget{glib_impl.InitiallyUnowned{obj}}}}}}
+func wrapApplicationWindow(obj *glib_impl.Object) *applicationWindow {
+	return &applicationWindow{window{bin{container{widget{glib_impl.InitiallyUnowned{obj}}}}}}
 }
 
 // ApplicationWindowNew is a wrapper around gtk_application_window_new().
-func ApplicationWindowNew(app *Application) (*ApplicationWindow, error) {
+func ApplicationWindowNew(app *application) (*applicationWindow, error) {
 	c := C.gtk_application_window_new(app.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -50,16 +50,16 @@ func ApplicationWindowNew(app *Application) (*ApplicationWindow, error) {
 }
 
 // SetShowMenubar is a wrapper around gtk_application_window_set_show_menubar().
-func (v *ApplicationWindow) SetShowMenubar(b bool) {
+func (v *applicationWindow) SetShowMenubar(b bool) {
 	C.gtk_application_window_set_show_menubar(v.native(), gbool(b))
 }
 
 // GetShowMenubar is a wrapper around gtk_application_window_get_show_menubar().
-func (v *ApplicationWindow) GetShowMenubar() bool {
+func (v *applicationWindow) GetShowMenubar() bool {
 	return gobool(C.gtk_application_window_get_show_menubar(v.native()))
 }
 
 // GetID is a wrapper around gtk_application_window_get_id().
-func (v *ApplicationWindow) GetID() uint {
+func (v *applicationWindow) GetID() uint {
 	return uint(C.gtk_application_window_get_id(v.native()))
 }
