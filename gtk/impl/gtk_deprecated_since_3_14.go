@@ -298,7 +298,7 @@ func (v *statusIcon) SetFromIconName(iconName string) {
 
 // GetStorageType is a wrapper around gtk_status_icon_get_storage_type()
 func (v *statusIcon) GetStorageType() gtk.ImageType {
-	return (ImageType)(C.gtk_status_icon_get_storage_type(v.native()))
+	return gtk.ImageType(C.gtk_status_icon_get_storage_type(v.native()))
 }
 
 // SetTooltipText is a wrapper around gtk_status_icon_set_tooltip_text()
