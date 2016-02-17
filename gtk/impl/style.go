@@ -149,7 +149,7 @@ func (v *StyleContext) Save() {
 
 // SetParent is a wrapper around gtk_style_context_set_parent().
 func (v *StyleContext) SetParent(p gtk.StyleContext) {
-	C.gtk_style_context_set_parent(v.native(), p.(*StyleContext).native())
+	C.gtk_style_context_set_parent(v.native(), castToStyleContext(p).native())
 }
 
 // HasClass is a wrapper around gtk_style_context_has_class().
@@ -162,7 +162,7 @@ func (v *StyleContext) HasClass(className string) bool {
 
 // SetScreen is a wrapper around gtk_style_context_set_screen().
 func (v *StyleContext) SetScreen(s gdk.Screen) {
-	C.gtk_style_context_set_screen(v.native(), (*C.GdkScreen)(unsafe.Pointer(s.(*gdk_impl.Screen).Native())))
+	C.gtk_style_context_set_screen(v.native(), (*C.GdkScreen)(unsafe.Pointer(gdk_impl.CastToScreen(s).Native())))
 }
 
 // SetState is a wrapper around gtk_style_context_set_state().

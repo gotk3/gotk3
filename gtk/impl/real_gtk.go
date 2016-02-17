@@ -28,11 +28,11 @@ func (*RealGtk) AccelGroupNew() (gtk.AccelGroup, error) {
 }
 
 func (*RealGtk) AccelGroupsActivate(obj glib.Object, key uint, mods gdk.ModifierType) bool {
-	return AccelGroupsActivate(obj.(*glib_impl.Object), key, mods)
+	return AccelGroupsActivate(glib_impl.CastToObject(obj), key, mods)
 }
 
 func (*RealGtk) AccelGroupsFromObject(obj glib.Object) glib.SList {
-	return AccelGroupsFromObject(obj.(*glib_impl.Object))
+	return AccelGroupsFromObject(glib_impl.CastToObject(obj))
 }
 
 func (*RealGtk) AccelMapAddEntry(path string, key uint, mods gdk.ModifierType) {
@@ -104,7 +104,7 @@ func (*RealGtk) AcceleratorValid(key uint, mods gdk.ModifierType) bool {
 }
 
 func (*RealGtk) AddProviderForScreen(s gdk.Screen, provider gtk.StyleProvider, prio uint) {
-	AddProviderForScreen(s.(*gdk_impl.Screen), provider, prio)
+	AddProviderForScreen(gdk_impl.CastToScreen(s), provider, prio)
 }
 
 func (*RealGtk) AdjustmentNew(value float64, lower float64, upper float64, stepIncrement float64, pageIncrement float64, pageSize float64) (gtk.Adjustment, error) {
@@ -128,7 +128,7 @@ func (*RealGtk) ApplicationNew(appId string, flags glib.ApplicationFlags) (gtk.A
 }
 
 func (*RealGtk) ApplicationWindowNew(app gtk.Application) (gtk.ApplicationWindow, error) {
-	return ApplicationWindowNew(app.(*Application))
+	return ApplicationWindowNew(castToApplication(app))
 }
 
 func (*RealGtk) AssistantNew() (gtk.Assistant, error) {
@@ -208,7 +208,7 @@ func (*RealGtk) ClipboardGet(atom gdk.Atom) (gtk.Clipboard, error) {
 }
 
 func (*RealGtk) ClipboardGetForDisplay(display gdk.Display, atom gdk.Atom) (gtk.Clipboard, error) {
-	return ClipboardGetForDisplay(display.(*gdk_impl.Display), atom)
+	return ClipboardGetForDisplay(gdk_impl.CastToDisplay(display), atom)
 }
 
 func (*RealGtk) ColorButtonNew() (gtk.ColorButton, error) {
@@ -216,7 +216,7 @@ func (*RealGtk) ColorButtonNew() (gtk.ColorButton, error) {
 }
 
 func (*RealGtk) ColorButtonNewWithRGBA(gdkColor gdk.RGBA) (gtk.ColorButton, error) {
-	return ColorButtonNewWithRGBA(gdkColor.(*gdk_impl.RGBA))
+	return ColorButtonNewWithRGBA(gdk_impl.CastToRGBA(gdkColor))
 }
 
 func (*RealGtk) ColorChooserDialogNew(title string, parent gtk.Window) (gtk.ColorChooserDialog, error) {
@@ -272,7 +272,7 @@ func (*RealGtk) EntryNew() (gtk.Entry, error) {
 }
 
 func (*RealGtk) EntryNewWithBuffer(buffer gtk.EntryBuffer) (gtk.Entry, error) {
-	return EntryNewWithBuffer(buffer.(*EntryBuffer))
+	return EntryNewWithBuffer(castToEntryBuffer(buffer))
 }
 
 func (*RealGtk) EventBoxNew() (gtk.EventBox, error) {
@@ -320,7 +320,7 @@ func (*RealGtk) FrameNew(label string) (gtk.Frame, error) {
 }
 
 func (*RealGtk) GdkCairoSetSourcePixBuf(cr cairo.Context, pixbuf gdk.Pixbuf, pixbufX float64, pixbufY float64) {
-	GdkCairoSetSourcePixBuf(cr.(*cairo_impl.Context), pixbuf.(*gdk_impl.Pixbuf), pixbufX, pixbufY)
+	GdkCairoSetSourcePixBuf(cairo_impl.CastToContext(cr), gdk_impl.CastToPixbuf(pixbuf), pixbufX, pixbufY)
 }
 
 func (*RealGtk) GetMajorVersion() uint {
@@ -344,7 +344,7 @@ func (*RealGtk) IconThemeGetDefault() (gtk.IconTheme, error) {
 }
 
 func (*RealGtk) IconThemeGetForScreen(screen gdk.Screen) (gtk.IconTheme, error) {
-	return IconThemeGetForScreen(screen.(*gdk_impl.Screen))
+	return IconThemeGetForScreen(gdk_impl.CastToScreen(screen))
 }
 
 func (*RealGtk) IconViewNew() (gtk.IconView, error) {
@@ -368,7 +368,7 @@ func (*RealGtk) ImageNewFromIconName(iconName string, size gtk.IconSize) (gtk.Im
 }
 
 func (*RealGtk) ImageNewFromPixbuf(pixbuf gdk.Pixbuf) (gtk.Image, error) {
-	return ImageNewFromPixbuf(pixbuf.(*gdk_impl.Pixbuf))
+	return ImageNewFromPixbuf(gdk_impl.CastToPixbuf(pixbuf))
 }
 
 func (*RealGtk) ImageNewFromResource(resourcePath string) (gtk.Image, error) {
@@ -392,7 +392,7 @@ func (*RealGtk) LabelNewWithMnemonic(str string) (gtk.Label, error) {
 }
 
 func (*RealGtk) LayoutNew(hadjustment gtk.Adjustment, vadjustment gtk.Adjustment) (gtk.Layout, error) {
-	return LayoutNew(hadjustment.(*Adjustment), vadjustment.(*Adjustment))
+	return LayoutNew(castToAdjustment(hadjustment), castToAdjustment(vadjustment))
 }
 
 func (*RealGtk) LevelBarNew() (gtk.LevelBar, error) {
@@ -480,51 +480,51 @@ func (*RealGtk) ProgressBarNew() (gtk.ProgressBar, error) {
 }
 
 func (*RealGtk) RadioButtonNew(group glib.SList) (gtk.RadioButton, error) {
-	return RadioButtonNew(group.(*glib_impl.SList))
+	return RadioButtonNew(glib_impl.CastToSList(group))
 }
 
 func (*RealGtk) RadioButtonNewFromWidget(radioGroupMember gtk.RadioButton) (gtk.RadioButton, error) {
-	return RadioButtonNewFromWidget(radioGroupMember.(*RadioButton))
+	return RadioButtonNewFromWidget(castToRadioButton(radioGroupMember))
 }
 
 func (*RealGtk) RadioButtonNewWithLabel(group glib.SList, label string) (gtk.RadioButton, error) {
-	return RadioButtonNewWithLabel(group.(*glib_impl.SList), label)
+	return RadioButtonNewWithLabel(glib_impl.CastToSList(group), label)
 }
 
 func (*RealGtk) RadioButtonNewWithLabelFromWidget(radioGroupMember gtk.RadioButton, label string) (gtk.RadioButton, error) {
-	return RadioButtonNewWithLabelFromWidget(radioGroupMember.(*RadioButton), label)
+	return RadioButtonNewWithLabelFromWidget(castToRadioButton(radioGroupMember), label)
 }
 
 func (*RealGtk) RadioButtonNewWithMnemonic(group glib.SList, label string) (gtk.RadioButton, error) {
-	return RadioButtonNewWithMnemonic(group.(*glib_impl.SList), label)
+	return RadioButtonNewWithMnemonic(glib_impl.CastToSList(group), label)
 }
 
 func (*RealGtk) RadioButtonNewWithMnemonicFromWidget(radioGroupMember gtk.RadioButton, label string) (gtk.RadioButton, error) {
-	return RadioButtonNewWithMnemonicFromWidget(radioGroupMember.(*RadioButton), label)
+	return RadioButtonNewWithMnemonicFromWidget(castToRadioButton(radioGroupMember), label)
 }
 
 func (*RealGtk) RadioMenuItemNew(group glib.SList) (gtk.RadioMenuItem, error) {
-	return RadioMenuItemNew(group.(*glib_impl.SList))
+	return RadioMenuItemNew(glib_impl.CastToSList(group))
 }
 
 func (*RealGtk) RadioMenuItemNewFromWidget(group gtk.RadioMenuItem) (gtk.RadioMenuItem, error) {
-	return RadioMenuItemNewFromWidget(group.(*RadioMenuItem))
+	return RadioMenuItemNewFromWidget(castToRadioMenuItem(group))
 }
 
 func (*RealGtk) RadioMenuItemNewWithLabel(group glib.SList, label string) (gtk.RadioMenuItem, error) {
-	return RadioMenuItemNewWithLabel(group.(*glib_impl.SList), label)
+	return RadioMenuItemNewWithLabel(glib_impl.CastToSList(group), label)
 }
 
 func (*RealGtk) RadioMenuItemNewWithLabelFromWidget(group gtk.RadioMenuItem, label string) (gtk.RadioMenuItem, error) {
-	return RadioMenuItemNewWithLabelFromWidget(group.(*RadioMenuItem), label)
+	return RadioMenuItemNewWithLabelFromWidget(castToRadioMenuItem(group), label)
 }
 
 func (*RealGtk) RadioMenuItemNewWithMnemonic(group glib.SList, label string) (gtk.RadioMenuItem, error) {
-	return RadioMenuItemNewWithMnemonic(group.(*glib_impl.SList), label)
+	return RadioMenuItemNewWithMnemonic(glib_impl.CastToSList(group), label)
 }
 
 func (*RealGtk) RadioMenuItemNewWithMnemonicFromWidget(group gtk.RadioMenuItem, label string) (gtk.RadioMenuItem, error) {
-	return RadioMenuItemNewWithMnemonicFromWidget(group.(*RadioMenuItem), label)
+	return RadioMenuItemNewWithMnemonicFromWidget(castToRadioMenuItem(group), label)
 }
 
 func (*RealGtk) RecentFilterNew() (gtk.RecentFilter, error) {
@@ -536,7 +536,7 @@ func (*RealGtk) RecentManagerGetDefault() (gtk.RecentManager, error) {
 }
 
 func (*RealGtk) RemoveProviderForScreen(s gdk.Screen, provider gtk.StyleProvider) {
-	RemoveProviderForScreen(s.(*gdk_impl.Screen), provider)
+	RemoveProviderForScreen(gdk_impl.CastToScreen(s), provider)
 }
 
 func (*RealGtk) ScaleButtonNew(size gtk.IconSize, min float64, max float64, step float64, icons []string) (gtk.ScaleButton, error) {
@@ -544,7 +544,7 @@ func (*RealGtk) ScaleButtonNew(size gtk.IconSize, min float64, max float64, step
 }
 
 func (*RealGtk) ScaleNew(orientation gtk.Orientation, adjustment gtk.Adjustment) (gtk.Scale, error) {
-	return ScaleNew(orientation, adjustment.(*Adjustment))
+	return ScaleNew(orientation, castToAdjustment(adjustment))
 }
 
 func (*RealGtk) ScaleNewWithRange(orientation gtk.Orientation, min float64, max float64, step float64) (gtk.Scale, error) {
@@ -552,11 +552,11 @@ func (*RealGtk) ScaleNewWithRange(orientation gtk.Orientation, min float64, max 
 }
 
 func (*RealGtk) ScrollbarNew(orientation gtk.Orientation, adjustment gtk.Adjustment) (gtk.Scrollbar, error) {
-	return ScrollbarNew(orientation, adjustment.(*Adjustment))
+	return ScrollbarNew(orientation, castToAdjustment(adjustment))
 }
 
 func (*RealGtk) ScrolledWindowNew(hadjustment gtk.Adjustment, vadjustment gtk.Adjustment) (gtk.ScrolledWindow, error) {
-	return ScrolledWindowNew(hadjustment.(*Adjustment), vadjustment.(*Adjustment))
+	return ScrolledWindowNew(castToAdjustment(hadjustment), castToAdjustment(vadjustment))
 }
 
 func (*RealGtk) SearchEntryNew() (gtk.SearchEntry, error) {
@@ -580,7 +580,7 @@ func (*RealGtk) SettingsGetDefault() (gtk.Settings, error) {
 }
 
 func (*RealGtk) SpinButtonNew(adjustment gtk.Adjustment, climbRate float64, digits uint) (gtk.SpinButton, error) {
-	return SpinButtonNew(adjustment.(*Adjustment), climbRate, digits)
+	return SpinButtonNew(castToAdjustment(adjustment), climbRate, digits)
 }
 
 func (*RealGtk) SpinButtonNewWithRange(min float64, max float64, step float64) (gtk.SpinButton, error) {
@@ -596,7 +596,7 @@ func (*RealGtk) StatusbarNew() (gtk.Statusbar, error) {
 }
 
 func (*RealGtk) StyleContextResetWidgets(v gdk.Screen) {
-	StyleContextResetWidgets(v.(*gdk_impl.Screen))
+	StyleContextResetWidgets(gdk_impl.CastToScreen(v))
 }
 
 func (*RealGtk) SwitchNew() (gtk.Switch, error) {
@@ -608,7 +608,7 @@ func (*RealGtk) TargetEntryNew(target string, flags gtk.TargetFlags, info uint) 
 }
 
 func (*RealGtk) TextBufferNew(table gtk.TextTagTable) (gtk.TextBuffer, error) {
-	return TextBufferNew(table.(*TextTagTable))
+	return TextBufferNew(castToTextTagTable(table))
 }
 
 func (*RealGtk) TextTagNew(name string) (gtk.TextTag, error) {
@@ -624,7 +624,7 @@ func (*RealGtk) TextViewNew() (gtk.TextView, error) {
 }
 
 func (*RealGtk) TextViewNewWithBuffer(buf gtk.TextBuffer) (gtk.TextView, error) {
-	return TextViewNewWithBuffer(buf.(*TextBuffer))
+	return TextViewNewWithBuffer(castToTextBuffer(buf))
 }
 
 func (*RealGtk) ToggleButtonNew() (gtk.ToggleButton, error) {
@@ -656,7 +656,7 @@ func (*RealGtk) TreeIterNew() gtk.TreeIter {
 }
 
 func (*RealGtk) TreePathFromList(list glib.List) gtk.TreePath {
-	return TreePathFromList(list.(*glib_impl.List))
+	return TreePathFromList(glib_impl.CastToList(list))
 }
 
 func (*RealGtk) TreePathNew() gtk.TreePath {
@@ -688,7 +688,7 @@ func (*RealGtk) TreeViewNewWithModel(model gtk.TreeModel) (gtk.TreeView, error) 
 }
 
 func (*RealGtk) ViewportNew(hadjustment gtk.Adjustment, vadjustment gtk.Adjustment) (gtk.Viewport, error) {
-	return ViewportNew(hadjustment.(*Adjustment), vadjustment.(*Adjustment))
+	return ViewportNew(castToAdjustment(hadjustment), castToAdjustment(vadjustment))
 }
 
 func (*RealGtk) VolumeButtonNew() (gtk.VolumeButton, error) {

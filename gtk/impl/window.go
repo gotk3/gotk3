@@ -141,13 +141,13 @@ func (v *Window) GetScreen() (gdk.Screen, error) {
 
 // SetIcon is a wrapper around gtk_window_set_icon().
 func (v *Window) SetIcon(icon gdk.Pixbuf) {
-	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.(*gdk_impl.Pixbuf).Native()))
+	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(gdk_impl.CastToPixbuf(icon).Native()))
 	C.gtk_window_set_icon(v.native(), iconPtr)
 }
 
 // WindowSetDefaultIcon is a wrapper around gtk_window_set_default_icon().
 func WindowSetDefaultIcon(icon gdk.Pixbuf) {
-	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.(*gdk_impl.Pixbuf).Native()))
+	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(gdk_impl.CastToPixbuf(icon).Native()))
 	C.gtk_window_set_default_icon(iconPtr)
 }
 
@@ -600,7 +600,7 @@ func (v *Window) GetApplication() (gtk.Application, error) {
 
 // SetApplication is a wrapper around gtk_window_set_application().
 func (v *Window) SetApplication(a gtk.Application) {
-	C.gtk_window_set_application(v.native(), a.(*Application).native())
+	C.gtk_window_set_application(v.native(), castToApplication(a).native())
 }
 
 // TODO gtk_window_activate_key().

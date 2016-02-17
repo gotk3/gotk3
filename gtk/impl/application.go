@@ -99,7 +99,7 @@ func (v *Application) GetAppMenu() glib.MenuModel {
 
 // SetAppMenu is a wrapper around gtk_application_set_app_menu().
 func (v *Application) SetAppMenu(m glib.MenuModel) {
-	mptr := (*C.GMenuModel)(unsafe.Pointer(m.(*glib_impl.MenuModel).Native()))
+	mptr := (*C.GMenuModel)(unsafe.Pointer(glib_impl.CastToMenuModel(m).Native()))
 	C.gtk_application_set_app_menu(v.native(), mptr)
 }
 
@@ -114,7 +114,7 @@ func (v *Application) GetMenubar() glib.MenuModel {
 
 // SetMenubar is a wrapper around gtk_application_set_menubar().
 func (v *Application) SetMenubar(m glib.MenuModel) {
-	mptr := (*C.GMenuModel)(unsafe.Pointer(m.(*glib_impl.MenuModel).Native()))
+	mptr := (*C.GMenuModel)(unsafe.Pointer(glib_impl.CastToMenuModel(m).Native()))
 	C.gtk_application_set_menubar(v.native(), mptr)
 }
 

@@ -118,7 +118,7 @@ func (v *ComboBox) GetActiveIter() (gtk.TreeIter, error) {
 func (v *ComboBox) SetActiveIter(iter gtk.TreeIter) {
 	var cIter *C.GtkTreeIter
 	if iter != nil {
-		cIter = &iter.(*TreeIter).GtkTreeIter
+		cIter = &castToTreeIter(iter).GtkTreeIter
 	}
 	C.gtk_combo_box_set_active_iter(v.native(), cIter)
 }

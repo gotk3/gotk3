@@ -131,7 +131,7 @@ func (v *Context) SetSourceRGBA(red, green, blue, alpha float64) {
 
 // SetSourceSurface is a wrapper around cairo_set_source_surface().
 func (v *Context) SetSourceSurface(surface cairo.Surface, x, y float64) {
-	C.cairo_set_source_surface(v.native(), surface.(*Surface).native(), C.double(x),
+	C.cairo_set_source_surface(v.native(), toSurface(surface).native(), C.double(x),
 		C.double(y))
 }
 
@@ -355,7 +355,7 @@ func (v *Context) InFill(x, y float64) bool {
 
 // MaskSurface is a wrapper around cairo_mask_surface().
 func (v *Context) MaskSurface(surface cairo.Surface, surfaceX, surfaceY float64) {
-	C.cairo_mask_surface(v.native(), surface.(*Surface).native(), C.double(surfaceX),
+	C.cairo_mask_surface(v.native(), toSurface(surface).native(), C.double(surfaceX),
 		C.double(surfaceY))
 }
 

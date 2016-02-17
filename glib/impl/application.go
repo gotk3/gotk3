@@ -152,7 +152,7 @@ func (v *Application) SendNotification(id string, notification glib.Notification
 	cstr1 := (*C.gchar)(C.CString(id))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	C.g_application_send_notification(v.native(), cstr1, notification.(*Notification).native())
+	C.g_application_send_notification(v.native(), cstr1, toNotification(notification).native())
 }
 
 // WithdrawNotification is a wrapper around g_application_withdraw_notification().

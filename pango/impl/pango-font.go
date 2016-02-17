@@ -164,7 +164,7 @@ func (v *FontDescription) Hash() uint {
 //gboolean              pango_font_description_equal       (const PangoFontDescription  *desc1,
 //							  const PangoFontDescription  *desc2) G_GNUC_PURE;
 func (v *FontDescription) Equal(v2 pango.FontDescription) bool {
-	c := C.pango_font_description_equal(v.native(), v2.(*FontDescription).native())
+	c := C.pango_font_description_equal(v.native(), toFontDescription(v2).native())
 	return gobool(c)
 }
 
@@ -293,21 +293,21 @@ func (v *FontDescription) GetUnsetFields(to_unset pango.FontMask) {
 //					  const PangoFontDescription *desc_to_merge,
 //					  gboolean                    replace_existing);
 func (v *FontDescription) Merge(desc_to_merge pango.FontDescription, replace_existing bool) {
-	C.pango_font_description_merge(v.native(), desc_to_merge.(*FontDescription).native(), gbool(replace_existing))
+	C.pango_font_description_merge(v.native(), toFontDescription(desc_to_merge).native(), gbool(replace_existing))
 }
 
 //void pango_font_description_merge_static (PangoFontDescription       *desc,
 //					  const PangoFontDescription *desc_to_merge,
 //					  gboolean                    replace_existing);
 func (v *FontDescription) MergeStatic(desc_to_merge pango.FontDescription, replace_existing bool) {
-	C.pango_font_description_merge_static(v.native(), desc_to_merge.(*FontDescription).native(), gbool(replace_existing))
+	C.pango_font_description_merge_static(v.native(), toFontDescription(desc_to_merge).native(), gbool(replace_existing))
 }
 
 //gboolean pango_font_description_better_match (const PangoFontDescription *desc,
 //					      const PangoFontDescription *old_match,
 //					      const PangoFontDescription *new_match) G_GNUC_PURE;
 func (v *FontDescription) BetterMatch(old_match, new_match pango.FontDescription) bool {
-	c := C.pango_font_description_better_match(v.native(), old_match.(*FontDescription).native(), new_match.(*FontDescription).native())
+	c := C.pango_font_description_better_match(v.native(), toFontDescription(old_match).native(), toFontDescription(new_match).native())
 	return gobool(c)
 }
 

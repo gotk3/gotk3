@@ -151,7 +151,7 @@ func (v *Screen) GetMonitorAtPoint(x, y int) int {
 
 // GetMonitorAtWindow is a wrapper around gdk_screen_get_monitor_at_window().
 func (v *Screen) GetMonitorAtWindow(w gdk.Window) int {
-	return int(C.gdk_screen_get_monitor_at_window(v.native(), w.(*Window).native()))
+	return int(C.gdk_screen_get_monitor_at_window(v.native(), CastToWindow(w).native()))
 }
 
 // GetMonitorHeightMM is a wrapper around gdk_screen_get_monitor_height_mm().

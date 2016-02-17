@@ -98,12 +98,12 @@ func (v *TreeViewColumn) GetMinWidth() int {
 
 // PackStart() is a wrapper around gtk_tree_view_column_pack_start().
 func (v *TreeViewColumn) PackStart(cell gtk.CellRenderer, expand bool) {
-	C.gtk_tree_view_column_pack_start(v.native(), cell.(*CellRenderer).native(), gbool(expand))
+	C.gtk_tree_view_column_pack_start(v.native(), castToCellRenderer(cell).native(), gbool(expand))
 }
 
 // PackEnd() is a wrapper around gtk_tree_view_column_pack_end().
 func (v *TreeViewColumn) PackEnd(cell gtk.CellRenderer, expand bool) {
-	C.gtk_tree_view_column_pack_end(v.native(), cell.(*CellRenderer).native(), gbool(expand))
+	C.gtk_tree_view_column_pack_end(v.native(), castToCellRenderer(cell).native(), gbool(expand))
 }
 
 // Clear() is a wrapper around gtk_tree_view_column_clear().
@@ -113,7 +113,7 @@ func (v *TreeViewColumn) Clear() {
 
 // ClearAttributes() is a wrapper around gtk_tree_view_column_clear_attributes().
 func (v *TreeViewColumn) ClearAttributes(cell gtk.CellRenderer) {
-	C.gtk_tree_view_column_clear_attributes(v.native(), cell.(*CellRenderer).native())
+	C.gtk_tree_view_column_clear_attributes(v.native(), castToCellRenderer(cell).native())
 }
 
 // SetSpacing() is a wrapper around gtk_tree_view_column_set_spacing().
@@ -235,7 +235,7 @@ func (v *TreeViewColumn) CellIsVisible() bool {
 
 // FocusCell() is a wrapper around gtk_tree_view_column_focus_cell().
 func (v *TreeViewColumn) FocusCell(cell gtk.CellRenderer) {
-	C.gtk_tree_view_column_focus_cell(v.native(), cell.(*CellRenderer).native())
+	C.gtk_tree_view_column_focus_cell(v.native(), castToCellRenderer(cell).native())
 }
 
 // QueueResize() is a wrapper around gtk_tree_view_column_queue_resize().

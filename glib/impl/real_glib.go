@@ -44,15 +44,15 @@ func (*RealGlib) MenuItemNew(label string, detailed_action string) glib.MenuItem
 }
 
 func (*RealGlib) MenuItemNewFromModel(model glib.MenuModel, index int) glib.MenuItem {
-	return MenuItemNewFromModel(model.(*MenuModel), index)
+	return MenuItemNewFromModel(CastToMenuModel(model), index)
 }
 
 func (*RealGlib) MenuItemNewSection(label string, section glib.MenuModel) glib.MenuItem {
-	return MenuItemNewSection(label, section.(*MenuModel))
+	return MenuItemNewSection(label, CastToMenuModel(section))
 }
 
 func (*RealGlib) MenuItemNewSubmenu(label string, submenu glib.MenuModel) glib.MenuItem {
-	return MenuItemNewSubmenu(label, submenu.(*MenuModel))
+	return MenuItemNewSubmenu(label, CastToMenuModel(submenu))
 }
 
 func (*RealGlib) MenuNew() glib.Menu {

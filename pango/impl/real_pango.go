@@ -12,47 +12,47 @@ type RealPango struct{}
 var Real = &RealPango{}
 
 func (*RealPango) CairoCreateContext(cr cairo.Context) pango.Context {
-	return CairoCreateContext(cr.(*cairo_impl.Context))
+	return CairoCreateContext(cairo_impl.CastToContext(cr))
 }
 
 func (*RealPango) CairoCreateLayout(cr cairo.Context) pango.Layout {
-	return CairoCreateLayout(cr.(*cairo_impl.Context))
+	return CairoCreateLayout(cairo_impl.CastToContext(cr))
 }
 
 func (*RealPango) CairoErrorUnderlinePath(cr cairo.Context, x float64, y float64, width float64, height float64) {
-	CairoErrorUnderlinePath(cr.(*cairo_impl.Context), x, y, width, height)
+	CairoErrorUnderlinePath(cairo_impl.CastToContext(cr), x, y, width, height)
 }
 
 func (*RealPango) CairoGlyphStringPath(cr cairo.Context, font pango.Font, glyphs pango.GlyphString) {
-	CairoGlyphStringPath(cr.(*cairo_impl.Context), font.(*Font), glyphs.(*GlyphString))
+	CairoGlyphStringPath(cairo_impl.CastToContext(cr), toFont(font), toGlyphString(glyphs))
 }
 
 func (*RealPango) CairoLayoutLinePath(cr cairo.Context, line pango.LayoutLine) {
-	CairoLayoutLinePath(cr.(*cairo_impl.Context), line.(*LayoutLine))
+	CairoLayoutLinePath(cairo_impl.CastToContext(cr), toLayoutLine(line))
 }
 
 func (*RealPango) CairoLayoutPath(cr cairo.Context, layout pango.Layout) {
-	CairoLayoutPath(cr.(*cairo_impl.Context), layout.(*Layout))
+	CairoLayoutPath(cairo_impl.CastToContext(cr), toLayout(layout))
 }
 
 func (*RealPango) CairoShowGlyphItem(cr cairo.Context, text string, glyph_item pango.GlyphItem) {
-	CairoShowGlyphItem(cr.(*cairo_impl.Context), text, glyph_item.(*GlyphItem))
+	CairoShowGlyphItem(cairo_impl.CastToContext(cr), text, toGlyphItem(glyph_item))
 }
 
 func (*RealPango) CairoShowGlyphString(cr cairo.Context, font pango.Font, glyphs pango.GlyphString) {
-	CairoShowGlyphString(cr.(*cairo_impl.Context), font.(*Font), glyphs.(*GlyphString))
+	CairoShowGlyphString(cairo_impl.CastToContext(cr), toFont(font), toGlyphString(glyphs))
 }
 
 func (*RealPango) CairoShowLayout(cr cairo.Context, layout pango.Layout) {
-	CairoShowLayout(cr.(*cairo_impl.Context), layout.(*Layout))
+	CairoShowLayout(cairo_impl.CastToContext(cr), toLayout(layout))
 }
 
 func (*RealPango) CairoShowLayoutLine(cr cairo.Context, line pango.LayoutLine) {
-	CairoShowLayoutLine(cr.(*cairo_impl.Context), line.(*LayoutLine))
+	CairoShowLayoutLine(cairo_impl.CastToContext(cr), toLayoutLine(line))
 }
 
 func (*RealPango) CairoUpdateLayout(cr cairo.Context, v pango.Layout) {
-	CairoUpdateLayout(cr.(*cairo_impl.Context), v.(*Layout))
+	CairoUpdateLayout(cairo_impl.CastToContext(cr), toLayout(v))
 }
 
 func (*RealPango) ContextNew() pango.Context {
@@ -72,7 +72,7 @@ func (*RealPango) GravityToRotation(gravity pango.Gravity) float64 {
 }
 
 func (*RealPango) LayoutNew(context pango.Context) pango.Layout {
-	return LayoutNew(context.(*Context))
+	return LayoutNew(toContext(context))
 }
 
 func (*RealPango) RectangleNew(x int, y int, width int, height int) pango.Rectangle {

@@ -7,7 +7,7 @@ type RealCairo struct{}
 var Real = &RealCairo{}
 
 func (*RealCairo) Create(target cairo.Surface) cairo.Context {
-	return Create(target.(*Surface))
+	return Create(toSurface(target))
 }
 
 func (*RealCairo) NewSurface(s uintptr, needsRef bool) cairo.Surface {

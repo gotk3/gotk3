@@ -116,7 +116,7 @@ func (v *Rectangle) native() *C.PangoRectangle {
 //void pango_extents_to_pixels (PangoRectangle *inclusive,
 //			      PangoRectangle *nearest);
 func (inclusive *Rectangle) ExtentsToPixels(nearest pango.Rectangle) {
-	C.pango_extents_to_pixels(inclusive.native(), nearest.(*Rectangle).native())
+	C.pango_extents_to_pixels(inclusive.native(), toRectangle(nearest).native())
 }
 
 func RectangleNew(x, y, width, height int) *Rectangle {

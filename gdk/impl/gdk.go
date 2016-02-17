@@ -325,11 +325,11 @@ func marshalDevice(p uintptr) (interface{}, error) {
 func (v *Device) Grab(w gdk.Window, ownership gdk.GrabOwnership, owner_events bool, event_mask gdk.EventMask, cursor gdk.Cursor, time uint32) gdk.GrabStatus {
 	ret := C.gdk_device_grab(
 		v.native(),
-		w.(*Window).native(),
+		CastToWindow(w).native(),
 		C.GdkGrabOwnership(ownership),
 		gbool(owner_events),
 		C.GdkEventMask(event_mask),
-		cursor.(*Cursor).native(),
+		castToCursor(cursor).native(),
 		C.guint32(time),
 	)
 	return gdk.GrabStatus(ret)
@@ -553,7 +553,7 @@ func (v *Display) GetDeviceManager() (gdk.DeviceManager, error) {
 
 // DeviceIsGrabbed() is a wrapper around gdk_display_device_is_grabbed().
 func (v *Display) DeviceIsGrabbed(device gdk.Device) bool {
-	c := C.gdk_display_device_is_grabbed(v.native(), device.(*Device).native())
+	c := C.gdk_display_device_is_grabbed(v.native(), CastToDevice(device).native())
 	return gobool(c)
 }
 
@@ -607,7 +607,7 @@ func (v *Display) PeekEvent() (gdk.Event, error) {
 
 // PutEvent() is a wrapper around gdk_display_put_event().
 func (v *Display) PutEvent(event gdk.Event) {
-	C.gdk_display_put_event(v.native(), event.(*Event).native())
+	C.gdk_display_put_event(v.native(), castToEvent(event).native())
 }
 
 // HasPending() is a wrapper around gdk_display_has_pending().

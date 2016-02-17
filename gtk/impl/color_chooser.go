@@ -77,7 +77,7 @@ func (v *ColorChooser) GetRGBA() gdk.RGBA {
 
 // SetRGBA() is a wrapper around gtk_color_chooser_set_rgba().
 func (v *ColorChooser) SetRGBA(gdkColor gdk.RGBA) {
-	C.gtk_color_chooser_set_rgba(v.native(), (*C.GdkRGBA)(unsafe.Pointer(gdkColor.(*gdk_impl.RGBA).Native())))
+	C.gtk_color_chooser_set_rgba(v.native(), (*C.GdkRGBA)(unsafe.Pointer(gdk_impl.CastToRGBA(gdkColor).Native())))
 }
 
 // GetUseAlpha() is a wrapper around gtk_color_chooser_get_use_alpha().
@@ -95,7 +95,7 @@ func (v *ColorChooser) AddPalette(orientation gtk.Orientation, colors_per_line i
 	n_colors := len(colors)
 	var c_colors []C.GdkRGBA
 	for _, c := range colors {
-		c_colors = append(c_colors, *(*C.GdkRGBA)(unsafe.Pointer(c.(*gdk_impl.RGBA).Native())))
+		c_colors = append(c_colors, *(*C.GdkRGBA)(unsafe.Pointer(gdk_impl.CastToRGBA(c).Native())))
 	}
 	C.gtk_color_chooser_add_palette(
 		v.native(),

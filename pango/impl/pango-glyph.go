@@ -23,11 +23,10 @@ package impl
 // #include "pango.go.h"
 // #include <stdlib.h>
 import "C"
-import (
-	//	"github.com/andre-hub/gotk3/glib"
-	//	"github.com/andre-hub/gotk3/cairo"
-	"unsafe"
-)
+import
+//	"github.com/andre-hub/gotk3/glib"
+//	"github.com/andre-hub/gotk3/cairo"
+"unsafe"
 
 // GlyphGeometry is a representation of PangoGlyphGeometry.
 type GlyphGeometry struct {

@@ -142,7 +142,7 @@ func (v *Layout) GetContext() pango.Context {
 //void           pango_layout_set_attributes (PangoLayout    *layout,
 //					    PangoAttrList  *attrs);
 func (v *Layout) SetAttributes(attrs pango.AttrList) {
-	C.pango_layout_set_attributes(v.native(), attrs.(*AttrList).native())
+	C.pango_layout_set_attributes(v.native(), toAttrList(attrs).native())
 }
 
 //PangoAttrList *pango_layout_get_attributes (PangoLayout    *layout);
@@ -203,7 +203,7 @@ func (v *Layout)SetMarkupWithAccel (text string, length int, accel_marker, accel
 //						  const PangoFontDescription *desc);
 
 func (v *Layout) SetFontDescription(desc pango.FontDescription) {
-	C.pango_layout_set_font_description(v.native(), desc.(*FontDescription).native())
+	C.pango_layout_set_font_description(v.native(), toFontDescription(desc).native())
 }
 
 //const PangoFontDescription *pango_layout_get_font_description (PangoLayout *layout);

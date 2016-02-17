@@ -1104,7 +1104,7 @@ func (b *Builder) AddFromString(str string) error {
 //       // object not found
 //       return
 //   }
-//   if w, ok := obj.(*gtk.Window); ok {
+//   if w, ok := castToWindow(obj); ok {
 //       // do stuff with w here
 //   } else {
 //       // not a *gtk.Window
@@ -2099,7 +2099,7 @@ func (v *Clipboard) SetText(text string) {
 
 // WaitIsRichTextAvailable is a wrapper around gtk_clipboard_wait_is_rich_text_available
 func (v *Clipboard) WaitIsRichTextAvailable(buf gtk.TextBuffer) bool {
-	c := C.gtk_clipboard_wait_is_rich_text_available(v.native(), buf.(*TextBuffer).native())
+	c := C.gtk_clipboard_wait_is_rich_text_available(v.native(), castToTextBuffer(buf).native())
 	return gobool(c)
 }
 
@@ -2117,7 +2117,7 @@ func (v *Clipboard) WaitIsImageAvailable() bool {
 
 // SetImage is a wrapper around gtk_clipboard_set_image
 func (v *Clipboard) SetImage(pixbuf gdk.Pixbuf) {
-	C.gtk_clipboard_set_image(v.native(), (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.(*gdk_impl.Pixbuf).Native())))
+	C.gtk_clipboard_set_image(v.native(), (*C.GdkPixbuf)(unsafe.Pointer(gdk_impl.CastToPixbuf(pixbuf).Native())))
 }
 
 // WaitForImage is a wrapper around gtk_clipboard_wait_for_image
@@ -2226,7 +2226,7 @@ func (v *Container) GetFocusVAdjustment() gtk.Adjustment {
 // SetFocusVAdjustment is a wrapper around
 // gtk_container_set_focus_vadjustment().
 func (v *Container) SetFocusVAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_container_set_focus_vadjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_container_set_focus_vadjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 // GetFocusHAdjustment is a wrapper around
@@ -2243,7 +2243,7 @@ func (v *Container) GetFocusHAdjustment() gtk.Adjustment {
 // SetFocusHAdjustment is a wrapper around
 // gtk_container_set_focus_hadjustment().
 func (v *Container) SetFocusHAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_container_set_focus_hadjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_container_set_focus_hadjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 // ChildType is a wrapper around gtk_container_child_type().
@@ -2291,7 +2291,7 @@ func (v *Container) SetBorderWidth(borderWidth uint) {
 
 // PropagateDraw is a wrapper around gtk_container_propagate_draw().
 func (v *Container) PropagateDraw(child gtk.Widget, cr cairo.Context) {
-	context := (*C.cairo_t)(unsafe.Pointer(cr.(*cairo_impl.Context).Native()))
+	context := (*C.cairo_t)(unsafe.Pointer(cairo_impl.CastToContext(cr).Native()))
 	C.gtk_container_propagate_draw(v.native(), child.(IWidget).toWidget(), context)
 }
 
@@ -2322,7 +2322,7 @@ func (v *Container) SetFocusChain(focusableWidgets []gtk.Widget) {
 		data := uintptr(unsafe.Pointer(w.(IWidget).toWidget()))
 		list = list.Append(data)
 	}
-	glist := (*C.GList)(unsafe.Pointer(list.(*glib_impl.List)))
+	glist := (*C.GList)(unsafe.Pointer(glib_impl.CastToList(list)))
 	C.gtk_container_set_focus_chain(v.native(), glist)
 }
 
@@ -2781,7 +2781,7 @@ func (v *Entry) GetBuffer() (gtk.EntryBuffer, error) {
 
 // SetBuffer() is a wrapper around gtk_entry_set_buffer().
 func (v *Entry) SetBuffer(buffer gtk.EntryBuffer) {
-	C.gtk_entry_set_buffer(v.native(), buffer.(*EntryBuffer).native())
+	C.gtk_entry_set_buffer(v.native(), castToEntryBuffer(buffer).native())
 }
 
 // SetText() is a wrapper around gtk_entry_set_text().
@@ -2964,7 +2964,7 @@ func (v *Entry) GetVisibility() bool {
 
 // SetCompletion() is a wrapper around gtk_entry_set_completion().
 func (v *Entry) SetCompletion(completion gtk.EntryCompletion) {
-	C.gtk_entry_set_completion(v.native(), completion.(*EntryCompletion).native())
+	C.gtk_entry_set_completion(v.native(), castToEntryCompletion(completion).native())
 }
 
 // GetCompletion() is a wrapper around gtk_entry_get_completion().
@@ -2981,7 +2981,7 @@ func (v *Entry) GetCompletion() (gtk.EntryCompletion, error) {
 // SetCursorHAdjustment() is a wrapper around
 // gtk_entry_set_cursor_hadjustment().
 func (v *Entry) SetCursorHAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_entry_set_cursor_hadjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_entry_set_cursor_hadjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 // GetCursorHAdjustment() is a wrapper around
@@ -3553,7 +3553,7 @@ func (v *FileChooser) GetPreviewFilename() string {
 
 // AddFilter is a wrapper around gtk_file_chooser_add_filter().
 func (v *FileChooser) AddFilter(filter gtk.FileFilter) {
-	C.gtk_file_chooser_add_filter(v.native(), filter.(*FileFilter).native())
+	C.gtk_file_chooser_add_filter(v.native(), castToFileFilter(filter).native())
 }
 
 // GetURI is a wrapper around gtk_file_chooser_get_uri().
@@ -4193,12 +4193,12 @@ func (v *IconView) SetModel(model gtk.TreeModel) {
 
 // SelectPath is a wrapper around gtk_icon_view_select_path().
 func (v *IconView) SelectPath(path gtk.TreePath) {
-	C.gtk_icon_view_select_path(v.native(), path.(*TreePath).native())
+	C.gtk_icon_view_select_path(v.native(), castToTreePath(path).native())
 }
 
 // ScrollToPath is a wrapper around gtk_icon_view_scroll_to_path().
 func (v *IconView) ScrollToPath(path gtk.TreePath, useAlign bool, rowAlign, colAlign float64) {
-	C.gtk_icon_view_scroll_to_path(v.native(), path.(*TreePath).native(), gbool(useAlign),
+	C.gtk_icon_view_scroll_to_path(v.native(), castToTreePath(path).native(), gbool(useAlign),
 		C.gfloat(rowAlign), C.gfloat(colAlign))
 }
 
@@ -4327,7 +4327,7 @@ func (v *Image) SetFromResource(resourcePath string) {
 
 // SetFromFixbuf is a wrapper around gtk_image_set_from_pixbuf().
 func (v *Image) SetFromPixbuf(pixbuf gdk.Pixbuf) {
-	pbptr := (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.(*gdk_impl.Pixbuf).Native()))
+	pbptr := (*C.GdkPixbuf)(unsafe.Pointer(gdk_impl.CastToPixbuf(pixbuf).Native()))
 	C.gtk_image_set_from_pixbuf(v.native(), pbptr)
 }
 
@@ -4594,7 +4594,7 @@ func ListStoreNew(types ...glib.Type) (*ListStore, error) {
 
 // Remove is a wrapper around gtk_list_store_remove().
 func (v *ListStore) Remove(iter gtk.TreeIter) bool {
-	c := C.gtk_list_store_remove(v.native(), castOrNilTreeIter(iter).native())
+	c := C.gtk_list_store_remove(v.native(), castToTreeIter(iter).native())
 	return gobool(c)
 }
 
@@ -4618,7 +4618,7 @@ func (v *ListStore) Set2(iter gtk.TreeIter, columns []int, values []interface{})
 		return errors.New("columns and values lengths do not match")
 	}
 	for i, val := range values {
-		v.SetValue(castOrNilTreeIter(iter), columns[i], val)
+		v.SetValue(castToTreeIter(iter), columns[i], val)
 	}
 	return nil
 }
@@ -4628,7 +4628,7 @@ func (v *ListStore) SetValue(iter gtk.TreeIter, column int, value interface{}) e
 	switch value.(type) {
 	case *gdk_impl.Pixbuf:
 		pix := value.(*gdk_impl.Pixbuf)
-		C._gtk_list_store_set(v.native(), castOrNilTreeIter(iter).native(), C.gint(column), unsafe.Pointer(pix.Native()))
+		C._gtk_list_store_set(v.native(), castToTreeIter(iter).native(), C.gint(column), unsafe.Pointer(pix.Native()))
 
 	default:
 		gv, err := glib_impl.GValue(value)
@@ -4636,7 +4636,7 @@ func (v *ListStore) SetValue(iter gtk.TreeIter, column int, value interface{}) e
 			return err
 		}
 
-		C.gtk_list_store_set_value(v.native(), castOrNilTreeIter(iter).native(),
+		C.gtk_list_store_set_value(v.native(), castToTreeIter(iter).native(),
 			C.gint(column),
 			(*C.GValue)(unsafe.Pointer(gv.Native())))
 	}
@@ -4679,22 +4679,15 @@ func (v *ListStore) InsertWithValues(iter *TreeIter, position int, columns []int
 // InsertBefore() is a wrapper around gtk_list_store_insert_before().
 func (v *ListStore) InsertBefore(sibling gtk.TreeIter) gtk.TreeIter {
 	var ti C.GtkTreeIter
-	C.gtk_list_store_insert_before(v.native(), &ti, castOrNilTreeIter(sibling).native())
+	C.gtk_list_store_insert_before(v.native(), &ti, castToTreeIter(sibling).native())
 	iter := &TreeIter{ti}
 	return iter
-}
-
-func castOrNilTreeIter(s gtk.TreeIter) *TreeIter {
-	if s == nil {
-		return nil
-	}
-	return s.(*TreeIter)
 }
 
 // InsertAfter() is a wrapper around gtk_list_store_insert_after().
 func (v *ListStore) InsertAfter(sibling gtk.TreeIter) gtk.TreeIter {
 	var ti C.GtkTreeIter
-	C.gtk_list_store_insert_after(v.native(), &ti, castOrNilTreeIter(sibling).native())
+	C.gtk_list_store_insert_after(v.native(), &ti, castToTreeIter(sibling).native())
 	iter := &TreeIter{ti}
 	return iter
 }
@@ -4722,7 +4715,7 @@ func (v *ListStore) Clear() {
 
 // IterIsValid() is a wrapper around gtk_list_store_iter_is_valid().
 func (v *ListStore) IterIsValid(iter gtk.TreeIter) bool {
-	c := C.gtk_list_store_iter_is_valid(v.native(), castOrNilTreeIter(iter).native())
+	c := C.gtk_list_store_iter_is_valid(v.native(), castToTreeIter(iter).native())
 	return gobool(c)
 }
 
@@ -4734,19 +4727,19 @@ func (v *ListStore) Reorder(newOrder []int) {
 
 // Swap() is a wrapper around gtk_list_store_swap().
 func (v *ListStore) Swap(a, b gtk.TreeIter) {
-	C.gtk_list_store_swap(v.native(), castOrNilTreeIter(a).native(), castOrNilTreeIter(b).native())
+	C.gtk_list_store_swap(v.native(), castToTreeIter(a).native(), castToTreeIter(b).native())
 }
 
 // MoveBefore() is a wrapper around gtk_list_store_move_before().
 func (v *ListStore) MoveBefore(iter, position gtk.TreeIter) {
-	C.gtk_list_store_move_before(v.native(), castOrNilTreeIter(position).native(),
-		castOrNilTreeIter(position).native())
+	C.gtk_list_store_move_before(v.native(), castToTreeIter(position).native(),
+		castToTreeIter(position).native())
 }
 
 // MoveAfter() is a wrapper around gtk_list_store_move_after().
 func (v *ListStore) MoveAfter(iter, position gtk.TreeIter) {
-	C.gtk_list_store_move_after(v.native(), castOrNilTreeIter(position).native(),
-		castOrNilTreeIter(position).native())
+	C.gtk_list_store_move_after(v.native(), castToTreeIter(position).native(),
+		castToTreeIter(position).native())
 }
 
 /*
@@ -5800,7 +5793,7 @@ func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label s
 
 // SetGroup is a wrapper around gtk_radio_button_set_group().
 func (v *RadioButton) SetGroup(group glib.SList) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.(*glib_impl.SList).Native()))
+	gslist := (*C.GSList)(unsafe.Pointer(glib_impl.CastToSList(group).Native()))
 	C.gtk_radio_button_set_group(v.native(), gslist)
 }
 
@@ -5815,7 +5808,7 @@ func (v *RadioButton) GetGroup() (glib.SList, error) {
 
 // JoinGroup is a wrapper around gtk_radio_button_join_group().
 func (v *RadioButton) JoinGroup(groupSource gtk.RadioButton) {
-	C.gtk_radio_button_join_group(v.native(), groupSource.(*RadioButton).native())
+	C.gtk_radio_button_join_group(v.native(), castToRadioButton(groupSource).native())
 }
 
 /*
@@ -5921,7 +5914,7 @@ func RadioMenuItemNewWithMnemonicFromWidget(group *RadioMenuItem, label string) 
 
 // SetGroup is a wrapper around gtk_radio_menu_item_set_group().
 func (v *RadioMenuItem) SetGroup(group glib.SList) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.(*glib_impl.SList).Native()))
+	gslist := (*C.GSList)(unsafe.Pointer(glib_impl.CastToSList(group).Native()))
 	C.gtk_radio_menu_item_set_group(v.native(), gslist)
 }
 
@@ -6024,11 +6017,11 @@ func (v *RecentChooser) GetCurrentUri() string {
 }
 
 func (v *RecentChooser) AddFilter(filter gtk.RecentFilter) {
-	C.gtk_recent_chooser_add_filter(v.native(), filter.(*RecentFilter).native())
+	C.gtk_recent_chooser_add_filter(v.native(), castToRecentFilter(filter).native())
 }
 
 func (v *RecentChooser) RemoveFilter(filter gtk.RecentFilter) {
-	C.gtk_recent_chooser_remove_filter(v.native(), filter.(*RecentFilter).native())
+	C.gtk_recent_chooser_remove_filter(v.native(), castToRecentFilter(filter).native())
 }
 
 /*
@@ -6254,7 +6247,7 @@ func (v *ScaleButton) GetValue() float64 {
 
 // SetAdjustment() is a wrapper around gtk_scale_button_set_adjustment().
 func (v *ScaleButton) SetAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_scale_button_set_adjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_scale_button_set_adjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 // SetValue() is a wrapper around gtk_scale_button_set_value().
@@ -6301,7 +6294,7 @@ func (v *Scrollable) toScrollable() *C.GtkScrollable {
 
 // SetHAdjustment is a wrapper around gtk_scrollable_set_hadjustment().
 func (v *Scrollable) SetHAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_scrollable_set_hadjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_scrollable_set_hadjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 // GetHAdjustment is a wrapper around gtk_scrollable_get_hadjustment().
@@ -6315,7 +6308,7 @@ func (v *Scrollable) GetHAdjustment() (gtk.Adjustment, error) {
 
 // SetVAdjustment is a wrapper around gtk_scrollable_set_vadjustment().
 func (v *Scrollable) SetVAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_scrollable_set_vadjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_scrollable_set_vadjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 // GetVAdjustment is a wrapper around gtk_scrollable_get_vadjustment().
@@ -6420,7 +6413,7 @@ func (v *ScrolledWindow) GetHAdjustment() gtk.Adjustment {
 
 // SetHAdjustment is a wrapper around gtk_scrolled_window_set_hadjustment().
 func (v *ScrolledWindow) SetHAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_scrolled_window_set_hadjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_scrolled_window_set_hadjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 // GetVAdjustment() is a wrapper around gtk_scrolled_window_get_vadjustment().
@@ -6434,7 +6427,7 @@ func (v *ScrolledWindow) GetVAdjustment() gtk.Adjustment {
 
 // SetVAdjustment is a wrapper around gtk_scrolled_window_set_vadjustment().
 func (v *ScrolledWindow) SetVAdjustment(adjustment gtk.Adjustment) {
-	C.gtk_scrolled_window_set_vadjustment(v.native(), adjustment.(*Adjustment).native())
+	C.gtk_scrolled_window_set_vadjustment(v.native(), castToAdjustment(adjustment).native())
 }
 
 /*
@@ -6670,13 +6663,13 @@ func wrapSpinButton(obj *glib_impl.Object) *SpinButton {
 
 // Configure() is a wrapper around gtk_spin_button_configure().
 func (v *SpinButton) Configure(adjustment gtk.Adjustment, climbRate float64, digits uint) {
-	C.gtk_spin_button_configure(v.native(), adjustment.(*Adjustment).native(),
+	C.gtk_spin_button_configure(v.native(), castToAdjustment(adjustment).native(),
 		C.gdouble(climbRate), C.guint(digits))
 }
 
 // SpinButtonNew() is a wrapper around gtk_spin_button_new().
 func SpinButtonNew(adjustment gtk.Adjustment, climbRate float64, digits uint) (gtk.SpinButton, error) {
-	c := C.gtk_spin_button_new(adjustment.(*Adjustment).native(),
+	c := C.gtk_spin_button_new(castToAdjustment(adjustment).native(),
 		C.gdouble(climbRate), C.guint(digits))
 	if c == nil {
 		return nil, nilPtrErr
@@ -6983,7 +6976,7 @@ func (v *TextView) GetBuffer() (gtk.TextBuffer, error) {
 
 // SetBuffer is a wrapper around gtk_text_view_set_buffer().
 func (v *TextView) SetBuffer(buffer gtk.TextBuffer) {
-	C.gtk_text_view_set_buffer(v.native(), buffer.(*TextBuffer).native())
+	C.gtk_text_view_set_buffer(v.native(), castToTextBuffer(buffer).native())
 }
 
 // SetEditable is a wrapper around gtk_text_view_set_editable().
@@ -7190,9 +7183,9 @@ func (v *TextTag) SetPriority(priority int) {
 // Event() is a wrapper around gtk_text_tag_event().
 func (v *TextTag) Event(eventObject glib.Object, event gdk.Event, iter gtk.TextIter) bool {
 	ok := C.gtk_text_tag_event(v.native(),
-		(*C.GObject)(unsafe.Pointer(eventObject.(*glib_impl.Object).Native())),
-		(*C.GdkEvent)(unsafe.Pointer(event.(*gdk_impl.Event).Native())),
-		(*C.GtkTextIter)(iter.(*TextIter)),
+		(*C.GObject)(unsafe.Pointer(glib_impl.CastToObject(eventObject).Native())),
+		(*C.GdkEvent)(unsafe.Pointer(gdk_impl.CastToEvent(event).Native())),
+		(*C.GtkTextIter)(castToTextIter(iter)),
 	)
 	return gobool(ok)
 }
@@ -7234,7 +7227,7 @@ func TextTagTableNew() (*TextTagTable, error) {
 
 // Add() is a wrapper around gtk_text_tag_table_add().
 func (v *TextTagTable) Add(tag gtk.TextTag) {
-	C.gtk_text_tag_table_add(v.native(), tag.(*TextTag).native())
+	C.gtk_text_tag_table_add(v.native(), castToTextTag(tag).native())
 	//return gobool(c) // TODO version-separate
 }
 
@@ -7251,7 +7244,7 @@ func (v *TextTagTable) Lookup(name string) (gtk.TextTag, error) {
 
 // Remove() is a wrapper around gtk_text_tag_table_remove().
 func (v *TextTagTable) Remove(tag gtk.TextTag) {
-	C.gtk_text_tag_table_remove(v.native(), tag.(*TextTag).native())
+	C.gtk_text_tag_table_remove(v.native(), castToTextTag(tag).native())
 }
 
 /*
@@ -7295,7 +7288,7 @@ func TextBufferNew(table *TextTagTable) (*TextBuffer, error) {
 
 // ApplyTag() is a wrapper around gtk_text_buffer_apply_tag().
 func (v *TextBuffer) ApplyTag(tag gtk.TextTag, start, end gtk.TextIter) {
-	C.gtk_text_buffer_apply_tag(v.native(), tag.(*TextTag).native(), (*C.GtkTextIter)(start.(*TextIter)), (*C.GtkTextIter)(end.(*TextIter)))
+	C.gtk_text_buffer_apply_tag(v.native(), castToTextTag(tag).native(), (*C.GtkTextIter)(castToTextIter(start)), (*C.GtkTextIter)(castToTextIter(end)))
 }
 
 // ApplyTagByName() is a wrapper around gtk_text_buffer_apply_tag_by_name().
@@ -7303,17 +7296,17 @@ func (v *TextBuffer) ApplyTagByName(name string, start, end gtk.TextIter) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_text_buffer_apply_tag_by_name(v.native(), (*C.gchar)(cstr),
-		(*C.GtkTextIter)(start.(*TextIter)), (*C.GtkTextIter)(end.(*TextIter)))
+		(*C.GtkTextIter)(castToTextIter(start)), (*C.GtkTextIter)(castToTextIter(end)))
 }
 
 // Delete() is a wrapper around gtk_text_buffer_delete().
 func (v *TextBuffer) Delete(start, end gtk.TextIter) {
-	C.gtk_text_buffer_delete(v.native(), (*C.GtkTextIter)(start.(*TextIter)), (*C.GtkTextIter)(end.(*TextIter)))
+	C.gtk_text_buffer_delete(v.native(), (*C.GtkTextIter)(castToTextIter(start)), (*C.GtkTextIter)(castToTextIter(end)))
 }
 
 func (v *TextBuffer) GetBounds() (start, end gtk.TextIter) {
 	start, end = new(TextIter), new(TextIter)
-	C.gtk_text_buffer_get_bounds(v.native(), (*C.GtkTextIter)(start.(*TextIter)), (*C.GtkTextIter)(end.(*TextIter)))
+	C.gtk_text_buffer_get_bounds(v.native(), (*C.GtkTextIter)(castToTextIter(start)), (*C.GtkTextIter)(castToTextIter(end)))
 	return
 }
 
@@ -7365,7 +7358,7 @@ func (v *TextBuffer) GetTagTable() (gtk.TextTagTable, error) {
 
 func (v *TextBuffer) GetText(start, end gtk.TextIter, includeHiddenChars bool) (string, error) {
 	c := C.gtk_text_buffer_get_text(
-		v.native(), (*C.GtkTextIter)(start.(*TextIter)), (*C.GtkTextIter)(end.(*TextIter)), gbool(includeHiddenChars),
+		v.native(), (*C.GtkTextIter)(castToTextIter(start)), (*C.GtkTextIter)(castToTextIter(end)), gbool(includeHiddenChars),
 	)
 	if c == nil {
 		return "", nilPtrErr
@@ -7379,7 +7372,7 @@ func (v *TextBuffer) GetText(start, end gtk.TextIter, includeHiddenChars bool) (
 func (v *TextBuffer) Insert(iter gtk.TextIter, text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_text_buffer_insert(v.native(), (*C.GtkTextIter)(iter.(*TextIter)), (*C.gchar)(cstr), C.gint(len(text)))
+	C.gtk_text_buffer_insert(v.native(), (*C.GtkTextIter)(castToTextIter(iter)), (*C.gchar)(cstr), C.gint(len(text)))
 }
 
 // InsertAtCursor() is a wrapper around gtk_text_buffer_insert_at_cursor().
@@ -7391,7 +7384,7 @@ func (v *TextBuffer) InsertAtCursor(text string) {
 
 // RemoveTag() is a wrapper around gtk_text_buffer_remove_tag().
 func (v *TextBuffer) RemoveTag(tag gtk.TextTag, start, end gtk.TextIter) {
-	C.gtk_text_buffer_remove_tag(v.native(), tag.(*TextTag).native(), (*C.GtkTextIter)(start.(*TextIter)), (*C.GtkTextIter)(end.(*TextIter)))
+	C.gtk_text_buffer_remove_tag(v.native(), castToTextTag(tag).native(), (*C.GtkTextIter)(castToTextIter(start)), (*C.GtkTextIter)(castToTextIter(end)))
 }
 
 // SetModified() is a wrapper around gtk_text_buffer_set_modified().
@@ -8028,7 +8021,7 @@ func (v *TreeModel) GetColumnType(index int) glib.Type {
 // GetIter() is a wrapper around gtk_tree_model_get_iter().
 func (v *TreeModel) GetIter(path gtk.TreePath) (gtk.TreeIter, error) {
 	var iter C.GtkTreeIter
-	c := C.gtk_tree_model_get_iter(v.native(), &iter, path.(*TreePath).native())
+	c := C.gtk_tree_model_get_iter(v.native(), &iter, castToTreePath(path).native())
 	if !gobool(c) {
 		return nil, errors.New("Unable to set iterator")
 	}
@@ -8064,7 +8057,7 @@ func (v *TreeModel) GetIterFirst() (gtk.TreeIter, bool) {
 
 // GetPath() is a wrapper around gtk_tree_model_get_path().
 func (v *TreeModel) GetPath(iter gtk.TreeIter) (gtk.TreePath, error) {
-	c := C.gtk_tree_model_get_path(v.native(), castOrNilTreeIter(iter).native())
+	c := C.gtk_tree_model_get_path(v.native(), castToTreeIter(iter).native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -8081,7 +8074,7 @@ func (v *TreeModel) GetValue(iter gtk.TreeIter, column int) (glib.Value, error) 
 	}
 	C.gtk_tree_model_get_value(
 		(*C.GtkTreeModel)(unsafe.Pointer(v.native())),
-		castOrNilTreeIter(iter).native(),
+		castToTreeIter(iter).native(),
 		C.gint(column),
 		(*C.GValue)(unsafe.Pointer(val.Native())))
 	return val, nil
@@ -8089,13 +8082,13 @@ func (v *TreeModel) GetValue(iter gtk.TreeIter, column int) (glib.Value, error) 
 
 // IterNext() is a wrapper around gtk_tree_model_iter_next().
 func (v *TreeModel) IterNext(iter gtk.TreeIter) bool {
-	c := C.gtk_tree_model_iter_next(v.native(), castOrNilTreeIter(iter).native())
+	c := C.gtk_tree_model_iter_next(v.native(), castToTreeIter(iter).native())
 	return gobool(c)
 }
 
 // IterPrevious is a wrapper around gtk_tree_model_iter_previous().
 func (v *TreeModel) IterPrevious(iter gtk.TreeIter) bool {
-	c := C.gtk_tree_model_iter_previous(v.native(), castOrNilTreeIter(iter).native())
+	c := C.gtk_tree_model_iter_previous(v.native(), castToTreeIter(iter).native())
 	return gobool(c)
 }
 
@@ -8103,9 +8096,9 @@ func (v *TreeModel) IterPrevious(iter gtk.TreeIter) bool {
 func (v *TreeModel) IterChildren(iter, child gtk.TreeIter) bool {
 	var cIter, cChild *C.GtkTreeIter
 	if iter != nil {
-		cIter = castOrNilTreeIter(iter).native()
+		cIter = castToTreeIter(iter).native()
 	}
-	cChild = castOrNilTreeIter(child).native()
+	cChild = castToTreeIter(child).native()
 	c := C.gtk_tree_model_iter_children(v.native(), cChild, cIter)
 	return gobool(c)
 }
@@ -8114,7 +8107,7 @@ func (v *TreeModel) IterChildren(iter, child gtk.TreeIter) bool {
 func (v *TreeModel) IterNChildren(iter gtk.TreeIter) int {
 	var cIter *C.GtkTreeIter
 	if iter != nil {
-		cIter = castOrNilTreeIter(iter).native()
+		cIter = castToTreeIter(iter).native()
 	}
 	c := C.gtk_tree_model_iter_n_children(v.native(), cIter)
 	return int(c)
@@ -8220,12 +8213,12 @@ func (v *TreeSelection) GetSelected() (model gtk.TreeModel, iter gtk.TreeIter, o
 
 // SelectPath is a wrapper around gtk_tree_selection_select_path().
 func (v *TreeSelection) SelectPath(path gtk.TreePath) {
-	C.gtk_tree_selection_select_path(v.native(), path.(*TreePath).native())
+	C.gtk_tree_selection_select_path(v.native(), castToTreePath(path).native())
 }
 
 // UnselectPath is a wrapper around gtk_tree_selection_unselect_path().
 func (v *TreeSelection) UnselectPath(path gtk.TreePath) {
-	C.gtk_tree_selection_unselect_path(v.native(), path.(*TreePath).native())
+	C.gtk_tree_selection_unselect_path(v.native(), castToTreePath(path).native())
 }
 
 // GetSelectedRows is a wrapper around gtk_tree_selection_get_selected_rows().
@@ -8267,7 +8260,7 @@ func (v *TreeSelection) CountSelectedRows() int {
 
 // SelectIter is a wrapper around gtk_tree_selection_select_iter().
 func (v *TreeSelection) SelectIter(iter gtk.TreeIter) {
-	C.gtk_tree_selection_select_iter(v.native(), castOrNilTreeIter(iter).native())
+	C.gtk_tree_selection_select_iter(v.native(), castToTreeIter(iter).native())
 }
 
 // SetMode() is a wrapper around gtk_tree_selection_set_mode().
@@ -8340,7 +8333,7 @@ func (v *TreeStore) Append(parent gtk.TreeIter) gtk.TreeIter {
 	var ti C.GtkTreeIter
 	var cParent *C.GtkTreeIter
 	if parent != nil {
-		cParent = castOrNilTreeIter(parent).native()
+		cParent = castToTreeIter(parent).native()
 	}
 	C.gtk_tree_store_append(v.native(), &ti, cParent)
 	iter := &TreeIter{ti}
@@ -8352,7 +8345,7 @@ func (v *TreeStore) Insert(parent gtk.TreeIter, position int) gtk.TreeIter {
 	var ti C.GtkTreeIter
 	var cParent *C.GtkTreeIter
 	if parent != nil {
-		cParent = castOrNilTreeIter(parent).native()
+		cParent = castToTreeIter(parent).native()
 	}
 	C.gtk_tree_store_insert(v.native(), &ti, cParent, C.gint(position))
 	iter := &TreeIter{ti}
@@ -8364,14 +8357,14 @@ func (v *TreeStore) SetValue(iter gtk.TreeIter, column int, value interface{}) e
 	switch value.(type) {
 	case *gdk_impl.Pixbuf:
 		pix := value.(*gdk_impl.Pixbuf)
-		C._gtk_tree_store_set(v.native(), castOrNilTreeIter(iter).native(), C.gint(column), unsafe.Pointer(pix.Native()))
+		C._gtk_tree_store_set(v.native(), castToTreeIter(iter).native(), C.gint(column), unsafe.Pointer(pix.Native()))
 
 	default:
 		gv, err := glib_impl.GValue(value)
 		if err != nil {
 			return err
 		}
-		C.gtk_tree_store_set_value(v.native(), castOrNilTreeIter(iter).native(),
+		C.gtk_tree_store_set_value(v.native(), castToTreeIter(iter).native(),
 			C.gint(column),
 			(*C.GValue)(C.gpointer(gv.Native())))
 	}
@@ -8382,7 +8375,7 @@ func (v *TreeStore) SetValue(iter gtk.TreeIter, column int, value interface{}) e
 func (v *TreeStore) Remove(iter gtk.TreeIter) bool {
 	var ti *C.GtkTreeIter
 	if iter != nil {
-		ti = castOrNilTreeIter(iter).native()
+		ti = castToTreeIter(iter).native()
 	}
 	return 0 != C.gtk_tree_store_remove(v.native(), ti)
 }
@@ -8447,7 +8440,7 @@ func ViewportNew(hadjustment, vadjustment *Adjustment) (*Viewport, error) {
 }
 
 func (v *Viewport) SetHAdjustment(adjustment gtk.Adjustment) {
-	wrapScrollable(v.Object).SetHAdjustment(adjustment.(*Adjustment))
+	wrapScrollable(v.Object).SetHAdjustment(castToAdjustment(adjustment))
 }
 
 func (v *Viewport) GetHAdjustment() (gtk.Adjustment, error) {
@@ -8455,7 +8448,7 @@ func (v *Viewport) GetHAdjustment() (gtk.Adjustment, error) {
 }
 
 func (v *Viewport) SetVAdjustment(adjustment gtk.Adjustment) {
-	wrapScrollable(v.Object).SetVAdjustment(adjustment.(*Adjustment))
+	wrapScrollable(v.Object).SetVAdjustment(castToAdjustment(adjustment))
 }
 
 func (v *Viewport) GetVAdjustment() (gtk.Adjustment, error) {

@@ -534,7 +534,7 @@ func getLastIter(ls *ListStore) (gtk.TreeIter, bool) {
 		return iterx, listIsntEmpty
 	}
 
-	iter := iterx.(*TreeIter)
+	iter := castToTreeIter(iterx)
 	for {
 		temp := *iter
 		last := &temp
@@ -573,7 +573,7 @@ func TestListStoreInsertBefore(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *(firstIter.(*TreeIter)) != *(newIter.(*TreeIter)) {
+	if *(castToTreeIter(firstIter)) != *(castToTreeIter(newIter)) {
 		t.Fatal("Expected the new iter added to front of list")
 	}
 }
@@ -595,7 +595,7 @@ func TestListStoreInsertBefore_WhenNilSibling(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *(lastIter.(*TreeIter)) != *(newIter.(*TreeIter)) {
+	if *(castToTreeIter(lastIter)) != *(castToTreeIter(newIter)) {
 		t.Fatal("Expected the new iter added to end of list")
 	}
 }
@@ -615,7 +615,7 @@ func TestListStoreInsertAfter(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *(lastIter.(*TreeIter)) != *(newIter.(*TreeIter)) {
+	if *(castToTreeIter(lastIter)) != *(castToTreeIter(newIter)) {
 		t.Fatal("Expected the new iter added to end of list")
 	}
 }
@@ -637,7 +637,7 @@ func TestListStoreInsertAfter_WhenNilSibling(t *testing.T) {
 		t.Fatal("Unexpected: liststore is empty")
 	}
 
-	if *(first.(*TreeIter)) != *(newIter.(*TreeIter)) {
+	if *(castToTreeIter(first)) != *(castToTreeIter(newIter)) {
 		t.Fatal("Expected the new iter was prepended to liststore")
 	}
 }
@@ -682,7 +682,7 @@ func TestBuilder(t *testing.T) {
 		t.Error("Unable to get widget from string")
 	}
 
-	button, ok := widget.(*Button)
+	button, ok := castToButton(widget)
 	if !ok {
 		t.Error("Unable to cast to gtk.Button")
 	}

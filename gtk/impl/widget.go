@@ -266,7 +266,7 @@ func (v *Widget) GetAllocatedHeight() int {
 // Event() is a wrapper around gtk_widget_event().
 func (v *Widget) Event(event gdk.Event) bool {
 	c := C.gtk_widget_event(v.native(),
-		(*C.GdkEvent)(unsafe.Pointer(event.(*gdk_impl.Event).Native())))
+		(*C.GdkEvent)(unsafe.Pointer(gdk_impl.CastToEvent(event).Native())))
 	return gobool(c)
 }
 
@@ -371,7 +371,7 @@ func (v *Widget) GetSizeRequest() (width, height int) {
 // SetParentWindow is a wrapper around gtk_widget_set_parent_window().
 func (v *Widget) SetParentWindow(parentWindow gdk.Window) {
 	C.gtk_widget_set_parent_window(v.native(),
-		(*C.GdkWindow)(unsafe.Pointer(parentWindow.(*gdk_impl.Window).Native())))
+		(*C.GdkWindow)(unsafe.Pointer(gdk_impl.CastToWindow(parentWindow).Native())))
 }
 
 // GetParentWindow is a wrapper around gtk_widget_get_parent_window().
@@ -457,13 +457,13 @@ func (v *Widget) AddDeviceEvents() {
 // SetDeviceEnabled is a wrapper around gtk_widget_set_device_enabled().
 func (v *Widget) SetDeviceEnabled(device gdk.Device, enabled bool) {
 	C.gtk_widget_set_device_enabled(v.native(),
-		(*C.GdkDevice)(unsafe.Pointer(device.(*gdk_impl.Device).Native())), gbool(enabled))
+		(*C.GdkDevice)(unsafe.Pointer(gdk_impl.CastToDevice(device).Native())), gbool(enabled))
 }
 
 // GetDeviceEnabled is a wrapper around gtk_widget_get_device_enabled().
 func (v *Widget) GetDeviceEnabled(device gdk.Device) bool {
 	c := C.gtk_widget_get_device_enabled(v.native(),
-		(*C.GdkDevice)(unsafe.Pointer(device.(*gdk_impl.Device).Native())))
+		(*C.GdkDevice)(unsafe.Pointer(gdk_impl.CastToDevice(device).Native())))
 	return gobool(c)
 }
 
@@ -576,7 +576,7 @@ func (v *Widget) TranslateCoordinates(dest gtk.Widget, srcX, srcY int) (destX, d
 // SetVisual is a wrapper around gtk_widget_set_visual().
 func (v *Widget) SetVisual(visual gdk.Visual) {
 	C.gtk_widget_set_visual(v.native(),
-		(*C.GdkVisual)(unsafe.Pointer(visual.(*gdk_impl.Visual).Native())))
+		(*C.GdkVisual)(unsafe.Pointer(gdk_impl.CastToVisual(visual).Native())))
 }
 
 // SetAppPaintable is a wrapper around gtk_widget_set_app_paintable().
@@ -604,12 +604,12 @@ func (v *Widget) GetAllocation() gtk.Allocation {
 
 // SetAllocation is a wrapper around gtk_widget_set_allocation().
 func (v *Widget) SetAllocation(allocation gtk.Allocation) {
-	C.gtk_widget_set_allocation(v.native(), allocation.(*Allocation).native())
+	C.gtk_widget_set_allocation(v.native(), castToAllocation(allocation).native())
 }
 
 // SizeAllocate is a wrapper around gtk_widget_size_allocate().
 func (v *Widget) SizeAllocate(allocation gtk.Allocation) {
-	C.gtk_widget_size_allocate(v.native(), allocation.(*Allocation).native())
+	C.gtk_widget_size_allocate(v.native(), castToAllocation(allocation).native())
 }
 
 // SetStateFlags is a wrapper around gtk_widget_set_state_flags().
