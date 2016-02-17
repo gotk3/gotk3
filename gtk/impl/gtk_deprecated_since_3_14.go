@@ -11,17 +11,18 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	glib_impl "github.com/gotk3/gotk3/glib/impl"
 	"github.com/gotk3/gotk3/gtk"
 )
 
 func init() {
-	tm := []glib.TypeMarshaler{
+	tm := []glib_impl.TypeMarshaler{
 		{glib.Type(C.gtk_alignment_get_type()), marshalAlignment},
 		{glib.Type(C.gtk_arrow_get_type()), marshalArrow},
 		{glib.Type(C.gtk_misc_get_type()), marshalMisc},
 		{glib.Type(C.gtk_status_icon_get_type()), marshalStatusIcon},
 	}
-	glib.RegisterGValueMarshalers(tm)
+	glib_impl.RegisterGValueMarshalers(tm)
 
 	//Contribute to casting
 	for k, v := range map[string]WrapFn{
