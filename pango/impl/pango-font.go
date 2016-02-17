@@ -40,30 +40,30 @@ func init() {
 }
 
 // FontDescription is a representation of PangoFontDescription.
-type FontDescription struct {
+type fontDescription struct {
 	pangoFontDescription *C.PangoFontDescription
 }
 
 // Native returns a pointer to the underlying PangoLayout.
-func (v *FontDescription) Native() uintptr {
+func (v *fontDescription) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *FontDescription) native() *C.PangoFontDescription {
+func (v *fontDescription) native() *C.PangoFontDescription {
 	return (*C.PangoFontDescription)(unsafe.Pointer(v.pangoFontDescription))
 }
 
 // FontMetrics is a representation of PangoFontMetrics.
-type FontMetrics struct {
+type fontMetrics struct {
 	pangoFontMetrics *C.PangoFontMetrics
 }
 
 // Native returns a pointer to the underlying PangoLayout.
-func (v *FontMetrics) Native() uintptr {
+func (v *fontMetrics) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *FontMetrics) native() *C.PangoFontMetrics {
+func (v *fontMetrics) native() *C.PangoFontMetrics {
 	return (*C.PangoFontMetrics)(unsafe.Pointer(v.pangoFontMetrics))
 }
 
@@ -127,49 +127,49 @@ func marshalFontDescription(p uintptr) (interface{}, error) {
 	return wrapFontDescription(c2), nil
 }
 
-func wrapFontDescription(obj *C.PangoFontDescription) *FontDescription {
-	return &FontDescription{obj}
+func wrapFontDescription(obj *C.PangoFontDescription) *fontDescription {
+	return &fontDescription{obj}
 }
 
 //PangoFontDescription *pango_font_description_new         (void);
-func FontDescriptionNew() *FontDescription {
+func FontDescriptionNew() *fontDescription {
 	c := C.pango_font_description_new()
-	v := new(FontDescription)
+	v := new(fontDescription)
 	v.pangoFontDescription = c
 	return v
 }
 
 //PangoFontDescription *pango_font_description_copy        (const PangoFontDescription  *desc);
-func (v *FontDescription) Copy() pango.FontDescription {
+func (v *fontDescription) Copy() pango.FontDescription {
 	c := C.pango_font_description_copy(v.native())
-	v2 := new(FontDescription)
+	v2 := new(fontDescription)
 	v2.pangoFontDescription = c
 	return v2
 }
 
 //PangoFontDescription *pango_font_description_copy_static (const PangoFontDescription  *desc);
-func (v *FontDescription) CopyStatic() pango.FontDescription {
+func (v *fontDescription) CopyStatic() pango.FontDescription {
 	c := C.pango_font_description_copy_static(v.native())
-	v2 := new(FontDescription)
+	v2 := new(fontDescription)
 	v2.pangoFontDescription = c
 	return v2
 }
 
 //guint                 pango_font_description_hash        (const PangoFontDescription  *desc) G_GNUC_PURE;
-func (v *FontDescription) Hash() uint {
+func (v *fontDescription) Hash() uint {
 	c := C.pango_font_description_hash(v.native())
 	return uint(c)
 }
 
 //gboolean              pango_font_description_equal       (const PangoFontDescription  *desc1,
 //							  const PangoFontDescription  *desc2) G_GNUC_PURE;
-func (v *FontDescription) Equal(v2 pango.FontDescription) bool {
+func (v *fontDescription) Equal(v2 pango.FontDescription) bool {
 	c := C.pango_font_description_equal(v.native(), toFontDescription(v2).native())
 	return gobool(c)
 }
 
 //void                  pango_font_description_free        (PangoFontDescription        *desc);
-func (v *FontDescription) Free() {
+func (v *fontDescription) Free() {
 	C.pango_font_description_free(v.native())
 }
 
@@ -181,7 +181,7 @@ func (v *FontDescription) Free() {
 
 //void                 pango_font_description_set_family        (PangoFontDescription *desc,
 //							       const char           *family);
-func (v *FontDescription) SetFamily(family string) {
+func (v *fontDescription) SetFamily(family string) {
 	cstr := C.CString(family)
 	defer C.free(unsafe.Pointer(cstr))
 	C.pango_font_description_set_family(v.native(), (*C.char)(cstr))
@@ -189,26 +189,26 @@ func (v *FontDescription) SetFamily(family string) {
 
 //void                 pango_font_description_set_family_static (PangoFontDescription *desc,
 //							       const char           *family);
-func (v *FontDescription) SetFamilyStatic(family string) {
+func (v *fontDescription) SetFamilyStatic(family string) {
 	cstr := C.CString(family)
 	defer C.free(unsafe.Pointer(cstr))
 	C.pango_font_description_set_family_static(v.native(), (*C.char)(cstr))
 }
 
 //const char          *pango_font_description_get_family        (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetFamily() string {
+func (v *fontDescription) GetFamily() string {
 	c := C.pango_font_description_get_family(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 //void                 pango_font_description_set_style         (PangoFontDescription *desc,
 //							       PangoStyle            style);
-func (v *FontDescription) SetStyle(style pango.Style) {
+func (v *fontDescription) SetStyle(style pango.Style) {
 	C.pango_font_description_set_style(v.native(), (C.PangoStyle)(style))
 }
 
 //PangoStyle           pango_font_description_get_style         (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetStyle() pango.Style {
+func (v *fontDescription) GetStyle() pango.Style {
 	c := C.pango_font_description_get_style(v.native())
 	return pango.Style(c)
 }
@@ -219,116 +219,116 @@ func (v *FontDescription) GetStyle() pango.Style {
 
 //void                 pango_font_description_set_weight        (PangoFontDescription *desc,
 //							       PangoWeight           weight);
-func (v *FontDescription) SetWeight(weight pango.Weight) {
+func (v *fontDescription) SetWeight(weight pango.Weight) {
 	C.pango_font_description_set_weight(v.native(), (C.PangoWeight)(weight))
 }
 
 //PangoWeight          pango_font_description_get_weight        (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetWeight() pango.Weight {
+func (v *fontDescription) GetWeight() pango.Weight {
 	c := C.pango_font_description_get_weight(v.native())
 	return pango.Weight(c)
 }
 
 //void                 pango_font_description_set_stretch       (PangoFontDescription *desc,
 //							       PangoStretch          stretch);
-func (v *FontDescription) SetStretch(stretch pango.Stretch) {
+func (v *fontDescription) SetStretch(stretch pango.Stretch) {
 	C.pango_font_description_set_stretch(v.native(), (C.PangoStretch)(stretch))
 }
 
 //PangoStretch         pango_font_description_get_stretch       (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetStretch() pango.Stretch {
+func (v *fontDescription) GetStretch() pango.Stretch {
 	c := C.pango_font_description_get_stretch(v.native())
 	return pango.Stretch(c)
 }
 
 //void                 pango_font_description_set_size          (PangoFontDescription *desc,
 //							       gint                  size);
-func (v *FontDescription) SetSize(size int) {
+func (v *fontDescription) SetSize(size int) {
 	C.pango_font_description_set_size(v.native(), (C.gint)(size))
 }
 
 //gint                 pango_font_description_get_size          (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetSize() int {
+func (v *fontDescription) GetSize() int {
 	c := C.pango_font_description_get_size(v.native())
 	return int(c)
 }
 
 //void                 pango_font_description_set_absolute_size (PangoFontDescription *desc,
 //							       double                size);
-func (v *FontDescription) SetAbsoluteSize(size float64) {
+func (v *fontDescription) SetAbsoluteSize(size float64) {
 	C.pango_font_description_set_absolute_size(v.native(), (C.double)(size))
 }
 
 //gboolean             pango_font_description_get_size_is_absolute (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetSizeIsAbsolute() bool {
+func (v *fontDescription) GetSizeIsAbsolute() bool {
 	c := C.pango_font_description_get_size_is_absolute(v.native())
 	return gobool(c)
 }
 
 //void                 pango_font_description_set_gravity       (PangoFontDescription *desc,
 //							       PangoGravity          gravity);
-func (v *FontDescription) SetGravity(gravity pango.Gravity) {
+func (v *fontDescription) SetGravity(gravity pango.Gravity) {
 	C.pango_font_description_set_gravity(v.native(), (C.PangoGravity)(gravity))
 }
 
 //PangoGravity         pango_font_description_get_gravity       (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetGravity() pango.Gravity {
+func (v *fontDescription) GetGravity() pango.Gravity {
 	c := C.pango_font_description_get_gravity(v.native())
 	return pango.Gravity(c)
 }
 
 //PangoFontMask pango_font_description_get_set_fields (const PangoFontDescription *desc) G_GNUC_PURE;
-func (v *FontDescription) GetSetFields() pango.FontMask {
+func (v *fontDescription) GetSetFields() pango.FontMask {
 	c := C.pango_font_description_get_set_fields(v.native())
 	return pango.FontMask(c)
 }
 
 //void          pango_font_description_unset_fields   (PangoFontDescription       *desc,
 //						     PangoFontMask               to_unset);
-func (v *FontDescription) GetUnsetFields(to_unset pango.FontMask) {
+func (v *fontDescription) GetUnsetFields(to_unset pango.FontMask) {
 	C.pango_font_description_unset_fields(v.native(), (C.PangoFontMask)(to_unset))
 }
 
 //void pango_font_description_merge        (PangoFontDescription       *desc,
 //					  const PangoFontDescription *desc_to_merge,
 //					  gboolean                    replace_existing);
-func (v *FontDescription) Merge(desc_to_merge pango.FontDescription, replace_existing bool) {
+func (v *fontDescription) Merge(desc_to_merge pango.FontDescription, replace_existing bool) {
 	C.pango_font_description_merge(v.native(), toFontDescription(desc_to_merge).native(), gbool(replace_existing))
 }
 
 //void pango_font_description_merge_static (PangoFontDescription       *desc,
 //					  const PangoFontDescription *desc_to_merge,
 //					  gboolean                    replace_existing);
-func (v *FontDescription) MergeStatic(desc_to_merge pango.FontDescription, replace_existing bool) {
+func (v *fontDescription) MergeStatic(desc_to_merge pango.FontDescription, replace_existing bool) {
 	C.pango_font_description_merge_static(v.native(), toFontDescription(desc_to_merge).native(), gbool(replace_existing))
 }
 
 //gboolean pango_font_description_better_match (const PangoFontDescription *desc,
 //					      const PangoFontDescription *old_match,
 //					      const PangoFontDescription *new_match) G_GNUC_PURE;
-func (v *FontDescription) BetterMatch(old_match, new_match pango.FontDescription) bool {
+func (v *fontDescription) BetterMatch(old_match, new_match pango.FontDescription) bool {
 	c := C.pango_font_description_better_match(v.native(), toFontDescription(old_match).native(), toFontDescription(new_match).native())
 	return gobool(c)
 }
 
 //PangoFontDescription *pango_font_description_from_string (const char                  *str);
-func FontDescriptionFromString(str string) *FontDescription {
+func FontDescriptionFromString(str string) *fontDescription {
 	cstr := C.CString(str)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.pango_font_description_from_string((*C.char)(cstr))
-	v := new(FontDescription)
+	v := new(fontDescription)
 	v.pangoFontDescription = c
 	return v
 }
 
 //char *                pango_font_description_to_string   (const PangoFontDescription  *desc);
-func (v *FontDescription) ToString() string {
+func (v *fontDescription) ToString() string {
 	c := C.pango_font_description_to_string(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 //char *                pango_font_description_to_filename (const PangoFontDescription  *desc);
-func (v *FontDescription) ToFilename() string {
+func (v *fontDescription) ToFilename() string {
 	c := C.pango_font_description_to_filename(v.native())
 	return C.GoString((*C.char)(c))
 }

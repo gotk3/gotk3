@@ -345,12 +345,12 @@ func (v *Device) Ungrab(time uint32) {
  */
 
 // Cursor is a representation of GdkCursor.
-type Cursor struct {
+type cursor struct {
 	*glib_impl.Object
 }
 
 // native returns a pointer to the underlying GdkCursor.
-func (v *Cursor) native() *C.GdkCursor {
+func (v *cursor) native() *C.GdkCursor {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -359,14 +359,14 @@ func (v *Cursor) native() *C.GdkCursor {
 }
 
 // Native returns a pointer to the underlying GdkCursor.
-func (v *Cursor) Native() uintptr {
+func (v *cursor) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
 func marshalCursor(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib_impl.Object{glib_impl.ToGObject(unsafe.Pointer(c))}
-	return &Cursor{obj}, nil
+	return &cursor{obj}, nil
 }
 
 /*
@@ -374,12 +374,12 @@ func marshalCursor(p uintptr) (interface{}, error) {
  */
 
 // DeviceManager is a representation of GDK's GdkDeviceManager.
-type DeviceManager struct {
+type deviceManager struct {
 	*glib_impl.Object
 }
 
 // native returns a pointer to the underlying GdkDeviceManager.
-func (v *DeviceManager) native() *C.GdkDeviceManager {
+func (v *deviceManager) native() *C.GdkDeviceManager {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -388,18 +388,18 @@ func (v *DeviceManager) native() *C.GdkDeviceManager {
 }
 
 // Native returns a pointer to the underlying GdkDeviceManager.
-func (v *DeviceManager) Native() uintptr {
+func (v *deviceManager) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
 func marshalDeviceManager(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib_impl.Object{glib_impl.ToGObject(unsafe.Pointer(c))}
-	return &DeviceManager{obj}, nil
+	return &deviceManager{obj}, nil
 }
 
 // GetClientPointer() is a wrapper around gdk_device_manager_get_client_pointer().
-func (v *DeviceManager) GetClientPointer() (gdk.Device, error) {
+func (v *deviceManager) GetClientPointer() (gdk.Device, error) {
 	c := C.gdk_device_manager_get_client_pointer(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -411,7 +411,7 @@ func (v *DeviceManager) GetClientPointer() (gdk.Device, error) {
 }
 
 // GetDisplay() is a wrapper around gdk_device_manager_get_display().
-func (v *DeviceManager) GetDisplay() (gdk.Display, error) {
+func (v *deviceManager) GetDisplay() (gdk.Display, error) {
 	c := C.gdk_device_manager_get_display(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -423,7 +423,7 @@ func (v *DeviceManager) GetDisplay() (gdk.Display, error) {
 }
 
 // ListDevices() is a wrapper around gdk_device_manager_list_devices().
-func (v *DeviceManager) ListDevices(tp gdk.DeviceType) glib.List {
+func (v *deviceManager) ListDevices(tp gdk.DeviceType) glib.List {
 	clist := C.gdk_device_manager_list_devices(v.native(), C.GdkDeviceType(tp))
 	if clist == nil {
 		return nil
@@ -545,7 +545,7 @@ func (v *Display) GetDeviceManager() (gdk.DeviceManager, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib_impl.Object{glib_impl.ToGObject(unsafe.Pointer(c))}
-	d := &DeviceManager{obj}
+	d := &deviceManager{obj}
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib_impl.Object).Unref)
 	return d, nil
@@ -607,7 +607,7 @@ func (v *Display) PeekEvent() (gdk.Event, error) {
 
 // PutEvent() is a wrapper around gdk_display_put_event().
 func (v *Display) PutEvent(event gdk.Event) {
-	C.gdk_display_put_event(v.native(), castToEvent(event).native())
+	C.gdk_display_put_event(v.native(), CastToEvent(event).native())
 }
 
 // HasPending() is a wrapper around gdk_display_has_pending().
@@ -758,12 +758,12 @@ func KeyvalToUpper(v uint) uint {
  */
 
 // DragContext is a representation of GDK's GdkDragContext.
-type DragContext struct {
+type dragContext struct {
 	*glib_impl.Object
 }
 
 // native returns a pointer to the underlying GdkDragContext.
-func (v *DragContext) native() *C.GdkDragContext {
+func (v *dragContext) native() *C.GdkDragContext {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -772,17 +772,17 @@ func (v *DragContext) native() *C.GdkDragContext {
 }
 
 // Native returns a pointer to the underlying GdkDragContext.
-func (v *DragContext) Native() uintptr {
+func (v *dragContext) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
 func marshalDragContext(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib_impl.Object{glib_impl.ToGObject(unsafe.Pointer(c))}
-	return &DragContext{obj}, nil
+	return &dragContext{obj}, nil
 }
 
-func (v *DragContext) ListTargets() glib.List {
+func (v *dragContext) ListTargets() glib.List {
 	c := C.gdk_drag_context_list_targets(v.native())
 	return glib_impl.WrapList(uintptr(unsafe.Pointer(c)))
 }
@@ -823,79 +823,79 @@ func (v *Event) free() {
  */
 
 // EventButton is a representation of GDK's GdkEventButton.
-type EventButton struct {
+type eventButton struct {
 	*Event
 }
 
 // Native returns a pointer to the underlying GdkEventButton.
-func (v *EventButton) Native() uintptr {
+func (v *eventButton) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *EventButton) native() *C.GdkEventButton {
+func (v *eventButton) native() *C.GdkEventButton {
 	return (*C.GdkEventButton)(unsafe.Pointer(v.Event.native()))
 }
 
 func EventButtonFrom(ev *Event) gdk.EventButton {
-	return &EventButton{ev}
+	return &eventButton{ev}
 }
 
-func (v *EventButton) X() float64 {
+func (v *eventButton) X() float64 {
 	c := v.native().x
 	return float64(c)
 }
 
-func (v *EventButton) Y() float64 {
+func (v *eventButton) Y() float64 {
 	c := v.native().y
 	return float64(c)
 }
 
 // XRoot returns the x coordinate of the pointer relative to the root of the screen.
-func (v *EventButton) XRoot() float64 {
+func (v *eventButton) XRoot() float64 {
 	c := v.native().x_root
 	return float64(c)
 }
 
 // YRoot returns the y coordinate of the pointer relative to the root of the screen.
-func (v *EventButton) YRoot() float64 {
+func (v *eventButton) YRoot() float64 {
 	c := v.native().y_root
 	return float64(c)
 }
 
-func (v *EventButton) Button() uint {
+func (v *eventButton) Button() uint {
 	c := v.native().button
 	return uint(c)
 }
 
-func (v *EventButton) State() uint {
+func (v *eventButton) State() uint {
 	c := v.native().state
 	return uint(c)
 }
 
 // Time returns the time of the event in milliseconds.
-func (v *EventButton) Time() uint32 {
+func (v *eventButton) Time() uint32 {
 	c := v.native().time
 	return uint32(c)
 }
 
-func (v *EventButton) Type() gdk.EventType {
+func (v *eventButton) Type() gdk.EventType {
 	c := v.native()._type
 	return gdk.EventType(c)
 }
 
-func (v *EventButton) MotionVal() (float64, float64) {
+func (v *eventButton) MotionVal() (float64, float64) {
 	x := v.native().x
 	y := v.native().y
 	return float64(x), float64(y)
 }
 
-func (v *EventButton) MotionValRoot() (float64, float64) {
+func (v *eventButton) MotionValRoot() (float64, float64) {
 	x := v.native().x_root
 	y := v.native().y_root
 	return float64(x), float64(y)
 }
 
-func (v *EventButton) ButtonVal() uint {
+func (v *eventButton) ButtonVal() uint {
 	c := v.native().button
 	return uint(c)
 }
@@ -905,36 +905,36 @@ func (v *EventButton) ButtonVal() uint {
  */
 
 // EventKey is a representation of GDK's GdkEventKey.
-type EventKey struct {
+type eventKey struct {
 	*Event
 }
 
-func EventKeyNew() *EventKey {
+func EventKeyNew() *eventKey {
 	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventKey{}))
 	ev := Event{ee}
-	return &EventKey{&ev}
+	return &eventKey{&ev}
 }
 
 // Native returns a pointer to the underlying GdkEventKey.
-func (v *EventKey) Native() uintptr {
+func (v *eventKey) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *EventKey) native() *C.GdkEventKey {
+func (v *eventKey) native() *C.GdkEventKey {
 	return (*C.GdkEventKey)(unsafe.Pointer(v.Event.native()))
 }
 
-func (v *EventKey) KeyVal() uint {
+func (v *eventKey) KeyVal() uint {
 	c := v.native().keyval
 	return uint(c)
 }
 
-func (v *EventKey) Type() gdk.EventType {
+func (v *eventKey) Type() gdk.EventType {
 	c := v.native()._type
 	return gdk.EventType(c)
 }
 
-func (v *EventKey) State() uint {
+func (v *eventKey) State() uint {
 	c := v.native().state
 	return uint(c)
 }
@@ -943,26 +943,26 @@ func (v *EventKey) State() uint {
  * GdkEventMotion
  */
 
-type EventMotion struct {
+type eventMotion struct {
 	*Event
 }
 
 // Native returns a pointer to the underlying GdkEventMotion.
-func (v *EventMotion) Native() uintptr {
+func (v *eventMotion) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *EventMotion) native() *C.GdkEventMotion {
+func (v *eventMotion) native() *C.GdkEventMotion {
 	return (*C.GdkEventMotion)(unsafe.Pointer(v.Event.native()))
 }
 
-func (v *EventMotion) MotionVal() (float64, float64) {
+func (v *eventMotion) MotionVal() (float64, float64) {
 	x := v.native().x
 	y := v.native().y
 	return float64(x), float64(y)
 }
 
-func (v *EventMotion) MotionValRoot() (float64, float64) {
+func (v *eventMotion) MotionValRoot() (float64, float64) {
 	x := v.native().x_root
 	y := v.native().y_root
 	return float64(x), float64(y)
@@ -973,36 +973,36 @@ func (v *EventMotion) MotionValRoot() (float64, float64) {
  */
 
 // EventScroll is a representation of GDK's GdkEventScroll.
-type EventScroll struct {
+type eventScroll struct {
 	*Event
 }
 
 // Native returns a pointer to the underlying GdkEventScroll.
-func (v *EventScroll) Native() uintptr {
+func (v *eventScroll) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *EventScroll) native() *C.GdkEventScroll {
+func (v *eventScroll) native() *C.GdkEventScroll {
 	return (*C.GdkEventScroll)(unsafe.Pointer(v.Event.native()))
 }
 
-func (v *EventScroll) DeltaX() float64 {
+func (v *eventScroll) DeltaX() float64 {
 	return float64(v.native().delta_x)
 }
 
-func (v *EventScroll) DeltaY() float64 {
+func (v *eventScroll) DeltaY() float64 {
 	return float64(v.native().delta_y)
 }
 
-func (v *EventScroll) X() float64 {
+func (v *eventScroll) X() float64 {
 	return float64(v.native().x)
 }
 
-func (v *EventScroll) Y() float64 {
+func (v *eventScroll) Y() float64 {
 	return float64(v.native().y)
 }
 
-func (v *EventScroll) Type() gdk.EventType {
+func (v *eventScroll) Type() gdk.EventType {
 	c := v.native()._type
 	return gdk.EventType(c)
 }
@@ -1294,12 +1294,12 @@ func PixbufGetFileInfo(filename string) (format interface{}, width, height int) 
 
 // PixbufLoader is a representation of GDK's GdkPixbufLoader.
 // Users of PixbufLoader are expected to call Close() when they are finished.
-type PixbufLoader struct {
+type pixbufLoader struct {
 	*glib_impl.Object
 }
 
 // native() returns a pointer to the underlying GdkPixbufLoader.
-func (v *PixbufLoader) native() *C.GdkPixbufLoader {
+func (v *pixbufLoader) native() *C.GdkPixbufLoader {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -1308,13 +1308,13 @@ func (v *PixbufLoader) native() *C.GdkPixbufLoader {
 }
 
 // PixbufLoaderNew() is a wrapper around gdk_pixbuf_loader_new().
-func PixbufLoaderNew() (*PixbufLoader, error) {
+func PixbufLoaderNew() (*pixbufLoader, error) {
 	c := C.gdk_pixbuf_loader_new()
 	if c == nil {
 		return nil, nilPtrErr
 	}
 	obj := &glib_impl.Object{glib_impl.ToGObject(unsafe.Pointer(c))}
-	p := &PixbufLoader{obj}
+	p := &pixbufLoader{obj}
 	runtime.SetFinalizer(obj, (*glib_impl.Object).Unref)
 	return p, nil
 }
@@ -1322,7 +1322,7 @@ func PixbufLoaderNew() (*PixbufLoader, error) {
 // Write() is a wrapper around gdk_pixbuf_loader_write().  The
 // function signature differs from the C equivalent to satisify the
 // io.Writer interface.
-func (v *PixbufLoader) Write(data []byte) (int, error) {
+func (v *pixbufLoader) Write(data []byte) (int, error) {
 	// n is set to 0 on error, and set to len(data) otherwise.
 	// This is a tiny hacky to satisfy io.Writer and io.WriteCloser,
 	// which would allow access to all io and ioutil goodies,
@@ -1347,7 +1347,7 @@ func (v *PixbufLoader) Write(data []byte) (int, error) {
 // Close is a wrapper around gdk_pixbuf_loader_close().  An error is
 // returned instead of a bool like the native C function to support the
 // io.Closer interface.
-func (v *PixbufLoader) Close() error {
+func (v *pixbufLoader) Close() error {
 	var err *C.GError
 
 	if ok := gobool(C.gdk_pixbuf_loader_close(v.native(), &err)); !ok {
@@ -1358,12 +1358,12 @@ func (v *PixbufLoader) Close() error {
 }
 
 // SetSize is a wrapper around gdk_pixbuf_loader_set_size().
-func (v *PixbufLoader) SetSize(width, height int) {
+func (v *pixbufLoader) SetSize(width, height int) {
 	C.gdk_pixbuf_loader_set_size(v.native(), C.int(width), C.int(height))
 }
 
 // GetPixbuf is a wrapper around gdk_pixbuf_loader_get_pixbuf().
-func (v *PixbufLoader) GetPixbuf() (gdk.Pixbuf, error) {
+func (v *pixbufLoader) GetPixbuf() (gdk.Pixbuf, error) {
 	c := C.gdk_pixbuf_loader_get_pixbuf(v.native())
 	if c == nil {
 		return nil, nilPtrErr

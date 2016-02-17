@@ -22,11 +22,11 @@ import (
  */
 
 // Surface is a representation of Cairo's cairo_surface_t.
-type Surface struct {
+type surface struct {
 	surface *C.cairo_surface_t
 }
 
-func NewSurfaceFromPNG(fileName string) (*Surface, error) {
+func NewSurfaceFromPNG(fileName string) (*surface, error) {
 
 	cstr := C.CString(fileName)
 	defer C.free(unsafe.Pointer(cstr))
@@ -38,11 +38,11 @@ func NewSurfaceFromPNG(fileName string) (*Surface, error) {
 		return nil, ErrorStatus(status)
 	}
 
-	return &Surface{surfaceNative}, nil
+	return &surface{surfaceNative}, nil
 }
 
 // native returns a pointer to the underlying cairo_surface_t.
-func (v *Surface) native() *C.cairo_surface_t {
+func (v *surface) native() *C.cairo_surface_t {
 	if v == nil {
 		return nil
 	}
@@ -50,7 +50,7 @@ func (v *Surface) native() *C.cairo_surface_t {
 }
 
 // Native returns a pointer to the underlying cairo_surface_t.
-func (v *Surface) Native() uintptr {
+func (v *surface) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
@@ -60,61 +60,61 @@ func marshalSurface(p uintptr) (interface{}, error) {
 	return wrapSurface(surface), nil
 }
 
-func wrapSurface(surface *C.cairo_surface_t) *Surface {
-	return &Surface{surface}
+func wrapSurface(s *C.cairo_surface_t) *surface {
+	return &surface{s}
 }
 
 // NewSurface creates a gotk3 cairo Surface from a pointer to a
 // C cairo_surface_t.  This is primarily designed for use with other
 // gotk3 packages and should be avoided by applications.
-func NewSurface(s uintptr, needsRef bool) *Surface {
+func NewSurface(s uintptr, needsRef bool) *surface {
 	ptr := (*C.cairo_surface_t)(unsafe.Pointer(s))
 	surface := wrapSurface(ptr)
 	if needsRef {
 		surface.reference()
 	}
-	runtime.SetFinalizer(surface, (*Surface).destroy)
+	runtime.SetFinalizer(surface, (*surface).destroy)
 	return surface
 }
 
 // CreateSimilar is a wrapper around cairo_surface_create_similar().
-func (v *Surface) CreateSimilar(content cairo.Content, width, height int) cairo.Surface {
+func (v *surface) CreateSimilar(content cairo.Content, width, height int) cairo.Surface {
 	c := C.cairo_surface_create_similar(v.native(),
 		C.cairo_content_t(content), C.int(width), C.int(height))
 	s := wrapSurface(c)
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, (*surface).destroy)
 	return s
 }
 
 // TODO cairo_surface_create_similar_image (since 1.12)
 
 // CreateForRectangle is a wrapper around cairo_surface_create_for_rectangle().
-func (v *Surface) CreateForRectangle(x, y, width, height float64) cairo.Surface {
+func (v *surface) CreateForRectangle(x, y, width, height float64) cairo.Surface {
 	c := C.cairo_surface_create_for_rectangle(v.native(), C.double(x),
 		C.double(y), C.double(width), C.double(height))
 	s := wrapSurface(c)
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, (*surface).destroy)
 	return s
 }
 
 // reference is a wrapper around cairo_surface_reference().
-func (v *Surface) reference() {
+func (v *surface) reference() {
 	v.surface = C.cairo_surface_reference(v.native())
 }
 
 // destroy is a wrapper around cairo_surface_destroy().
-func (v *Surface) destroy() {
+func (v *surface) destroy() {
 	C.cairo_surface_destroy(v.native())
 }
 
 // Status is a wrapper around cairo_surface_status().
-func (v *Surface) Status() cairo.Status {
+func (v *surface) Status() cairo.Status {
 	c := C.cairo_surface_status(v.native())
 	return cairo.Status(c)
 }
 
 // Flush is a wrapper around cairo_surface_flush().
-func (v *Surface) Flush() {
+func (v *surface) Flush() {
 	C.cairo_surface_flush(v.native())
 }
 
@@ -125,23 +125,23 @@ func (v *Surface) Flush() {
 // TODO(jrick) GetContent (requires Content bindings)
 
 // MarkDirty is a wrapper around cairo_surface_mark_dirty().
-func (v *Surface) MarkDirty() {
+func (v *surface) MarkDirty() {
 	C.cairo_surface_mark_dirty(v.native())
 }
 
 // MarkDirtyRectangle is a wrapper around cairo_surface_mark_dirty_rectangle().
-func (v *Surface) MarkDirtyRectangle(x, y, width, height int) {
+func (v *surface) MarkDirtyRectangle(x, y, width, height int) {
 	C.cairo_surface_mark_dirty_rectangle(v.native(), C.int(x), C.int(y),
 		C.int(width), C.int(height))
 }
 
 // SetDeviceOffset is a wrapper around cairo_surface_set_device_offset().
-func (v *Surface) SetDeviceOffset(x, y float64) {
+func (v *surface) SetDeviceOffset(x, y float64) {
 	C.cairo_surface_set_device_offset(v.native(), C.double(x), C.double(y))
 }
 
 // GetDeviceOffset is a wrapper around cairo_surface_get_device_offset().
-func (v *Surface) GetDeviceOffset() (x, y float64) {
+func (v *surface) GetDeviceOffset() (x, y float64) {
 	var xOffset, yOffset C.double
 	C.cairo_surface_get_device_offset(v.native(), &xOffset, &yOffset)
 	return float64(xOffset), float64(yOffset)
@@ -149,21 +149,21 @@ func (v *Surface) GetDeviceOffset() (x, y float64) {
 
 // SetFallbackResolution is a wrapper around
 // cairo_surface_set_fallback_resolution().
-func (v *Surface) SetFallbackResolution(xPPI, yPPI float64) {
+func (v *surface) SetFallbackResolution(xPPI, yPPI float64) {
 	C.cairo_surface_set_fallback_resolution(v.native(), C.double(xPPI),
 		C.double(yPPI))
 }
 
 // GetFallbackResolution is a wrapper around
 // cairo_surface_get_fallback_resolution().
-func (v *Surface) GetFallbackResolution() (xPPI, yPPI float64) {
+func (v *surface) GetFallbackResolution() (xPPI, yPPI float64) {
 	var x, y C.double
 	C.cairo_surface_get_fallback_resolution(v.native(), &x, &y)
 	return float64(x), float64(y)
 }
 
 // GetType is a wrapper around cairo_surface_get_type().
-func (v *Surface) GetType() cairo.SurfaceType {
+func (v *surface) GetType() cairo.SurfaceType {
 	c := C.cairo_surface_get_type(v.native())
 	return cairo.SurfaceType(c)
 }
@@ -173,17 +173,17 @@ func (v *Surface) GetType() cairo.SurfaceType {
 // TODO(jrick) GetUserData (depends on UserDataKey)
 
 // CopyPage is a wrapper around cairo_surface_copy_page().
-func (v *Surface) CopyPage() {
+func (v *surface) CopyPage() {
 	C.cairo_surface_copy_page(v.native())
 }
 
 // ShowPage is a wrapper around cairo_surface_show_page().
-func (v *Surface) ShowPage() {
+func (v *surface) ShowPage() {
 	C.cairo_surface_show_page(v.native())
 }
 
 // HasShowTextGlyphs is a wrapper around cairo_surface_has_show_text_glyphs().
-func (v *Surface) HasShowTextGlyphs() bool {
+func (v *surface) HasShowTextGlyphs() bool {
 	c := C.cairo_surface_has_show_text_glyphs(v.native())
 	return gobool(c)
 }
@@ -192,7 +192,7 @@ func (v *Surface) HasShowTextGlyphs() bool {
 
 // GetMimeData is a wrapper around cairo_surface_get_mime_data().  The
 // returned mimetype data is returned as a Go byte slice.
-func (v *Surface) GetMimeData(mimeType cairo.MimeType) []byte {
+func (v *surface) GetMimeData(mimeType cairo.MimeType) []byte {
 	cstr := C.CString(string(mimeType))
 	defer C.free(unsafe.Pointer(cstr))
 	var data *C.uchar

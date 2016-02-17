@@ -47,7 +47,7 @@ func wrapContext(context *C.cairo_t) *Context {
 }
 
 // Create is a wrapper around cairo_create().
-func Create(target *Surface) *Context {
+func Create(target *surface) *Context {
 	c := C.cairo_create(target.native())
 	ctx := wrapContext(c)
 	runtime.SetFinalizer(ctx, (*Context).destroy)
@@ -85,7 +85,7 @@ func (v *Context) GetTarget() cairo.Surface {
 	c := C.cairo_get_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, (*surface).destroy)
 	return s
 }
 
@@ -111,7 +111,7 @@ func (v *Context) GetGroupTarget() cairo.Surface {
 	c := C.cairo_get_group_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, (*surface).destroy)
 	return s
 }
 

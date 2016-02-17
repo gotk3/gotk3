@@ -42,44 +42,44 @@ func init() {
 /* PangoColor */
 
 // Color is a representation of PangoColor.
-type Color struct {
+type color struct {
 	pangoColor *C.PangoColor
 }
 
 // Native returns a pointer to the underlying PangoColor.
-func (v *Color) Native() uintptr {
+func (v *color) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *Color) native() *C.PangoColor {
+func (v *color) native() *C.PangoColor {
 	return (*C.PangoColor)(unsafe.Pointer(v.pangoColor))
 }
 
-func (v *Color) Set(red, green, blue uint16) {
+func (v *color) Set(red, green, blue uint16) {
 	v.native().red = C.guint16(red)
 	v.native().green = C.guint16(green)
 	v.native().blue = C.guint16(blue)
 }
 
-func (v *Color) Get() (red, green, blue uint16) {
+func (v *color) Get() (red, green, blue uint16) {
 	return uint16(v.native().red), uint16(v.native().green), uint16(v.native().blue)
 }
 
 //PangoColor *pango_color_copy     (const PangoColor *src);
-func (v *Color) Copy(c pango.Color) pango.Color {
-	w := new(Color)
+func (v *color) Copy(c pango.Color) pango.Color {
+	w := new(color)
 	w.pangoColor = C.pango_color_copy(v.native())
 	return w
 }
 
 //void        pango_color_free     (PangoColor       *color);
-func (v *Color) Free() {
+func (v *color) Free() {
 	C.pango_color_free(v.native())
 }
 
 //gboolean    pango_color_parse    (PangoColor       *color,
 //			  const char       *spec);
-func (v *Color) Parse(spec string) bool {
+func (v *color) Parse(spec string) bool {
 	cstr := C.CString(spec)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.pango_color_parse(v.native(), (*C.char)(cstr))
@@ -87,7 +87,7 @@ func (v *Color) Parse(spec string) bool {
 }
 
 //gchar      *pango_color_to_string(const PangoColor *color);
-func (v *Color) ToString() string {
+func (v *color) ToString() string {
 	c := C.pango_color_to_string(v.native())
 	return C.GoString((*C.char)(c))
 }
@@ -95,16 +95,16 @@ func (v *Color) ToString() string {
 /* ---  ---  --- Attributes ---  ---  ---  */
 
 // AttrList is a representation of PangoAttrList.
-type AttrList struct {
+type attrList struct {
 	pangoAttrList *C.PangoAttrList
 }
 
 // Native returns a pointer to the underlying PangoLayout.
-func (v *AttrList) Native() uintptr {
+func (v attrList) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *AttrList) native() *C.PangoAttrList {
+func (v attrList) native() *C.PangoAttrList {
 	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
 }
 
@@ -154,17 +154,17 @@ func marshalUnderline(p uintptr) (interface{}, error) {
 }
 
 // Attribute is a representation of Pango's PangoAttribute.
-type Attribute struct {
+type attribute struct {
 	pangoAttribute *C.PangoAttribute
 	//start_index, end_index uint
 }
 
 // Native returns a pointer to the underlying PangoColor.
-func (v *Attribute) Native() uintptr {
+func (v *attribute) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *Attribute) native() *C.PangoAttribute {
+func (v *attribute) native() *C.PangoAttribute {
 	return (*C.PangoAttribute)(unsafe.Pointer(v.pangoAttribute))
 }
 
@@ -184,50 +184,50 @@ func AttrDataCopyFunc(user_data uintptr) uintptr {
 */
 
 // AttrClass is a representation of Pango's PangoAttrClass.
-type AttrClass struct {
+type attrClass struct {
 	//PangoAttrType type;
 }
 
 // AttrString is a representation of Pango's PangoAttrString.
-type AttrString struct {
-	Attribute
+type attrString struct {
+	attribute
 	//char *value;
 }
 
 // AttrLanguage is a representation of Pango's PangoAttrLanguage.
-type AttrLanguage struct {
-	Attribute
+type attrLanguage struct {
+	attribute
 	//PangoLanguage *value;
 }
 
 // AttrInt is a representation of Pango's PangoAttrInt.
-type AttrInt struct {
-	Attribute
+type attrInt struct {
+	attribute
 	//int value;
 }
 
 // AttrFloat is a representation of Pango's PangoAttrFloat.
-type AttrFloat struct {
-	Attribute
+type attrFloat struct {
+	attribute
 	//double value;
 }
 
 // AttrColor is a representation of Pango's AttrColor.
-type AttrColor struct {
-	Attribute
-	Color
+type attrColor struct {
+	attribute
+	color
 }
 
 // AttrSize is a representation of Pango's PangoAttrSize.
-type AttrSize struct {
-	Attribute
+type attrSize struct {
+	attribute
 	//int size;
 	//guint absolute : 1;
 }
 
 // AttrShape is a representation of Pango's PangoAttrShape.
-type AttrShape struct {
-	Attribute
+type attrShape struct {
+	attribute
 	//PangoRectangle ink_rect;
 	//PangoRectangle logical_rect;
 
@@ -237,8 +237,8 @@ type AttrShape struct {
 }
 
 // AttrFontDesc is a representation of Pango's PangoAttrFontDesc.
-type AttrFontDesc struct {
-	Attribute
+type attrFontDesc struct {
+	attribute
 	//PangoFontDescription *desc;
 }
 

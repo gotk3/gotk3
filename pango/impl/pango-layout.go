@@ -44,30 +44,30 @@ func init() {
 }
 
 // Layout is a representation of PangoLayout.
-type Layout struct {
+type layout struct {
 	pangoLayout *C.PangoLayout
 }
 
 // Native returns a pointer to the underlying PangoLayout.
-func (v *Layout) Native() uintptr {
+func (v *layout) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *Layout) native() *C.PangoLayout {
+func (v *layout) native() *C.PangoLayout {
 	return (*C.PangoLayout)(unsafe.Pointer(v.pangoLayout))
 }
 
 // LayoutLine is a representation of PangoLayoutLine.
-type LayoutLine struct {
+type layoutLine struct {
 	pangoLayoutLine *C.PangoLayout
 }
 
 // Native returns a pointer to the underlying PangoLayoutLine.
-func (v *LayoutLine) Native() uintptr {
+func (v *layoutLine) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *LayoutLine) native() *C.PangoLayoutLine {
+func (v *layoutLine) native() *C.PangoLayoutLine {
 	return (*C.PangoLayoutLine)(unsafe.Pointer(v.pangoLayoutLine))
 }
 
@@ -112,28 +112,28 @@ func wrapLayout(obj *glib.Object) *Layout {
 */
 
 //PangoLayout *pango_layout_new            (PangoContext   *context);
-func LayoutNew(context *Context) *Layout {
+func LayoutNew(context *context) *layout {
 	c := C.pango_layout_new(context.native())
 
-	layout := new(Layout)
+	layout := new(layout)
 	layout.pangoLayout = (*C.PangoLayout)(c)
 	return layout
 }
 
 //PangoLayout *pango_layout_copy           (PangoLayout    *src);
-func (v *Layout) Copy() pango.Layout {
+func (v *layout) Copy() pango.Layout {
 	c := C.pango_layout_copy(v.native())
 
-	layout := new(Layout)
+	layout := new(layout)
 	layout.pangoLayout = (*C.PangoLayout)(c)
 	return layout
 }
 
 //PangoContext  *pango_layout_get_context    (PangoLayout    *layout);
-func (v *Layout) GetContext() pango.Context {
+func (v *layout) GetContext() pango.Context {
 	c := C.pango_layout_get_context(v.native())
 
-	context := new(Context)
+	context := new(context)
 	context.pangoContext = (*C.PangoContext)(c)
 
 	return context
@@ -141,15 +141,15 @@ func (v *Layout) GetContext() pango.Context {
 
 //void           pango_layout_set_attributes (PangoLayout    *layout,
 //					    PangoAttrList  *attrs);
-func (v *Layout) SetAttributes(attrs pango.AttrList) {
+func (v *layout) SetAttributes(attrs pango.AttrList) {
 	C.pango_layout_set_attributes(v.native(), toAttrList(attrs).native())
 }
 
 //PangoAttrList *pango_layout_get_attributes (PangoLayout    *layout);
-func (v *Layout) GetAttributes() pango.AttrList {
+func (v *layout) GetAttributes() pango.AttrList {
 	c := C.pango_layout_get_attributes(v.native())
 
-	attrList := new(AttrList)
+	attrList := new(attrList)
 	attrList.pangoAttrList = (*C.PangoAttrList)(c)
 
 	return attrList
@@ -158,20 +158,20 @@ func (v *Layout) GetAttributes() pango.AttrList {
 //void           pango_layout_set_text       (PangoLayout    *layout,
 //					    const char     *text,
 //					    int             length);
-func (v *Layout) SetText(text string, length int) {
+func (v *layout) SetText(text string, length int) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.pango_layout_set_text(v.native(), (*C.char)(cstr), (C.int)(length))
 }
 
 //const char    *pango_layout_get_text       (PangoLayout    *layout);
-func (v *Layout) GetText() string {
+func (v *layout) GetText() string {
 	c := C.pango_layout_get_text(v.native())
 	return C.GoString((*C.char)(c))
 }
 
 //gint           pango_layout_get_character_count (PangoLayout *layout);
-func (v *Layout) GetCharacterCount() int {
+func (v *layout) GetCharacterCount() int {
 	c := C.pango_layout_get_character_count(v.native())
 	return int(c)
 }
@@ -179,7 +179,7 @@ func (v *Layout) GetCharacterCount() int {
 //void           pango_layout_set_markup     (PangoLayout    *layout,
 //					    const char     *markup,
 //					    int             length);
-func (v *Layout) SetMarkup(text string, length int) {
+func (v *layout) SetMarkup(text string, length int) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.pango_layout_set_markup(v.native(), (*C.char)(cstr), (C.int)(length))
@@ -202,16 +202,16 @@ func (v *Layout)SetMarkupWithAccel (text string, length int, accel_marker, accel
 //void           pango_layout_set_font_description (PangoLayout                *layout,
 //						  const PangoFontDescription *desc);
 
-func (v *Layout) SetFontDescription(desc pango.FontDescription) {
+func (v *layout) SetFontDescription(desc pango.FontDescription) {
 	C.pango_layout_set_font_description(v.native(), toFontDescription(desc).native())
 }
 
 //const PangoFontDescription *pango_layout_get_font_description (PangoLayout *layout);
 
-func (v *Layout) GetFontDescription() pango.FontDescription {
+func (v *layout) GetFontDescription() pango.FontDescription {
 	c := C.pango_layout_get_font_description(v.native())
 
-	desc := new(FontDescription)
+	desc := new(fontDescription)
 	desc.pangoFontDescription = (*C.PangoFontDescription)(c)
 
 	return desc
@@ -220,13 +220,13 @@ func (v *Layout) GetFontDescription() pango.FontDescription {
 //void           pango_layout_set_width            (PangoLayout                *layout,
 //						  int                         width);
 
-func (v *Layout) SetWidth(width int) {
+func (v *layout) SetWidth(width int) {
 	C.pango_layout_set_width(v.native(), C.int(width))
 }
 
 //int            pango_layout_get_width            (PangoLayout                *layout);
 
-func (v *Layout) GetWidth() int {
+func (v *layout) GetWidth() int {
 	c := C.pango_layout_get_width(v.native())
 	return int(c)
 }
@@ -234,13 +234,13 @@ func (v *Layout) GetWidth() int {
 //void           pango_layout_set_height           (PangoLayout                *layout,
 //						  int                         height);
 
-func (v *Layout) SetHeight(width int) {
+func (v *layout) SetHeight(width int) {
 	C.pango_layout_set_height(v.native(), C.int(width))
 }
 
 //int            pango_layout_get_height           (PangoLayout                *layout);
 
-func (v *Layout) GetHeight() int {
+func (v *layout) GetHeight() int {
 	c := C.pango_layout_get_height(v.native())
 	return int(c)
 }
@@ -248,20 +248,20 @@ func (v *Layout) GetHeight() int {
 //void           pango_layout_set_wrap             (PangoLayout                *layout,
 //						  PangoWrapMode               wrap);
 
-func (v *Layout) SetWrap(wrap pango.WrapMode) {
+func (v *layout) SetWrap(wrap pango.WrapMode) {
 	C.pango_layout_set_wrap(v.native(), C.PangoWrapMode(wrap))
 }
 
 //PangoWrapMode  pango_layout_get_wrap             (PangoLayout                *layout);
 
-func (v *Layout) GetWrap() pango.WrapMode {
+func (v *layout) GetWrap() pango.WrapMode {
 	c := C.pango_layout_get_wrap(v.native())
 	return pango.WrapMode(c)
 }
 
 //gboolean       pango_layout_is_wrapped           (PangoLayout                *layout);
 
-func (v *Layout) IsWrapped() bool {
+func (v *layout) IsWrapped() bool {
 	c := C.pango_layout_is_wrapped(v.native())
 	return gobool(c)
 }
@@ -269,13 +269,13 @@ func (v *Layout) IsWrapped() bool {
 //void           pango_layout_set_indent           (PangoLayout                *layout,
 //						  int                         indent);
 
-func (v *Layout) SetIndent(indent int) {
+func (v *layout) SetIndent(indent int) {
 	C.pango_layout_set_indent(v.native(), C.int(indent))
 }
 
 //int            pango_layout_get_indent           (PangoLayout                *layout);
 
-func (v *Layout) GetIndent() int {
+func (v *layout) GetIndent() int {
 	c := C.pango_layout_get_indent(v.native())
 	return int(c)
 }
@@ -353,7 +353,7 @@ func (v *Layout) GetIndent() int {
 //void     pango_layout_get_size             (PangoLayout    *layout,
 //					    int            *width,
 //					    int            *height);
-func (v *Layout) GetSize() (int, int) {
+func (v *layout) GetSize() (int, int) {
 	var w, h C.int
 	C.pango_layout_get_size(v.native(), &w, &h)
 	return int(w), int(h)

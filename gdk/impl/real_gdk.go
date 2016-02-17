@@ -18,7 +18,7 @@ func (*RealGdk) DisplayOpen(displayName string) (gdk.Display, error) {
 }
 
 func (*RealGdk) EventButtonFrom(ev gdk.Event) gdk.EventButton {
-	return EventButtonFrom(castToEvent(ev))
+	return EventButtonFrom(CastToEvent(ev))
 }
 
 func (*RealGdk) EventKeyNew() gdk.EventKey {
@@ -58,7 +58,7 @@ func (*RealGdk) NewRGBA(values ...float64) gdk.RGBA {
 }
 
 func (*RealGdk) PixbufCopy(v gdk.Pixbuf) (gdk.Pixbuf, error) {
-	return PixbufCopy(castToPixbuf(v))
+	return PixbufCopy(CastToPixbuf(v))
 }
 
 func (*RealGdk) PixbufGetFileInfo(filename string) (interface{}, int, int) {

@@ -42,16 +42,16 @@ func init() {
 }
 
 // Context is a representation of PangoContext.
-type Context struct {
+type context struct {
 	pangoContext *C.PangoContext
 }
 
 // Native returns a pointer to the underlying PangoLayout.
-func (v *Context) Native() uintptr {
+func (v *context) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *Context) native() *C.PangoContext {
+func (v *context) native() *C.PangoContext {
 	return (*C.PangoContext)(unsafe.Pointer(v.pangoContext))
 }
 
@@ -62,16 +62,16 @@ func marshalContext(p uintptr) (interface{}, error) {
 	return wrapContext(obj), nil
 }
 
-func wrapContext(obj *glib.Object) *Context {
+func wrapContext(obj *glib.Object) *context {
 	return &Context{obj}
 }
 */
 
 //PangoContext *pango_context_new           (void);
-func ContextNew() *Context {
+func ContextNew() *context {
 	c := C.pango_context_new()
 
-	context := new(Context)
+	context := new(context)
 	context.pangoContext = (*C.PangoContext)(c)
 
 	return context

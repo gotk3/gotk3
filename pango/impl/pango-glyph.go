@@ -29,57 +29,57 @@ import
 "unsafe"
 
 // GlyphGeometry is a representation of PangoGlyphGeometry.
-type GlyphGeometry struct {
+type glyphGeometry struct {
 	pangoGlyphGeometry *C.PangoGlyphGeometry
 }
 
 // Native returns a pointer to the underlying PangoLayout.
-func (v *GlyphGeometry) Native() uintptr {
+func (v *glyphGeometry) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *GlyphGeometry) native() *C.PangoGlyphGeometry {
+func (v *glyphGeometry) native() *C.PangoGlyphGeometry {
 	return (*C.PangoGlyphGeometry)(unsafe.Pointer(v.pangoGlyphGeometry))
 }
 
 // GlyphVisAttr is a representation of PangoGlyphVisAttr.
-type GlyphVisAttr struct {
+type glyphVisAttr struct {
 	pangoGlyphVisAttr *C.PangoGlyphGeometry
 }
 
 // Native returns a pointer to the underlying PangoGlyphVisAttr.
-func (v *GlyphVisAttr) Native() uintptr {
+func (v *glyphVisAttr) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *GlyphVisAttr) native() *C.PangoGlyphVisAttr {
+func (v *glyphVisAttr) native() *C.PangoGlyphVisAttr {
 	return (*C.PangoGlyphVisAttr)(unsafe.Pointer(v.pangoGlyphVisAttr))
 }
 
 // GlyphInfo is a representation of PangoGlyphInfo.
-type GlyphInfo struct {
+type glyphInfo struct {
 	pangoGlyphInfo *C.PangoGlyphInfo
 }
 
 // Native returns a pointer to the underlying PangoGlyphInfo.
-func (v *GlyphInfo) Native() uintptr {
+func (v *glyphInfo) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *GlyphInfo) native() *C.PangoGlyphInfo {
+func (v *glyphInfo) native() *C.PangoGlyphInfo {
 	return (*C.PangoGlyphInfo)(unsafe.Pointer(v.pangoGlyphInfo))
 }
 
 // GlyphGeometry is a representation of PangoGlyphString.
-type GlyphString struct {
+type glyphString struct {
 	pangoGlyphString *C.PangoGlyphString
 }
 
 // Native returns a pointer to the underlying PangoGlyphString.
-func (v *GlyphString) Native() uintptr {
+func (v *glyphString) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *GlyphString) native() *C.PangoGlyphString {
+func (v *glyphString) native() *C.PangoGlyphString {
 	return (*C.PangoGlyphString)(unsafe.Pointer(v.pangoGlyphString))
 }

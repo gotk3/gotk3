@@ -44,13 +44,6 @@ func CastToWindow(s gdk.Window) *Window {
 	return s.(*Window)
 }
 
-func castToEvent(s gdk.Event) *Event {
-	if s == nil {
-		return nil
-	}
-	return s.(*Event)
-}
-
 func CastToDevice(s gdk.Device) *Device {
 	if s == nil {
 		return nil
@@ -58,18 +51,11 @@ func CastToDevice(s gdk.Device) *Device {
 	return s.(*Device)
 }
 
-func castToCursor(s gdk.Cursor) *Cursor {
+func castToCursor(s gdk.Cursor) *cursor {
 	if s == nil {
 		return nil
 	}
-	return s.(*Cursor)
-}
-
-func castToPixbuf(s gdk.Pixbuf) *Pixbuf {
-	if s == nil {
-		return nil
-	}
-	return s.(*Pixbuf)
+	return s.(*cursor)
 }
 
 func CastToVisual(s gdk.Visual) *Visual {

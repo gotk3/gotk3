@@ -30,15 +30,15 @@ import (
 )
 
 // GlyphItem is a representation of PangoGlyphItem.
-type GlyphItem struct {
+type glyphItem struct {
 	pangoGlyphItem *C.PangoGlyphItem
 }
 
 // Native returns a pointer to the underlying PangoGlyphItem.
-func (v *GlyphItem) Native() uintptr {
+func (v *glyphItem) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *GlyphItem) native() *C.PangoGlyphItem {
+func (v *glyphItem) native() *C.PangoGlyphItem {
 	return (*C.PangoGlyphItem)(unsafe.Pointer(v.pangoGlyphItem))
 }
