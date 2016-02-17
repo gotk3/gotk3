@@ -23,18 +23,18 @@ func CastToSList(s glib.SList) *SList {
 	return s.(*SList)
 }
 
-func toNotification(s glib.Notification) *Notification {
+func toNotification(s glib.Notification) *notification {
 	if s == nil {
 		return nil
 	}
-	return s.(*Notification)
+	return s.(*notification)
 }
 
-func toMenuItem(s glib.MenuItem) *MenuItem {
+func toMenuItem(s glib.MenuItem) *menuItem {
 	if s == nil {
 		return nil
 	}
-	return s.(*MenuItem)
+	return s.(*menuItem)
 }
 
 func CastToMenuModel(s glib.MenuModel) *MenuModel {

@@ -175,7 +175,7 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 	// Fill beginning of args, up to the minimum of the total number of callback
 	// parameters and parameters from the glib runtime.
 	for i := 0; i < nCbParams && i < nGLibParams; i++ {
-		v := &Value{&gValues[i]}
+		v := &value{&gValues[i]}
 		val, err := v.GoValue()
 		if err != nil {
 			fmt.Fprintf(os.Stderr,
@@ -770,35 +770,35 @@ func (v *InitiallyUnowned) Native() uintptr {
 // be properly unset when going out of scope. Instead, use ValueAlloc(),
 // which will set the runtime finalizer to unset the Value after it has
 // left scope.
-type Value struct {
+type value struct {
 	GValue *C.GValue
 }
 
 // native returns a pointer to the underlying GValue.
-func (v *Value) native() *C.GValue {
+func (v *value) native() *C.GValue {
 	return v.GValue
 }
 
 // Native returns a pointer to the underlying GValue.
-func (v *Value) Native() unsafe.Pointer {
+func (v *value) Native() unsafe.Pointer {
 	return unsafe.Pointer(v.native())
 }
 
 // ValueAlloc allocates a Value and sets a runtime finalizer to call
 // g_value_unset() on the underlying GValue after leaving scope.
 // ValueAlloc() returns a non-nil error if the allocation failed.
-func ValueAlloc() (*Value, error) {
+func ValueAlloc() (*value, error) {
 	c := C._g_value_alloc()
 	if c == nil {
 		return nil, errNilPtr
 	}
 
-	v := &Value{c}
+	v := &value{c}
 
 	//An allocated GValue is not guaranteed to hold a value that can be unset
 	//We need to double check before unsetting, to prevent:
 	//`g_value_unset: assertion 'G_IS_VALUE (value)' failed`
-	runtime.SetFinalizer(v, func(f *Value) {
+	runtime.SetFinalizer(v, func(f *value) {
 		if t, _, err := f.Type(); err != nil || t == glib.TYPE_INVALID || t == glib.TYPE_NONE {
 			C.g_free(C.gpointer(f.native()))
 			return
@@ -814,32 +814,32 @@ func ValueAlloc() (*Value, error) {
 // initializes a new Value with the Type t.  A runtime finalizer is set
 // to call g_value_unset() on the underlying GValue after leaving scope.
 // ValueInit() returns a non-nil error if the allocation failed.
-func ValueInit(t glib.Type) (*Value, error) {
+func ValueInit(t glib.Type) (*value, error) {
 	c := C._g_value_init(C.GType(t))
 	if c == nil {
 		return nil, errNilPtr
 	}
 
-	v := &Value{c}
+	v := &value{c}
 
-	runtime.SetFinalizer(v, (*Value).unset)
+	runtime.SetFinalizer(v, (*value).unset)
 	return v, nil
 }
 
 // ValueFromNative returns a type-asserted pointer to the Value.
-func ValueFromNative(l unsafe.Pointer) *Value {
+func ValueFromNative(l unsafe.Pointer) *value {
 	//TODO why it does not add finalizer to the value?
-	return &Value{(*C.GValue)(l)}
+	return &value{(*C.GValue)(l)}
 }
 
-func (v *Value) unset() {
+func (v *value) unset() {
 	C.g_value_unset(v.native())
 }
 
 // Type is a wrapper around the G_VALUE_HOLDS_GTYPE() macro and
 // the g_value_get_gtype() function.  GetType() returns TYPE_INVALID if v
 // does not hold a Type, or otherwise returns the Type of v.
-func (v *Value) Type() (actual glib.Type, fundamental glib.Type, err error) {
+func (v *value) Type() (actual glib.Type, fundamental glib.Type, err error) {
 	if !gobool(C._g_is_value(v.native())) {
 		return actual, fundamental, errors.New("invalid GValue")
 	}
@@ -850,7 +850,7 @@ func (v *Value) Type() (actual glib.Type, fundamental glib.Type, err error) {
 
 // GValue converts a Go type to a comparable GValue.  GValue()
 // returns a non-nil error if the conversion was unsuccessful.
-func GValue(v interface{}) (gvalue *Value, err error) {
+func GValue(v interface{}) (gvalue *value, err error) {
 	if v == nil {
 		val, err := ValueInit(glib.TYPE_POINTER)
 		if err != nil {
@@ -1048,7 +1048,7 @@ func (m marshalMap) register(tm []TypeMarshaler) {
 	}
 }
 
-func (m marshalMap) lookup(v *Value) (GValueMarshaler, error) {
+func (m marshalMap) lookup(v *value) (GValueMarshaler, error) {
 	actual, fundamental, err := v.Type()
 	if err != nil {
 		return nil, err
@@ -1171,7 +1171,7 @@ func marshalVariant(p uintptr) (interface{}, error) {
 //
 // This function is a wrapper around the many g_value_get_*()
 // functions, depending on the type of the Value.
-func (v *Value) GoValue() (interface{}, error) {
+func (v *value) GoValue() (interface{}, error) {
 	f, err := gValueMarshalers.lookup(v)
 	if err != nil {
 		return nil, err
@@ -1183,69 +1183,69 @@ func (v *Value) GoValue() (interface{}, error) {
 }
 
 // SetBool is a wrapper around g_value_set_boolean().
-func (v *Value) SetBool(val bool) {
+func (v *value) SetBool(val bool) {
 	C.g_value_set_boolean(v.native(), gbool(val))
 }
 
 // SetSChar is a wrapper around g_value_set_schar().
-func (v *Value) SetSChar(val int8) {
+func (v *value) SetSChar(val int8) {
 	C.g_value_set_schar(v.native(), C.gint8(val))
 }
 
 // SetInt64 is a wrapper around g_value_set_int64().
-func (v *Value) SetInt64(val int64) {
+func (v *value) SetInt64(val int64) {
 	C.g_value_set_int64(v.native(), C.gint64(val))
 }
 
 // SetInt is a wrapper around g_value_set_int().
-func (v *Value) SetInt(val int) {
+func (v *value) SetInt(val int) {
 	C.g_value_set_int(v.native(), C.gint(val))
 }
 
 // SetUChar is a wrapper around g_value_set_uchar().
-func (v *Value) SetUChar(val uint8) {
+func (v *value) SetUChar(val uint8) {
 	C.g_value_set_uchar(v.native(), C.guchar(val))
 }
 
 // SetUInt64 is a wrapper around g_value_set_uint64().
-func (v *Value) SetUInt64(val uint64) {
+func (v *value) SetUInt64(val uint64) {
 	C.g_value_set_uint64(v.native(), C.guint64(val))
 }
 
 // SetUInt is a wrapper around g_value_set_uint().
-func (v *Value) SetUInt(val uint) {
+func (v *value) SetUInt(val uint) {
 	C.g_value_set_uint(v.native(), C.guint(val))
 }
 
 // SetFloat is a wrapper around g_value_set_float().
-func (v *Value) SetFloat(val float32) {
+func (v *value) SetFloat(val float32) {
 	C.g_value_set_float(v.native(), C.gfloat(val))
 }
 
 // SetDouble is a wrapper around g_value_set_double().
-func (v *Value) SetDouble(val float64) {
+func (v *value) SetDouble(val float64) {
 	C.g_value_set_double(v.native(), C.gdouble(val))
 }
 
 // SetString is a wrapper around g_value_set_string().
-func (v *Value) SetString(val string) {
+func (v *value) SetString(val string) {
 	cstr := C.CString(val)
 	defer C.free(unsafe.Pointer(cstr))
 	C.g_value_set_string(v.native(), (*C.gchar)(cstr))
 }
 
 // SetInstance is a wrapper around g_value_set_instance().
-func (v *Value) SetInstance(instance uintptr) {
+func (v *value) SetInstance(instance uintptr) {
 	C.g_value_set_instance(v.native(), C.gpointer(instance))
 }
 
 // SetPointer is a wrapper around g_value_set_pointer().
-func (v *Value) SetPointer(p uintptr) {
+func (v *value) SetPointer(p uintptr) {
 	C.g_value_set_pointer(v.native(), C.gpointer(p))
 }
 
 // GetPointer is a wrapper around g_value_get_pointer().
-func (v *Value) GetPointer() unsafe.Pointer {
+func (v *value) GetPointer() unsafe.Pointer {
 	return unsafe.Pointer(C.g_value_get_pointer(v.native()))
 }
 
@@ -1253,7 +1253,7 @@ func (v *Value) GetPointer() unsafe.Pointer {
 // returns a non-nil error if g_value_get_string() returned a NULL
 // pointer to distinguish between returning a NULL pointer and returning
 // an empty string.
-func (v *Value) GetString() (string, error) {
+func (v *value) GetString() (string, error) {
 	c := C.g_value_get_string(v.native())
 	if c == nil {
 		return "", errNilPtr
@@ -1261,12 +1261,12 @@ func (v *Value) GetString() (string, error) {
 	return C.GoString((*C.char)(c)), nil
 }
 
-type Signal struct {
+type signal struct {
 	name     string
 	signalId C.guint
 }
 
-func SignalNew(s string) (*Signal, error) {
+func SignalNew(s string) (*signal, error) {
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -1276,13 +1276,13 @@ func SignalNew(s string) (*Signal, error) {
 		return nil, fmt.Errorf("invalid signal name: %s", s)
 	}
 
-	return &Signal{
+	return &signal{
 		name:     s,
 		signalId: signalId,
 	}, nil
 }
 
-func (s *Signal) String() string {
+func (s *signal) String() string {
 	return s.name
 }
 

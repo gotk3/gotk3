@@ -20,19 +20,19 @@ import "unsafe"
 // )
 
 // Notification is a representation of GNotification.
-type Notification struct {
+type notification struct {
 	*Object
 }
 
 // native() returns a pointer to the underlying GNotification.
-func (v *Notification) native() *C.GNotification {
+func (v *notification) native() *C.GNotification {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
 	return C.toGNotification(unsafe.Pointer(v.GObject))
 }
 
-func (v *Notification) Native() uintptr {
+func (v *notification) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
@@ -41,12 +41,12 @@ func marshalNotification(p uintptr) (interface{}, error) {
 	return wrapNotification(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapNotification(obj *Object) *Notification {
-	return &Notification{obj}
+func wrapNotification(obj *Object) *notification {
+	return &notification{obj}
 }
 
 // NotificationNew is a wrapper around g_notification_new().
-func NotificationNew(title string) *Notification {
+func NotificationNew(title string) *notification {
 	cstr1 := (*C.gchar)(C.CString(title))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -58,7 +58,7 @@ func NotificationNew(title string) *Notification {
 }
 
 // SetTitle is a wrapper around g_notification_set_title().
-func (v *Notification) SetTitle(title string) {
+func (v *notification) SetTitle(title string) {
 	cstr1 := (*C.gchar)(C.CString(title))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -66,7 +66,7 @@ func (v *Notification) SetTitle(title string) {
 }
 
 // SetBody is a wrapper around g_notification_set_body().
-func (v *Notification) SetBody(body string) {
+func (v *notification) SetBody(body string) {
 	cstr1 := (*C.gchar)(C.CString(body))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -75,12 +75,12 @@ func (v *Notification) SetBody(body string) {
 
 // Only available from 2.42
 // // SetPriority is a wrapper around g_notification_set_priority().
-// func (v *Notification) SetPriority(prio NotificationPriority) {
+// func (v *notification) SetPriority(prio NotificationPriority) {
 // 	C.g_notification_set_priority(v.native(), C.GNotificationPriority(prio))
 // }
 
 // SetDefaultAction is a wrapper around g_notification_set_default_action().
-func (v *Notification) SetDefaultAction(detailedAction string) {
+func (v *notification) SetDefaultAction(detailedAction string) {
 	cstr1 := (*C.gchar)(C.CString(detailedAction))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -88,7 +88,7 @@ func (v *Notification) SetDefaultAction(detailedAction string) {
 }
 
 // AddButton is a wrapper around g_notification_add_button().
-func (v *Notification) AddButton(label, detailedAction string) {
+func (v *notification) AddButton(label, detailedAction string) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
