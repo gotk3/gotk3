@@ -293,6 +293,12 @@ toGtkMenuBar(void *p)
 	return (GTK_MENU_BAR(p));
 }
 
+static GtkSizeGroup *
+toGtkSizeGroup(void *p)
+{
+	return (GTK_SIZE_GROUP(p));
+}
+
 static GtkSpinButton *
 toGtkSpinButton(void *p)
 {

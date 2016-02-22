@@ -684,6 +684,21 @@ func marshalShadowType(p uintptr) (interface{}, error) {
 	return ShadowType(c), nil
 }
 
+// SizeGroupMode is a representation of GTK's GtkSizeGroupMode
+type SizeGroupMode int
+
+const (
+	SIZE_GROUP_NONE       SizeGroupMode = C.GTK_SIZE_GROUP_NONE
+	SIZE_GROUP_HORIZONTAL SizeGroupMode = C.GTK_SIZE_GROUP_HORIZONTAL
+	SIZE_GROUP_VERTICAL   SizeGroupMode = C.GTK_SIZE_GROUP_VERTICAL
+	SIZE_GROUP_BOTH       SizeGroupMode = C.GTK_SIZE_GROUP_BOTH
+)
+
+func marshalSizeGroupMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SizeGroupMode(c), nil
+}
+
 // SortType is a representation of GTK's GtkSortType.
 type SortType int
 
@@ -6808,6 +6823,76 @@ func (v *SeparatorToolItem) SetDraw(draw bool) {
 func (v *SeparatorToolItem) GetDraw() bool {
 	c := C.gtk_separator_tool_item_get_draw(v.native())
 	return gobool(c)
+}
+
+/*
+ * GtkSizeGroup
+ */
+
+// SizeGroup is a representation of GTK's GtkSizeGroup
+type SizeGroup struct {
+	*glib.Object
+}
+
+// native() returns a pointer to the underlying GtkSizeGroup
+func (v *SizeGroup) native() *C.GtkSizeGroup {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkSizeGroup(p)
+}
+
+func marshalSizeGroup(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := wrapObject(unsafe.Pointer(c))
+	return &SizeGroup{obj}, nil
+}
+
+func wrapSizeGroup(obj *glib.Object) *SizeGroup {
+	return &SizeGroup{obj}
+}
+
+// SizeGroupNew is a wrapper around gtk_size_group_new().
+func SizeGroupNew(mode SizeGroupMode) (*SizeGroup, error) {
+	c := C.gtk_size_group_new(C.GtkSizeGroupMode(mode))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapSizeGroup(wrapObject(unsafe.Pointer(c))), nil
+}
+
+func (v *SizeGroup) SetMode(mode SizeGroupMode) {
+	C.gtk_size_group_set_mode(v.native(), C.GtkSizeGroupMode(mode))
+}
+
+func (v *SizeGroup) GetMode() SizeGroupMode {
+	return SizeGroupMode(C.gtk_size_group_get_mode(v.native()))
+}
+
+func (v *SizeGroup) SetIgnoreHidden(ignoreHidden bool) {
+	C.gtk_size_group_set_ignore_hidden(v.native(), gbool(ignoreHidden))
+}
+
+func (v *SizeGroup) GetIgnoreHidden() bool {
+	c := C.gtk_size_group_get_ignore_hidden(v.native())
+	return gobool(c)
+}
+
+func (v *SizeGroup) AddWidget(widget IWidget) {
+	C.gtk_size_group_add_widget(v.native(), widget.toWidget())
+}
+
+func (v *SizeGroup) RemoveWidget(widget IWidget) {
+	C.gtk_size_group_remove_widget(v.native(), widget.toWidget())
+}
+
+func (v *SizeGroup) GetWidgets() *glib.SList {
+	c := C.gtk_size_group_get_widgets(v.native())
+	if c == nil {
+		return nil
+	}
+	return glib.WrapSList(uintptr(unsafe.Pointer(c)))
 }
 
 /*
