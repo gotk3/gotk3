@@ -107,6 +107,7 @@ func init() {
 		{glib.Type(C.gtk_accel_group_get_type()), marshalAccelGroup},
 		{glib.Type(C.gtk_accel_map_get_type()), marshalAccelMap},
 		{glib.Type(C.gtk_adjustment_get_type()), marshalAdjustment},
+		{glib.Type(C.gtk_application_get_type()), marshalApplication},
 		{glib.Type(C.gtk_application_window_get_type()), marshalApplicationWindow},
 		{glib.Type(C.gtk_assistant_get_type()), marshalAssistant},
 		{glib.Type(C.gtk_bin_get_type()), marshalBin},
