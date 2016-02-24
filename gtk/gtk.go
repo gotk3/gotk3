@@ -5217,6 +5217,12 @@ func (v *MenuItem) SetLabel(label string) {
 	C.gtk_menu_item_set_label(v.native(), (*C.gchar)(cstr))
 }
 
+// Gets text on the menu_item label
+func (v *MenuItem) GetLabel() string {
+	l := C.gtk_menu_item_get_label(v.native())
+	return C.GoString((*C.char)(l))
+}
+
 /*
  * GtkMessageDialog
  */
