@@ -1333,3 +1333,11 @@ func InitI18n(domain string, dir string) {
 
 	C.init_i18n(domainStr, dirStr)
 }
+
+// _ localizes a string using gettext
+func _(input string) string {
+	cstr := C.CString(input)
+	defer C.free(unsafe.Pointer(cstr))
+
+	return C.GoString(C.localize(cstr))
+}

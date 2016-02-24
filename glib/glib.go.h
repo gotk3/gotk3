@@ -180,6 +180,10 @@ static void init_i18n(const char *domain, const char *dir) {
   textdomain(domain);
 }
 
+static const char* localize(const char *string) {
+  return _(string);
+}
+
 static inline char** make_strings(int count) {
 	return (char**)malloc(sizeof(char*) * count);
 }
