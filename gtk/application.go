@@ -40,6 +40,12 @@ func (v *Application) native() *C.GtkApplication {
 	return C.toGtkApplication(unsafe.Pointer(v.GObject))
 }
 
+func marshalApplication(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapApplication(obj), nil
+}
+
 func wrapApplication(obj *glib.Object) *Application {
 	return &Application{glib.Application{obj}}
 }
