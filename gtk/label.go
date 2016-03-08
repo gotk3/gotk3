@@ -255,3 +255,12 @@ func (v *Label) SetLabel(str string) {
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_label_set_label(v.native(), (*C.gchar)(cstr))
 }
+
+// GetLabel is a wrapper around gtk_label_get_label().
+func (v *Label) GetLabel() string {
+	c := C.gtk_label_get_label(v.native())
+	if c == nil {
+		return ""
+	}
+	return C.GoString((*C.char)(c))
+}
