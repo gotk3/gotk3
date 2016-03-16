@@ -7686,18 +7686,6 @@ func (v *TextBuffer) CreateMark(mark_name string, where *TextIter, left_gravity 
 }
 
 /*
- * GtkTextIter
- */
-
-// TextIter is a representation of GTK's GtkTextIter
-type TextIter C.GtkTextIter
-
-func marshalTextIter(p uintptr) (interface{}, error) {
-	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
-	return (*TextIter)(unsafe.Pointer(c)), nil
-}
-
-/*
  * GtkToggleButton
  */
 
