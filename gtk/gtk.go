@@ -193,6 +193,7 @@ func init() {
 		// Boxed
 		{glib.Type(C.gtk_target_entry_get_type()), marshalTargetEntry},
 		{glib.Type(C.gtk_text_iter_get_type()), marshalTextIter},
+		{glib.Type(C.gtk_text_mark_get_type()), marshalTextMark},
 		{glib.Type(C.gtk_tree_iter_get_type()), marshalTreeIter},
 		{glib.Type(C.gtk_tree_path_get_type()), marshalTreePath},
 	}
@@ -7667,6 +7668,21 @@ func (v *TextBuffer) SetText(text string) {
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_text_buffer_set_text(v.native(), (*C.gchar)(cstr),
 		C.gint(len(text)))
+}
+
+// GetIterAtMark() is a wrapper around gtk_text_buffer_get_iter_at_mark().
+func (v *TextBuffer) GetIterAtMark(mark *TextMark) *TextIter {
+	var iter C.GtkTextIter
+	C.gtk_text_buffer_get_iter_at_mark(v.native(), &iter, (*C.GtkTextMark)(mark))
+	return (*TextIter)(&iter)
+}
+
+// CreateMark() is a wrapper around gtk_text_buffer_create_mark().
+func (v *TextBuffer) CreateMark(mark_name string, where *TextIter, left_gravity bool) *TextMark {
+	cstr := C.CString(mark_name)
+	defer C.free(unsafe.Pointer(cstr))
+	ret := C.gtk_text_buffer_create_mark(v.native(), (*C.gchar)(cstr), (*C.GtkTextIter)(where), gbool(left_gravity))
+	return (*TextMark)(ret)
 }
 
 /*
