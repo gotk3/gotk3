@@ -1517,6 +1517,17 @@ type Rectangle struct {
 	GdkRectangle C.GdkRectangle
 }
 
+func WrapRectangle(p uintptr) *Rectangle {
+	return wrapRectangle((*C.GdkRectangle)(unsafe.Pointer(p)))
+}
+
+func wrapRectangle(obj *C.GdkRectangle) *Rectangle {
+	if obj == nil {
+		return nil
+	}
+	return &Rectangle{*obj}
+}
+
 // Native() returns a pointer to the underlying GdkRectangle.
 func (r *Rectangle) native() *C.GdkRectangle {
 	return &r.GdkRectangle
