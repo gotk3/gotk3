@@ -8296,7 +8296,7 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
 		glist.FreeFull(func(item interface{}) {
-			path := item.(TreePath)
+			path := item.(*TreePath)
 			C.gtk_tree_path_free(path.GtkTreePath)
 		})
 	})
