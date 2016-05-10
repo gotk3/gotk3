@@ -1077,6 +1077,11 @@ func (v *EventScroll) Type() EventType {
 	return EventType(c)
 }
 
+func (v *EventScroll) Direction() ScrollDirection {
+	c := v.native().direction
+	return ScrollDirection(c)
+}
+
 /*
  * GdkPixbuf
  */
