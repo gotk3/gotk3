@@ -39,6 +39,15 @@ func NewSurfaceFromPNG(fileName string) (*Surface, error) {
 	return &Surface{surfaceNative}, nil
 }
 
+// CreateImageSurface is a wrapper around cairo_image_surface_create().
+func CreateImageSurface(format Format, width, height int) *Surface {
+	c := C.cairo_image_surface_create(C.cairo_format_t(format),
+		C.int(width), C.int(height))
+	s := wrapSurface(c)
+	runtime.SetFinalizer(s, (*Surface).destroy)
+	return s
+}
+
 // native returns a pointer to the underlying cairo_surface_t.
 func (v *Surface) native() *C.cairo_surface_t {
 	if v == nil {
