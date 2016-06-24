@@ -62,4 +62,9 @@ func (v *SettingsSchemaSource) Lookup(schema string, recursive bool) *SettingsSc
 	return wrapSettingsSchema(C.g_settings_schema_source_lookup(v.native(), cstr, gbool(recursive)))
 }
 
-// void 	g_settings_schema_source_list_schemas ()
+// ListSchemas is a wrapper around 	g_settings_schema_source_list_schemas().
+func (v *SettingsSchemaSource) ListSchemas(recursive bool) (nonReolcatable, relocatable []string) {
+	var nonRel, rel **C.gchar
+	C.g_settings_schema_source_list_schemas(v.native(), gbool(recursive), &nonRel, &rel)
+	return toGoStringArray(nonRel), toGoStringArray(rel)
+}
