@@ -24,6 +24,7 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
+
 import (
 	"errors"
 	"fmt"
