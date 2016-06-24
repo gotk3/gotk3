@@ -4,12 +4,11 @@
 package glib
 
 // #cgo pkg-config: glib-2.0 gobject-2.0
-// #include <glib.h>
-// #include <glib-object.h>
-// #include "glib.go.h"
 // #include "gvariant.go.h"
-//import "C"
-//import "unsafe"
+// #include "glib.go.h"
+import "C"
+
+import "unsafe"
 
 /*
  * GVariant
@@ -18,7 +17,7 @@ package glib
 // IVariant is an interface type implemented by Variant and all types which embed
 // an Variant.  It is meant to be used as a type for function arguments which
 // require GVariants or any subclasses thereof.
-/* todo fix bugs
+
 type IVariant interface {
 	ToGVariant() *C.GVariant
 	ToVariant() *Variant
@@ -54,6 +53,7 @@ func (v *Variant) native() *C.GVariant {
 	if v == nil || v.GVariant == nil {
 		return nil
 	}
+	return v.GVariant
 	p := unsafe.Pointer(v.GVariant)
 	return C.toGVariant(p)
 }
@@ -62,17 +62,52 @@ func (v *Variant) native() *C.GVariant {
 func (v *Variant) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
-*/
+
+func (v *Variant) GetStrv() []string {
+	gstrv := C.g_variant_get_strv(v.native(), nil)
+	// we do not own the memory for these strings, so we must not use strfreev
+	// but we must free the actual pointer we receive.
+	c := gstrv
+	defer C.g_free(gstrv)
+	var strs []string
+
+	for *c != nil {
+		strs = append(strs, C.GoString((*C.char)(*c)))
+		c = C.next_gcharptr(c)
+	}
+	return strs
+}
+
+func (v *Variant) TypeString() string {
+	// the string returned from this belongs to GVariant and must not be freed.
+	return C.GoString((*C.char)(C.g_variant_get_type_string(v.native())))
+}
+
+func (v *Variant) IsContainer() bool {
+	return gobool(C.g_variant_is_container(v.native()))
+}
+
+func (v *Variant) IsFloating() bool {
+	return gobool(C.g_variant_is_floating(v.native()))
+}
+
+func (v *Variant) GetBoolean() bool {
+	return gobool(C.g_variant_get_boolean(v.native()))
+}
+
+func (v *Variant) GetString() string {
+	var len C.gsize
+	gc := C.g_variant_get_string(v.native(), &len)
+	defer C.g_free(gc)
+	return C.GoStringN((*C.char)(gc), (C.int)(len))
+}
 
 //void	g_variant_unref ()
 //GVariant *	g_variant_ref ()
 //GVariant *	g_variant_ref_sink ()
-//gboolean	g_variant_is_floating ()
 //GVariant *	g_variant_take_ref ()
 //const GVariantType *	g_variant_get_type ()
-//const gchar *	g_variant_get_type_string ()
 //gboolean	g_variant_is_of_type ()
-//gboolean	g_variant_is_container ()
 //gint	g_variant_compare ()
 //GVariantClass	g_variant_classify ()
 //gboolean	g_variant_check_format_string ()
@@ -102,7 +137,6 @@ func (v *Variant) Native() uintptr {
 //GVariant *	g_variant_new_objv ()
 //GVariant *	g_variant_new_bytestring ()
 //GVariant *	g_variant_new_bytestring_array ()
-//gboolean	g_variant_get_boolean ()
 //guchar	g_variant_get_byte ()
 //gint16	g_variant_get_int16 ()
 //guint16	g_variant_get_uint16 ()

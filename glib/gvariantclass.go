@@ -9,6 +9,7 @@ package glib
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
+// #include "gvariant.go.h"
 import "C"
 
 /*

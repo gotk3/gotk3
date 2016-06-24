@@ -10,13 +10,13 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 // #include "gvariant.go.h"
-//import "C"
-//import "unsafe"
+import "C"
+import "unsafe"
 
 /*
  * GVariantBuilder
  */
-/* todo fix bugs
+
 // VariantBuilder is a representation of GLib's VariantBuilder.
 type VariantBuilder struct {
 	GVariantBuilder *C.GVariantBuilder
@@ -51,4 +51,3 @@ func (v *VariantBuilder) native() *C.GVariantBuilder {
 func (v *VariantBuilder) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
-*/
