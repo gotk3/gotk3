@@ -8,7 +8,10 @@ package glib
 // #include "glib.go.h"
 import "C"
 
-import "unsafe"
+import (
+	"fmt"
+	"unsafe"
+)
 
 /*
  * GVariant
@@ -63,21 +66,6 @@ func (v *Variant) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func (v *Variant) GetStrv() []string {
-	gstrv := C.g_variant_get_strv(v.native(), nil)
-	// we do not own the memory for these strings, so we must not use strfreev
-	// but we must free the actual pointer we receive.
-	c := gstrv
-	defer C.g_free(gstrv)
-	var strs []string
-
-	for *c != nil {
-		strs = append(strs, C.GoString((*C.char)(*c)))
-		c = C.next_gcharptr(c)
-	}
-	return strs
-}
-
 func (v *Variant) TypeString() string {
 	// the string returned from this belongs to GVariant and must not be freed.
 	return C.GoString((*C.char)(C.g_variant_get_type_string(v.native())))
@@ -102,12 +90,73 @@ func (v *Variant) GetString() string {
 	return C.GoStringN((*C.char)(gc), (C.int)(len))
 }
 
+func (v *Variant) GetStrv() []string {
+	gstrv := C.g_variant_get_strv(v.native(), nil)
+	// we do not own the memory for these strings, so we must not use strfreev
+	// but we must free the actual pointer we receive.
+	c := gstrv
+	defer C.g_free(gstrv)
+	var strs []string
+
+	for *c != nil {
+		strs = append(strs, C.GoString((*C.char)(*c)))
+		c = C.next_gcharptr(c)
+	}
+	return strs
+}
+
+func (v *Variant) GetInt() (int64, error) {
+	t := v.Type().String()
+	var i int64
+	switch t {
+	case "y":
+		i = int64(C.g_variant_get_byte(v.native()))
+	case "n":
+		i = int64(C.g_variant_get_int16(v.native()))
+	case "q":
+		i = int64(C.g_variant_get_uint16(v.native()))
+	case "i":
+		i = int64(C.g_variant_get_int32(v.native()))
+	case "u":
+		i = int64(C.g_variant_get_uint32(v.native()))
+	case "x":
+		i = int64(C.g_variant_get_int64(v.native()))
+	case "t":
+		i = int64(C.g_variant_get_uint64(v.native()))
+	default:
+		return 0, fmt.Errorf("variant type %s not an integer type", t)
+	}
+	return i, nil
+}
+
+func (v *Variant) Type() *VariantType {
+	return newVariantType(C.g_variant_get_type(v.native()))
+}
+
+func (v *Variant) IsType(t *VariantType) bool {
+	return gobool(C.g_variant_is_of_type(v.native(), t.native()))
+}
+
+// String wraps g_variant_print().  It returns a string understood
+// by g_variant_parse().
+func (v *Variant) String() string {
+	gc := C.g_variant_print(v.native(), gbool(false))
+	defer C.g_free(gc)
+	return C.GoString((*C.char)(gc))
+}
+
+// AnnotatedString wraps g_variant_print(), but returns a type-annotated
+// string.
+func (v *Variant) AnnotatedString() string {
+	gc := C.g_variant_print(v.native(), gbool(true))
+	defer C.g_free(gc)
+	return C.GoString((*C.char)(gc))
+}
+
 //void	g_variant_unref ()
 //GVariant *	g_variant_ref ()
 //GVariant *	g_variant_ref_sink ()
 //GVariant *	g_variant_take_ref ()
-//const GVariantType *	g_variant_get_type ()
-//gboolean	g_variant_is_of_type ()
 //gint	g_variant_compare ()
 //GVariantClass	g_variant_classify ()
 //gboolean	g_variant_check_format_string ()
