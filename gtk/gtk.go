@@ -8570,6 +8570,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkCheckButton":         wrapCheckButton,
 	"GtkCheckMenuItem":       wrapCheckMenuItem,
 	"GtkClipboard":           wrapClipboard,
+	"GtkColorButton":         wrapColorButton,
 	"GtkContainer":           wrapContainer,
 	"GtkDialog":              wrapDialog,
 	"GtkDrawingArea":         wrapDrawingArea,
