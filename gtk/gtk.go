@@ -8209,6 +8209,21 @@ func (v *TreePath) free() {
 	C.gtk_tree_path_free(v.native())
 }
 
+// GetIndices is a wrapper around gtk_tree_path_get_indices_with_depth
+func (v *TreePath) GetIndices() []int {
+	var depth C.gint
+	var goindices []int
+	var ginthelp C.gint
+	indices := uintptr(unsafe.Pointer(C.gtk_tree_path_get_indices_with_depth(v.native(), &depth)))
+	size := unsafe.Sizeof(ginthelp)
+	for i := 0; i < int(depth); i++ {
+		goind := int(*((*C.gint)(unsafe.Pointer(indices))))
+		goindices = append(goindices, goind)
+		indices += size
+	}
+	return goindices
+}
+
 // String is a wrapper around gtk_tree_path_to_string().
 func (v *TreePath) String() string {
 	c := C.gtk_tree_path_to_string(v.native())
