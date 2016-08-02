@@ -1247,6 +1247,20 @@ func BuilderNew() (*Builder, error) {
 	return &Builder{obj}, nil
 }
 
+// BuilderNewFromResource is a wrapper around gtk_builder_new_from_resource().
+func BuilderNewFromResource(resourcePath string) (*Builder, error) {
+	cstr := C.CString(resourcePath)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gtk_builder_new_from_resource((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := wrapObject(unsafe.Pointer(c))
+	return &Builder{obj}, nil
+}
+
 // AddFromFile is a wrapper around gtk_builder_add_from_file().
 func (b *Builder) AddFromFile(filename string) error {
 	cstr := C.CString(filename)
