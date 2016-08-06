@@ -2478,7 +2478,7 @@ func (v *Container) ChildSetProperty(child IWidget, name string, value interface
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 
-	C.gtk_container_child_set_property(v.native(), child.toWidget(), (*C.gchar)(cstr), (*C.GValue)(unsafe.Pointer(gv)))
+	C.gtk_container_child_set_property(v.native(), child.toWidget(), (*C.gchar)(cstr), (*C.GValue)(unsafe.Pointer(gv.Native())))
 	return nil
 }
 
