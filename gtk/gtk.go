@@ -215,6 +215,13 @@ func gobool(b C.gboolean) bool {
 	return b != C.FALSE
 }
 
+func cGSList(clist *glib.SList) *C.GSList {
+	if clist == nil {
+		return nil
+	}
+	return (*C.GSList)(unsafe.Pointer(clist.Native()))
+}
+
 // Wrapper function for new objects with reference management.
 func wrapObject(ptr unsafe.Pointer) *glib.Object {
 	obj := &glib.Object{glib.ToGObject(ptr)}
@@ -5936,8 +5943,7 @@ func wrapRadioButton(obj *glib.Object) *RadioButton {
 
 // RadioButtonNew is a wrapper around gtk_radio_button_new().
 func RadioButtonNew(group *glib.SList) (*RadioButton, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
-	c := C.gtk_radio_button_new(gslist)
+	c := C.gtk_radio_button_new(cGSList(group))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -5957,10 +5963,9 @@ func RadioButtonNewFromWidget(radioGroupMember *RadioButton) (*RadioButton, erro
 // RadioButtonNewWithLabel is a wrapper around
 // gtk_radio_button_new_with_label().
 func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_radio_button_new_with_label(gslist, (*C.gchar)(cstr))
+	c := C.gtk_radio_button_new_with_label(cGSList(group), (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -5972,8 +5977,11 @@ func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, err
 func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label string) (*RadioButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_radio_button_new_with_label_from_widget(radioGroupMember.native(),
-		(*C.gchar)(cstr))
+	var cradio *C.GtkRadioButton
+	if radioGroupMember != nil {
+		cradio = radioGroupMember.native()
+	}
+	c := C.gtk_radio_button_new_with_label_from_widget(cradio, (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -5983,10 +5991,9 @@ func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label stri
 // RadioButtonNewWithMnemonic is a wrapper around
 // gtk_radio_button_new_with_mnemonic()
 func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_radio_button_new_with_mnemonic(gslist, (*C.gchar)(cstr))
+	c := C.gtk_radio_button_new_with_mnemonic(cGSList(group), (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -5998,7 +6005,11 @@ func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, 
 func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label string) (*RadioButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_radio_button_new_with_mnemonic_from_widget(radioGroupMember.native(),
+	var cradio *C.GtkRadioButton
+	if radioGroupMember != nil {
+		cradio = radioGroupMember.native()
+	}
+	c := C.gtk_radio_button_new_with_mnemonic_from_widget(cradio,
 		(*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
@@ -6008,8 +6019,7 @@ func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label s
 
 // SetGroup is a wrapper around gtk_radio_button_set_group().
 func (v *RadioButton) SetGroup(group *glib.SList) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
-	C.gtk_radio_button_set_group(v.native(), gslist)
+	C.gtk_radio_button_set_group(v.native(), cGSList(group))
 }
 
 // GetGroup is a wrapper around gtk_radio_button_get_group().
@@ -6023,7 +6033,11 @@ func (v *RadioButton) GetGroup() (*glib.SList, error) {
 
 // JoinGroup is a wrapper around gtk_radio_button_join_group().
 func (v *RadioButton) JoinGroup(groupSource *RadioButton) {
-	C.gtk_radio_button_join_group(v.native(), groupSource.native())
+	var cgroup *C.GtkRadioButton
+	if groupSource != nil {
+		cgroup = groupSource.native()
+	}
+	C.gtk_radio_button_join_group(v.native(), cgroup)
 }
 
 /*
@@ -6057,8 +6071,7 @@ func wrapRadioMenuItem(obj *glib.Object) *RadioMenuItem {
 
 // RadioMenuItemNew is a wrapper around gtk_radio_menu_item_new().
 func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
-	c := C.gtk_radio_menu_item_new(gslist)
+	c := C.gtk_radio_menu_item_new(cGSList(group))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -6068,10 +6081,9 @@ func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
 // RadioMenuItemNewWithLabel is a wrapper around
 // gtk_radio_menu_item_new_with_label().
 func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_radio_menu_item_new_with_label(gslist, (*C.gchar)(cstr))
+	c := C.gtk_radio_menu_item_new_with_label(cGSList(group), (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -6081,10 +6093,9 @@ func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem,
 // RadioMenuItemNewWithMnemonic is a wrapper around
 // gtk_radio_menu_item_new_with_mnemonic().
 func RadioMenuItemNewWithMnemonic(group *glib.SList, label string) (*RadioMenuItem, error) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_radio_menu_item_new_with_mnemonic(gslist, (*C.gchar)(cstr))
+	c := C.gtk_radio_menu_item_new_with_mnemonic(cGSList(group), (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -6129,8 +6140,7 @@ func RadioMenuItemNewWithMnemonicFromWidget(group *RadioMenuItem, label string) 
 
 // SetGroup is a wrapper around gtk_radio_menu_item_set_group().
 func (v *RadioMenuItem) SetGroup(group *glib.SList) {
-	gslist := (*C.GSList)(unsafe.Pointer(group.Native()))
-	C.gtk_radio_menu_item_set_group(v.native(), gslist)
+	C.gtk_radio_menu_item_set_group(v.native(), cGSList(group))
 }
 
 // GetGroup is a wrapper around gtk_radio_menu_item_get_group().
