@@ -2407,7 +2407,18 @@ func (v *Container) CheckResize() {
 }
 
 // TODO: gtk_container_foreach
-// TODO: gtk_container_get_children
+
+// GetChildren is a wrapper around gtk_container_get_children().
+func (v *Container) GetChildren() *glib.List {
+	clist := C.gtk_container_get_children(v.native())
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return wrapWidget(wrapObject(ptr))
+	})
+
+	return glist
+}
+
 // TODO: gtk_container_get_path_for_child
 
 // GetFocusChild is a wrapper around gtk_container_get_focus_child().
