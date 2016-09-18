@@ -119,6 +119,12 @@ toGtkContainer(void *p)
 	return (GTK_CONTAINER(p));
 }
 
+static GtkOverlay *
+toGtkOverlay(void *p)
+{
+	return (GTK_OVERLAY(p));
+}
+
 static GtkPaned *
 toGtkPaned(void *p)
 {

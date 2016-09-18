@@ -155,6 +155,7 @@ func init() {
 		{glib.Type(C.gtk_notebook_get_type()), marshalNotebook},
 		{glib.Type(C.gtk_offscreen_window_get_type()), marshalOffscreenWindow},
 		{glib.Type(C.gtk_orientable_get_type()), marshalOrientable},
+		{glib.Type(C.gtk_overlay_get_type()), marshalOverlay},
 		{glib.Type(C.gtk_paned_get_type()), marshalPaned},
 		{glib.Type(C.gtk_progress_bar_get_type()), marshalProgressBar},
 		{glib.Type(C.gtk_radio_button_get_type()), marshalRadioButton},
@@ -5764,6 +5765,66 @@ func (v *Orientable) SetOrientation(orientation Orientation) {
 }
 
 /*
+ * GtkOverlay
+ */
+
+// Overlay is a representation of GTK's GtkOverlay.
+type Overlay struct {
+	Bin
+}
+
+// native returns a pointer to the underlying GtkOverlay.
+func (v *Overlay) native() *C.GtkOverlay {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkOverlay(p)
+}
+
+func marshalOverlay(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapOverlay(obj), nil
+}
+
+func wrapOverlay(obj *glib.Object) *Overlay {
+	return &Overlay{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// OverlayNew() is a wrapper around gtk_overlay_new().
+func OverlayNew() (*Overlay, error) {
+	c := C.gtk_overlay_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapOverlay(wrapObject(unsafe.Pointer(c))), nil
+}
+
+// AddOverlay() is a wrapper around gtk_overlay_add_overlay().
+func (v *Overlay) AddOverlay(widget IWidget) {
+	C.gtk_overlay_add_overlay(v.native(), widget.toWidget())
+}
+
+// ReorderOverlay() is a wrapper around gtk_overlay_reorder_overlay().
+func (v *Overlay) ReorderOverlay(child IWidget, position int) {
+	C.gtk_overlay_reorder_overlay(v.native(), child.toWidget(), C.gint(position))
+}
+
+// GetOverlayPassThrough() is a wrapper around
+// gtk_overlay_get_overlay_pass_through().
+func (v *Overlay) GetOverlayPassThrough(widget IWidget) bool {
+	c := C.gtk_overlay_get_overlay_pass_through(v.native(), widget.toWidget())
+	return gobool(c)
+}
+
+// SetOverlayPassThrough() is a wrapper around
+// gtk_overlay_set_overlay_pass_through().
+func (v *Overlay) SetOverlayPassThrough(widget IWidget, passThrough bool) {
+	C.gtk_overlay_set_overlay_pass_through(v.native(), widget.toWidget(), gbool(passThrough))
+}
+
+/*
  * GtkPaned
  */
 
@@ -8652,6 +8713,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkNotebook":            wrapNotebook,
 	"GtkOffscreenWindow":     wrapOffscreenWindow,
 	"GtkOrientable":          wrapOrientable,
+	"GtkOverlay":             wrapOverlay,
 	"GtkPaned":               wrapPaned,
 	"GtkProgressBar":         wrapProgressBar,
 	"GtkRadioButton":         wrapRadioButton,
