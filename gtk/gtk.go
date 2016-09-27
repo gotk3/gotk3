@@ -5834,7 +5834,7 @@ func wrapPaned(obj *glib.Object) *Paned {
 	return &Paned{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
-// PanedNew() is a wrapper around gtk_scrolled_window_new().
+// PanedNew() is a wrapper around gtk_paned_new().
 func PanedNew(orientation Orientation) (*Paned, error) {
 	c := C.gtk_paned_new(C.GtkOrientation(orientation))
 	if c == nil {
