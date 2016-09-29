@@ -377,6 +377,12 @@ toGtkTreeModel(void *p)
 	return (GTK_TREE_MODEL(p));
 }
 
+static GtkTreeModelFilter *
+toGtkTreeModelFilter(void *p)
+{
+	return (GTK_TREE_MODEL_FILTER(p));
+}
+
 static GtkCellRenderer *
 toGtkCellRenderer(void *p)
 {
