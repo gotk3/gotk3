@@ -610,3 +610,17 @@ func (v *Widget) GetWindow() (*gdk.Window, error) {
 	w := &gdk.Window{wrapObject(unsafe.Pointer(c))}
 	return w, nil
 }
+
+// GetPreferredHeight is a wrapper around gtk_widget_get_preferred_height().
+func (v *Widget) GetPreferredHeight() (int, int) {
+	var minimum, natural C.gint
+	C.gtk_widget_get_preferred_height(v.native(), &minimum, &natural)
+	return int(minimum), int(natural)
+}
+
+// GetPreferredWidth is a wrapper around gtk_widget_get_preferred_width().
+func (v *Widget) GetPreferredWidth() (int, int) {
+	var minimum, natural C.gint
+	C.gtk_widget_get_preferred_width(v.native(), &minimum, &natural)
+	return int(minimum), int(natural)
+}
