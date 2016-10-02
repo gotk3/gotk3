@@ -10,6 +10,8 @@ package glib
 // #include "gvarianttype.go.h"
 import "C"
 
+// A VariantType is a wrapper for the GVariantType, which encodes type
+// information for GVariants.
 type VariantType struct {
 	GVariantType *C.GVariantType
 }
@@ -18,9 +20,10 @@ func (v *VariantType) native() *C.GVariantType {
 	return v.GVariantType
 }
 
+// String returns a copy of this VariantType's type string.
 func (v *VariantType) String() string {
 	ch := C.g_variant_type_dup_string(v.native())
-	defer C.g_free(ch)
+	defer C.g_free(C.gpointer(ch))
 	return C.GoString((*C.char)(ch))
 }
 
@@ -28,6 +31,8 @@ func newVariantType(v *C.GVariantType) *VariantType {
 	return &VariantType{v}
 }
 
+// Variant types for comparing between them.  Cannot be const because
+// they are pointers.
 var (
 	VARIANT_TYPE_BOOLEAN           = newVariantType(C._G_VARIANT_TYPE_BOOLEAN)
 	VARIANT_TYPE_BYTE              = newVariantType(C._G_VARIANT_TYPE_BYTE)

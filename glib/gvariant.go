@@ -20,17 +20,18 @@ import (
 // IVariant is an interface type implemented by Variant and all types which embed
 // an Variant.  It is meant to be used as a type for function arguments which
 // require GVariants or any subclasses thereof.
-
 type IVariant interface {
 	ToGVariant() *C.GVariant
 	ToVariant() *Variant
 }
 
-// Variant is a representation of GLib's GVariant.
+// A Variant is a representation of GLib's GVariant.
 type Variant struct {
 	GVariant *C.GVariant
 }
 
+// ToGVariant exposes the underlying *C.GVariant type for this Variant,
+// necessary to implement IVariant.
 func (v *Variant) ToGVariant() *C.GVariant {
 	if v == nil {
 		return nil
@@ -38,6 +39,7 @@ func (v *Variant) ToGVariant() *C.GVariant {
 	return v.native()
 }
 
+// ToVariant returns this Variant, necessary to implement IVariant.
 func (v *Variant) ToVariant() *Variant {
 	return v
 }
@@ -47,9 +49,11 @@ func newVariant(p *C.GVariant) *Variant {
 	return &Variant{GVariant: p}
 }
 
-func VariantFromUnsafePointer(p unsafe.Pointer) *Variant {
-	return &Variant{C.toGVariant(p)}
-}
+// VariantFromUnsafePointer returns a Variant from an unsafe pointer.
+// XXX: unnecessary footgun?
+//func VariantFromUnsafePointer(p unsafe.Pointer) *Variant {
+//	return &Variant{C.toGVariant(p)}
+//}
 
 // native returns a pointer to the underlying GVariant.
 func (v *Variant) native() *C.GVariant {
@@ -57,8 +61,6 @@ func (v *Variant) native() *C.GVariant {
 		return nil
 	}
 	return v.GVariant
-	p := unsafe.Pointer(v.GVariant)
-	return C.toGVariant(p)
 }
 
 // Native returns a pointer to the underlying GVariant.
@@ -66,36 +68,45 @@ func (v *Variant) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
+// TypeString returns the g variant type string for this variant.
 func (v *Variant) TypeString() string {
 	// the string returned from this belongs to GVariant and must not be freed.
 	return C.GoString((*C.char)(C.g_variant_get_type_string(v.native())))
 }
 
+// IsContainer returns true if the variant is a container and false otherwise.
 func (v *Variant) IsContainer() bool {
 	return gobool(C.g_variant_is_container(v.native()))
 }
 
-func (v *Variant) IsFloating() bool {
-	return gobool(C.g_variant_is_floating(v.native()))
-}
+// IsFloating returns true if the variant has a floating reference count.
+// XXX: this isn't useful without ref_sink/take_ref, which are themselves
+// perhaps not useful for most Go code that may use variants.
+//func (v *Variant) IsFloating() bool {
+//	return gobool(C.g_variant_is_floating(v.native()))
+//}
 
+// GetBoolean returns the bool value of this variant.
 func (v *Variant) GetBoolean() bool {
 	return gobool(C.g_variant_get_boolean(v.native()))
 }
 
+// GetString returns the string value of the variant.
 func (v *Variant) GetString() string {
 	var len C.gsize
 	gc := C.g_variant_get_string(v.native(), &len)
-	defer C.g_free(gc)
+	defer C.g_free(C.gpointer(gc))
 	return C.GoStringN((*C.char)(gc), (C.int)(len))
 }
 
+// GetStrv returns a slice of strings from this variant.  It wraps
+// g_variant_get_strv, but returns copies of the strings instead.
 func (v *Variant) GetStrv() []string {
 	gstrv := C.g_variant_get_strv(v.native(), nil)
 	// we do not own the memory for these strings, so we must not use strfreev
 	// but we must free the actual pointer we receive.
 	c := gstrv
-	defer C.g_free(gstrv)
+	defer C.g_free(C.gpointer(gstrv))
 	var strs []string
 
 	for *c != nil {
@@ -105,6 +116,9 @@ func (v *Variant) GetStrv() []string {
 	return strs
 }
 
+// GetInt returns the int64 value of the variant if it is an integer type, and
+// an error otherwise.  It wraps variouns `g_variant_get_*` functions dealing
+// with integers of different sizes.
 func (v *Variant) GetInt() (int64, error) {
 	t := v.Type().String()
 	var i int64
@@ -129,10 +143,12 @@ func (v *Variant) GetInt() (int64, error) {
 	return i, nil
 }
 
+// Type returns the VariantType for this variant.
 func (v *Variant) Type() *VariantType {
 	return newVariantType(C.g_variant_get_type(v.native()))
 }
 
+// IsType returns true if the variant's type matches t.
 func (v *Variant) IsType(t *VariantType) bool {
 	return gobool(C.g_variant_is_of_type(v.native(), t.native()))
 }
@@ -141,7 +157,7 @@ func (v *Variant) IsType(t *VariantType) bool {
 // by g_variant_parse().
 func (v *Variant) String() string {
 	gc := C.g_variant_print(v.native(), gbool(false))
-	defer C.g_free(gc)
+	defer C.g_free(C.gpointer(gc))
 	return C.GoString((*C.char)(gc))
 }
 
@@ -149,7 +165,7 @@ func (v *Variant) String() string {
 // string.
 func (v *Variant) AnnotatedString() string {
 	gc := C.g_variant_print(v.native(), gbool(true))
-	defer C.g_free(gc)
+	defer C.g_free(C.gpointer(gc))
 	return C.GoString((*C.char)(gc))
 }
 
