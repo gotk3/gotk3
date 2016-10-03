@@ -8253,6 +8253,59 @@ func (v *TreeModel) IterNChildren(iter *TreeIter) int {
 	return int(c)
 }
 
+// FilterNew is a wrapper around gtk_tree_model_filter_new().
+func (v *TreeModel) FilterNew(root *TreePath) (*TreeModelFilter, error) {
+	c := C.gtk_tree_model_filter_new(v.native(), root.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapTreeModelFilter(obj), nil
+}
+
+/*
+ * GtkTreeModelFilter
+ */
+
+// TreeModelFilter is a representation of GTK's GtkTreeModelFilter.
+type TreeModelFilter struct {
+	*glib.Object
+
+	// Interfaces
+	TreeModel
+}
+
+func (v *TreeModelFilter) native() *C.GtkTreeModelFilter {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTreeModelFilter(p)
+}
+
+func (v *TreeModelFilter) toTreeModelFilter() *C.GtkTreeModelFilter {
+	if v == nil {
+		return nil
+	}
+	return v.native()
+}
+
+func marshalTreeModelFilter(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := wrapObject(unsafe.Pointer(c))
+	return wrapTreeModelFilter(obj), nil
+}
+
+func wrapTreeModelFilter(obj *glib.Object) *TreeModelFilter {
+	tm := wrapTreeModel(obj)
+	return &TreeModelFilter{obj, *tm}
+}
+
+// SetVisibleColumn is a wrapper around gtk_tree_model_filter_set_visible_column().
+func (v *TreeModelFilter) SetVisibleColumn(column int) {
+	C.gtk_tree_model_filter_set_visible_column(v.native(), C.gint(column))
+}
+
 /*
  * GtkTreePath
  */
@@ -8727,6 +8780,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkToolButton":          wrapToolButton,
 	"GtkToolItem":            wrapToolItem,
 	"GtkTreeModel":           wrapTreeModel,
+	"GtkTreeModelFilter":     wrapTreeModelFilter,
 	"GtkTreeSelection":       wrapTreeSelection,
 	"GtkTreeStore":           wrapTreeStore,
 	"GtkTreeView":            wrapTreeView,
