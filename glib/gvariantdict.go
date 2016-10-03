@@ -10,13 +10,13 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 // #include "gvariant.go.h"
-//import "C"
-//import "unsafe"
+import "C"
+import "unsafe"
 
 /*
  * GVariantDict
  */
-/* todo fix bugs
+
 // VariantDict is a representation of GLib's VariantDict.
 type VariantDict struct {
 	GVariantDict *C.GVariantDict
@@ -51,4 +51,3 @@ func (v *VariantDict) native() *C.GVariantDict {
 func (v *VariantDict) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
-*/

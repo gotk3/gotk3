@@ -256,6 +256,12 @@ func (v *Settings) SetFlags(name string, value uint) bool {
 	return gobool(C.g_settings_set_flags(v.native(), cstr1, C.guint(value)))
 }
 
+func (v *Settings) GetValue(name string) *Variant {
+	cstr := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr))
+	return newVariant(C.g_settings_get_value(v.native(), cstr))
+}
+
 // GVariant * 	g_settings_get_value ()
 // gboolean 	g_settings_set_value ()
 // GVariant * 	g_settings_get_user_value ()

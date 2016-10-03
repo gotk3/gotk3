@@ -10,13 +10,13 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 // #include "gvariant.go.h"
-//import "C"
-//import "unsafe"
+import "C"
+import "unsafe"
 
 /*
  * GVariantIter
  */
-/* todo fix bugs
+
 // VariantIter is a representation of GLib's GVariantIter.
 type VariantIter struct {
 	GVariantIter *C.GVariantIter
@@ -51,4 +51,3 @@ func (v *VariantIter) native() *C.GVariantIter {
 func (v *VariantIter) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
-*/
