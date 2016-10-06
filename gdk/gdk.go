@@ -290,6 +290,13 @@ const (
 	DEVICE_TYPE_FLOATING DeviceType = C.GDK_DEVICE_TYPE_FLOATING
 )
 
+// EventPropagation constants
+
+const (
+	GDK_EVENT_PROPAGATE bool = C.GDK_EVENT_PROPAGATE != 0
+	GDK_EVENT_STOP      bool = C.GDK_EVENT_STOP != 0
+)
+
 /*
  * GdkAtom
  */
