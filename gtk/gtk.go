@@ -2488,6 +2488,19 @@ func (v *Container) ChildNotify(child IWidget, childProperty string) {
 		(*C.gchar)(cstr))
 }
 
+// ChildGetProperty is a wrapper around gtk_container_child_get_property().
+func (v *Container) ChildGetProperty(child IWidget, name string, valueType glib.Type) (interface{}, error) {
+	gv, e := glib.ValueInit(valueType)
+	if e != nil {
+		return nil, e
+	}
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.gtk_container_child_get_property(v.native(), child.toWidget(), (*C.gchar)(cstr), (*C.GValue)(unsafe.Pointer(gv.Native())))
+	return gv.GoValue()
+}
+
 // ChildSetProperty is a wrapper around gtk_container_child_set_property().
 func (v *Container) ChildSetProperty(child IWidget, name string, value interface{}) error {
 	gv, e := glib.GValue(value)
