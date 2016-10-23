@@ -834,6 +834,14 @@ func KeyvalToUpper(v uint) uint {
 	return uint(C.gdk_keyval_to_upper(C.guint(v)))
 }
 
+func KeyvalToUnicode(v uint) rune {
+	return rune(C.gdk_keyval_to_unicode(C.guint(v)))
+}
+
+func UnicodeToKeyval(v rune) uint {
+	return uint(C.gdk_unicode_to_keyval(C.guint32(v)))
+}
+
 /*
  * GdkDragContext
  */
