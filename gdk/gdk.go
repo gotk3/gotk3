@@ -1434,6 +1434,32 @@ func PixbufLoaderNew() (*PixbufLoader, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
+
+	//TODO this should be some wrap object
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &PixbufLoader{obj}
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+	return p, nil
+}
+
+// PixbufLoaderNewWithType() is a wrapper around gdk_pixbuf_loader_new_with_type().
+func PixbufLoaderNewWithType(t string) (*PixbufLoader, error) {
+	var err *C.GError
+
+	cstr := C.CString(t)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gdk_pixbuf_loader_new_with_type((*C.char)(cstr), &err)
+	if err != nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	//TODO this should be some wrap object
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &PixbufLoader{obj}
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
@@ -1457,6 +1483,7 @@ func (v *PixbufLoader) Write(data []byte) (int, error) {
 	c := C.gdk_pixbuf_loader_write(v.native(),
 		(*C.guchar)(unsafe.Pointer(&data[0])), C.gsize(len(data)),
 		&err)
+
 	if !gobool(c) {
 		defer C.g_error_free(err)
 		return 0, errors.New(C.GoString((*C.char)(err.message)))
