@@ -7,7 +7,8 @@ package glib
 import "C"
 import "unsafe"
 
-// SList is a representation of Glib's GSList.
+// SList is a representation of Glib's GSList. A SList must be manually freed
+// by either calling Free() or FreeFull()
 type SList struct {
 	list *C.struct__GSList
 }
@@ -17,6 +18,13 @@ func WrapSList(obj uintptr) *SList {
 }
 
 func wrapSList(obj *C.struct__GSList) *SList {
+	if obj == nil {
+		return nil
+	}
+
+	//NOTE a list should be freed by calling either
+	//g_slist_free() or g_slist_free_full(). However, it's not possible to use a
+	//finalizer for this.
 	return &SList{obj}
 }
 
@@ -35,9 +43,45 @@ func (v *SList) Append(data uintptr) *SList {
 	ret := C.g_slist_append(v.native(), C.gpointer(data))
 	if ret == v.native() {
 		return v
-	} else {
-		return wrapSList(ret)
 	}
+
+	return wrapSList(ret)
+}
+
+// Length is a wrapper around g_slist_length().
+func (v *SList) Length() uint {
+	return uint(C.g_slist_length(v.native()))
+}
+
+// Next is a wrapper around the next struct field
+func (v *SList) Next() *SList {
+	n := v.native()
+	if n == nil {
+		return nil
+	}
+
+	return wrapSList(n.next)
+}
+
+// Foreach acts the same as g_slist_foreach().
+// No user_data arguement is implemented because of Go clojure capabilities.
+func (v *SList) Foreach(fn func(ptr unsafe.Pointer)) {
+	for l := v; l != nil; l = l.Next() {
+		fn(unsafe.Pointer(l.native().data))
+	}
+}
+
+// Free is a wrapper around g_slist_free().
+func (v *SList) Free() {
+	C.g_slist_free(v.native())
+	v.list = nil
+}
+
+// FreeFull is a wrapper around g_slist_free_full().
+func (v *SList) FreeFull() {
+	//TODO implement GDestroyNotify callback
+	C.g_slist_free_full(v.native(), nil)
+	v.list = nil
 }
 
 // GSList * 	g_slist_alloc ()
@@ -49,10 +93,7 @@ func (v *SList) Append(data uintptr) *SList {
 // GSList * 	g_slist_remove_link ()
 // GSList * 	g_slist_delete_link ()
 // GSList * 	g_slist_remove_all ()
-// void 	g_slist_free ()
-// void 	g_slist_free_full ()
 // void 	g_slist_free_1 ()
-// guint 	g_slist_length ()
 // GSList * 	g_slist_copy ()
 // GSList * 	g_slist_copy_deep ()
 // GSList * 	g_slist_reverse ()
@@ -60,9 +101,7 @@ func (v *SList) Append(data uintptr) *SList {
 // GSList * 	g_slist_sort ()
 // GSList * 	g_slist_sort_with_data ()
 // GSList * 	g_slist_concat ()
-// void 	g_slist_foreach ()
 // GSList * 	g_slist_last ()
-// #define 	g_slist_next()
 // GSList * 	g_slist_nth ()
 // gpointer 	g_slist_nth_data ()
 // GSList * 	g_slist_find ()
