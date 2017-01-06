@@ -111,6 +111,7 @@ func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
 /*
  * GtkGrid
  */
+
 // RemoveRow() is a wrapper around gtk_grid_remove_row().
 func (v *Grid) RemoveRow(position int) {
 	C.gtk_grid_remove_row(v.native(), C.gint(position))
