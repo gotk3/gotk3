@@ -17,3 +17,13 @@ func (v *ScrolledWindow) SetOverlayScrolling(scrolling bool) {
 func (v *ScrolledWindow) GetOverlayScrolling() bool {
     return gobool(C.gtk_scrolled_window_get_overlay_scrolling(v.native()))
 }
+
+// SetWideHandle is a wrapper around gtk_paned_set_wide_handle().
+func (v *Paned) SetWideHandle(wide bool) {
+    C.gtk_paned_set_wide_handle(v.native(), gbool(wide))
+}
+
+// GetWideHandle is a wrapper around gtk_paned_get_wide_handle().
+func (v *Paned) GetWideHandle() bool {
+    return gobool(C.gtk_paned_get_wide_handle(v.native()))
+}
