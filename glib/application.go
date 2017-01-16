@@ -194,8 +194,6 @@ func (v *Application) Run(args []string) int {
 		C.set_string(cargs, C.int(i), (*C.char)(cstr))
 	}
 
-	C.set_string(cargs, C.int(len(args)), nil)
-
 	return int(C.g_application_run(v.native(), C.int(len(args)), cargs))
 }
 
