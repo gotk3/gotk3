@@ -587,7 +587,7 @@ func (v *Window) SetApplication(a *Application) {
 
 // ActivateKey is a wrapper around gtk_window_activate_key().
 func (v *Window) ActivateKey(event *gdk.EventKey) bool {
-	c = C.gtk_window_activate_key(v.native(), event.native())
+	c := C.gtk_window_activate_key(v.native(), (*C.GdkEventKey)(unsafe.Pointer(event.Native())))
 	return gobool(c)
 }
 
