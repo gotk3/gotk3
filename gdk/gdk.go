@@ -916,6 +916,25 @@ type EventButton struct {
 	*Event
 }
 
+func EventButtonNew() *EventButton {
+	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventButton{}))
+	ev := Event{ee}
+	return &EventButton{&ev}
+}
+
+// EventButtonNewFromEvent returns an EventButton from an Event.
+//
+// Using widget.Connect() for a key related signal such as
+// "button-press-event" results in a *Event being passed as
+// the callback's second argument. The argument is actually a
+// *EventButton. EventButtonNewFromEvent provides a means of creating
+// an EventKey from the Event.
+func EventButtonNewFromEvent(event *Event) *EventButton {
+	ee := (*C.GdkEvent)(unsafe.Pointer(event.native()))
+	ev := Event{ee}
+	return &EventButton{&ev}
+}
+
 // Native returns a pointer to the underlying GdkEventButton.
 func (v *EventButton) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
@@ -1045,6 +1064,25 @@ type EventMotion struct {
 	*Event
 }
 
+func EventMotionNew() *EventMotion {
+	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventMotion{}))
+	ev := Event{ee}
+	return &EventMotion{&ev}
+}
+
+// EventMotionNewFromEvent returns an EventMotion from an Event.
+//
+// Using widget.Connect() for a key related signal such as
+// "button-press-event" results in a *Event being passed as
+// the callback's second argument. The argument is actually a
+// *EventMotion. EventMotionNewFromEvent provides a means of creating
+// an EventKey from the Event.
+func EventMotionNewFromEvent(event *Event) *EventMotion {
+	ee := (*C.GdkEvent)(unsafe.Pointer(event.native()))
+	ev := Event{ee}
+	return &EventMotion{&ev}
+}
+
 // Native returns a pointer to the underlying GdkEventMotion.
 func (v *EventMotion) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
@@ -1073,6 +1111,25 @@ func (v *EventMotion) MotionValRoot() (float64, float64) {
 // EventScroll is a representation of GDK's GdkEventScroll.
 type EventScroll struct {
 	*Event
+}
+
+func EventScrollNew() *EventScroll {
+	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventScroll{}))
+	ev := Event{ee}
+	return &EventScroll{&ev}
+}
+
+// EventScrollNewFromEvent returns an EventScroll from an Event.
+//
+// Using widget.Connect() for a key related signal such as
+// "button-press-event" results in a *Event being passed as
+// the callback's second argument. The argument is actually a
+// *EventScroll. EventScrollNewFromEvent provides a means of creating
+// an EventKey from the Event.
+func EventScrollNewFromEvent(event *Event) *EventScroll {
+	ee := (*C.GdkEvent)(unsafe.Pointer(event.native()))
+	ev := Event{ee}
+	return &EventScroll{&ev}
 }
 
 // Native returns a pointer to the underlying GdkEventScroll.
