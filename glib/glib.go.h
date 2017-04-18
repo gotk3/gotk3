@@ -80,6 +80,11 @@ toGSettingsBackend(void *p)
 	return (G_SETTINGS_BACKEND(p));
 }
 
+static GBinding*
+toGBinding(void *p)
+{
+        return (G_BINDING(p));
+}
 
 static GType
 _g_type_from_instance(gpointer instance)
