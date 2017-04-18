@@ -638,6 +638,17 @@ func (v *Stack) AddTitled(child IWidget, name, title string) {
 		(*C.gchar)(cTitle))
 }
 
+// GetChildByName is a wrapper around gtk_stack_get_child_by_name().
+func (v *Stack) GetChildByName(name string) *Widget {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_stack_get_child_by_name(v.native(), (*C.gchar)(cstr))
+	if c == nil {
+		return nil
+	}
+	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+}
+
 // SetVisibleChild is a wrapper around gtk_stack_set_visible_child().
 func (v *Stack) SetVisibleChild(child IWidget) {
 	C.gtk_stack_set_visible_child(v.native(), child.toWidget())
