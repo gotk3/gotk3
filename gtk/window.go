@@ -585,8 +585,17 @@ func (v *Window) SetApplication(a *Application) {
 	C.gtk_window_set_application(v.native(), a.native())
 }
 
-// TODO gtk_window_activate_key().
-// TODO gtk_window_add_mnemonic().
+// ActivateKey is a wrapper around gtk_window_activate_key().
+func (v *Window) ActivateKey(event *gdk.EventKey) bool {
+	c := C.gtk_window_activate_key(v.native(), (*C.GdkEventKey)(unsafe.Pointer(event.Native())))
+	return gobool(c)
+}
+
+// AddMnemonic is a wrapper around gtk_window_add_mnemonic().
+func (v *Window) AddMnemonic(keyval uint, target *Widget) {
+	C.gtk_window_add_mnemonic(v.native(), C.guint(keyval), target.native())
+}
+
 // TODO gtk_window_begin_move_drag().
 // TODO gtk_window_begin_resize_drag().
 // TODO gtk_window_get_default_icon_list().
