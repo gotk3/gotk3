@@ -223,6 +223,30 @@ func cGSList(clist *glib.SList) *C.GSList {
 	return (*C.GSList)(unsafe.Pointer(clist.Native()))
 }
 
+func free(str ...interface{}) {
+	for _, s := range str {
+		switch x := s.(type) {
+		case *C.char:
+			C.free(unsafe.Pointer(x))
+		case []*C.char:
+			for _, cp := range x {
+				C.free(unsafe.Pointer(cp))
+			}
+			/*
+				case C.gpointer:
+					C.g_free(C.gpointer(c))
+			*/
+		default:
+			fmt.Printf("utils.go free(): Unknown type: %T\n", x)
+		}
+
+	}
+}
+
+func goString(cstr *C.gchar) string {
+	return C.GoString((*C.char)(cstr))
+}
+
 // Wrapper function for new objects with reference management.
 func wrapObject(ptr unsafe.Pointer) *glib.Object {
 	obj := &glib.Object{glib.ToGObject(ptr)}
@@ -859,7 +883,7 @@ func Init(args *[]string) {
 		unhandled := make([]string, argc)
 		for i := 0; i < int(argc); i++ {
 			cstr := C.get_string(argv, C.int(i))
-			unhandled[i] = C.GoString((*C.char)(cstr))
+			unhandled[i] = goString(cstr)
 			C.free(unsafe.Pointer(cstr))
 		}
 		*args = unhandled
@@ -1137,8 +1161,7 @@ func (v *Assistant) SetPageTitle(page IWidget, title string) {
 
 // GetPageTitle is a wrapper around gtk_assistant_get_page_title().
 func (v *Assistant) GetPageTitle(page IWidget) string {
-	c := C.gtk_assistant_get_page_title(v.native(), page.toWidget())
-	return C.GoString((*C.char)(c))
+	return goString(C.gtk_assistant_get_page_title(v.native(), page.toWidget()))
 }
 
 // SetPageComplete is a wrapper around gtk_assistant_set_page_complete().
@@ -1277,7 +1300,7 @@ func (b *Builder) AddFromFile(filename string) error {
 	res := C.gtk_builder_add_from_file(b.native(), (*C.gchar)(cstr), &err)
 	if res == 0 {
 		defer C.g_error_free(err)
-		return errors.New(C.GoString((*C.char)(err.message)))
+		return errors.New(goString(err.message))
 	}
 	return nil
 }
@@ -1290,7 +1313,7 @@ func (b *Builder) AddFromResource(path string) error {
 	res := C.gtk_builder_add_from_resource(b.native(), (*C.gchar)(cstr), &err)
 	if res == 0 {
 		defer C.g_error_free(err)
-		return errors.New(C.GoString((*C.char)(err.message)))
+		return errors.New(goString(err.message))
 	}
 	return nil
 }
@@ -1304,7 +1327,7 @@ func (b *Builder) AddFromString(str string) error {
 	res := C.gtk_builder_add_from_string(b.native(), (*C.gchar)(cstr), length, &err)
 	if res == 0 {
 		defer C.g_error_free(err)
-		return errors.New(C.GoString((*C.char)(err.message)))
+		return errors.New(goString(err.message))
 	}
 	return nil
 }
@@ -1447,7 +1470,7 @@ func (v *Button) GetLabel() (string, error) {
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // SetUseUnderline() is a wrapper around gtk_button_set_use_underline().
@@ -2289,7 +2312,7 @@ func (v *Clipboard) WaitForText() (string, error) {
 		return "", nilPtrErr
 	}
 	defer C.g_free(C.gpointer(c))
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // SetText() is a wrapper around gtk_clipboard_set_text().
@@ -2599,7 +2622,7 @@ func (v *CssProvider) LoadFromPath(path string) error {
 	var gerr *C.GError
 	if C.gtk_css_provider_load_from_path(v.native(), (*C.gchar)(cpath), &gerr) == 0 {
 		defer C.g_error_free(gerr)
-		return errors.New(C.GoString((*C.char)(gerr.message)))
+		return errors.New(goString(gerr.message))
 	}
 	return nil
 }
@@ -2611,7 +2634,7 @@ func (v *CssProvider) LoadFromData(data string) error {
 	var gerr *C.GError
 	if C.gtk_css_provider_load_from_data(v.native(), (*C.gchar)(unsafe.Pointer(cdata)), C.gssize(len(data)), &gerr) == 0 {
 		defer C.g_error_free(gerr)
-		return errors.New(C.GoString((*C.char)(gerr.message)))
+		return errors.New(goString(gerr.message))
 	}
 	return nil
 }
@@ -2891,7 +2914,7 @@ func (v *Editable) GetChars(startPos, endPos int) string {
 	c := C.gtk_editable_get_chars(v.native(), C.gint(startPos),
 		C.gint(endPos))
 	defer C.free(unsafe.Pointer(c))
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // CutClipboard is a wrapper around gtk_editable_cut_clipboard().
@@ -3024,7 +3047,7 @@ func (v *Entry) GetText() (string, error) {
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // GetTextLength() is a wrapper around gtk_entry_get_text_length().
@@ -3122,7 +3145,7 @@ func (v *Entry) GetPlaceholderText() (string, error) {
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // SetOverwriteMode() is a wrapper around gtk_entry_set_overwrite_mode().
@@ -3303,7 +3326,7 @@ func (v *Entry) GetIconName(iconPos EntryIconPosition) (string, error) {
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // TODO(jrick) GIcon
@@ -3359,7 +3382,7 @@ func (v *Entry) GetIconTooltipText(iconPos EntryIconPosition) (string, error) {
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // SetIconTooltipMarkup() is a wrapper around
@@ -3379,7 +3402,7 @@ func (v *Entry) GetIconTooltipMarkup(iconPos EntryIconPosition) (string, error) 
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // TODO(jrick) GdkDragAction
@@ -3472,7 +3495,7 @@ func (v *EntryBuffer) GetText() (string, error) {
 	if c == nil {
 		return "", nilPtrErr
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // SetText() is a wrapper around gtk_entry_buffer_set_text().
@@ -3691,7 +3714,7 @@ func (v *Expander) SetLabel(label string) {
 // GetLabel is a wrapper around gtk_expander_get_label().
 func (v *Expander) GetLabel() string {
 	c := C.gtk_expander_get_label(v.native())
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // SetLabelWidget is a wrapper around gtk_expander_set_label_widget().
@@ -3730,7 +3753,7 @@ func wrapFileChooser(obj *glib.Object) *FileChooser {
 // GetFilename is a wrapper around gtk_file_chooser_get_filename().
 func (v *FileChooser) GetFilename() string {
 	c := C.gtk_file_chooser_get_filename(v.native())
-	s := C.GoString((*C.char)(c))
+	s := goString(c)
 	defer C.g_free((C.gpointer)(c))
 	return s
 }
@@ -3758,7 +3781,7 @@ func (v *FileChooser) GetCurrentFolder() (string, error) {
 		return "", nilPtrErr
 	}
 	defer C.free(unsafe.Pointer(c))
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // SetPreviewWidget is a wrapper around gtk_file_chooser_set_preview_widget().
@@ -3786,7 +3809,7 @@ func (v *FileChooser) AddFilter(filter *FileFilter) {
 // GetURI is a wrapper around gtk_file_chooser_get_uri().
 func (v *FileChooser) GetURI() string {
 	c := C.gtk_file_chooser_get_uri(v.native())
-	s := C.GoString((*C.char)(c))
+	s := goString(c)
 	defer C.g_free((C.gpointer)(c))
 	return s
 }
@@ -4076,7 +4099,7 @@ func FontButtonNewWithFont(fontname string) (*FontButton, error) {
 // GetFontName is a wrapper around gtk_font_button_get_font_name().
 func (v *FontButton) GetFontName() string {
 	c := C.gtk_font_button_get_font_name(v.native())
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // SetFontName is a wrapper around gtk_font_button_set_font_name().
@@ -4156,7 +4179,7 @@ func (v *Frame) SetShadowType(t ShadowType) {
 // GetLabel is a wrapper around gtk_frame_get_label().
 func (v *Frame) GetLabel() string {
 	c := C.gtk_frame_get_label(v.native())
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // GetLabelAlign is a wrapper around gtk_frame_get_label_align().
@@ -4350,7 +4373,7 @@ func (v *IconTheme) LoadIcon(iconName string, size int, flags IconLookupFlags) (
 	c := C.gtk_icon_theme_load_icon(v.Theme, (*C.gchar)(cstr), C.gint(size), C.GtkIconLookupFlags(flags), &err)
 	if c == nil {
 		defer C.g_error_free(err)
-		return nil, errors.New(C.GoString((*C.char)(err.message)))
+		return nil, errors.New(goString(err.message))
 	}
 	return &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}, nil
 }
@@ -4623,7 +4646,7 @@ func (v *Image) GetIconName() (string, IconSize) {
 	var iconName *C.gchar
 	var size C.GtkIconSize
 	C.gtk_image_get_icon_name(v.native(), &iconName, &size)
-	return C.GoString((*C.char)(iconName)), IconSize(size)
+	return goString(iconName), IconSize(size)
 }
 
 // TODO(jrick) GIcon
@@ -4755,7 +4778,7 @@ func LinkButtonNewWithLabel(uri, label string) (*LinkButton, error) {
 // GetUri is a wrapper around gtk_link_button_get_uri().
 func (v *LinkButton) GetUri() string {
 	c := C.gtk_link_button_get_uri(v.native())
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // SetUri is a wrapper around gtk_link_button_set_uri().
@@ -5243,7 +5266,7 @@ func (v *MenuItem) SetLabel(label string) {
 // Gets text on the menu_item label
 func (v *MenuItem) GetLabel() string {
 	l := C.gtk_menu_item_get_label(v.native())
-	return C.GoString((*C.char)(l))
+	return goString(l)
 }
 
 /*
@@ -5556,7 +5579,7 @@ func (v *Notebook) GetMenuLabelText(child IWidget) (string, error) {
 	if c == nil {
 		return "", errors.New("No menu label for widget")
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // GetScrollable() is a wrapper around gtk_notebook_get_scrollable().
@@ -5583,7 +5606,7 @@ func (v *Notebook) GetTabLabelText(child IWidget) (string, error) {
 	if c == nil {
 		return "", errors.New("No tab label for widget")
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // GetTabPos() is a wrapper around gtk_notebook_get_tab_pos().
@@ -5622,7 +5645,7 @@ func (v *Notebook) GetGroupName() (string, error) {
 	if c == nil {
 		return "", errors.New("No group name")
 	}
-	return C.GoString((*C.char)(c)), nil
+	return goString(c), nil
 }
 
 // SetActionWidget() is a wrapper around gtk_notebook_set_action_widget().
@@ -6279,8 +6302,7 @@ func (v *RecentChooser) toRecentChooser() *C.GtkRecentChooser {
 
 func (v *RecentChooser) GetCurrentUri() string {
 	curi := C.gtk_recent_chooser_get_current_uri(v.native())
-	uri := C.GoString((*C.char)(curi))
-	return uri
+	return goString(curi)
 }
 
 func (v *RecentChooser) AddFilter(filter *RecentFilter) {
@@ -7479,7 +7501,7 @@ func (v *TextBuffer) GetText(start, end *TextIter, includeHiddenChars bool) (str
 	if c == nil {
 		return "", nilPtrErr
 	}
-	gostr := C.GoString((*C.char)(c))
+	gostr := goString(c)
 	C.g_free(C.gpointer(c))
 	return gostr, nil
 }
@@ -7779,7 +7801,7 @@ func (v *ToolButton) SetLabel(label string) {
 // GetLabel is a wrapper aroud gtk_tool_button_get_label().
 func (v *ToolButton) GetLabel() string {
 	c := C.gtk_tool_button_get_label(v.native())
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // SetUseUnderline is a wrapper around gtk_tool_button_set_use_underline().
@@ -7803,7 +7825,7 @@ func (v *ToolButton) SetIconName(iconName string) {
 // GetIconName is a wrapper around gtk_tool_button_get_icon_name().
 func (v *ToolButton) GetIconName() string {
 	c := C.gtk_tool_button_get_icon_name(v.native())
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // SetIconWidget is a wrapper around gtk_tool_button_set_icon_widget().
@@ -8337,7 +8359,7 @@ func (v *TreePath) GetIndices() []int {
 // String is a wrapper around gtk_tree_path_to_string().
 func (v *TreePath) String() string {
 	c := C.gtk_tree_path_to_string(v.native())
-	return C.GoString((*C.char)(c))
+	return goString(c)
 }
 
 // TreePathNewFromString is a wrapper around gtk_tree_path_new_from_string().
@@ -8774,7 +8796,7 @@ var WrapMap = map[string]WrapFn{
 //TODO change all wrapFns to return an IObject
 func cast(c *C.GObject) (glib.IObject, error) {
 	var (
-		className = C.GoString((*C.char)(C.object_get_class_name(c)))
+		className = goString(C.object_get_class_name(c))
 		obj       = wrapObject(unsafe.Pointer(c))
 	)
 

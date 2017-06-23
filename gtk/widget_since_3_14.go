@@ -9,7 +9,7 @@ package gtk
 import "C"
 
 // GetClip is a wrapper around gtk_widget_get_clip().
-func (v *Widget) GetClip() *Allocation{
+func (v *Widget) GetClip() *Allocation {
 	var clip Allocation
 	C.gtk_widget_get_clip(v.native(), clip.native())
 	return &clip

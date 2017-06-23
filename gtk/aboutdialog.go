@@ -111,7 +111,7 @@ func (v *AboutDialog) SetLicenseType(license License) {
 // GetLogo is a wrapper around gtk_about_dialog_get_logo().
 func (v *AboutDialog) GetLogo() (*gdk.Pixbuf, error) {
 	c := C.gtk_about_dialog_get_logo(v.native())
-        if c == nil {
+	if c == nil {
 		return nil, nilPtrErr
 	}
 
