@@ -226,6 +226,18 @@ func marshalUnit(p uintptr) (interface{}, error) {
 }
 
 /*
+ * GtkPageRanges
+ */
+type PageRanges struct {
+	ranges []C.GtkPageRange
+}
+
+// free() is a wrapper around g_free.
+func (pr *PageRanges) free() {
+	C.g_free((C.gpointer)(unsafe.Pointer(&pr.ranges[0])))
+}
+
+/*
  * GtkPageSetup
  */
 type PageSetup struct {
@@ -1444,10 +1456,24 @@ func (ps *PrintSettings) SetPrintPages(pages PrintPages) {
 }
 
 // GetPageRanges() is a wrapper around gtk_print_settings_get_page_ranges().
-// TODO
+func (ps *PrintSettings) GetPageRanges() (int, *PageRanges) {
+	var ranges *C.GtkPageRange
+	var num C.gint
+	ranges = C.gtk_print_settings_get_page_ranges(ps.native(), &num)
+	length := int(num)
+	if length == 0 {
+		return 0, &PageRanges{nil}
+	}
+	slice := (*[1 << 30]C.GtkPageRange)(unsafe.Pointer(ranges))[:length:length]
+	t := &PageRanges{slice}
+	runtime.SetFinalizer(t, (*PageRanges).free)
+	return length, t
+}
 
 // SetPageRanges() is a wrapper around gtk_print_settings_set_page_ranges().
-// TODO
+func (ps *PrintSettings) SetPageRanges(ranges *PageRanges, num int) {
+	C.gtk_print_settings_set_page_ranges(ps.native(), &ranges.ranges[0], C.gint(num))
+}
 
 // GetPageSet() is a wrapper around gtk_print_settings_get_page_set().
 func (ps *PrintSettings) GetPageSet(pages PrintPages) PageSet {
