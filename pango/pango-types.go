@@ -97,6 +97,15 @@ func (v *FontMap) native() *C.PangoFontMap {
 	return (*C.PangoFontMap)(unsafe.Pointer(v.pangoFontMap))
 }
 
+func wrapFontMap(fontMap *C.PangoFontMap) *FontMap {
+	return &FontMap{fontMap}
+}
+
+func WrapFontMap(p uintptr) *FontMap {
+	fontMap := (*C.PangoFontMap)(unsafe.Pointer(p))
+	return wrapFontMap(fontMap)
+}
+
 // Rectangle is a representation of PangoRectangle.
 type Rectangle struct {
 	pangoRectangle *C.PangoRectangle
