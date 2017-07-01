@@ -380,6 +380,21 @@ type Cursor struct {
 	*glib.Object
 }
 
+// CursorNewFromName is a wrapper around gdk_cursor_new_from_name().
+func CursorNewFromName(display *Display, name string) (*Cursor, error) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gdk_cursor_new_from_name(display.native(), (*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	runtime.SetFinalizer(obj, (*glib.Object).Unref)
+
+	return &Cursor{obj}, nil
+}
+
 // native returns a pointer to the underlying GdkCursor.
 func (v *Cursor) native() *C.GdkCursor {
 	if v == nil || v.GObject == nil {
@@ -1722,6 +1737,11 @@ func marshalVisual(p uintptr) (interface{}, error) {
 // Window is a representation of GDK's GdkWindow.
 type Window struct {
 	*glib.Object
+}
+
+// SetCursor is a wrapper around gdk_window_set_cursor().
+func (v *Window) SetCursor(cursor *Cursor) {
+	C.gdk_window_set_cursor(v.native(), cursor.native())
 }
 
 // native returns a pointer to the underlying GdkWindow.
