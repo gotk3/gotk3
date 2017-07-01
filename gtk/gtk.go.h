@@ -125,10 +125,40 @@ toGtkOverlay(void *p)
 	return (GTK_OVERLAY(p));
 }
 
+static GtkPageSetup *
+toGtkPageSetup(void *p)
+{
+	return (GTK_PAGE_SETUP(p));
+}
+
 static GtkPaned *
 toGtkPaned(void *p)
 {
 	return (GTK_PANED(p));
+}
+
+static GtkPrintContext *
+toGtkPrintContext(void *p)
+{
+	return (GTK_PRINT_CONTEXT(p));
+}
+
+static GtkPrintOperation *
+toGtkPrintOperation(void *p)
+{
+	return (GTK_PRINT_OPERATION(p));
+}
+
+static GtkPrintOperationPreview *
+toGtkPrintOperationPreview(void *p)
+{
+	return (GTK_PRINT_OPERATION_PREVIEW(p));
+}
+
+static GtkPrintSettings *
+toGtkPrintSettings(void *p)
+{
+	return (GTK_PRINT_SETTINGS(p));
 }
 
 static GtkProgressBar *
@@ -821,5 +851,13 @@ extern void goBuilderConnect (GtkBuilder *builder,
 static inline void _gtk_builder_connect_signals_full(GtkBuilder *builder) {
 	gtk_builder_connect_signals_full(builder, (GtkBuilderConnectFunc)(goBuilderConnect), NULL);
 }
+/*
+extern void goPrintSettings (gchar *key,
+	                     gchar *value,
+                         gpointer user_data);
 
+static inline void _gtk_print_settings_foreach(GtkPrintSettings *ps, gpointer user_data) {
+	gtk_print_settings_foreach(ps, (GtkPrintSettingsFunc)(goPrintSettings), NULL);
+}
+*/
 #endif

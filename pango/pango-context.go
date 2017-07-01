@@ -36,7 +36,7 @@ func init() {
 	//		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
 
 	// Objects/Interfaces
-	//		{glib.Type(C.pango_context_get_type()), marshalContext},
+	// {glib.Type(C.pango_context_get_type()), marshalContext},
 	}
 	glib.RegisterGValueMarshalers(tm)
 }
@@ -66,6 +66,11 @@ func wrapContext(obj *glib.Object) *Context {
 	return &Context{obj}
 }
 */
+func WrapContext(p uintptr) *Context {
+	context := new(Context)
+	context.pangoContext = (*C.PangoContext)(unsafe.Pointer(p))
+	return context
+}
 
 //PangoContext *pango_context_new           (void);
 func ContextNew() *Context {

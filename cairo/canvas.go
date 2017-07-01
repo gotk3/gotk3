@@ -44,6 +44,11 @@ func wrapContext(context *C.cairo_t) *Context {
 	return &Context{context}
 }
 
+func WrapContext(p uintptr) *Context {
+	context := (*C.cairo_t)(unsafe.Pointer(p))
+	return wrapContext(context)
+}
+
 // Create is a wrapper around cairo_create().
 func Create(target *Surface) *Context {
 	c := C.cairo_create(target.native())
