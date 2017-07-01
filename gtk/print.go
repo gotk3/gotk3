@@ -578,12 +578,6 @@ func (ps *PaperSize) GetHeight(unit Unit) float64 {
 	return float64(c)
 }
 
-// IsIPP() is a wrapper around gtk_paper_size_is_ipp().
-func (ps *PaperSize) IsIPP() bool {
-	c := C.gtk_paper_size_is_ipp(ps.native())
-	return gobool(c)
-}
-
 // IsCustom() is a wrapper around gtk_paper_size_is_custom().
 func (ps *PaperSize) IsCustom() bool {
 	c := C.gtk_paper_size_is_custom(ps.native())
