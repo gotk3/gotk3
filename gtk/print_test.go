@@ -38,10 +38,18 @@ func TestPrintOperation(t *testing.T) {
 
 // TestPrintSettings tests creating and manipulating PrintSettings
 func TestPrintSettings(t *testing.T) {
-	_, err := PrintSettingsNew()
+	settings, err := PrintSettingsNew()
 	if err != nil {
 		t.Error(err)
 	}
+
+	settings.Set("Key1", "String1")
+	settings.SetBool("Key2", true)
+	settings.Set("Key3", "String2")
+	settings.SetInt("Key4", 2)
+
+	settings.ForEach(func(key, value string, ptr uintptr) {
+	}, 0)
 }
 
 // TestPrintContext tests creating and manipulating PrintContext
