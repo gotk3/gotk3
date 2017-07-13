@@ -1461,17 +1461,6 @@ func (v *Button) GetUseUnderline() bool {
 	return gobool(c)
 }
 
-// SetFocusOnClick() is a wrapper around gtk_button_set_focus_on_click().
-func (v *Button) SetFocusOnClick(focusOnClick bool) {
-	C.gtk_button_set_focus_on_click(v.native(), gbool(focusOnClick))
-}
-
-// GetFocusOnClick() is a wrapper around gtk_button_get_focus_on_click().
-func (v *Button) GetFocusOnClick() bool {
-	c := C.gtk_button_get_focus_on_click(v.native())
-	return gobool(c)
-}
-
 // SetImage() is a wrapper around gtk_button_set_image().
 func (v *Button) SetImage(image IWidget) {
 	C.gtk_button_set_image(v.native(), image.toWidget())
@@ -5036,20 +5025,6 @@ func MenuNew() (*Menu, error) {
 	return wrapMenu(wrapObject(unsafe.Pointer(c))), nil
 }
 
-// PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
-func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button int, activateTime uint32) {
-	wshell := nullableWidget(parentMenuShell)
-	witem := nullableWidget(parentMenuItem)
-
-	C.gtk_menu_popup(v.native(),
-		wshell,
-		witem,
-		nil,
-		nil,
-		C.guint(button),
-		C.guint32(activateTime))
-}
-
 // Popdown() is a wrapper around gtk_menu_popdown().
 func (v *Menu) Popdown() {
 	C.gtk_menu_popdown(v.native())
@@ -6967,15 +6942,6 @@ func (v *SizeGroup) SetMode(mode SizeGroupMode) {
 
 func (v *SizeGroup) GetMode() SizeGroupMode {
 	return SizeGroupMode(C.gtk_size_group_get_mode(v.native()))
-}
-
-func (v *SizeGroup) SetIgnoreHidden(ignoreHidden bool) {
-	C.gtk_size_group_set_ignore_hidden(v.native(), gbool(ignoreHidden))
-}
-
-func (v *SizeGroup) GetIgnoreHidden() bool {
-	c := C.gtk_size_group_get_ignore_hidden(v.native())
-	return gobool(c)
 }
 
 func (v *SizeGroup) AddWidget(widget IWidget) {
