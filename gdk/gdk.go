@@ -352,25 +352,6 @@ func marshalDevice(p uintptr) (interface{}, error) {
 	return &Device{obj}, nil
 }
 
-// Grab() is a wrapper around gdk_device_grab().
-func (v *Device) Grab(w *Window, ownership GrabOwnership, owner_events bool, event_mask EventMask, cursor *Cursor, time uint32) GrabStatus {
-	ret := C.gdk_device_grab(
-		v.native(),
-		w.native(),
-		C.GdkGrabOwnership(ownership),
-		gbool(owner_events),
-		C.GdkEventMask(event_mask),
-		cursor.native(),
-		C.guint32(time),
-	)
-	return GrabStatus(ret)
-}
-
-// Ungrab() is a wrapper around gdk_device_ungrab().
-func (v *Device) Ungrab(time uint32) {
-	C.gdk_device_ungrab(v.native(), C.guint32(time))
-}
-
 /*
  * GdkCursor
  */
@@ -444,18 +425,6 @@ func marshalDeviceManager(p uintptr) (interface{}, error) {
 	return &DeviceManager{obj}, nil
 }
 
-// GetClientPointer() is a wrapper around gdk_device_manager_get_client_pointer().
-func (v *DeviceManager) GetClientPointer() (*Device, error) {
-	c := C.gdk_device_manager_get_client_pointer(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return &Device{obj}, nil
-}
-
 // GetDisplay() is a wrapper around gdk_device_manager_get_display().
 func (v *DeviceManager) GetDisplay() (*Display, error) {
 	c := C.gdk_device_manager_get_display(v.native())
@@ -466,22 +435,6 @@ func (v *DeviceManager) GetDisplay() (*Display, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return &Display{obj}, nil
-}
-
-// ListDevices() is a wrapper around gdk_device_manager_list_devices().
-func (v *DeviceManager) ListDevices(tp DeviceType) *glib.List {
-	clist := C.gdk_device_manager_list_devices(v.native(), C.GdkDeviceType(tp))
-	if clist == nil {
-		return nil
-	}
-	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
-	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
-		return &Device{&glib.Object{glib.ToGObject(ptr)}}
-	})
-	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		glist.Free()
-	})
-	return glist
 }
 
 /*
@@ -558,19 +511,6 @@ func (v *Display) GetName() (string, error) {
 	return C.GoString((*C.char)(c)), nil
 }
 
-// GetScreen() is a wrapper around gdk_display_get_screen().
-func (v *Display) GetScreen(screenNum int) (*Screen, error) {
-	c := C.gdk_display_get_screen(v.native(), C.gint(screenNum))
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &Screen{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
-}
-
 // GetDefaultScreen() is a wrapper around gdk_display_get_default_screen().
 func (v *Display) GetDefaultScreen() (*Screen, error) {
 	c := C.gdk_display_get_default_screen(v.native())
@@ -582,19 +522,6 @@ func (v *Display) GetDefaultScreen() (*Screen, error) {
 	obj.Ref()
 	runtime.SetFinalizer(obj, (*glib.Object).Unref)
 	return s, nil
-}
-
-// GetDeviceManager() is a wrapper around gdk_display_get_device_manager().
-func (v *Display) GetDeviceManager() (*DeviceManager, error) {
-	c := C.gdk_display_get_device_manager(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	d := &DeviceManager{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return d, nil
 }
 
 // DeviceIsGrabbed() is a wrapper around gdk_display_device_is_grabbed().

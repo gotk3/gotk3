@@ -105,12 +105,6 @@ func (v *Window) SetDefaultSize(width, height int) {
 	C.gtk_window_set_default_size(v.native(), C.gint(width), C.gint(height))
 }
 
-// SetDefaultGeometry is a wrapper around gtk_window_set_default_geometry().
-func (v *Window) SetDefaultGeometry(width, height int) {
-	C.gtk_window_set_default_geometry(v.native(), C.gint(width),
-		C.gint(height))
-}
-
 // GetScreen is a wrapper around gtk_window_get_screen().
 func (v *Window) GetScreen() (*gdk.Screen, error) {
 	c := C.gtk_window_get_screen(v.native())
@@ -328,15 +322,6 @@ func (v *Window) SetRole(s string) {
 	C.gtk_window_set_role(v.native(), cstr)
 }
 
-// SetWMClass is a wrapper around gtk_window_set_wmclass().
-func (v *Window) SetWMClass(name, class string) {
-	cName := C.CString(name)
-	defer C.free(unsafe.Pointer(cName))
-	cClass := C.CString(class)
-	defer C.free(unsafe.Pointer(cClass))
-	C.gtk_window_set_wmclass(v.native(), (*C.gchar)(cName), (*C.gchar)(cClass))
-}
-
 // GetDecorated is a wrapper around gtk_window_get_decorated().
 func (v *Window) GetDecorated() bool {
 	c := C.gtk_window_get_decorated(v.native())
@@ -490,11 +475,6 @@ func (v *Window) Move(x, y int) {
 // Resize is a wrapper around gtk_window_resize().
 func (v *Window) Resize(width, height int) {
 	C.gtk_window_resize(v.native(), C.gint(width), C.gint(height))
-}
-
-// ResizeToGeometry is a wrapper around gtk_window_resize_to_geometry().
-func (v *Window) ResizeToGeometry(width, height int) {
-	C.gtk_window_resize_to_geometry(v.native(), C.gint(width), C.gint(height))
 }
 
 // WindowSetDefaultIconFromFile is a wrapper around gtk_window_set_default_icon_from_file().

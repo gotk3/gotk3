@@ -96,11 +96,6 @@ func (v *TextIter) GetVisibleText(end *TextIter) string {
 	return C.GoString((*C.char)(c))
 }
 
-// BeginsTag is a wrapper around gtk_text_iter_begins_tag().
-func (v *TextIter) BeginsTag(v1 *TextTag) bool {
-	return gobool(C.gtk_text_iter_begins_tag(v.native(), v1.native()))
-}
-
 // EndsTag is a wrapper around gtk_text_iter_ends_tag().
 func (v *TextIter) EndsTag(v1 *TextTag) bool {
 	return gobool(C.gtk_text_iter_ends_tag(v.native(), v1.native()))
