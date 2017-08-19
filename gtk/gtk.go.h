@@ -851,7 +851,6 @@ static inline void _gtk_builder_connect_signals_full(GtkBuilder *builder) {
 	gtk_builder_connect_signals_full(builder, (GtkBuilderConnectFunc)(goBuilderConnect), NULL);
 }
 
-<<<<<<< HEAD
 extern void goPrintSettings (gchar *key,
 	                     gchar *value,
                          gpointer user_data);
@@ -868,7 +867,3 @@ static inline void _gtk_print_run_page_setup_dialog_async(GtkWindow *parent, Gtk
 	gtk_print_run_page_setup_dialog_async(parent, setup, settings, 
 		(GtkPageSetupDoneFunc)(goPageSetupDone), data);
 }
-
-#endif
-=======
->>>>>>> 5ec65d6... Updates
