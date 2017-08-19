@@ -336,6 +336,36 @@ func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{})
  * Miscellaneous Utility Functions
  */
 
+// GetHomeDir is a wrapper around g_get_home_dir().
+func GetHomeDir() string {
+	c := C.g_get_home_dir()
+	return C.GoString((*C.char)(c))
+}
+
+// GetUserCacheDir is a wrapper around g_get_user_cache_dir().
+func GetUserCacheDir() string {
+	c := C.g_get_user_cache_dir()
+	return C.GoString((*C.char)(c))
+}
+
+// GetUserDataDir is a wrapper around g_get_user_data_dir().
+func GetUserDataDir() string {
+	c := C.g_get_user_data_dir()
+	return C.GoString((*C.char)(c))
+}
+
+// GetUserConfigDir is a wrapper around g_get_user_config_dir().
+func GetUserConfigDir() string {
+	c := C.g_get_user_config_dir()
+	return C.GoString((*C.char)(c))
+}
+
+// GetUserRuntimeDir is a wrapper around g_get_user_runtime_dir().
+func GetUserRuntimeDir() string {
+	c := C.g_get_user_runtime_dir()
+	return C.GoString((*C.char)(c))
+}
+
 // GetUserSpecialDir is a wrapper around g_get_user_special_dir().  A
 // non-nil error is returned in the case that g_get_user_special_dir()
 // returns NULL to differentiate between NULL and an empty string.
