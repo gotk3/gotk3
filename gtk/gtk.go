@@ -5977,6 +5977,22 @@ func (v *ProgressBar) SetText(text string) {
 	C.gtk_progress_bar_set_text(v.native(), (*C.gchar)(cstr))
 }
 
+// SetPulseStep is a wrapper around gtk_progress_bar_set_pulse_step().
+func (v *ProgressBar) SetPulseStep(fraction float64) {
+	C.gtk_progress_bar_set_pulse_step(v.native(), C.gdouble(fraction))
+}
+
+// GetPulseStep is a wrapper around gtk_progress_bar_get_pulse_step().
+func (v *ProgressBar) GetPulseStep() float64 {
+	c := C.gtk_progress_bar_get_pulse_step(v.native())
+	return float64(c)
+}
+
+// Pulse is a wrapper arountd gtk_progress_bar_pulse().
+func (v *ProgressBar) Pulse() {
+	C.gtk_progress_bar_pulse(v.native())
+}
+
 /*
  * GtkRadioButton
  */
