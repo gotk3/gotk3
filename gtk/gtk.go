@@ -5918,6 +5918,8 @@ func (v *Paned) GetPosition() int {
 // ProgressBar is a representation of GTK's GtkProgressBar.
 type ProgressBar struct {
 	Widget
+	// Interfaces
+	Orientable
 }
 
 // native returns a pointer to the underlying GtkProgressBar.
@@ -5936,7 +5938,8 @@ func marshalProgressBar(p uintptr) (interface{}, error) {
 }
 
 func wrapProgressBar(obj *glib.Object) *ProgressBar {
-	return &ProgressBar{Widget{glib.InitiallyUnowned{obj}}}
+	o := wrapOrientable(obj)
+	return &ProgressBar{Widget{glib.InitiallyUnowned{obj}}, *o}
 }
 
 // ProgressBarNew() is a wrapper around gtk_progress_bar_new().
@@ -5993,6 +5996,16 @@ func (v *ProgressBar) Pulse() {
 	C.gtk_progress_bar_pulse(v.native())
 }
 
+// SetInverted is a wrapper around gtk_progress_bar_set_inverted().
+func (v *ProgressBar) SetInverted(inverted bool) {
+	C.gtk_progress_bar_set_inverted(v.native(), gbool(inverted))
+}
+
+// GetInverted is a wrapper around gtk_progress_bar_get_inverted().
+func (v *ProgressBar) GetInverted() bool {
+	c := C.gtk_progress_bar_get_inverted(v.native())
+	return gobool(c)
+}
 /*
  * GtkRadioButton
  */
