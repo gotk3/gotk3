@@ -576,6 +576,11 @@ func (v *Window) AddMnemonic(keyval uint, target *Widget) {
 	C.gtk_window_add_mnemonic(v.native(), C.guint(keyval), target.native())
 }
 
+// RemoreMnemonic is a wrapper around gtk_window_remove_mnemonic().
+func (v *Window) RemoveMnemonic(keyval uint, target *Widget) {
+	C.gtk_window_remove_mnemonic(v.native(), C.guint(keyval), target.native())
+}
+
 // TODO gtk_window_begin_move_drag().
 // TODO gtk_window_begin_resize_drag().
 // TODO gtk_window_get_default_icon_list().
@@ -588,7 +593,6 @@ func (v *Window) AddMnemonic(keyval uint, target *Widget) {
 // TODO gtk_window_mnemonic_activate().
 // TODO gtk_window_parse_geometry().
 // TODO gtk_window_propogate_key_event().
-// TODO gtk_window_remove_mnemonic().
 // TODO gtk_window_set_attached_to().
 // TODO gtk_window_set_default_icon_list().
 // TODO gtk_window_set_icon_list().
