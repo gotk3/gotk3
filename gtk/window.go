@@ -576,9 +576,26 @@ func (v *Window) AddMnemonic(keyval uint, target *Widget) {
 	C.gtk_window_add_mnemonic(v.native(), C.guint(keyval), target.native())
 }
 
-// RemoreMnemonic is a wrapper around gtk_window_remove_mnemonic().
+// RemoveMnemonic is a wrapper around gtk_window_remove_mnemonic().
 func (v *Window) RemoveMnemonic(keyval uint, target *Widget) {
 	C.gtk_window_remove_mnemonic(v.native(), C.guint(keyval), target.native())
+}
+
+// ActivateMnemonic is a wrapper around gtk_window_mnemonic_activate().
+func (v *Window) ActivateMnemonic(keyval uint, mods gdk.ModifierType) bool {
+	c := C.gtk_window_mnemonic_activate(v.native(), C.guint(keyval), C.GdkModifierType(mods))
+	return gobool(c)
+}
+
+// GetMnemonicModifier is a wrapper around gtk_window_get_mnemonic_modifier().
+func (v *Window) GetMnemonicModifier() gdk.ModifierType {
+	c := C.gtk_window_get_mnemonic_modifier(v.native())
+	return gdk.ModifierType(c)
+}
+
+// SetMnemonicModifier is a wrapper around gtk_window_set_mnemonic_modifier().
+func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
+	C.gtk_window_set_mnemonic_modifier(v.native(), C.GdkModifierType(mods))
 }
 
 // TODO gtk_window_begin_move_drag().
@@ -586,17 +603,14 @@ func (v *Window) RemoveMnemonic(keyval uint, target *Widget) {
 // TODO gtk_window_get_default_icon_list().
 // TODO gtk_window_get_group().
 // TODO gtk_window_get_icon_list().
-// TODO gtk_window_get_mnemonic_modifier().
 // TODO gtk_window_get_type_hint().
 // TODO gtk_window_get_window_type().
 // TODO gtk_window_list_toplevels().
-// TODO gtk_window_mnemonic_activate().
 // TODO gtk_window_parse_geometry().
 // TODO gtk_window_propogate_key_event().
 // TODO gtk_window_set_attached_to().
 // TODO gtk_window_set_default_icon_list().
 // TODO gtk_window_set_icon_list().
-// TODO gtk_window_set_mnemonic_modifier().
 // TODO gtk_window_set_screen().
 // TODO gtk_window_set_type_hint().
 // TODO gtk_window_get_resize_grip_area().

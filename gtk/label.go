@@ -264,3 +264,8 @@ func (v *Label) GetLabel() string {
 	}
 	return C.GoString((*C.char)(c))
 }
+
+// GetMnemonicKeyval is a wrapper around gtk_label_get_mnemonic_keyval().
+func (v *Label) GetMnemonicKeyval() uint {
+	return uint(C.gtk_label_get_mnemonic_keyval(v.native()))
+}
