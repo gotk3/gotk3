@@ -252,6 +252,21 @@ const (
 	SCROLL_SMOOTH ScrollDirection = C.GDK_SCROLL_SMOOTH
 )
 
+// WindowState is a representation of GDK's GdkWindowState
+type WindowState int
+
+const (
+	WINDOW_STATE_WITHDRAWN  WindowState = C.GDK_WINDOW_STATE_WITHDRAWN
+	WINDOW_STATE_ICONIFIED  WindowState = C.GDK_WINDOW_STATE_ICONIFIED
+	WINDOW_STATE_MAXIMIZED  WindowState = C.GDK_WINDOW_STATE_MAXIMIZED
+	WINDOW_STATE_STICKY     WindowState = C.GDK_WINDOW_STATE_STICKY
+	WINDOW_STATE_FULLSCREEN WindowState = C.GDK_WINDOW_STATE_FULLSCREEN
+	WINDOW_STATE_ABOVE      WindowState = C.GDK_WINDOW_STATE_ABOVE
+	WINDOW_STATE_BELOW      WindowState = C.GDK_WINDOW_STATE_BELOW
+	WINDOW_STATE_FOCUSED    WindowState = C.GDK_WINDOW_STATE_FOCUSED
+	WINDOW_STATE_TILED      WindowState = C.GDK_WINDOW_STATE_TILED
+)
+
 // CURRENT_TIME is a representation of GDK_CURRENT_TIME
 
 const CURRENT_TIME = C.GDK_CURRENT_TIME
@@ -1107,6 +1122,58 @@ func (v *EventScroll) Type() EventType {
 func (v *EventScroll) Direction() ScrollDirection {
 	c := v.native().direction
 	return ScrollDirection(c)
+}
+
+/*
+ * GdkEventWindowState
+ */
+
+// EventWindowState is a representation of GDK's GdkEventWindowState.
+type EventWindowState struct {
+	*Event
+}
+
+func EventWindowStateNew() *EventWindowState {
+	ee := (*C.GdkEvent)(unsafe.Pointer(&C.GdkEventWindowState{}))
+	ev := Event{ee}
+	return &EventWindowState{&ev}
+}
+
+// EventWindowStateNewFromEvent returns an EventWindowState from an Event.
+//
+// Using widget.Connect() for the
+// "window-state-event" signal results in a *Event being passed as
+// the callback's second argument. The argument is actually a
+// *EventWindowState. EventWindowStateNewFromEvent provides a means of creating
+// an EventWindowState from the Event.
+func EventWindowStateNewFromEvent(event *Event) *EventWindowState {
+	ee := (*C.GdkEvent)(unsafe.Pointer(event.native()))
+	ev := Event{ee}
+	return &EventWindowState{&ev}
+}
+
+// Native returns a pointer to the underlying GdkEventWindowState.
+func (v *EventWindowState) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *EventWindowState) native() *C.GdkEventWindowState {
+	return (*C.GdkEventWindowState)(unsafe.Pointer(v.Event.native()))
+}
+
+func (v *EventWindowState) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+func (v *EventWindowState) ChangedMask() WindowState {
+	c := v.native().changed_mask
+	return WindowState(c)
+}
+
+func (v *EventWindowState) NewWindowState() WindowState {
+	c := v.native().new_window_state
+	return WindowState(c)
 }
 
 /*
