@@ -1584,9 +1584,6 @@ func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
 // Box is a representation of GTK's GtkBox.
 type Box struct {
 	Container
-
-	// Interfaces
-	Orientable
 }
 
 // native() returns a pointer to the underlying GtkBox.
@@ -1605,8 +1602,7 @@ func marshalBox(p uintptr) (interface{}, error) {
 }
 
 func wrapBox(obj *glib.Object) *Box {
-	o := wrapOrientable(obj)
-	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}
+	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
 func (v *Box) toOrientable() *C.GtkOrientable {
@@ -2801,8 +2797,7 @@ func (v *Dialog) GetContentArea() (*Box, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	o := wrapOrientable(obj)
-	b := &Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}
+	b := &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
 	return b, nil
 }
 
@@ -3873,8 +3868,7 @@ func marshalFileChooserButton(p uintptr) (interface{}, error) {
 
 func wrapFileChooserButton(obj *glib.Object) *FileChooserButton {
 	fc := wrapFileChooser(obj)
-	o := wrapOrientable(obj)
-	return &FileChooserButton{Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}, *fc}
+	return &FileChooserButton{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
 }
 
 // FileChooserButtonNew is a wrapper around gtk_file_chooser_button_new().
@@ -3998,8 +3992,7 @@ func marshalFileChooserWidget(p uintptr) (interface{}, error) {
 
 func wrapFileChooserWidget(obj *glib.Object) *FileChooserWidget {
 	fc := wrapFileChooser(obj)
-	o := wrapOrientable(obj)
-	return &FileChooserWidget{Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}, *fc}
+	return &FileChooserWidget{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
 }
 
 // FileChooserWidgetNew is a wrapper around gtk_file_chooser_widget_new().
@@ -7199,8 +7192,7 @@ func marshalStatusbar(p uintptr) (interface{}, error) {
 }
 
 func wrapStatusbar(obj *glib.Object) *Statusbar {
-	o := wrapOrientable(obj)
-	return &Statusbar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}}
+	return &Statusbar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
 // StatusbarNew() is a wrapper around gtk_statusbar_new().
@@ -7241,8 +7233,7 @@ func (v *Statusbar) GetMessageArea() (*Box, error) {
 		return nil, nilPtrErr
 	}
 	obj := wrapObject(unsafe.Pointer(c))
-	o := wrapOrientable(obj)
-	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}, nil
+	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, nil
 }
 
 /*

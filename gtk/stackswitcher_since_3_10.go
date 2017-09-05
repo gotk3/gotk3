@@ -51,8 +51,7 @@ func marshalStackSwitcher(p uintptr) (interface{}, error) {
 }
 
 func wrapStackSwitcher(obj *glib.Object) *StackSwitcher {
-	o := wrapOrientable(obj)
-	return &StackSwitcher{Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}}
+	return &StackSwitcher{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
 // StackSwitcherNew is a wrapper around gtk_stack_switcher_new().

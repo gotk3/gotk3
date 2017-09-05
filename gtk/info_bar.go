@@ -38,8 +38,7 @@ func marshalInfoBar(p uintptr) (interface{}, error) {
 }
 
 func wrapInfoBar(obj *glib.Object) *InfoBar {
-	o := wrapOrientable(obj)
-	return &InfoBar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}}
+	return &InfoBar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
 func InfoBarNew() (*InfoBar, error) {
