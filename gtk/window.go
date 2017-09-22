@@ -283,6 +283,11 @@ func (v *Window) SetDeletable(setting bool) {
 	C.gtk_window_set_deletable(v.native(), gbool(setting))
 }
 
+// SetTypeHint is a wrapper around gtk_window_set_type_hint().
+func (v *Window) SetTypeHint(typeHint gdk.WindowTypeHint) {
+	C.gtk_window_set_type_hint(v.native(), C.GdkWindowTypeHint(typeHint))
+}
+
 // SetSkipTaskbarHint is a wrapper around gtk_window_set_skip_taskbar_hint().
 func (v *Window) SetSkipTaskbarHint(setting bool) {
 	C.gtk_window_set_skip_taskbar_hint(v.native(), gbool(setting))
@@ -429,6 +434,12 @@ func (v *Window) GetAttachedTo() (*Widget, error) {
 		return nil, nilPtrErr
 	}
 	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+}
+
+// GetTypeHint is a wrapper around gtk_window_get_type_hint().
+func (v *Window) GetTypeHint() gdk.WindowTypeHint {
+	c := C.gtk_window_get_type_hint(v.native())
+	return gdk.WindowTypeHint(c)
 }
 
 // GetSkipTaskbarHint is a wrapper around gtk_window_get_skip_taskbar_hint().
@@ -603,7 +614,6 @@ func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
 // TODO gtk_window_get_default_icon_list().
 // TODO gtk_window_get_group().
 // TODO gtk_window_get_icon_list().
-// TODO gtk_window_get_type_hint().
 // TODO gtk_window_get_window_type().
 // TODO gtk_window_list_toplevels().
 // TODO gtk_window_parse_geometry().
@@ -612,5 +622,4 @@ func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
 // TODO gtk_window_set_default_icon_list().
 // TODO gtk_window_set_icon_list().
 // TODO gtk_window_set_screen().
-// TODO gtk_window_set_type_hint().
 // TODO gtk_window_get_resize_grip_area().

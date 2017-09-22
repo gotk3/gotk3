@@ -6023,6 +6023,7 @@ func (v *ProgressBar) GetInverted() bool {
 	c := C.gtk_progress_bar_get_inverted(v.native())
 	return gobool(c)
 }
+
 /*
  * GtkRadioButton
  */
@@ -6513,7 +6514,7 @@ func ScaleNewWithRange(orientation Orientation, min, max, step float64) (*Scale,
 
 // SetDrawValue() is a wrapper around gtk_scale_set_draw_value().
 func (v *Scale) SetDrawValue(drawValue bool) {
-    C.gtk_scale_set_draw_value(v.native(), gbool(drawValue))
+	C.gtk_scale_set_draw_value(v.native(), gbool(drawValue))
 }
 
 /*
