@@ -45,5 +45,5 @@ func (v *Application) GetMenuByID(id string) *glib.Menu {
 	if c == nil {
 		return nil
 	}
-	return &glib.Menu{glib.MenuModel{wrapObject(unsafe.Pointer(c))}}
+	return &glib.Menu{glib.MenuModel{glib.Take(unsafe.Pointer(c))}}
 }

@@ -105,7 +105,7 @@ func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapButton(wrapObject(unsafe.Pointer(c))), nil
+	return wrapButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
 /*
@@ -141,7 +141,7 @@ func (v *HeaderBar) native() *C.GtkHeaderBar {
 
 func marshalHeaderBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapHeaderBar(obj), nil
 }
 
@@ -155,7 +155,7 @@ func HeaderBarNew() (*HeaderBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapHeaderBar(wrapObject(unsafe.Pointer(c))), nil
+	return wrapHeaderBar(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetTitle is a wrapper around gtk_header_bar_set_title().
@@ -195,7 +195,7 @@ func (v *HeaderBar) GetCustomTitle() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // PackStart is a wrapper around gtk_header_bar_pack_start().
@@ -254,7 +254,7 @@ func (v *ListBox) native() *C.GtkListBox {
 
 func marshalListBox(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapListBox(obj), nil
 }
 
@@ -268,7 +268,7 @@ func ListBoxNew() (*ListBox, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapListBox(wrapObject(unsafe.Pointer(c))), nil
+	return wrapListBox(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // Prepend is a wrapper around gtk_list_box_prepend().
@@ -292,7 +292,7 @@ func (v *ListBox) GetSelectedRow() *ListBoxRow {
 	if c == nil {
 		return nil
 	}
-	return wrapListBoxRow(wrapObject(unsafe.Pointer(c)))
+	return wrapListBoxRow(glib.Take(unsafe.Pointer(c)))
 }
 
 // SetSelectionMode is a wrapper around gtk_list_box_set_selection_mode().
@@ -320,7 +320,7 @@ func (v *ListBox) GetActivateOnSingleClick() bool {
 // GetAdjustment is a wrapper around gtk_list_box_get_adjustment().
 func (v *ListBox) GetAdjustment() *Adjustment {
 	c := C.gtk_list_box_get_adjustment(v.native())
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return &Adjustment{glib.InitiallyUnowned{obj}}
 }
 
@@ -340,7 +340,7 @@ func (v *ListBox) GetRowAtIndex(index int) *ListBoxRow {
 	if c == nil {
 		return nil
 	}
-	return wrapListBoxRow(wrapObject(unsafe.Pointer(c)))
+	return wrapListBoxRow(glib.Take(unsafe.Pointer(c)))
 }
 
 // GetRowAtY is a wrapper around gtk_list_box_get_row_at_y().
@@ -349,7 +349,7 @@ func (v *ListBox) GetRowAtY(y int) *ListBoxRow {
 	if c == nil {
 		return nil
 	}
-	return wrapListBoxRow(wrapObject(unsafe.Pointer(c)))
+	return wrapListBoxRow(glib.Take(unsafe.Pointer(c)))
 }
 
 // InvalidateFilter is a wrapper around gtk_list_box_invalidate_filter().
@@ -396,7 +396,7 @@ func (v *ListBoxRow) native() *C.GtkListBoxRow {
 
 func marshalListBoxRow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapListBoxRow(obj), nil
 }
 
@@ -409,7 +409,7 @@ func ListBoxRowNew() (*ListBoxRow, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapListBoxRow(wrapObject(unsafe.Pointer(c))), nil
+	return wrapListBoxRow(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // Changed is a wrapper around gtk_list_box_row_changed().
@@ -423,7 +423,7 @@ func (v *ListBoxRow) GetHeader() *Widget {
 	if c == nil {
 		return nil
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+	return wrapWidget(glib.Take(unsafe.Pointer(c)))
 }
 
 // SetHeader is a wrapper around gtk_list_box_row_get_header().
@@ -457,7 +457,7 @@ func (v *Revealer) native() *C.GtkRevealer {
 
 func marshalRevealer(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapRevealer(obj), nil
 }
 
@@ -471,7 +471,7 @@ func RevealerNew() (*Revealer, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapRevealer(wrapObject(unsafe.Pointer(c))), nil
+	return wrapRevealer(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetRevealChild is a wrapper around gtk_revealer_get_reveal_child().
@@ -534,7 +534,7 @@ func (v *SearchBar) native() *C.GtkSearchBar {
 
 func marshalSearchBar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapSearchBar(obj), nil
 }
 
@@ -548,7 +548,7 @@ func SearchBarNew() (*SearchBar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapSearchBar(wrapObject(unsafe.Pointer(c))), nil
+	return wrapSearchBar(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // ConnectEntry is a wrapper around gtk_search_bar_connect_entry().
@@ -604,7 +604,7 @@ func (v *Stack) native() *C.GtkStack {
 
 func marshalStack(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapStack(obj), nil
 }
 
@@ -618,7 +618,7 @@ func StackNew() (*Stack, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStack(wrapObject(unsafe.Pointer(c))), nil
+	return wrapStack(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // AddNamed is a wrapper around gtk_stack_add_named().
@@ -649,7 +649,7 @@ func (v *Stack) GetVisibleChild() *Widget {
 	if c == nil {
 		return nil
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+	return wrapWidget(glib.Take(unsafe.Pointer(c)))
 }
 
 // SetVisibleChildName is a wrapper around gtk_stack_set_visible_child_name().

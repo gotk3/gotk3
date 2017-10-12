@@ -40,7 +40,7 @@ func (v *AboutDialog) native() *C.GtkAboutDialog {
 
 func marshalAboutDialog(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAboutDialog(obj), nil
 }
 
@@ -54,7 +54,7 @@ func AboutDialogNew() (*AboutDialog, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAboutDialog(obj), nil
 }
 
@@ -115,7 +115,7 @@ func (v *AboutDialog) GetLogo() (*gdk.Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	p := &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}
+	p := &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}
 	return p, nil
 }
 

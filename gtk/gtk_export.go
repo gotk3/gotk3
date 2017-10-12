@@ -54,7 +54,7 @@ func goPageSetupDone(setup *C.GtkPageSetup,
 	delete(pageSetupDoneCallbackRegistry.m, id)
 	pageSetupDoneCallbackRegistry.Unlock()
 
-	obj := wrapObject(unsafe.Pointer(setup))
+	obj := glib.Take(unsafe.Pointer(setup))
 	r.fn(wrapPageSetup(obj), r.data)
 
 }

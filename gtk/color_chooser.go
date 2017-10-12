@@ -50,7 +50,7 @@ func (v *ColorChooser) native() *C.GtkColorChooser {
 
 func marshalColorChooser(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapColorChooser(obj), nil
 }
 
@@ -127,7 +127,7 @@ func (v *ColorChooserDialog) native() *C.GtkColorChooserDialog {
 
 func marshalColorChooserDialog(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapColorChooserDialog(wrapObject(unsafe.Pointer(c))), nil
+	return wrapColorChooserDialog(glib.Take(unsafe.Pointer(c))), nil
 }
 
 func wrapColorChooserDialog(obj *glib.Object) *ColorChooserDialog {
@@ -144,5 +144,5 @@ func ColorChooserDialogNew(title string, parent *Window) (*ColorChooserDialog, e
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapColorChooserDialog(wrapObject(unsafe.Pointer(c))), nil
+	return wrapColorChooserDialog(glib.Take(unsafe.Pointer(c))), nil
 }

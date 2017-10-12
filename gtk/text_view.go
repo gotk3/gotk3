@@ -44,7 +44,7 @@ func (v *TextView) native() *C.GtkTextView {
 
 func marshalTextView(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapTextView(obj), nil
 }
 
@@ -58,14 +58,14 @@ func TextViewNew() (*TextView, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTextView(wrapObject(unsafe.Pointer(c))), nil
+	return wrapTextView(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // TextViewNewWithBuffer is a wrapper around gtk_text_view_new_with_buffer().
 func TextViewNewWithBuffer(buf *TextBuffer) (*TextView, error) {
 	cbuf := buf.native()
 	c := C.gtk_text_view_new_with_buffer(cbuf)
-	return wrapTextView(wrapObject(unsafe.Pointer(c))), nil
+	return wrapTextView(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetBuffer is a wrapper around gtk_text_view_get_buffer().
@@ -74,7 +74,7 @@ func (v *TextView) GetBuffer() (*TextBuffer, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTextBuffer(wrapObject(unsafe.Pointer(c))), nil
+	return wrapTextBuffer(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetBuffer is a wrapper around gtk_text_view_set_buffer().
@@ -335,7 +335,7 @@ func (v *TextView) GetWindow(win TextWindowType) *gdk.Window {
 	if c == nil {
 		return nil
 	}
-	return &gdk.Window{wrapObject(unsafe.Pointer(c))}
+	return &gdk.Window{glib.Take(unsafe.Pointer(c))}
 }
 
 // GetWindowType is a wrapper around gtk_text_view_get_window_type().

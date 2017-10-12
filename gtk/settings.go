@@ -35,7 +35,7 @@ func (v *Settings) native() *C.GtkSettings {
 
 func marshalSettings(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapSettings(wrapObject(unsafe.Pointer(c))), nil
+	return wrapSettings(glib.Take(unsafe.Pointer(c))), nil
 }
 
 func wrapSettings(obj *glib.Object) *Settings {
@@ -49,5 +49,5 @@ func SettingsGetDefault() (*Settings, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapSettings(wrapObject(unsafe.Pointer(c))), nil
+	return wrapSettings(glib.Take(unsafe.Pointer(c))), nil
 }

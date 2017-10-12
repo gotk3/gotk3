@@ -26,5 +26,5 @@ func (p *Popover) GetDefaultWidget() *Widget {
 	if w == nil {
 		return nil
 	}
-	return &Widget{glib.InitiallyUnowned{wrapObject(unsafe.Pointer(w))}}
+	return &Widget{glib.InitiallyUnowned{glib.Take(unsafe.Pointer(w))}}
 }

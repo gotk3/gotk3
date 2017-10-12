@@ -48,7 +48,7 @@ func (v *Window) toWindow() *C.GtkWindow {
 
 func marshalWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapWindow(obj), nil
 }
 
@@ -62,7 +62,7 @@ func WindowNew(t WindowType) (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c))), nil
+	return wrapWindow(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetTitle is a wrapper around gtk_window_set_title().
@@ -112,7 +112,7 @@ func (v *Window) GetScreen() (*gdk.Screen, error) {
 		return nil, nilPtrErr
 	}
 
-	s := &gdk.Screen{wrapObject(unsafe.Pointer(c))}
+	s := &gdk.Screen{glib.Take(unsafe.Pointer(c))}
 	return s, nil
 }
 
@@ -190,7 +190,7 @@ func (v *Window) GetFocus() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetFocus is a wrapper around gtk_window_set_focus().
@@ -204,7 +204,7 @@ func (v *Window) GetDefaultWidget() *Widget {
 	if c == nil {
 		return nil
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapWidget(obj)
 }
 
@@ -372,7 +372,7 @@ func (v *Window) GetIcon() (*gdk.Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	p := &gdk.Pixbuf{wrapObject(unsafe.Pointer(c))}
+	p := &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}
 	return p, nil
 }
 
@@ -424,7 +424,7 @@ func (v *Window) GetTransientFor() (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c))), nil
+	return wrapWindow(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetAttachedTo is a wrapper around gtk_window_get_attached_to().
@@ -433,7 +433,7 @@ func (v *Window) GetAttachedTo() (*Widget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c))), nil
+	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetTypeHint is a wrapper around gtk_window_get_type_hint().
@@ -568,7 +568,7 @@ func (v *Window) GetApplication() (*Application, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapApplication(wrapObject(unsafe.Pointer(c))), nil
+	return wrapApplication(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetApplication is a wrapper around gtk_window_set_application().

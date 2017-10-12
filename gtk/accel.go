@@ -88,7 +88,7 @@ func (v *AccelGroup) native() *C.GtkAccelGroup {
 
 func marshalAccelGroup(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAccelGroup(obj), nil
 }
 
@@ -102,7 +102,7 @@ func AccelGroupNew() (*AccelGroup, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAccelGroup(obj), nil
 }
 
@@ -167,7 +167,7 @@ func AccelGroupFromClosure(f interface{}) *AccelGroup {
 	if c == nil {
 		return nil
 	}
-	return wrapAccelGroup(wrapObject(unsafe.Pointer(c)))
+	return wrapAccelGroup(glib.Take(unsafe.Pointer(c)))
 }
 
 // GetModifierMask is a wrapper around gtk_accel_group_get_modifier_mask().
@@ -214,7 +214,7 @@ func (v *AccelMap) native() *C.GtkAccelMap {
 
 func marshalAccelMap(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAccelMap(obj), nil
 }
 
@@ -317,7 +317,7 @@ func AccelMapGet() *AccelMap {
 	if c == nil {
 		return nil
 	}
-	return wrapAccelMap(wrapObject(unsafe.Pointer(c)))
+	return wrapAccelMap(glib.Take(unsafe.Pointer(c)))
 }
 
 // AccelMapLockPath is a wrapper around gtk_accel_map_lock_path().
@@ -347,7 +347,7 @@ func (v *Menu) GetAccelGroup() *AccelGroup {
 	if c == nil {
 		return nil
 	}
-	return wrapAccelGroup(wrapObject(unsafe.Pointer(c)))
+	return wrapAccelGroup(glib.Take(unsafe.Pointer(c)))
 }
 
 // SetAccelPath is a wrapper around gtk_menu_set_accel_path().

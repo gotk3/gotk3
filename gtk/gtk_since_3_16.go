@@ -91,7 +91,7 @@ func (v *StackSidebar) native() *C.GtkStackSidebar {
 
 func marshalStackSidebar(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapStackSidebar(obj), nil
 }
 
@@ -105,7 +105,7 @@ func StackSidebarNew() (*StackSidebar, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStackSidebar(wrapObject(unsafe.Pointer(c))), nil
+	return wrapStackSidebar(glib.Take(unsafe.Pointer(c))), nil
 }
 
 func (v *StackSidebar) SetStack(stack *Stack) {
@@ -117,5 +117,5 @@ func (v *StackSidebar) GetStack() *Stack {
 	if c == nil {
 		return nil
 	}
-	return wrapStack(wrapObject(unsafe.Pointer(c)))
+	return wrapStack(glib.Take(unsafe.Pointer(c)))
 }

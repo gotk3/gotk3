@@ -23,5 +23,5 @@ func (v *Stack) GetChildByName(name string) *Widget {
 	if c == nil {
 		return nil
 	}
-	return wrapWidget(wrapObject(unsafe.Pointer(c)))
+	return wrapWidget(glib.Take(unsafe.Pointer(c)))
 }

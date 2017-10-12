@@ -34,7 +34,7 @@ func (v *Label) native() *C.GtkLabel {
 
 func marshalLabel(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapLabel(obj), nil
 }
 
@@ -50,7 +50,7 @@ func LabelNew(str string) (*Label, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapLabel(obj), nil
 }
 
@@ -234,7 +234,7 @@ func LabelNewWithMnemonic(str string) (*Label, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapLabel(obj), nil
 }
 

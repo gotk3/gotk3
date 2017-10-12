@@ -32,7 +32,7 @@ func (v *MenuShell) native() *C.GtkMenuShell {
 
 func marshalMenuShell(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapMenuShell(obj), nil
 }
 

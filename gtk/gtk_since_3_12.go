@@ -37,7 +37,7 @@ func (v *MenuButton) GetPopover() *Popover {
 	if c == nil {
 		return nil
 	}
-	return wrapPopover(wrapObject(unsafe.Pointer(c)))
+	return wrapPopover(glib.Take(unsafe.Pointer(c)))
 }
 
 /*
@@ -57,7 +57,7 @@ func (fb *FlowBox) native() *C.GtkFlowBox {
 
 func marshalFlowBox(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapFlowBox(obj), nil
 }
 
@@ -71,7 +71,7 @@ func FlowBoxNew() (*FlowBox, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapFlowBox(wrapObject(unsafe.Pointer(c))), nil
+	return wrapFlowBox(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // Insert is a wrapper around gtk_flow_box_insert()
@@ -85,7 +85,7 @@ func (fb *FlowBox) GetChildAtIndex(idx int) *FlowBoxChild {
 	if c == nil {
 		return nil
 	}
-	return wrapFlowBoxChild(wrapObject(unsafe.Pointer(c)))
+	return wrapFlowBoxChild(glib.Take(unsafe.Pointer(c)))
 }
 
 // TODO 3.22.6 gtk_flow_box_get_child_at_pos()
@@ -176,7 +176,7 @@ func (fb *FlowBox) GetSelectedChildren() (rv []*FlowBoxChild) {
 	}
 	list := glib.WrapList(uintptr(unsafe.Pointer(c)))
 	for l := list; l != nil; l = l.Next() {
-		o := wrapFlowBoxChild(wrapObject(l.Data().(unsafe.Pointer)))
+		o := wrapFlowBoxChild(glib.Take(l.Data().(unsafe.Pointer)))
 		rv = append(rv, o)
 	}
 	// We got a transfer container, so we must free the list.
@@ -239,7 +239,7 @@ func (fbc *FlowBoxChild) native() *C.GtkFlowBoxChild {
 
 func marshalFlowBoxChild(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapFlowBoxChild(obj), nil
 }
 
@@ -253,7 +253,7 @@ func FlowBoxChildNew() (*FlowBoxChild, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapFlowBoxChild(wrapObject(unsafe.Pointer(c))), nil
+	return wrapFlowBoxChild(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetIndex is a wrapper around gtk_flow_box_child_get_index()

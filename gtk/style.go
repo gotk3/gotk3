@@ -64,7 +64,7 @@ func fromNativeStyleContext(c *C.GtkStyleContext) (*StyleContext, error) {
 		return nil, nilPtrErr
 	}
 
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapStyleContext(obj), nil
 }
 
@@ -107,7 +107,7 @@ func (v *StyleContext) GetScreen() (*gdk.Screen, error) {
 		return nil, nilPtrErr
 	}
 
-	d := &gdk.Screen{wrapObject(unsafe.Pointer(c))}
+	d := &gdk.Screen{glib.Take(unsafe.Pointer(c))}
 	return d, nil
 }
 

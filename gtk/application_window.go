@@ -32,7 +32,7 @@ func (v *ApplicationWindow) native() *C.GtkApplicationWindow {
 
 func marshalApplicationWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapApplicationWindow(obj), nil
 }
 
@@ -46,7 +46,7 @@ func ApplicationWindowNew(app *Application) (*ApplicationWindow, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapApplicationWindow(wrapObject(unsafe.Pointer(c))), nil
+	return wrapApplicationWindow(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetShowMenubar is a wrapper around gtk_application_window_set_show_menubar().

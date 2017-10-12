@@ -81,7 +81,7 @@ func AlignmentNew(xalign, yalign, xscale, yscale float32) (*Alignment, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAlignment(obj), nil
 }
 
@@ -107,7 +107,7 @@ func ArrowNew(arrowType ArrowType, shadowType ShadowType) (*Arrow, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapArrow(obj), nil
 }
 
@@ -185,7 +185,7 @@ func (v *Arrow) native() *C.GtkArrow {
 
 func marshalArrow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapArrow(obj), nil
 }
 
@@ -213,7 +213,7 @@ func (v *Alignment) native() *C.GtkAlignment {
 
 func marshalAlignment(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAlignment(obj), nil
 }
 
@@ -233,7 +233,7 @@ type StatusIcon struct {
 
 func marshalStatusIcon(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapStatusIcon(obj), nil
 }
 
@@ -255,7 +255,7 @@ func StatusIconNew() (*StatusIcon, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStatusIcon(wrapObject(unsafe.Pointer(c))), nil
+	return wrapStatusIcon(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // StatusIconNewFromFile is a wrapper around gtk_status_icon_new_from_file()
@@ -266,7 +266,7 @@ func StatusIconNewFromFile(filename string) (*StatusIcon, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStatusIcon(wrapObject(unsafe.Pointer(c))), nil
+	return wrapStatusIcon(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // StatusIconNewFromIconName is a wrapper around gtk_status_icon_new_from_name()
@@ -277,7 +277,7 @@ func StatusIconNewFromIconName(iconName string) (*StatusIcon, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStatusIcon(wrapObject(unsafe.Pointer(c))), nil
+	return wrapStatusIcon(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetFromFile is a wrapper around gtk_status_icon_set_from_file()
@@ -410,7 +410,7 @@ func (v *Misc) native() *C.GtkMisc {
 
 func marshalMisc(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapMisc(obj), nil
 }
 

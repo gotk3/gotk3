@@ -243,7 +243,7 @@ func (ps *PageSetup) native() *C.GtkPageSetup {
 
 func marshalPageSetup(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj), nil
 }
 
@@ -257,7 +257,7 @@ func PageSetupNew() (*PageSetup, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj), nil
 }
 
@@ -267,7 +267,7 @@ func (ps *PageSetup) Copy() (*PageSetup, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj), nil
 }
 
@@ -378,7 +378,7 @@ func PageSetupNewFromFile(fileName string) (*PageSetup, error) {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return &PageSetup{obj}, nil
 
 }
@@ -643,7 +643,7 @@ func (pc *PrintContext) native() *C.GtkPrintContext {
 
 func marshalPrintContext(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintContext(obj), nil
 }
 
@@ -667,7 +667,7 @@ func (pc *PrintContext) SetCairoContext(cr *cairo.Context, dpiX, dpiY float64) {
 // GetPageSetup() is a wrapper around gtk_print_context_get_page_setup().
 func (pc *PrintContext) GetPageSetup() *PageSetup {
 	c := C.gtk_print_context_get_page_setup(pc.native())
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj)
 }
 
@@ -750,7 +750,7 @@ func (v *PrintOperation) toPrintOperationPreview() *C.GtkPrintOperationPreview {
 
 func marshalPrintOperation(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintOperation(obj), nil
 }
 
@@ -765,7 +765,7 @@ func PrintOperationNew() (*PrintOperation, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintOperation(obj), nil
 }
 
@@ -793,7 +793,7 @@ func (po *PrintOperation) GetDefaultPageSetup() (*PageSetup, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj), nil
 }
 
@@ -808,7 +808,7 @@ func (po *PrintOperation) GetPrintSettings(ps *PageSetup) (*PrintSettings, error
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintSettings(obj), nil
 }
 
@@ -950,7 +950,7 @@ func (po *PrintOperation) GetEmbedPageSetup() bool {
 // PrintRunPageSetupDialog() is a wrapper around gtk_print_run_page_setup_dialog().
 func PrintRunPageSetupDialog(parent *Window, pageSetup *PageSetup, settings *PrintSettings) *PageSetup {
 	c := C.gtk_print_run_page_setup_dialog(parent.native(), pageSetup.native(), settings.native())
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj)
 }
 
@@ -1015,7 +1015,7 @@ func (v *PrintOperationPreview) native() *C.GtkPrintOperationPreview {
 
 func marshalPrintOperationPreview(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintOperationPreview(obj), nil
 }
 
@@ -1065,7 +1065,7 @@ func (ps *PrintSettings) native() *C.GtkPrintSettings {
 
 func marshalPrintSettings(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapPrintSettings(wrapObject(unsafe.Pointer(c))), nil
+	return wrapPrintSettings(glib.Take(unsafe.Pointer(c))), nil
 }
 
 func wrapPrintSettings(obj *glib.Object) *PrintSettings {
@@ -1113,7 +1113,7 @@ func PrintSettingsNew() (*PrintSettings, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintSettings(obj), nil
 }
 
@@ -1123,7 +1123,7 @@ func (ps *PrintSettings) Copy() (*PrintSettings, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintSettings(obj), nil
 }
 
@@ -1564,7 +1564,7 @@ func PrintSettingsNewFromFile(name string) (*PrintSettings, error) {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
 	}
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPrintSettings(obj), nil
 }
 

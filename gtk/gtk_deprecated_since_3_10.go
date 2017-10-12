@@ -37,7 +37,7 @@ func ButtonNewFromStock(stock Stock) (*Button, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapButton(wrapObject(unsafe.Pointer(c))), nil
+	return wrapButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetUseStock is a wrapper around gtk_button_set_use_stock().
@@ -77,7 +77,7 @@ func ImageNewFromStock(stock Stock, size IconSize) (*Image, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapImage(wrapObject(unsafe.Pointer(c))), nil
+	return wrapImage(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetFromStock is a wrapper around gtk_image_set_from_stock().

@@ -42,7 +42,7 @@ func (v *Application) native() *C.GtkApplication {
 
 func marshalApplication(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapApplication(obj), nil
 }
 
@@ -59,7 +59,7 @@ func ApplicationNew(appId string, flags glib.ApplicationFlags) (*Application, er
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapApplication(wrapObject(unsafe.Pointer(c))), nil
+	return wrapApplication(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // AddWindow is a wrapper around gtk_application_add_window().
@@ -78,7 +78,7 @@ func (v *Application) GetWindowByID(id uint) *Window {
 	if c == nil {
 		return nil
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c)))
+	return wrapWindow(glib.Take(unsafe.Pointer(c)))
 }
 
 // GetActiveWindow is a wrapper around gtk_application_get_active_window().
@@ -87,7 +87,7 @@ func (v *Application) GetActiveWindow() *Window {
 	if c == nil {
 		return nil
 	}
-	return wrapWindow(wrapObject(unsafe.Pointer(c)))
+	return wrapWindow(glib.Take(unsafe.Pointer(c)))
 }
 
 // Uninhibit is a wrapper around gtk_application_uninhibit().
@@ -101,7 +101,7 @@ func (v *Application) GetAppMenu() *glib.MenuModel {
 	if c == nil {
 		return nil
 	}
-	return &glib.MenuModel{wrapObject(unsafe.Pointer(c))}
+	return &glib.MenuModel{glib.Take(unsafe.Pointer(c))}
 }
 
 // SetAppMenu is a wrapper around gtk_application_set_app_menu().
@@ -116,7 +116,7 @@ func (v *Application) GetMenubar() *glib.MenuModel {
 	if c == nil {
 		return nil
 	}
-	return &glib.MenuModel{wrapObject(unsafe.Pointer(c))}
+	return &glib.MenuModel{glib.Take(unsafe.Pointer(c))}
 }
 
 // SetMenubar is a wrapper around gtk_application_set_menubar().
@@ -147,7 +147,7 @@ func (v *Application) GetWindows() *glib.List {
 	glist := C.gtk_application_get_windows(v.native())
 	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
 	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
-		return wrapWindow(wrapObject(ptr))
+		return wrapWindow(glib.Take(ptr))
 	})
 	runtime.SetFinalizer(list, func(l *glib.List) {
 		l.Free()

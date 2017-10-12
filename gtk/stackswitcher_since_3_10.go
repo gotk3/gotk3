@@ -46,7 +46,7 @@ func (v *StackSwitcher) native() *C.GtkStackSwitcher {
 
 func marshalStackSwitcher(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapStackSwitcher(obj), nil
 }
 
@@ -60,7 +60,7 @@ func StackSwitcherNew() (*StackSwitcher, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapStackSwitcher(wrapObject(unsafe.Pointer(c))), nil
+	return wrapStackSwitcher(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetStack is a wrapper around gtk_stack_switcher_set_stack().
@@ -74,5 +74,5 @@ func (v *StackSwitcher) GetStack() *Stack {
 	if c == nil {
 		return nil
 	}
-	return wrapStack(wrapObject(unsafe.Pointer(c)))
+	return wrapStack(glib.Take(unsafe.Pointer(c)))
 }

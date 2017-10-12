@@ -34,7 +34,7 @@ func (v *TreeView) native() *C.GtkTreeView {
 
 func marshalTreeView(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapTreeView(obj), nil
 }
 
@@ -47,7 +47,7 @@ func setupTreeView(c unsafe.Pointer) (*TreeView, error) {
 		return nil, nilPtrErr
 	}
 
-	return wrapTreeView(wrapObject(c)), nil
+	return wrapTreeView(glib.Take(c)), nil
 }
 
 // TreeViewNew() is a wrapper around gtk_tree_view_new().
@@ -66,7 +66,7 @@ func (v *TreeView) GetModel() (*TreeModel, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTreeModel(wrapObject(unsafe.Pointer(c))), nil
+	return wrapTreeModel(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetModel() is a wrapper around gtk_tree_view_set_model().
@@ -80,7 +80,7 @@ func (v *TreeView) GetSelection() (*TreeSelection, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapTreeSelection(wrapObject(unsafe.Pointer(c))), nil
+	return wrapTreeSelection(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // AppendColumn() is a wrapper around gtk_tree_view_append_column().
@@ -192,7 +192,7 @@ func (v *TreeView) GetColumn(n int) *TreeViewColumn {
 	if c == nil {
 		return nil
 	}
-	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c)))
+	return wrapTreeViewColumn(glib.Take(unsafe.Pointer(c)))
 }
 
 // MoveColumnAfter() is a wrapper around gtk_tree_view_move_column_after().
@@ -211,7 +211,7 @@ func (v *TreeView) GetExpanderColumn() *TreeViewColumn {
 	if c == nil {
 		return nil
 	}
-	return wrapTreeViewColumn(wrapObject(unsafe.Pointer(c)))
+	return wrapTreeViewColumn(glib.Take(unsafe.Pointer(c)))
 }
 
 // ScrollToPoint() is a wrapper around gtk_tree_view_scroll_to_point().
@@ -242,7 +242,7 @@ func (v *TreeView) GetCursor() (p *TreePath, c *TreeViewColumn) {
 	}
 
 	if col != nil {
-		c = wrapTreeViewColumn(wrapObject(unsafe.Pointer(col)))
+		c = wrapTreeViewColumn(glib.Take(unsafe.Pointer(col)))
 	}
 
 	return
@@ -300,7 +300,7 @@ func (v *TreeView) GetBinWindow() *gdk.Window {
 		return nil
 	}
 
-	w := &gdk.Window{wrapObject(unsafe.Pointer(c))}
+	w := &gdk.Window{glib.Take(unsafe.Pointer(c))}
 	return w
 }
 
@@ -330,7 +330,7 @@ func (v *TreeView) GetSearchEntry() *Entry {
 	if c == nil {
 		return nil
 	}
-	return wrapEntry(wrapObject(unsafe.Pointer(c)))
+	return wrapEntry(glib.Take(unsafe.Pointer(c)))
 }
 
 // SetSearchEntry() is a wrapper around gtk_tree_view_set_search_entry().

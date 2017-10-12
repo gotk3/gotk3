@@ -53,7 +53,7 @@ func (v *AppChooser) native() *C.GtkAppChooser {
 
 func marshalAppChooser(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAppChooser(obj), nil
 }
 
@@ -107,7 +107,7 @@ func (v *AppChooserButton) native() *C.GtkAppChooserButton {
 
 func marshalAppChooserButton(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapAppChooserButton(wrapObject(unsafe.Pointer(c))), nil
+	return wrapAppChooserButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
 func wrapAppChooserButton(obj *glib.Object) *AppChooserButton {
@@ -124,7 +124,7 @@ func AppChooserButtonNew(content_type string) (*AppChooserButton, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapAppChooserButton(wrapObject(unsafe.Pointer(c))), nil
+	return wrapAppChooserButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // TODO: Needs gio/GIcon implemented first
@@ -205,7 +205,7 @@ func (v *AppChooserWidget) native() *C.GtkAppChooserWidget {
 
 func marshalAppChooserWidget(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapAppChooserWidget(wrapObject(unsafe.Pointer(c))), nil
+	return wrapAppChooserWidget(glib.Take(unsafe.Pointer(c))), nil
 }
 
 func wrapAppChooserWidget(obj *glib.Object) *AppChooserWidget {
@@ -222,7 +222,7 @@ func AppChooserWidgetNew(content_type string) (*AppChooserWidget, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapAppChooserWidget(wrapObject(unsafe.Pointer(c))), nil
+	return wrapAppChooserWidget(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetShowDefault() is a wrapper around gtk_app_chooser_widget_get_show_default().
@@ -318,7 +318,7 @@ func (v *AppChooserDialog) native() *C.GtkAppChooserDialog {
 
 func marshalAppChooserDialog(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapAppChooserDialog(wrapObject(unsafe.Pointer(c))), nil
+	return wrapAppChooserDialog(glib.Take(unsafe.Pointer(c))), nil
 }
 
 func wrapAppChooserDialog(obj *glib.Object) *AppChooserDialog {
@@ -338,7 +338,7 @@ func wrapAppChooserDialog(obj *glib.Object) *AppChooserDialog {
 // 	if c == nil {
 // 		return nil, nilPtrErr
 // 	}
-// 	return wrapAppChooserDialog(wrapObject(unsafe.Pointer(c))), nil
+// 	return wrapAppChooserDialog(glib.Take(unsafe.Pointer(c))), nil
 // }
 
 // AppChooserDialogNewForContentType() is a wrapper around gtk_app_chooser_dialog_new_for_content_type().
@@ -349,13 +349,13 @@ func AppChooserDialogNewForContentType(parent *Window, flags DialogFlags, conten
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapAppChooserDialog(wrapObject(unsafe.Pointer(c))), nil
+	return wrapAppChooserDialog(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetWidget() is a wrapper around gtk_app_chooser_dialog_get_widget().
 func (v *AppChooserDialog) GetWidget() *AppChooserWidget {
 	c := C.gtk_app_chooser_dialog_get_widget(v.native())
-	return wrapAppChooserWidget(wrapObject(unsafe.Pointer(c)))
+	return wrapAppChooserWidget(glib.Take(unsafe.Pointer(c)))
 }
 
 // GetHeading() is a wrapper around gtk_app_chooser_dialog_get_heading().
