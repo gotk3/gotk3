@@ -5,7 +5,6 @@ package gdk
 // #include "gdk.go.h"
 import "C"
 import (
-	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -54,11 +53,8 @@ func (v *Screen) GetRGBAVisual() (*Visual, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	visual := &Visual{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return visual, nil
+
+	return &Visual{glib.Take(unsafe.Pointer(c))}, nil
 }
 
 // GetSystemVisual is a wrapper around gdk_screen_get_system_visual().
@@ -67,11 +63,8 @@ func (v *Screen) GetSystemVisual() (*Visual, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	visual := &Visual{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return visual, nil
+
+	return &Visual{glib.Take(unsafe.Pointer(c))}, nil
 }
 
 // ScreenGetDefault is a wrapper aroud gdk_screen_get_default().

@@ -32,10 +32,8 @@ func (v *DeviceManager) GetClientPointer() (*Device, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return &Device{obj}, nil
+
+	return &Device{glib.Take(unsafe.Pointer(c))}, nil
 }
 
 // ListDevices() is a wrapper around gdk_device_manager_list_devices().
@@ -44,6 +42,8 @@ func (v *DeviceManager) ListDevices(tp DeviceType) *glib.List {
 	if clist == nil {
 		return nil
 	}
+
+	//TODO: WrapList should set the finalizer
 	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
 	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return &Device{&glib.Object{glib.ToGObject(ptr)}}
@@ -65,11 +65,8 @@ func (v *Display) GetDeviceManager() (*DeviceManager, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	d := &DeviceManager{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return d, nil
+
+	return &DeviceManager{glib.Take(unsafe.Pointer(c))}, nil
 }
 
 // GetScreen() is a wrapper around gdk_display_get_screen().
@@ -78,9 +75,6 @@ func (v *Display) GetScreen(screenNum int) (*Screen, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	s := &Screen{obj}
-	obj.Ref()
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return s, nil
+
+	return &Screen{glib.Take(unsafe.Pointer(c))}, nil
 }
