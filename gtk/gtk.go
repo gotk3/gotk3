@@ -249,16 +249,7 @@ func goString(cstr *C.gchar) string {
 
 // Wrapper function for new objects with reference management.
 func wrapObject(ptr unsafe.Pointer) *glib.Object {
-	obj := &glib.Object{glib.ToGObject(ptr)}
-
-	if obj.IsFloating() {
-		obj.RefSink()
-	} else {
-		obj.Ref()
-	}
-
-	runtime.SetFinalizer(obj, (*glib.Object).Unref)
-	return obj
+	return glib.Take(ptr)
 }
 
 // Wrapper function for TestBoolConvs since cgo can't be used with

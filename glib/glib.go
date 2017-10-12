@@ -419,6 +419,22 @@ func (v *Object) native() *C.GObject {
 	return C.toGObject(p)
 }
 
+// Take wraps a unsafe.Pointer as a glib.Object, taking ownership of it.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
+func Take(ptr unsafe.Pointer) *Object {
+	obj := newObject(ToGObject(ptr))
+
+	if obj.IsFloating() {
+		obj.RefSink()
+	} else {
+		obj.Ref()
+	}
+
+	runtime.SetFinalizer(obj, (*Object).Unref)
+	return obj
+}
+
 // Native returns a pointer to the underlying GObject.
 func (v *Object) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
