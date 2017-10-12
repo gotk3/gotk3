@@ -21,10 +21,9 @@ package pango
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
-import (
+
 //	"github.com/andre-hub/gotk3/glib"
 //	"unsafe"
-)
 
 func init() {
 

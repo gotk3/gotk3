@@ -10,6 +10,7 @@ package gtk
 import "C"
 import (
 	"unsafe"
+
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -23,7 +24,7 @@ func init() {
 
 	//Contribute to casting
 	for k, v := range map[string]WrapFn{
-		"GtkStackSidebar":  wrapStackSidebar,
+		"GtkStackSidebar": wrapStackSidebar,
 	} {
 		WrapMap[k] = v
 	}

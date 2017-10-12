@@ -6,7 +6,11 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
+)
 
 /*
  * GtkTextIter

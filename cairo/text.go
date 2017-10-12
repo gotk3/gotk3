@@ -124,4 +124,3 @@ func (v *Context) TextExtents(utf8 string) TextExtents {
 // TODO: cairo_text_cluster_allocate
 
 // TODO: cairo_text_cluster_free
-

@@ -23,8 +23,9 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
-	"github.com/gotk3/gotk3/glib"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
 )
 
 func init() {

@@ -13,6 +13,8 @@ package gtk
 import "C"
 import (
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
 )
 
 // GetChildByName is a wrapper around gtk_stack_get_child_by_name().

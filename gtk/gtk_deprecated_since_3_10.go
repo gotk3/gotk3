@@ -27,7 +27,11 @@ package gtk
 // #include <stdlib.h>
 // #include <gtk/gtk.h>
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
+)
 
 // ButtonNewFromStock is a wrapper around gtk_button_new_from_stock().
 func ButtonNewFromStock(stock Stock) (*Button, error) {
