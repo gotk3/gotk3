@@ -3118,6 +3118,17 @@ func (v *Entry) SetWidthChars(nChars int) {
 	C.gtk_entry_set_width_chars(v.native(), C.gint(nChars))
 }
 
+// SetMaxWidthChars() is a wrapper around gtk_entry_set_max_width_chars().
+func (v *Entry) SetMaxWidthChars(nChars int) {
+	C.gtk_entry_set_max_width_chars(v.native(), C.gint(nChars))
+}
+
+// GetMaxWidthChars() is a wrapper around gtk_entry_get_max_width_chars().
+func (v *Entry) GetMaxWidthChars() int {
+	c := C.gtk_entry_get_max_width_chars(v.native())
+	return int(c)
+}
+
 // GetInvisibleChar() is a wrapper around gtk_entry_get_invisible_char().
 func (v *Entry) GetInvisibleChar() rune {
 	c := C.gtk_entry_get_invisible_char(v.native())
