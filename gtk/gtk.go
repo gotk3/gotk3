@@ -5162,7 +5162,7 @@ func (v *MenuButton) GetMenuModel() *glib.MenuModel {
 	if c == nil {
 		return nil
 	}
-	return glib.WrapMenuModel{glib.Take(unsafe.Pointer(c))}
+	return glib.WrapMenuModel(glib.Take(unsafe.Pointer(c)))
 }
 
 // SetDirection is a wrapper around gtk_menu_button_set_direction().
