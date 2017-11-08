@@ -6,6 +6,7 @@ package gtk
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
+// #include "gtk_since_3_20.go.h"
 import "C"
 import (
 	"unsafe"
