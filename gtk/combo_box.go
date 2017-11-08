@@ -150,6 +150,14 @@ func (v *ComboBox) SetModel(model ITreeModel) {
 	C.gtk_combo_box_set_model(v.native(), model.toTreeModel())
 }
 
+func (v *ComboBox) Popup() {
+	C.gtk_combo_box_popup(v.native())
+}
+
+func (v *ComboBox) Popdown() {
+	C.gtk_combo_box_popdown(v.native())
+}
+
 /*
  * GtkComboBoxText
  */
