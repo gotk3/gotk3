@@ -34,6 +34,11 @@ func wrapMenuModel(obj *Object) *MenuModel {
 	return &MenuModel{obj}
 }
 
+// WrapMenuModel exposes wrapMenuModel
+func WrapMenuModel(obj *Object) *MenuModel {
+	return wrapMenuModel(obj)
+}
+
 // IsMutable is a wrapper around g_menu_model_is_mutable().
 func (v *MenuModel) IsMutable() bool {
 	return gobool(C.g_menu_model_is_mutable(v.native()))

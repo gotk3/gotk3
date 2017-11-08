@@ -5150,8 +5150,20 @@ func (v *MenuButton) GetPopup() *Menu {
 	return wrapMenu(glib.Take(unsafe.Pointer(c)))
 }
 
-// TODO: gtk_menu_button_set_menu_model
-// TODO: gtk_menu_button_get_menu_model
+// SetMenuModel is a wrapper around gtk_menu_button_set_menu_model
+func (v *MenuButton) SetMenuModel(m *glib.MenuModel) {
+	mptr := (*C.GMenuModel)(unsafe.Pointer(m.Native()))
+	C.gtk_menu_button_set_menu_model(v.native(), mptr)
+}
+
+// GetMenuModel is a wrapper around gtk_menu_button_get_menu_model
+func (v *MenuButton) GetMenuModel() *glib.MenuModel {
+	c := C.gtk_menu_button_get_menu_model(v.native())
+	if c == nil {
+		return nil
+	}
+	return glib.WrapMenuModel{glib.Take(unsafe.Pointer(c))}
+}
 
 // SetDirection is a wrapper around gtk_menu_button_set_direction().
 func (v *MenuButton) SetDirection(direction ArrowType) {
