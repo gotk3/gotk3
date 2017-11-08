@@ -68,6 +68,30 @@ toGApplication(void *p)
 	return (G_APPLICATION(p));
 }
 
+static GActionGroup *
+toGActionGroup(void *p)
+{
+	return (G_ACTION_GROUP(p));
+}
+
+static GActionMap *
+toGActionMap(void *p)
+{
+	return (G_ACTION_MAP(p));
+}
+
+static GAction *
+toGAction(void *p)
+{
+	return (G_ACTION(p));
+}
+
+static GSimpleAction *
+toGSimpleAction(void *p)
+{
+	return (G_SIMPLE_ACTION(p));
+}
+
 static GSettings *
 toGSettings(void *p)
 {

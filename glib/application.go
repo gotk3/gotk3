@@ -11,6 +11,8 @@ import "unsafe"
 // Application is a representation of GApplication.
 type Application struct {
 	*Object
+
+	ActionMap
 }
 
 // native() returns a pointer to the underlying GApplication.
@@ -31,7 +33,8 @@ func marshalApplication(p uintptr) (interface{}, error) {
 }
 
 func wrapApplication(obj *Object) *Application {
-	return &Application{obj}
+	am := wrapActionMap(obj)
+	return &Application{obj, *am}
 }
 
 // ApplicationIDIsValid is a wrapper around g_application_id_is_valid().
