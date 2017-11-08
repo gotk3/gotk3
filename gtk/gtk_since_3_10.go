@@ -12,6 +12,7 @@ package gtk
 // #include "gtk_since_3_10.go.h"
 import "C"
 import (
+	"sync"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -367,7 +368,34 @@ func (v *ListBox) InvalidateSort() {
 	C.gtk_list_box_invalidate_sort(v.native())
 }
 
-// TODO: SetFilterFunc
+type ListBoxFilterFunc func(row *ListBoxRow, userData uintptr) bool
+
+type listBoxFilterFuncData struct {
+	fn       ListBoxFilterFunc
+	userData uintptr
+}
+
+var (
+	listBoxFilterFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]listBoxFilterFuncData
+	}{
+		next: 1,
+		m:    make(map[int]listBoxFilterFuncData),
+	}
+)
+
+func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData uintptr) {
+	listBoxFilterFuncRegistry.Lock()
+	id := listBoxFilterFuncRegistry.next
+	listBoxFilterFuncRegistry.next++
+	listBoxFilterFuncRegistry.m[id] = listBoxFilterFuncData{fn: fn, userData: userData}
+	listBoxFilterFuncRegistry.Unlock()
+
+	C._gtk_list_box_set_filter_func(v.native(), C.gpointer(uintptr(id)))
+}
+
 // TODO: SetHeaderFunc
 // TODO: SetSortFunc
 
