@@ -338,11 +338,11 @@ func (v *TreeView) SetSearchEntry(e *Entry) {
 	C.gtk_tree_view_set_search_entry(v.native(), e.native())
 }
 
-// SetSearchByStringMatch sets TreeView to search by string match.
-func (v *TreeView) SetSearchByStringMatch() {
+// SetSearchEqualSubstringMatch sets TreeView to search by substring match.
+func (v *TreeView) SetSearchEqualSubstringMatch() {
 	C.gtk_tree_view_set_search_equal_func(
 		v.native(),
-		(C.GtkTreeViewSearchEqualFunc)(unsafe.Pointer(C.goStringMatch)),
+		(C.GtkTreeViewSearchEqualFunc)(unsafe.Pointer(C.substring_match_equal_func)),
 		nil,
 		nil)
 }

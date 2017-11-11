@@ -12,14 +12,15 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
-//export goStringMatch
-func goStringMatch(model *C.GtkTreeModel,
+//export substring_match_equal_func
+func substring_match_equal_func(model *C.GtkTreeModel,
 	column C.gint,
 	key *C.gchar,
 	iter *C.GtkTreeIter,
 	data C.gpointer) C.gboolean {
 
 	goModel := &TreeModel{glib.Take(unsafe.Pointer(model))}
+	defer goModel.Unref()
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
 
 	value, err := goModel.GetValue(goIter, int(column))
