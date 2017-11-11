@@ -748,11 +748,11 @@ _gtk_tree_store_set(GtkTreeStore *store, GtkTreeIter *iter, gint column,
 	gtk_tree_store_set(store, iter, column, value, -1);
 }
 
-extern gboolean goStringMatch(GtkTreeModel *model,
-                              gint column,
-                              gchar *key,
-                              GtkTreeIter *iter,
-                              gpointer data);
+extern gboolean substring_match_equal_func(GtkTreeModel *model,
+                                          gint column,
+                                          gchar *key,
+                                          GtkTreeIter *iter,
+                                          gpointer data);
 
 static GtkWidget *
 _gtk_message_dialog_new(GtkWindow *parent, GtkDialogFlags flags,
