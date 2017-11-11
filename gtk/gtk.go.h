@@ -748,6 +748,12 @@ _gtk_tree_store_set(GtkTreeStore *store, GtkTreeIter *iter, gint column,
 	gtk_tree_store_set(store, iter, column, value, -1);
 }
 
+extern gboolean substring_match_equal_func(GtkTreeModel *model,
+                                          gint column,
+                                          gchar *key,
+                                          GtkTreeIter *iter,
+                                          gpointer data);
+
 static GtkWidget *
 _gtk_message_dialog_new(GtkWindow *parent, GtkDialogFlags flags,
     GtkMessageType type, GtkButtonsType buttons, char *msg)
@@ -864,6 +870,6 @@ extern void goPageSetupDone (GtkPageSetup *setup,
 
 static inline void _gtk_print_run_page_setup_dialog_async(GtkWindow *parent, GtkPageSetup *setup,
 	GtkPrintSettings *settings, gpointer data) {
-	gtk_print_run_page_setup_dialog_async(parent, setup, settings, 
+	gtk_print_run_page_setup_dialog_async(parent, setup, settings,
 		(GtkPageSetupDoneFunc)(goPageSetupDone), data);
 }
