@@ -19,8 +19,7 @@ func substring_match_equal_func(model *C.GtkTreeModel,
 	iter *C.GtkTreeIter,
 	data C.gpointer) C.gboolean {
 
-	gobj := glib.Object{glib.ToGObject(unsafe.Pointer(model))}
-	goModel := &TreeModel{&gobj}
+	goModel := &TreeModel{glib.Take(unsafe.Pointer(model))}
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
 
 	value, err := goModel.GetValue(goIter, int(column))
