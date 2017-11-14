@@ -20,7 +20,6 @@ func substring_match_equal_func(model *C.GtkTreeModel,
 	data C.gpointer) C.gboolean {
 
 	goModel := &TreeModel{glib.Take(unsafe.Pointer(model))}
-	defer goModel.Unref()
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
 
 	value, err := goModel.GetValue(goIter, int(column))
