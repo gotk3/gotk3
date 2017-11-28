@@ -64,14 +64,18 @@ func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
 func (v *TreeView) GetModel() (*TreeModel, error) {
 	c := C.gtk_tree_view_get_model(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
 	return wrapTreeModel(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // SetModel is a wrapper around gtk_tree_view_set_model().
 func (v *TreeView) SetModel(model ITreeModel) {
-	C.gtk_tree_view_set_model(v.native(), model.toTreeModel())
+	if model == nil {
+		C.gtk_tree_view_set_model(v.native(), nil)
+	} else {
+		C.gtk_tree_view_set_model(v.native(), model.toTreeModel())
+	}
 }
 
 // GetSelection is a wrapper around gtk_tree_view_get_selection().
