@@ -3302,11 +3302,12 @@ func (v *Entry) ResetIMContext() {
 	C.gtk_entry_reset_im_context(v.native())
 }
 
-// TODO(jrick) GdkPixbuf
-/*
-func (v *Entry) SetIconFromPixbuf() {
+// SetIconFromPixbuf is a wrapper around gtk_entry_set_icon_from_pixbuf().
+func (v *Entry) SetIconFromPixbuf(iconPos EntryIconPosition, pixbuf *gdk.Pixbuf) {
+	C.gtk_entry_set_icon_from_pixbuf(v.native(),
+		C.GtkEntryIconPosition(iconPos),
+		(*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native())))
 }
-*/
 
 // SetIconFromIconName() is a wrapper around
 // gtk_entry_set_icon_from_icon_name().
