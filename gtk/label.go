@@ -269,3 +269,8 @@ func (v *Label) GetLabel() string {
 func (v *Label) GetMnemonicKeyval() uint {
 	return uint(C.gtk_label_get_mnemonic_keyval(v.native()))
 }
+
+// SetMnemonicWidget is a wrapper around gtk_label_set_mnemonic_widget().
+func (v *Label) SetMnemonicWidget(widget IWidget) {
+	C.gtk_label_set_mnemonic_widget(v.native(), widget.toWidget())
+}
