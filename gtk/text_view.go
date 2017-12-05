@@ -300,19 +300,17 @@ func (v *TextView) GetLineYrange(iter *TextIter) (y, height int) {
 
 // GetIterAtLocation is a wrapper around gtk_text_view_get_iter_at_location().
 func (v *TextView) GetIterAtLocation(x, y int) *TextIter {
-	var iter TextIter
-	iiter := (C.GtkTextIter)(iter)
-	C.gtk_text_view_get_iter_at_location(v.native(), &iiter, C.gint(x), C.gint(y))
-	return &iter
+	var iter C.GtkTextIter
+	C.gtk_text_view_get_iter_at_location(v.native(), &iter, C.gint(x), C.gint(y))
+	return (*TextIter)(&iter)
 }
 
 // GetIterAtPosition is a wrapper around gtk_text_view_get_iter_at_position().
 func (v *TextView) GetIterAtPosition(x, y int) (*TextIter, int) {
-	var iter TextIter
+	var iter C.GtkTextIter
 	var trailing C.gint
-	iiter := (C.GtkTextIter)(iter)
-	C.gtk_text_view_get_iter_at_position(v.native(), &iiter, &trailing, C.gint(x), C.gint(y))
-	return &iter, int(trailing)
+	C.gtk_text_view_get_iter_at_position(v.native(), &iter, &trailing, C.gint(x), C.gint(y))
+	return (*TextIter)(&iter), int(trailing)
 }
 
 // BufferToWindowCoords is a wrapper around gtk_text_view_buffer_to_window_coords().
