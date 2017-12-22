@@ -232,6 +232,13 @@ func (v *Settings) GetEnum(name string) int {
 	return int(C.g_settings_get_enum(v.native(), cstr1))
 }
 
+// GetStrv is a wrapper around g_settings_get_strv().
+func (v *Settings) GetStrv(name string) []string {
+	cstr1 := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr1))
+	return toGoStringArray(C.g_settings_get_strv(v.native(), cstr1))
+}
+
 // SetEnum is a wrapper around g_settings_set_enum().
 func (v *Settings) SetEnum(name string, value int) bool {
 	cstr1 := (*C.gchar)(C.CString(name))
