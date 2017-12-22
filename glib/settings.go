@@ -224,6 +224,13 @@ func (v *Settings) SetString(name string, value string) bool {
 	return gobool(C.g_settings_set_string(v.native(), cstr1, cstr2))
 }
 
+// GetStrv is a wrapper around g_settings_get_strv().
+func (v *Settings) GetStrv(name string) []string {
+	cstr1 := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr1))
+	return toGoStringArray(C.g_settings_get_strv(v.native(), cstr1))
+}
+
 // GetEnum is a wrapper around g_settings_get_enum().
 func (v *Settings) GetEnum(name string) int {
 	cstr1 := (*C.gchar)(C.CString(name))
