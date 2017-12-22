@@ -239,6 +239,23 @@ func (v *Settings) GetStrv(name string) []string {
 	return toGoStringArray(C.g_settings_get_strv(v.native(), cstr1))
 }
 
+// SetStrv is a wrapper around g_settings_set_strv().
+func (v *Settings) SetStrv(name string, values []string) bool {
+	cstr1 := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	cvalues := C.make_strings(C.int(len(values) + 1))
+	defer C.destroy_strings(cvalues)
+
+	for i, accel := range values {
+		cstr := C.CString(accel)
+		defer C.free(unsafe.Pointer(cstr))
+		C.set_string(cvalues, C.int(i), (*C.gchar)(cstr))
+	}
+	C.set_string(cvalues, C.int(len(values)), nil)
+	return gobool(C.g_settings_set_strv(v.native(), cstr1, cvalues))
+}
+
 // SetEnum is a wrapper around g_settings_set_enum().
 func (v *Settings) SetEnum(name string, value int) bool {
 	cstr1 := (*C.gchar)(C.CString(name))
