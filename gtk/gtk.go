@@ -8286,6 +8286,12 @@ func (v *TreeModel) IterPrevious(iter *TreeIter) bool {
 	return gobool(c)
 }
 
+// IterParent is a wrapper around gtk_tree_model_iter_parent().
+func (v *TreeModel) IterParent(iter, child *TreeIter) bool {
+	c := C.gtk_tree_model_iter_parent(v.native(), iter.native(), child.native())
+	return gobool(c)
+}
+
 // IterNthChild is a wrapper around gtk_tree_model_iter_nth_child().
 func (v *TreeModel) IterNthChild(iter *TreeIter, parent *TreeIter, n int) bool {
 	c := C.gtk_tree_model_iter_nth_child(v.native(), iter.native(), parent.native(), C.gint(n))
