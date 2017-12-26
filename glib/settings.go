@@ -244,16 +244,14 @@ func (v *Settings) SetStrv(name string, values []string) bool {
 	cstr1 := (*C.gchar)(C.CString(name))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	cvalues := C.make_strings(C.int(len(values) + 1))
-	defer C.destroy_strings(cvalues)
-
+	cvalues := make([]*C.gchar, len(values))
 	for i, accel := range values {
-		cstr := C.CString(accel)
-		defer C.free(unsafe.Pointer(cstr))
-		C.set_string(cvalues, C.int(i), (*C.gchar)(cstr))
+		cvalues[i] = (*C.gchar)(C.CString(accel))
+		defer C.free(unsafe.Pointer(cvalues[i]))
 	}
-	C.set_string(cvalues, C.int(len(values)), nil)
-	return gobool(C.g_settings_set_strv(v.native(), cstr1, cvalues))
+	cvalues = append(cvalues, nil)
+
+	return gobool(C.g_settings_set_strv(v.native(), cstr1, &cvalues[0]))
 }
 
 // SetEnum is a wrapper around g_settings_set_enum().
