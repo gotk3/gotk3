@@ -3819,17 +3819,27 @@ func (v *FileChooser) GetPreviewFilename() string {
 	return C.GoString(c)
 }
 
-// AddFilter is a wrapper around gtk_file_chooser_add_filter().
-func (v *FileChooser) AddFilter(filter *FileFilter) {
-	C.gtk_file_chooser_add_filter(v.native(), filter.native())
-}
-
 // GetURI is a wrapper around gtk_file_chooser_get_uri().
 func (v *FileChooser) GetURI() string {
 	c := C.gtk_file_chooser_get_uri(v.native())
 	s := goString(c)
 	defer C.g_free((C.gpointer)(c))
 	return s
+}
+
+// AddFilter is a wrapper around gtk_file_chooser_add_filter().
+func (v *FileChooser) AddFilter(filter *FileFilter) {
+	C.gtk_file_chooser_add_filter(v.native(), filter.native())
+}
+
+// RemoveFilter is a wrapper around gtk_file_chooser_remove_filter().
+func (v *FileChooser) RemoveFilter(filter *FileFilter) {
+	C.gtk_file_chooser_remove_filter(v.native(), filter.native())
+}
+
+// SetFilter is a wrapper around gtk_file_chooser_set_filter().
+func (v *FileChooser) SetFilter(filter *FileFilter) {
+	C.gtk_file_chooser_set_filter(v.native(), filter.native())
 }
 
 // AddShortcutFolder is a wrapper around gtk_file_chooser_add_shortcut_folder().
