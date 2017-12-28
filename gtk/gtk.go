@@ -3776,6 +3776,28 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// SetDoOverwriteConfirmation is a wrapper around gtk_file_chooser_set_do_overwrite_confirmation().
+func (v *FileChooser) SetDoOverwriteConfirmation(value bool) {
+	C.gtk_file_chooser_set_do_overwrite_confirmation(v.native(), gbool(value))
+}
+
+// GetDoOverwriteConfirmation is a wrapper around gtk_file_chooser_get_do_overwrite_confirmation().
+func (v *FileChooser) GetDoOverwriteConfirmation() bool {
+	c := C.gtk_file_chooser_get_do_overwrite_confirmation(v.native())
+	return gobool(c)
+}
+
+// SetCreateFolders is a wrapper around gtk_file_chooser_set_create_folders().
+func (v *FileChooser) SetCreateFolders(value bool) {
+	C.gtk_file_chooser_set_create_folders(v.native(), gbool(value))
+}
+
+// GetCreateFolders is a wrapper around gtk_file_chooser_get_create_folders().
+func (v *FileChooser) GetCreateFolders() bool {
+	c := C.gtk_file_chooser_get_create_folders(v.native())
+	return gobool(c)
+}
+
 // SetCurrentName is a wrapper around gtk_file_chooser_set_current_name().
 func (v *FileChooser) SetCurrentName(name string) {
 	cstr := C.CString(name)
