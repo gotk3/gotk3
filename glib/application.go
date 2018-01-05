@@ -14,6 +14,7 @@ type Application struct {
 
 	// Interfaces
 	ActionMap
+	ActionGroup
 }
 
 // native() returns a pointer to the underlying GApplication.
@@ -35,7 +36,8 @@ func marshalApplication(p uintptr) (interface{}, error) {
 
 func wrapApplication(obj *Object) *Application {
 	am := wrapActionMap(obj)
-	return &Application{obj, *am}
+	ag := wrapActionGroup(obj)
+	return &Application{obj, *am, *ag}
 }
 
 // ApplicationIDIsValid is a wrapper around g_application_id_is_valid().

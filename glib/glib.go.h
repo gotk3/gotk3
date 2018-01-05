@@ -44,6 +44,12 @@ toGAction(void *p)
 	return (G_ACTION(p));
 }
 
+static GActionGroup *
+toGActionGroup(void *p)
+{
+	return (G_ACTION_GROUP(p));
+}
+
 static GActionMap *
 toGActionMap(void *p)
 {
@@ -54,6 +60,12 @@ static GSimpleAction *
 toGSimpleAction(void *p)
 {
 	return (G_SIMPLE_ACTION(p));
+}
+
+static GSimpleActionGroup *
+toGSimpleActionGroup(void *p)
+{
+	return (G_SIMPLE_ACTION_GROUP(p));
 }
 
 static GPropertyAction *
