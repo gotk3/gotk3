@@ -19,6 +19,9 @@ import (
 // ApplicationWindow is a representation of GTK's GtkApplicationWindow.
 type ApplicationWindow struct {
 	Window
+
+	// Interfaces
+	glib.ActionMap
 }
 
 // native returns a pointer to the underlying GtkApplicationWindow.
@@ -37,7 +40,8 @@ func marshalApplicationWindow(p uintptr) (interface{}, error) {
 }
 
 func wrapApplicationWindow(obj *glib.Object) *ApplicationWindow {
-	return &ApplicationWindow{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+	am := glib.ActionMap{obj}
+	return &ApplicationWindow{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}, am}
 }
 
 // ApplicationWindowNew is a wrapper around gtk_application_window_new().
