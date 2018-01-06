@@ -3776,6 +3776,28 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// SetDoOverwriteConfirmation is a wrapper around gtk_file_chooser_set_do_overwrite_confirmation().
+func (v *FileChooser) SetDoOverwriteConfirmation(value bool) {
+	C.gtk_file_chooser_set_do_overwrite_confirmation(v.native(), gbool(value))
+}
+
+// GetDoOverwriteConfirmation is a wrapper around gtk_file_chooser_get_do_overwrite_confirmation().
+func (v *FileChooser) GetDoOverwriteConfirmation() bool {
+	c := C.gtk_file_chooser_get_do_overwrite_confirmation(v.native())
+	return gobool(c)
+}
+
+// SetCreateFolders is a wrapper around gtk_file_chooser_set_create_folders().
+func (v *FileChooser) SetCreateFolders(value bool) {
+	C.gtk_file_chooser_set_create_folders(v.native(), gbool(value))
+}
+
+// GetCreateFolders is a wrapper around gtk_file_chooser_get_create_folders().
+func (v *FileChooser) GetCreateFolders() bool {
+	c := C.gtk_file_chooser_get_create_folders(v.native())
+	return gobool(c)
+}
+
 // SetCurrentName is a wrapper around gtk_file_chooser_set_current_name().
 func (v *FileChooser) SetCurrentName(name string) {
 	cstr := C.CString(name)
@@ -3819,17 +3841,27 @@ func (v *FileChooser) GetPreviewFilename() string {
 	return C.GoString(c)
 }
 
-// AddFilter is a wrapper around gtk_file_chooser_add_filter().
-func (v *FileChooser) AddFilter(filter *FileFilter) {
-	C.gtk_file_chooser_add_filter(v.native(), filter.native())
-}
-
 // GetURI is a wrapper around gtk_file_chooser_get_uri().
 func (v *FileChooser) GetURI() string {
 	c := C.gtk_file_chooser_get_uri(v.native())
 	s := goString(c)
 	defer C.g_free((C.gpointer)(c))
 	return s
+}
+
+// AddFilter is a wrapper around gtk_file_chooser_add_filter().
+func (v *FileChooser) AddFilter(filter *FileFilter) {
+	C.gtk_file_chooser_add_filter(v.native(), filter.native())
+}
+
+// RemoveFilter is a wrapper around gtk_file_chooser_remove_filter().
+func (v *FileChooser) RemoveFilter(filter *FileFilter) {
+	C.gtk_file_chooser_remove_filter(v.native(), filter.native())
+}
+
+// SetFilter is a wrapper around gtk_file_chooser_set_filter().
+func (v *FileChooser) SetFilter(filter *FileFilter) {
+	C.gtk_file_chooser_set_filter(v.native(), filter.native())
 }
 
 // AddShortcutFolder is a wrapper around gtk_file_chooser_add_shortcut_folder().
