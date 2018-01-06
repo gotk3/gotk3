@@ -712,6 +712,12 @@ toGtkInfoBar(void *p)
 	return (GTK_INFO_BAR(p));
 }
 
+static GMenuModel *
+toGMenuModel(void *p)
+{
+	return (G_MENU_MODEL(p));
+}
+
 static GType *
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
