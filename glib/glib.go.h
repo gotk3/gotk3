@@ -38,6 +38,42 @@ toGObject(void *p)
 	return (G_OBJECT(p));
 }
 
+static GAction *
+toGAction(void *p)
+{
+	return (G_ACTION(p));
+}
+
+static GActionGroup *
+toGActionGroup(void *p)
+{
+	return (G_ACTION_GROUP(p));
+}
+
+static GActionMap *
+toGActionMap(void *p)
+{
+	return (G_ACTION_MAP(p));
+}
+
+static GSimpleAction *
+toGSimpleAction(void *p)
+{
+	return (G_SIMPLE_ACTION(p));
+}
+
+static GSimpleActionGroup *
+toGSimpleActionGroup(void *p)
+{
+	return (G_SIMPLE_ACTION_GROUP(p));
+}
+
+static GPropertyAction *
+toGPropertyAction(void *p)
+{
+	return (G_PROPERTY_ACTION(p));
+}
+
 static GMenuModel *
 toGMenuModel(void *p)
 {

@@ -624,3 +624,7 @@ func (v *Widget) GetPreferredWidth() (int, int) {
 	C.gtk_widget_get_preferred_width(v.native(), &minimum, &natural)
 	return int(minimum), int(natural)
 }
+
+func (v *Widget) InsertActionGroup(name string, group *glib.ActionGroup) {
+	C.gtk_widget_insert_action_group(v.native(), (*C.gchar)(C.CString(name)), C.toGActionGroup(unsafe.Pointer(group.Native())))
+}

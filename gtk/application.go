@@ -47,7 +47,9 @@ func marshalApplication(p uintptr) (interface{}, error) {
 }
 
 func wrapApplication(obj *glib.Object) *Application {
-	return &Application{glib.Application{obj}}
+	am := glib.ActionMap{obj}
+	ag := glib.ActionGroup{obj}
+	return &Application{glib.Application{obj, am, ag}}
 }
 
 // ApplicationNew is a wrapper around gtk_application_new().

@@ -17,6 +17,9 @@ type VariantType struct {
 }
 
 func (v *VariantType) native() *C.GVariantType {
+	if v == nil {
+		return nil
+	}
 	return v.GVariantType
 }
 
