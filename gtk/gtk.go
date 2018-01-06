@@ -7710,6 +7710,17 @@ func (v *ToggleButton) SetActive(isActive bool) {
 	C.gtk_toggle_button_set_active(v.native(), gbool(isActive))
 }
 
+// GetMode is a wrapper around gtk_toggle_button_get_mode().
+func (v *ToggleButton) GetMode() bool {
+	c := C.gtk_toggle_button_get_mode(v.native())
+	return gobool(c)
+}
+
+// SetMode is a wrapper around gtk_toggle_button_set_mode().
+func (v *ToggleButton) SetMode(drawIndicator bool) {
+	C.gtk_toggle_button_set_mode(v.native(), gbool(drawIndicator))
+}
+
 /*
  * GtkToolbar
  */
