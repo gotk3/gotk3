@@ -182,6 +182,7 @@ func init() {
 		{glib.Type(C.gtk_toolbar_get_type()), marshalToolbar},
 		{glib.Type(C.gtk_tool_button_get_type()), marshalToolButton},
 		{glib.Type(C.gtk_tool_item_get_type()), marshalToolItem},
+		{glib.Type(C.gtk_tooltip_get_type()), marshalTooltip},
 		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
 		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
 		{glib.Type(C.gtk_tree_store_get_type()), marshalTreeStore},

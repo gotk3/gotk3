@@ -670,6 +670,12 @@ toGtkToolbar(void *p)
 	return (GTK_TOOLBAR(p));
 }
 
+static GtkTooltip *
+toGtkTooltip(void *p)
+{
+	return (GTK_TOOLTIP(p));
+}
+
 static GtkEditable *
 toGtkEditable(void *p)
 {

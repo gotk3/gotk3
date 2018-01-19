@@ -107,14 +107,14 @@ func (v *IconView) GetPixbufColumn() int {
 // GetPathAtPos is a wrapper around gtk_icon_view_get_path_at_pos().
 func (v *IconView) GetPathAtPos(x, y int) *TreePath {
 	var (
-		gtkPath *C.GtkTreePath
-		path    *TreePath
+		cpath *C.GtkTreePath
+		path  *TreePath
 	)
 
-	gtkPath = C.gtk_icon_view_get_path_at_pos(v.native(), C.gint(x), C.gint(y))
+	cpath = C.gtk_icon_view_get_path_at_pos(v.native(), C.gint(x), C.gint(y))
 
-	if gtkPath != nil {
-		path = &TreePath{gtkPath}
+	if cpath != nil {
+		path = &TreePath{cpath}
 		runtime.SetFinalizer(path, (*TreePath).free)
 	}
 
@@ -124,21 +124,21 @@ func (v *IconView) GetPathAtPos(x, y int) *TreePath {
 // GetItemAtPos is a wrapper around gtk_icon_view_get_item_at_pos().
 func (v *IconView) GetItemAtPos(x, y int) (*TreePath, *CellRenderer) {
 	var (
-		gtkPath *C.GtkTreePath
-		gtkCell *C.GtkCellRenderer
-		path    *TreePath
-		cell    *CellRenderer
+		cpath *C.GtkTreePath
+		ccell *C.GtkCellRenderer
+		path  *TreePath
+		cell  *CellRenderer
 	)
 
-	C.gtk_icon_view_get_item_at_pos(v.native(), C.gint(x), C.gint(y), &gtkPath, &gtkCell)
+	C.gtk_icon_view_get_item_at_pos(v.native(), C.gint(x), C.gint(y), &cpath, &ccell)
 
-	if gtkPath != nil {
-		path = &TreePath{gtkPath}
+	if cpath != nil {
+		path = &TreePath{cpath}
 		runtime.SetFinalizer(path, (*TreePath).free)
 	}
 
-	if gtkCell != nil {
-		cell = wrapCellRenderer(glib.Take(unsafe.Pointer(gtkCell)))
+	if ccell != nil {
+		cell = wrapCellRenderer(glib.Take(unsafe.Pointer(ccell)))
 	}
 
 	return path, cell
@@ -161,21 +161,21 @@ func (v *IconView) SetCursor(path *TreePath, cell *CellRenderer, startEditing bo
 // GetCursor is a wrapper around gtk_icon_view_get_cursor().
 func (v *IconView) GetCursor() (*TreePath, *CellRenderer) {
 	var (
-		gtkPath *C.GtkTreePath
-		gtkCell *C.GtkCellRenderer
-		path    *TreePath
-		cell    *CellRenderer
+		cpath *C.GtkTreePath
+		ccell *C.GtkCellRenderer
+		path  *TreePath
+		cell  *CellRenderer
 	)
 
-	C.gtk_icon_view_get_cursor(v.native(), &gtkPath, &gtkCell)
+	C.gtk_icon_view_get_cursor(v.native(), &cpath, &ccell)
 
-	if gtkPath != nil {
-		path = &TreePath{gtkPath}
+	if cpath != nil {
+		path = &TreePath{cpath}
 		runtime.SetFinalizer(path, (*TreePath).free)
 	}
 
-	if gtkCell != nil {
-		cell = wrapCellRenderer(glib.Take(unsafe.Pointer(gtkCell)))
+	if ccell != nil {
+		cell = wrapCellRenderer(glib.Take(unsafe.Pointer(ccell)))
 	}
 
 	return path, cell
@@ -285,11 +285,11 @@ func (v *IconView) ActivateOnSingleClick() bool {
 
 // GetCellRect is a wrapper around gtk_icon_view_get_cell_rect().
 func (v *IconView) GetCellRect(path *TreePath, cell *CellRenderer) *gdk.Rectangle {
-	var gtkRect C.GdkRectangle
+	var crect C.GdkRectangle
 
-	C.gtk_icon_view_get_cell_rect(v.native(), path.native(), cell.native(), &gtkRect)
+	C.gtk_icon_view_get_cell_rect(v.native(), path.native(), cell.native(), &crect)
 
-	return gdk.WrapRectangle(uintptr(unsafe.Pointer(&gtkRect)))
+	return gdk.WrapRectangle(uintptr(unsafe.Pointer(&crect)))
 }
 
 // SelectPath is a wrapper around gtk_icon_view_select_path().
@@ -352,36 +352,85 @@ func (v *IconView) ScrollToPath(path *TreePath, useAlign bool, rowAlign, colAlig
 // GetVisibleRange is a wrapper around gtk_icon_view_get_visible_range().
 func (v *IconView) GetVisibleRange() (*TreePath, *TreePath) {
 	var (
-		gtkPathStart, gtkPathEnd *C.GtkTreePath
-		pathStart, pathEnd       *TreePath
+		cpathStart, cpathEnd *C.GtkTreePath
+		pathStart, pathEnd   *TreePath
 	)
 
-	C.gtk_icon_view_get_visible_range(v.native(), &gtkPathStart, &gtkPathEnd)
+	C.gtk_icon_view_get_visible_range(v.native(), &cpathStart, &cpathEnd)
 
-	if gtkPathStart != nil {
-		pathStart = &TreePath{gtkPathStart}
+	if cpathStart != nil {
+		pathStart = &TreePath{cpathStart}
 		runtime.SetFinalizer(pathStart, (*TreePath).free)
 	}
 
-	if gtkPathEnd != nil {
-		pathEnd = &TreePath{gtkPathEnd}
+	if cpathEnd != nil {
+		pathEnd = &TreePath{cpathEnd}
 		runtime.SetFinalizer(pathEnd, (*TreePath).free)
 	}
 
 	return pathStart, pathEnd
 }
 
-/*
-func (v *IconView) SetTooltipItem() {}
+// SetTooltipItem is a wrapper around gtk_icon_view_set_tooltip_item().
+func (v *IconView) SetTooltipItem(tooltip *Tooltip, path *TreePath) {
+	C.gtk_icon_view_set_tooltip_item(v.native(), tooltip.native(), path.native())
+}
 
-func (v *IconView) SetTooltipCell() {}
+// SetTooltipCell is a wrapper around gtk_icon_view_set_tooltip_cell().
+func (v *IconView) SetTooltipCell(tooltip *Tooltip, path *TreePath, cell *CellRenderer) {
+	C.gtk_icon_view_set_tooltip_cell(v.native(), tooltip.native(), path.native(), cell.native())
+}
 
-func (v *IconView) GetTooltipContext() {}
+// GetTooltipContext is a wrapper around gtk_icon_view_get_tooltip_context().
+func (v *IconView) GetTooltipContext(x, y int, keyboardTip bool) (*TreeModel, *TreePath, *TreeIter) {
+	var (
+		cmodel *C.GtkTreeModel
+		cpath  *C.GtkTreePath
+		citer  *C.GtkTreeIter
+		model  *TreeModel
+		path   *TreePath
+		iter   *TreeIter
+	)
 
-func (v *IconView) SetTooltipColumn() {}
+	px := C.gint(x)
+	py := C.gint(y)
+	if !gobool(C.gtk_icon_view_get_tooltip_context(v.native(),
+		&px,
+		&py,
+		gbool(keyboardTip),
+		&cmodel,
+		&cpath,
+		citer,
+	)) {
+		return nil, nil, nil
+	}
 
-func (v *IconView) GetTooltipColumn() {}
-*/
+	if cmodel != nil {
+		model = wrapTreeModel(glib.Take(unsafe.Pointer(cmodel)))
+	}
+
+	if cpath != nil {
+		path = &TreePath{cpath}
+		runtime.SetFinalizer(path, (*TreePath).free)
+	}
+
+	if citer != nil {
+		iter = &TreeIter{*citer}
+		runtime.SetFinalizer(iter, (*TreeIter).free)
+	}
+
+	return model, path, iter
+}
+
+// SetTooltipColumn is a wrapper around gtk_icon_view_set_tooltip_column().
+func (v *IconView) SetTooltipColumn(column int) {
+	C.gtk_icon_view_set_tooltip_column(v.native(), C.gint(column))
+}
+
+// GetTooltipColumn is a wrapper around gtk_icon_view_get_tooltip_column().
+func (v *IconView) GetTooltipColumn() int {
+	return int(C.gtk_icon_view_get_tooltip_column(v.native()))
+}
 
 // GetItemRow is a wrapper around gtk_icon_view_get_item_row().
 func (v *IconView) GetItemRow(path *TreePath) int {
