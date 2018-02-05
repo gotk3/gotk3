@@ -139,6 +139,7 @@ func init() {
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
 		{glib.Type(C.gtk_font_button_get_type()), marshalFontButton},
 		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
+		{glib.Type(C.gtk_aspect_frame_get_type()), marshalAspectFrame},
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
 		{glib.Type(C.gtk_icon_view_get_type()), marshalIconView},
 		{glib.Type(C.gtk_image_get_type()), marshalImage},
@@ -4254,6 +4255,48 @@ func (v *Frame) GetLabelWidget() (*Widget, error) {
 func (v *Frame) GetShadowType() ShadowType {
 	c := C.gtk_frame_get_shadow_type(v.native())
 	return ShadowType(c)
+}
+
+/*
+ * GtkAspectFrame
+ */
+
+// AspectFrame is a representation of GTK's GtkAspectFrame.
+type AspectFrame struct {
+	Frame
+}
+
+// native returns a pointer to the underlying GtkAspectFrame.
+func (v *AspectFrame) native() *C.GtkAspectFrame {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkAspectFrame(p)
+}
+
+func marshalAspectFrame(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapAspectFrame(obj), nil
+}
+
+func wrapAspectFrame(obj *glib.Object) *AspectFrame {
+	return &AspectFrame{Frame{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+}
+
+func AspectFrameNew(label string, xalign, yalign, ratio float32, obeyChild bool) (*AspectFrame, error) {
+	var cstr *C.char
+	if label != "" {
+		cstr = C.CString(label)
+		defer C.free(unsafe.Pointer(cstr))
+	}
+	c := C.gtk_aspect_frame_new((*C.gchar)(cstr), (C.gfloat)(xalign), (C.gfloat)(yalign), (C.gfloat)(ratio), gbool(obeyChild))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapAspectFrame(obj), nil
 }
 
 /*

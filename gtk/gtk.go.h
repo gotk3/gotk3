@@ -532,6 +532,12 @@ toGtkFrame(void *p)
 	return (GTK_FRAME(p));
 }
 
+static GtkAspectFrame *
+toGtkAspectFrame(void *p)
+{
+	return (GTK_ASPECT_FRAME(p));
+}
+
 static GtkSeparator *
 toGtkSeparator(void *p)
 {
