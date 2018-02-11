@@ -4902,16 +4902,33 @@ func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
 // Convenient map for Columns and values (See ListStore, TreeStore)
 type Cols map[int]interface{}
 
-// TODO(jrick)
-/*
-func (v *ListStore) InsertWithValues(iter *TreeIter, position int, columns []int, values []glib.Value) {
-		var ccolumns *C.gint
-		var cvalues *C.GValue
+// InsertWithValues() is a wrapper around gtk_list_store_insert_with_valuesv().
+func (v *ListStore) InsertWithValues(iter *TreeIter, position int, inColumns []int, inValues []interface{}) error {
+	length := len(inColumns)
+	if len(inValues) < length {
+		length = len(inValues)
+	}
 
-		C.gtk_list_store_insert_with_values(v.native(), iter.native(),
-			C.gint(position), columns, values, C.gint(len(values)))
+	var cColumns []C.gint
+	var cValues []C.GValue
+	for i := 0; i < length; i++ {
+		cColumns = append(cColumns, C.gint(inColumns[i]))
+
+		gv, err := glib.GValue(inValues[i])
+		if err != nil {
+			return err
+		}
+
+		var cvp *C.GValue = (*C.GValue)(gv.Native())
+		cValues = append(cValues, *cvp)
+	}
+	var cColumnsPointer *C.gint = &cColumns[0]
+	var cValuesPointer *C.GValue = &cValues[0]
+
+	C.gtk_list_store_insert_with_valuesv(v.native(), iter.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(length))
+
+	return nil
 }
-*/
 
 // InsertBefore() is a wrapper around gtk_list_store_insert_before().
 func (v *ListStore) InsertBefore(sibling *TreeIter) *TreeIter {
