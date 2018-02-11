@@ -728,6 +728,13 @@ const (
 	SORT_DESCENDING          = C.GTK_SORT_DESCENDING
 )
 
+// Use as column id in SetSortColumnId to specify ListStore sorted
+// by default column or unsorted
+const (
+	SORT_COLUMN_DEFAULT  int = -1
+	SORT_COLUMN_UNSORTED int = -2
+)
+
 func marshalSortType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return SortType(c), nil
