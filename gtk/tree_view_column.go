@@ -250,8 +250,25 @@ func (v *TreeViewColumn) GetXOffset() int {
 // GtkTreeViewColumn * 	gtk_tree_view_column_new_with_area ()
 // void 	gtk_tree_view_column_set_attributes ()
 // void 	gtk_tree_view_column_set_cell_data_func ()
+
+type TreeViewColumnSizing int
+
+const (
+	TREE_VIEW_COLUMN_GROW_ONLY int = C.GTK_TREE_VIEW_COLUMN_GROW_ONLY
+	TREE_VIEW_COLUMN_AUTOSIZE      = C.GTK_TREE_VIEW_COLUMN_AUTOSIZE
+	TREE_VIEW_COLUMN_FIXED         = C.GTK_TREE_VIEW_COLUMN_FIXED
+)
+
 // void 	gtk_tree_view_column_set_sizing ()
+func (v *TreeViewColumn) SetSizing(sizing TreeViewColumnSizing) {
+	C.gtk_tree_view_column_set_sizing(v.native(), C.GtkTreeViewColumnSizing(sizing))
+}
+
 // GtkTreeViewColumnSizing 	gtk_tree_view_column_get_sizing ()
+func (v *TreeViewColumn) GetSizing() TreeViewColumnSizing {
+	return TreeViewColumnSizing(C.gtk_tree_view_column_get_sizing(v.native()))
+}
+
 // void 	gtk_tree_view_column_set_widget ()
 // GtkWidget * 	gtk_tree_view_column_get_widget ()
 // GtkWidget * 	gtk_tree_view_column_get_button ()
