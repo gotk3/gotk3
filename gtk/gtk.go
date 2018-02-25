@@ -887,6 +887,42 @@ func Init(args *[]string) {
 	}
 }
 
+/*
+InitCheck() is a wrapper around gtk_init_check() and works exactly like Init()
+only that it doesn't terminate the program if initialization fails.
+*/
+func InitCheck(args *[]string) error {
+	success := false
+	if args != nil {
+		argc := C.int(len(*args))
+		argv := C.make_strings(argc)
+		defer C.destroy_strings(argv)
+
+		for i, arg := range *args {
+			cstr := C.CString(arg)
+			C.set_string(argv, C.int(i), (*C.gchar)(cstr))
+		}
+
+		success = gobool(C.gtk_init_check((*C.int)(unsafe.Pointer(&argc)),
+			(***C.char)(unsafe.Pointer(&argv))))
+
+		unhandled := make([]string, argc)
+		for i := 0; i < int(argc); i++ {
+			cstr := C.get_string(argv, C.int(i))
+			unhandled[i] = goString(cstr)
+			C.free(unsafe.Pointer(cstr))
+		}
+		*args = unhandled
+	} else {
+		success = gobool(C.gtk_init_check(nil, nil))
+	}
+	if success {
+		return nil
+	} else {
+		return errors.New("Unable to initialize GTK")
+	}
+}
+
 // Main() is a wrapper around gtk_main() and runs the GTK main loop,
 // blocking until MainQuit() is called.
 func Main() {
