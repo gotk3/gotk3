@@ -5,7 +5,6 @@ package gtk
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
-// #include "menu.go.h"
 import "C"
 import (
 	"unsafe"
