@@ -8858,7 +8858,6 @@ var WrapMap = map[string]WrapFn{
 	"GtkSpinButton":          wrapSpinButton,
 	"GtkSpinner":             wrapSpinner,
 	"GtkStatusbar":           wrapStatusbar,
-	"GtkStatusIcon":          wrapStatusIcon,
 	"GtkSwitch":              wrapSwitch,
 	"GtkTextView":            wrapTextView,
 	"GtkTextBuffer":          wrapTextBuffer,

@@ -92,6 +92,37 @@ func (v *Image) SetFromStock(stock Stock, size IconSize) {
 		C.GtkIconSize(size))
 }
 
+// StatusIconNewFromStock is a wrapper around gtk_status_icon_new_from_stock().
+// Deprecated since 3.10, use StatusIconNewFromIconName (gtk_status_icon_new_from_icon_name) instead.
+func StatusIconNewFromStock(stockId string) (*StatusIcon, error) {
+	cstr := C.CString(stockId)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_status_icon_new_from_file((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapStatusIcon(obj), nil
+}
+
+// SetFromStock is a wrapper around gtk_status_icon_set_from_stock()
+// Deprecated since 3.10, use SetFromIconName (gtk_status_icon_set_from_icon_name) instead.
+func (v *StatusIcon) SetFromStock(stockID string) {
+	cstr := C.CString(stockID)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_status_icon_set_from_stock(v.native(), (*C.gchar)(cstr))
+}
+
+// GetStock is a wrapper around gtk_status_icon_get_stock()
+// Deprecated since 3.10, use GetIconName (gtk_status_icon_get_icon_name) instead
+func (v *StatusIcon) GetStock() string {
+	c := C.gtk_status_icon_get_stock(v.native())
+	if c == nil {
+		return ""
+	}
+	return C.GoString((*C.char)(c))
+}
+
 // Stock is a special type that does not have an equivalent type in
 // GTK.  It is the type used as a parameter anytime an identifier for
 // stock icons are needed.  A Stock must be type converted to string when

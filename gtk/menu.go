@@ -75,9 +75,3 @@ func (v *Menu) Popdown() {
 func (v *Menu) ReorderChild(child IWidget, position int) {
 	C.gtk_menu_reorder_child(v.native(), child.toWidget(), C.gint(position))
 }
-
-// PopupAtStatusIcon() is a wrapper around gtk_menu_popup() specific to usage with GtkStatusIcon.
-// gomenu_popup() is defined in menu.go.h, this is a workaround to pass gtk_status_icon_position_menu as the GtkMenuPositionFunc.
-func (v *Menu) PopupAtStatusIcon(statusIcon *StatusIcon, button uint, activateTime uint32) {
-	C.gotk_menu_popup_at_status_icon(v.native(), statusIcon.native(), C.guint(button), C.guint32(activateTime))
-}
