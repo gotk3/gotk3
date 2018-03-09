@@ -14,36 +14,29 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-// This file includes wrapers for symbols included since GTK 3.8, and
-// and should not be included in a build intended to target any older GTK
-// versions.  To target an older build, such as 3.8, use
-// 'go build -tags gtk_3_8'.  Otherwise, if no build tags are used, GTK 3.18
-// is assumed and this file is built.
-// +build !gtk_3_6
+// This file includes wrapers for symbols deprecated beginning with GTK 3.8,
+// and should only be included in a build targeted intended to target GTK
+// 3.6 or earlier.  To target an earlier build build, use the build tag
+// gtk_MAJOR_MINOR.  For example, to target GTK 3.6, run
+// 'go build -tags gtk_3_6'.
+// +build gtk_3_6
 
 package gtk
 
 // #cgo pkg-config: gtk+-3.0
+// #include <stdlib.h>
 // #include <gtk/gtk.h>
 import "C"
 
-/*
- * GtkWidget
- */
-
-// IsVisible is a wrapper around gtk_widget_is_visible().
-func (v *Widget) IsVisible() bool {
-	c := C.gtk_widget_is_visible(v.native())
-	return gobool(c)
+// SetOpacity is a wrapper around gtk_window_set_opacity()
+// Deprecated since 3.8, replaced by SetOpacity on Widget (gtk_widget_set_opacity)
+func (v *Window) SetOpacity(opacity float64) {
+	C.gtk_window_set_opacity(v.native(), C.gdouble(opacity))
 }
 
-// SetOpacity is a wrapper around gtk_widget_set_opacity()
-func (v *Widget) SetOpacity(opacity float64) {
-	C.gtk_widget_set_opacity(v.native(), C.double(opacity))
-}
-
-// GetOpacity is a wrapper around gtk_widget_get_opacity()
-func (v *Widget) GetOpacity() float64 {
-	c := C.gtk_widget_get_opacity(v.native())
+// GetOpacity is a wrapper around gtk_window_get_opacity()
+// Deprecated since 3.8, replaced by GetOpacity on Widget (gtk_widget_get_opacity)
+func (v *Window) GetOpacity() float64 {
+	c := C.gtk_window_get_opacity(v.native())
 	return float64(c)
 }
