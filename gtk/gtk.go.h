@@ -736,6 +736,12 @@ toGActionGroup(void *p)
 	return (G_ACTION_GROUP(p));
 }
 
+static GdkPixbuf *
+toGdkPixbuf(void *p)
+{
+	return (GDK_PIXBUF(p));
+}
+
 static GType *
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
