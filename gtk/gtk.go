@@ -174,7 +174,6 @@ func init() {
 		{glib.Type(C.gtk_spin_button_get_type()), marshalSpinButton},
 		{glib.Type(C.gtk_spinner_get_type()), marshalSpinner},
 		{glib.Type(C.gtk_statusbar_get_type()), marshalStatusbar},
-		{glib.Type(C.gtk_status_icon_get_type()), marshalStatusIcon},
 		{glib.Type(C.gtk_switch_get_type()), marshalSwitch},
 		{glib.Type(C.gtk_text_view_get_type()), marshalTextView},
 		{glib.Type(C.gtk_text_tag_get_type()), marshalTextTag},
