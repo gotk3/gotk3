@@ -8,6 +8,21 @@ package glib
 import "C"
 import "unsafe"
 
+// IActionGroup is an interface representation of ActionGroup,
+// used to avoid duplication when embedding the type in a wrapper of another GObject-based type.
+type IActionGroup interface {
+	Native() uintptr
+
+	HasAction(actionName string) bool
+	GetActionEnabled(actionName string) bool
+	GetActionParameterType(actionName string) *VariantType
+	GetActionStateType(actionName string) *VariantType
+	GetActionState(actionName string) *Variant
+	GetActionStateHint(actionName string) *Variant
+	ChangeActionState(actionName string, value *Variant)
+	Activate(actionName string, parameter *Variant)
+}
+
 // ActionGroup is a representation of glib's GActionGroup GInterface
 type ActionGroup struct {
 	*Object

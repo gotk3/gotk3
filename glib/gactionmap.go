@@ -8,6 +8,16 @@ package glib
 import "C"
 import "unsafe"
 
+// IActionMap is an interface representation of ActionMap,
+// used to avoid duplication when embedding the type in a wrapper of another GObject-based type.
+type IActionMap interface {
+	Native() uintptr
+
+	LookupAction(actionName string) *Action
+	AddAction(action IAction)
+	RemoveAction(actionName string)
+}
+
 // ActionMap is a representation of glib's GActionMap GInterface
 type ActionMap struct {
 	*Object

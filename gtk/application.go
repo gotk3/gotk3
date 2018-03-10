@@ -47,8 +47,8 @@ func marshalApplication(p uintptr) (interface{}, error) {
 }
 
 func wrapApplication(obj *glib.Object) *Application {
-	am := glib.ActionMap{obj}
-	ag := glib.ActionGroup{obj}
+	am := &glib.ActionMap{obj}
+	ag := &glib.ActionGroup{obj}
 	return &Application{glib.Application{obj, am, ag}}
 }
 

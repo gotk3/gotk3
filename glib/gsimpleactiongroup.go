@@ -15,8 +15,8 @@ type SimpleActionGroup struct {
 	*Object
 
 	// Interfaces
-	ActionMap
-	ActionGroup
+	IActionMap
+	IActionGroup
 }
 
 // deprecated since 2.38:
@@ -44,8 +44,8 @@ func marshalSimpleActionGroup(p uintptr) (interface{}, error) {
 }
 
 func wrapSimpleActionGroup(obj *Object) *SimpleActionGroup {
-	am := *wrapActionMap(obj)
-	ag := *wrapActionGroup(obj)
+	am := wrapActionMap(obj)
+	ag := wrapActionGroup(obj)
 	return &SimpleActionGroup{obj, am, ag}
 }
 
