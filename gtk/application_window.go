@@ -21,8 +21,8 @@ type ApplicationWindow struct {
 	Window
 
 	// Interfaces
-	glib.ActionMap
-	glib.ActionGroup
+	glib.IActionMap
+	glib.IActionGroup
 }
 
 // native returns a pointer to the underlying GtkApplicationWindow.
@@ -41,8 +41,8 @@ func marshalApplicationWindow(p uintptr) (interface{}, error) {
 }
 
 func wrapApplicationWindow(obj *glib.Object) *ApplicationWindow {
-	am := glib.ActionMap{obj}
-	ag := glib.ActionGroup{obj}
+	am := &glib.ActionMap{obj}
+	ag := &glib.ActionGroup{obj}
 	return &ApplicationWindow{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}, am, ag}
 }
 
