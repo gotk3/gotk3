@@ -27,6 +27,19 @@ func init() {
 }
 
 /*
+ * Dialog
+ */
+
+// GetHeaderBar is a wrapper around gtk_dialog_get_header_bar().
+func (v *Dialog) GetHeaderBar() *Widget {
+	c := C.gtk_dialog_get_header_bar(v.native())
+	if c == nil {
+		return nil
+	}
+	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+}
+
+/*
  * Entry
  */
 
