@@ -106,6 +106,17 @@ func (v *MenuButton) GetPopover() *Popover {
 	return wrapPopover(glib.Take(unsafe.Pointer(c)))
 }
 
+// GetUsePopover is a wrapper around gtk_menu_button_get_use_popover().
+func (v *MenuButton) GetUsePopover() bool {
+	c := C.gtk_menu_button_get_use_popover(v.native())
+	return gobool(c)
+}
+
+// SetUsePopover is a wrapper around gtk_menu_button_set_use_popover().
+func (v *MenuButton) SetUsePopover(setting bool) {
+	C.gtk_menu_button_set_use_popover(v.native(), gbool(setting))
+}
+
 /*
  * FlowBox
  */
