@@ -26,6 +26,25 @@ func init() {
 	WrapMap["GtkFlowBoxChild"] = wrapFlowBoxChild
 }
 
+/*
+ * Entry
+ */
+
+// SetMaxWidthChars() is a wrapper around gtk_entry_set_max_width_chars().
+func (v *Entry) SetMaxWidthChars(nChars int) {
+	C.gtk_entry_set_max_width_chars(v.native(), C.gint(nChars))
+}
+
+// GetMaxWidthChars() is a wrapper around gtk_entry_get_max_width_chars().
+func (v *Entry) GetMaxWidthChars() int {
+	c := C.gtk_entry_get_max_width_chars(v.native())
+	return int(c)
+}
+
+/*
+ * MenuButton
+ */
+
 // SetPopover is a wrapper around gtk_menu_button_set_popover().
 func (v *MenuButton) SetPopover(popover *Popover) {
 	C.gtk_menu_button_set_popover(v.native(), popover.toWidget())
