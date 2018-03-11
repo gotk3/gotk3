@@ -26,6 +26,12 @@ func init() {
 	WrapMap["GtkFlowBoxChild"] = wrapFlowBoxChild
 }
 
+// GetLocaleDirection() is a wrapper around gtk_get_locale_direction().
+func GetLocaleDirection() TextDirection {
+	c := C.gtk_get_locale_direction()
+	return TextDirection(c)
+}
+
 /*
  * Dialog
  */
