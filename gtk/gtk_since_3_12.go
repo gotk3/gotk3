@@ -61,6 +61,34 @@ func (v *Entry) GetMaxWidthChars() int {
 }
 
 /*
+ * HeaderBar
+ */
+
+// GetDecorationLayout is a wrapper around gtk_header_bar_get_decoration_layout().
+func (v *HeaderBar) GetDecorationLayout() string {
+	c := C.gtk_header_bar_get_decoration_layout(v.native())
+	return C.GoString((*C.char)(c))
+}
+
+// SetDecorationLayout is a wrapper around gtk_header_bar_set_decoration_layout().
+func (v *HeaderBar) SetDecorationLayout(layout string) {
+	cstr := C.CString(layout)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_header_bar_set_decoration_layout(v.native(), (*C.gchar)(cstr))
+}
+
+// GetHasSubtitle is a wrapper around gtk_header_bar_get_has_subtitle().
+func (v *HeaderBar) GetHasSubtitle() bool {
+	c := C.gtk_header_bar_get_has_subtitle(v.native())
+	return gobool(c)
+}
+
+// SetHasSubtitle is a wrapper around gtk_header_bar_set_has_subtitle().
+func (v *HeaderBar) SetHasSubtitle(setting bool) {
+	C.gtk_header_bar_set_has_subtitle(v.native(), gbool(setting))
+}
+
+/*
  * MenuButton
  */
 
