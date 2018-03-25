@@ -299,26 +299,7 @@ func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{})
 	// f returns false.  The error is ignored here, as this will
 	// always be a function.
 	var closure *C.GClosure
-	closure, _ = ClosureNew(func() {
-		// Create a slice of reflect.Values arguments to call the func.
-		rargs := make([]reflect.Value, len(args))
-		for i := range args {
-			rargs[i] = reflect.ValueOf(args[i])
-		}
-
-		// Call func with args. The callback will be removed, unless
-		// it returns exactly one return value of true.
-		rv := rf.Call(rargs)
-		if len(rv) == 1 {
-			if rv[0].Kind() == reflect.Bool {
-				if rv[0].Bool() {
-					return
-				}
-			}
-		}
-		C.g_closure_invalidate(closure)
-		C.g_source_destroy(src)
-	})
+	closure, _ = ClosureNew(rf.Interface(), args...)
 
 	// Remove closure context when closure is finalized.
 	C._g_closure_add_finalize_notifier(closure)
