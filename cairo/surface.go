@@ -208,6 +208,21 @@ func (v *Surface) GetMimeData(mimeType MimeType) []byte {
 	return C.GoBytes(unsafe.Pointer(data), C.int(length))
 }
 
+// WriteToPNG is a wrapper around cairo_surface_write_png(). It writes the Cairo
+// surface to the given file in PNG format.
+func (v *Surface) WriteToPNG(fileName string) error {
+	cstr := C.CString(fileName)
+	defer C.free(unsafe.Pointer(cstr))
+
+	status := Status(C.cairo_surface_write_to_png(v.surface, cstr))
+
+	if status != STATUS_SUCCESS {
+		return ErrorStatus(status)
+	}
+
+	return nil
+}
+
 // TODO(jrick) SupportsMimeType (since 1.12)
 
 // TODO(jrick) MapToImage (since 1.12)
