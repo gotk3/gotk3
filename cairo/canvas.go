@@ -49,6 +49,11 @@ func WrapContext(p uintptr) *Context {
 	return wrapContext(context)
 }
 
+// Closes the context. The context must not be used afterwards.
+func (v *Context) Close() {
+	v.destroy()
+}
+
 // Create is a wrapper around cairo_create().
 func Create(target *Surface) *Context {
 	c := C.cairo_create(target.native())
@@ -64,7 +69,10 @@ func (v *Context) reference() {
 
 // destroy is a wrapper around cairo_destroy().
 func (v *Context) destroy() {
-	C.cairo_destroy(v.native())
+	if v.context != nil {
+		C.cairo_destroy(v.native())
+		v.context = nil
+	}
 }
 
 // Status is a wrapper around cairo_status().

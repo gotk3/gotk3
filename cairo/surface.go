@@ -4,6 +4,7 @@ package cairo
 // #include <stdlib.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>
+// #include <cairo-pdf.h>
 import "C"
 
 import (
@@ -48,6 +49,25 @@ func CreateImageSurface(format Format, width, height int) *Surface {
 	return s
 }
 
+/// Create a new PDF surface.
+func CreatePDFSurface(fileName string, width float64, height float64) (*Surface, error) {
+	cstr := C.CString(fileName)
+	defer C.free(unsafe.Pointer(cstr))
+
+	surfaceNative := C.cairo_pdf_surface_create(cstr, C.double(width), C.double(height))
+
+	status := Status(C.cairo_surface_status(surfaceNative))
+	if status != STATUS_SUCCESS {
+		return nil, ErrorStatus(status)
+	}
+
+	s := wrapSurface(surfaceNative)
+
+	runtime.SetFinalizer(s, (*Surface).destroy)
+
+	return s, nil
+}
+
 // native returns a pointer to the underlying cairo_surface_t.
 func (v *Surface) native() *C.cairo_surface_t {
 	if v == nil {
@@ -84,6 +104,11 @@ func NewSurface(s uintptr, needsRef bool) *Surface {
 	return surface
 }
 
+// Closes the surface. The surface must not be used afterwards.
+func (v *Surface) Close() {
+	v.destroy()
+}
+
 // CreateSimilar is a wrapper around cairo_surface_create_similar().
 func (v *Surface) CreateSimilar(content Content, width, height int) *Surface {
 	c := C.cairo_surface_create_similar(v.native(),
@@ -111,7 +136,10 @@ func (v *Surface) reference() {
 
 // destroy is a wrapper around cairo_surface_destroy().
 func (v *Surface) destroy() {
-	C.cairo_surface_destroy(v.native())
+	if v.surface != nil {
+		C.cairo_surface_destroy(v.native())
+		v.surface = nil
+	}
 }
 
 // Status is a wrapper around cairo_surface_status().
