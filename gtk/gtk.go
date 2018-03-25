@@ -97,6 +97,7 @@ func init() {
 		{glib.Type(C.gtk_sort_type_get_type()), marshalSortType},
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
 		{glib.Type(C.gtk_target_flags_get_type()), marshalTargetFlags},
+		{glib.Type(C.gtk_text_direction_get_type()), marshalTextDirection},
 		{glib.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
 		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
 		{glib.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
@@ -758,6 +759,20 @@ const (
 func marshalStateFlags(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return StateFlags(c), nil
+}
+
+// TextDirection is a representation of GTK's GtkTextDirection.
+type TextDirection int
+
+const (
+	TEXT_DIR_NONE TextDirection = C.GTK_TEXT_DIR_NONE
+	TEXT_DIR_LTR  TextDirection = C.GTK_TEXT_DIR_LTR
+	TEXT_DIR_RTL  TextDirection = C.GTK_TEXT_DIR_RTL
+)
+
+func marshalTextDirection(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TextDirection(c), nil
 }
 
 // TargetFlags is a representation of GTK's GtkTargetFlags.

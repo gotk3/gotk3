@@ -4,6 +4,7 @@
 package gtk
 
 // #cgo pkg-config: gtk+-3.0
+// #include <stdlib.h>
 // #include <gtk/gtk.h>
 // #include "gtk_since_3_12.go.h"
 import "C"
@@ -26,6 +27,72 @@ func init() {
 	WrapMap["GtkFlowBoxChild"] = wrapFlowBoxChild
 }
 
+// GetLocaleDirection() is a wrapper around gtk_get_locale_direction().
+func GetLocaleDirection() TextDirection {
+	c := C.gtk_get_locale_direction()
+	return TextDirection(c)
+}
+
+/*
+ * Dialog
+ */
+
+// GetHeaderBar is a wrapper around gtk_dialog_get_header_bar().
+func (v *Dialog) GetHeaderBar() *Widget {
+	c := C.gtk_dialog_get_header_bar(v.native())
+	if c == nil {
+		return nil
+	}
+	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+}
+
+/*
+ * Entry
+ */
+
+// SetMaxWidthChars() is a wrapper around gtk_entry_set_max_width_chars().
+func (v *Entry) SetMaxWidthChars(nChars int) {
+	C.gtk_entry_set_max_width_chars(v.native(), C.gint(nChars))
+}
+
+// GetMaxWidthChars() is a wrapper around gtk_entry_get_max_width_chars().
+func (v *Entry) GetMaxWidthChars() int {
+	c := C.gtk_entry_get_max_width_chars(v.native())
+	return int(c)
+}
+
+/*
+ * HeaderBar
+ */
+
+// GetDecorationLayout is a wrapper around gtk_header_bar_get_decoration_layout().
+func (v *HeaderBar) GetDecorationLayout() string {
+	c := C.gtk_header_bar_get_decoration_layout(v.native())
+	return C.GoString((*C.char)(c))
+}
+
+// SetDecorationLayout is a wrapper around gtk_header_bar_set_decoration_layout().
+func (v *HeaderBar) SetDecorationLayout(layout string) {
+	cstr := C.CString(layout)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_header_bar_set_decoration_layout(v.native(), (*C.gchar)(cstr))
+}
+
+// GetHasSubtitle is a wrapper around gtk_header_bar_get_has_subtitle().
+func (v *HeaderBar) GetHasSubtitle() bool {
+	c := C.gtk_header_bar_get_has_subtitle(v.native())
+	return gobool(c)
+}
+
+// SetHasSubtitle is a wrapper around gtk_header_bar_set_has_subtitle().
+func (v *HeaderBar) SetHasSubtitle(setting bool) {
+	C.gtk_header_bar_set_has_subtitle(v.native(), gbool(setting))
+}
+
+/*
+ * MenuButton
+ */
+
 // SetPopover is a wrapper around gtk_menu_button_set_popover().
 func (v *MenuButton) SetPopover(popover *Popover) {
 	C.gtk_menu_button_set_popover(v.native(), popover.toWidget())
@@ -38,6 +105,17 @@ func (v *MenuButton) GetPopover() *Popover {
 		return nil
 	}
 	return wrapPopover(glib.Take(unsafe.Pointer(c)))
+}
+
+// GetUsePopover is a wrapper around gtk_menu_button_get_use_popover().
+func (v *MenuButton) GetUsePopover() bool {
+	c := C.gtk_menu_button_get_use_popover(v.native())
+	return gobool(c)
+}
+
+// SetUsePopover is a wrapper around gtk_menu_button_set_use_popover().
+func (v *MenuButton) SetUsePopover(setting bool) {
+	C.gtk_menu_button_set_use_popover(v.native(), gbool(setting))
 }
 
 /*
