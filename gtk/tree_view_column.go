@@ -254,9 +254,9 @@ func (v *TreeViewColumn) GetXOffset() int {
 type TreeViewColumnSizing int
 
 const (
-	TREE_VIEW_COLUMN_GROW_ONLY int = C.GTK_TREE_VIEW_COLUMN_GROW_ONLY
-	TREE_VIEW_COLUMN_AUTOSIZE      = C.GTK_TREE_VIEW_COLUMN_AUTOSIZE
-	TREE_VIEW_COLUMN_FIXED         = C.GTK_TREE_VIEW_COLUMN_FIXED
+	TREE_VIEW_COLUMN_GROW_ONLY TreeViewColumnSizing = C.GTK_TREE_VIEW_COLUMN_GROW_ONLY
+	TREE_VIEW_COLUMN_AUTOSIZE                       = C.GTK_TREE_VIEW_COLUMN_AUTOSIZE
+	TREE_VIEW_COLUMN_FIXED                          = C.GTK_TREE_VIEW_COLUMN_FIXED
 )
 
 // void 	gtk_tree_view_column_set_sizing ()
