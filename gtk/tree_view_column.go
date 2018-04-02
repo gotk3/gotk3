@@ -254,9 +254,9 @@ func (v *TreeViewColumn) GetXOffset() int {
 type TreeViewColumnSizing int
 
 const (
-	TREE_VIEW_COLUMN_GROW_ONLY int = C.GTK_TREE_VIEW_COLUMN_GROW_ONLY
-	TREE_VIEW_COLUMN_AUTOSIZE      = C.GTK_TREE_VIEW_COLUMN_AUTOSIZE
-	TREE_VIEW_COLUMN_FIXED         = C.GTK_TREE_VIEW_COLUMN_FIXED
+	TREE_VIEW_COLUMN_GROW_ONLY TreeViewColumnSizing = C.GTK_TREE_VIEW_COLUMN_GROW_ONLY
+	TREE_VIEW_COLUMN_AUTOSIZE                       = C.GTK_TREE_VIEW_COLUMN_AUTOSIZE
+	TREE_VIEW_COLUMN_FIXED                          = C.GTK_TREE_VIEW_COLUMN_FIXED
 )
 
 // void 	gtk_tree_view_column_set_sizing ()
@@ -274,8 +274,24 @@ func (v *TreeViewColumn) GetSizing() TreeViewColumnSizing {
 // GtkWidget * 	gtk_tree_view_column_get_button ()
 // void 	gtk_tree_view_column_set_alignment ()
 // gfloat 	gtk_tree_view_column_get_alignment ()
+
+type GtkSortType int
+
+const (
+	GTK_SORT_ASCENDING  GtkSortType = C.GTK_SORT_ASCENDING
+	GTK_SORT_DESCENDING             = C.GTK_SORT_DESCENDING
+)
+
 // void 	gtk_tree_view_column_set_sort_order ()
+func (v *TreeViewColumn) SetSortOrder(order GtkSortType) {
+	C.gtk_tree_view_column_set_sort_order(v.native(), C.GtkSortType(order))
+}
+
 // GtkSortType 	gtk_tree_view_column_get_sort_order ()
+func (v *TreeViewColumn) GetSortOrder() GtkSortType {
+	return GtkSortType(C.gtk_tree_view_column_get_sort_order(v.native()))
+}
+
 // void 	gtk_tree_view_column_cell_set_cell_data ()
 // void 	gtk_tree_view_column_cell_get_size ()
 // gboolean 	gtk_tree_view_column_cell_get_position ()
