@@ -275,21 +275,14 @@ func (v *TreeViewColumn) GetSizing() TreeViewColumnSizing {
 // void 	gtk_tree_view_column_set_alignment ()
 // gfloat 	gtk_tree_view_column_get_alignment ()
 
-type GtkSortType int
-
-const (
-	GTK_SORT_ASCENDING  GtkSortType = C.GTK_SORT_ASCENDING
-	GTK_SORT_DESCENDING             = C.GTK_SORT_DESCENDING
-)
-
 // void 	gtk_tree_view_column_set_sort_order ()
-func (v *TreeViewColumn) SetSortOrder(order GtkSortType) {
+func (v *TreeViewColumn) SetSortOrder(order SortType) {
 	C.gtk_tree_view_column_set_sort_order(v.native(), C.GtkSortType(order))
 }
 
 // GtkSortType 	gtk_tree_view_column_get_sort_order ()
-func (v *TreeViewColumn) GetSortOrder() GtkSortType {
-	return GtkSortType(C.gtk_tree_view_column_get_sort_order(v.native()))
+func (v *TreeViewColumn) GetSortOrder() SortType {
+	return SortType(C.gtk_tree_view_column_get_sort_order(v.native()))
 }
 
 // void 	gtk_tree_view_column_cell_set_cell_data ()
