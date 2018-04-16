@@ -2,6 +2,7 @@ package gdk
 
 // #cgo pkg-config: gdk-3.0
 // #include <gdk/gdk.h>
+// #include "gdk.go.h"
 import "C"
 import (
 	"unsafe"
@@ -40,6 +41,34 @@ func (f *PixbufFormat) GetDescription() (string, error) {
 func (f *PixbufFormat) GetLicense() (string, error) {
 	c := C.gdk_pixbuf_format_get_license(f.native())
 	return C.GoString((*C.char)(c)), nil
+}
+
+// GetMimeTypes is a wrapper around gdk_pixbuf_format_get_mime_types().
+func (f *PixbufFormat) GetMimeTypes() []string {
+	var types []string
+	c := C.gdk_pixbuf_format_get_mime_types(f.native())
+	if c == nil {
+		return nil
+	}
+	for *c != nil {
+		types = append(types, C.GoString((*C.char)(*c)))
+		c = C.next_gcharptr(c)
+	}
+	return types
+}
+
+// GetExtensions is a wrapper around gdk_pixbuf_format_get_extensions().
+func (f *PixbufFormat) GetExtensions() []string {
+	var extensions []string
+	c := C.gdk_pixbuf_format_get_extensions(f.native())
+	if c == nil {
+		return nil
+	}
+	for *c != nil {
+		extensions = append(extensions, C.GoString((*C.char)(*c)))
+		c = C.next_gcharptr(c)
+	}
+	return extensions
 }
 
 func PixbufGetFormats() []*PixbufFormat {
