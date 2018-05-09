@@ -98,3 +98,5 @@ toGdkWindow(void *p)
 {
 	return (GDK_WINDOW(p));
 }
+
+static inline gchar** next_gcharptr(gchar** s) { return (s+1); }
