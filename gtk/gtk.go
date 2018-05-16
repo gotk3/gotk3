@@ -168,7 +168,7 @@ func init() {
 		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
 		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
 		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
-		{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
+		//{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
 		{glib.Type(C.gtk_separator_get_type()), marshalSeparator},
 		{glib.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
 		{glib.Type(C.gtk_separator_tool_item_get_type()), marshalSeparatorToolItem},
