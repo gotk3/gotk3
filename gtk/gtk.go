@@ -6872,6 +6872,23 @@ func (v *SelectionData) GetData() (data []byte) {
 	return
 }
 
+//fixed GetData directly from ptr
+func getData(pointer uintptr) (data []byte) {
+	c := (*C.GValue)(unsafe.Pointer(pointer))
+	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
+	C.gtk_selection_data_get_text(p)
+
+	var byteData []byte
+	var length C.gint
+	cptr := C.gtk_selection_data_get_data_with_length(p, &length)
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&byteData))
+	sliceHeader.Data = uintptr(unsafe.Pointer(cptr))
+	sliceHeader.Len = int(length)
+	sliceHeader.Cap = int(length)
+
+	return byteData
+}
+
 func (v *SelectionData) free() {
 	C.gtk_selection_data_free(v.native())
 }
@@ -7341,7 +7358,8 @@ func TargetEntryNew(target string, flags TargetFlags, info uint) (*TargetEntry, 
 		return nil, nilPtrErr
 	}
 	t := (*TargetEntry)(unsafe.Pointer(c))
-	runtime.SetFinalizer(t, (*TargetEntry).free)
+	// causes setFinilizer error
+	//	runtime.SetFinalizer(t, (*TargetEntry).free)
 	return t, nil
 }
 
