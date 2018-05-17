@@ -4623,8 +4623,7 @@ func ImageNewFromResource(resourcePath string) (*Image, error) {
 
 // ImageNewFromPixbuf is a wrapper around gtk_image_new_from_pixbuf().
 func ImageNewFromPixbuf(pixbuf *gdk.Pixbuf) (*Image, error) {
-	ptr := (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
-	c := C.gtk_image_new_from_pixbuf(ptr)
+	c := C.gtk_image_new_from_pixbuf((*C.GdkPixbuf)(pixbuf.NativePrivate()))
 	if c == nil {
 		return nil, nilPtrErr
 	}
