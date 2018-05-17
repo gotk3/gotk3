@@ -18,9 +18,10 @@
 
 package pango
 
-// #cgo pkg-config: pango
+// #cgo pkg-config: pango fontconfig
 // #include <pango/pango.h>
 // #include "pango.go.h"
+// #include "fontconfig.go.h"
 import "C"
 import (
 	//	"github.com/andre-hub/gotk3/glib"
@@ -37,6 +38,10 @@ func init() {
 		{glib.Type(C.pango_font_description_get_type()), marshalFontDescription},
 	}
 	glib.RegisterGValueMarshalers(tm)
+}
+
+func AddFont(fontPath string) {
+	C.addFont(C.CString(fontPath))
 }
 
 // FontDescription is a representation of PangoFontDescription.
