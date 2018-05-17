@@ -4009,6 +4009,35 @@ func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
 	return &FileChooserDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}, *fc}
 }
 
+/*
+ * FileChooserNative
+ */
+func OpenFileChooserNative(title string, parent_window *Window) (*string) {
+	c_title := C.CString(title)
+
+	var native *C.GtkFileChooserNative;
+
+	native = C.gtk_file_chooser_native_new((*C.gchar)(c_title),
+		parent_window.native(),
+		C.GtkFileChooserAction(FILE_CHOOSER_ACTION_OPEN),
+		(*C.gchar)(C.CString("_Open")),
+		(*C.gchar)(C.CString("_Cancel")));
+
+	p := unsafe.Pointer(unsafe.Pointer(native))
+	dlg := C.toGtkNativeDialog(p)
+	res := C.gtk_native_dialog_run(dlg)
+
+	if res == C.GTK_RESPONSE_ACCEPT {
+		c := C.gtk_file_chooser_get_filename( C.toGtkFileChooser(p))
+		s := goString(c)
+		defer C.g_free((C.gpointer)(c))
+
+		return &s
+	}
+
+	return nil
+}
+
 // FileChooserDialogNewWith1Button is a wrapper around gtk_file_chooser_dialog_new() with one button.
 func FileChooserDialogNewWith1Button(
 	title string,
