@@ -44,7 +44,7 @@
 // the object will be freed internally by GTK.
 package gtk
 
-// #cgo pkg-config: gtk+-3.0
+// #cgo pkg-config: gtk+-3.0 --static
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
