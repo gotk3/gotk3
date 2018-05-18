@@ -42,6 +42,11 @@ func wrapLabel(obj *glib.Object) *Label {
 	return &Label{Widget{glib.InitiallyUnowned{obj}}}
 }
 
+func WidgetToLabel(widget *Widget) (interface{}, error)   {
+	obj := glib.Take(unsafe.Pointer(widget.GObject))
+	return wrapLabel(obj), nil
+}
+
 // LabelNew is a wrapper around gtk_label_new().
 func LabelNew(str string) (*Label, error) {
 	cstr := C.CString(str)
