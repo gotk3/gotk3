@@ -19,7 +19,6 @@
 package cairo
 
 // #cgo pkg-config: cairo cairo-gobject
-// #cgo LDFLAGS: -L./lib -static
 // #include <stdlib.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>

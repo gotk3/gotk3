@@ -18,7 +18,6 @@
 package pango
 
 // #cgo pkg-config: pango
-// #cgo LDFLAGS: -L./lib
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
