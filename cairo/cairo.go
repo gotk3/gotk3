@@ -18,7 +18,14 @@
 // later.
 package cairo
 
+import "C"
+import (
+	"github.com/gotk3/gotk3/glib"
+	"unsafe"
+)
+
 // #cgo pkg-config: cairo cairo-gobject
+// #cgo LDFLAGS: -L./lib
 // #include <stdlib.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>

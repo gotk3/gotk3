@@ -18,6 +18,7 @@
 package gdk
 
 // #cgo pkg-config: gdk-3.0
+// #cgo LDFLAGS: -L./lib
 // #include <gdk/gdk.h>
 // #include "gdk.go.h"
 import "C"
