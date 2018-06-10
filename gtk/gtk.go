@@ -4099,63 +4099,6 @@ func FileChooserWidgetNew(action FileChooserAction) (*FileChooserWidget, error) 
 }
 
 /*
- * GtkFileChooserNative
- */
-
-// FileChooserNativeDialog is a representation of GTK's GtkFileChooserNative.
-type FileChooserNativeDialog struct {
-	// Interfaces
-	FileChooser
-}
-
-// native returns a pointer to the underlying FileChooserNativeDialog.
-func (v *FileChooserNativeDialog) native() *C.GtkNativeDialog {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkNativeDialog(p)
-}
-
-func wrapFileChooserNativeDialog(obj *glib.Object) *FileChooserNativeDialog {
-	fc := wrapFileChooser(obj)
-	return &FileChooserNativeDialog{*fc}
-}
-
-// FileChooserNativeDialogNew is a wrapper around gtk_file_chooser_native_new().
-func FileChooserNativeDialogNew(
-	title string,
-	parent *Window,
-	action FileChooserAction,
-	accept_label string,
-	cancel_label string) (*FileChooserNativeDialog, error) {
-	c_title := C.CString(title)
-	defer C.free(unsafe.Pointer(c_title))
-	c_accept_label := C.CString(accept_label)
-	defer C.free(unsafe.Pointer(c_accept_label))
-	c_cancel_label := C.CString(cancel_label)
-	defer C.free(unsafe.Pointer(c_cancel_label))
-	c := C.gtk_file_chooser_native_new(
-		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
-		(*C.gchar)(c_accept_label), (*C.gchar)(c_cancel_label))
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapFileChooserNativeDialog(obj), nil
-}
-
-// Run() is a wrapper around gtk_native_dialog_run().
-func (v *FileChooserNativeDialog) Run() int {
-	c := C.gtk_native_dialog_run(v.native())
-	return int(c)
-}
-
-func (v *FileChooserNativeDialog) Destroy() {
-	v.Object.Unref()
-}
-
-/*
  * GtkFileFilter
  */
 
