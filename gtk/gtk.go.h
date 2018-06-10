@@ -580,6 +580,12 @@ toGtkExpander(void *p)
 	return (GTK_EXPANDER(p));
 }
 
+static GtkNativeDialog *
+toGtkNativeDialog(void *p)
+{
+	return (GTK_NATIVE_DIALOG(p));
+}
+
 static GtkFileChooser *
 toGtkFileChooser(void *p)
 {
