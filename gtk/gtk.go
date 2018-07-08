@@ -3836,6 +3836,15 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// GetFilenames is a wrapper around gtk_file_chooser_get_filenames().
+func (v *FileChooser) GetFilenames() (*glib.SList, error) {
+	c := C.gtk_file_chooser_get_filenames(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
+}
+
 // SetDoOverwriteConfirmation is a wrapper around gtk_file_chooser_set_do_overwrite_confirmation().
 func (v *FileChooser) SetDoOverwriteConfirmation(value bool) {
 	C.gtk_file_chooser_set_do_overwrite_confirmation(v.native(), gbool(value))
