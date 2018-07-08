@@ -6797,6 +6797,17 @@ func (v *ScrolledWindow) SetVAdjustment(adjustment *Adjustment) {
 	C.gtk_scrolled_window_set_vadjustment(v.native(), adjustment.native())
 }
 
+// GetShadowType is a wrapper around gtk_scrolled_window_get_shadow_type().
+func (v *ScrolledWindow) GetShadowType() ShadowType {
+	c := C.gtk_scrolled_window_get_shadow_type(v.native())
+	return ShadowType(c)
+}
+
+// SetShadowType is a wrapper around gtk_scrolled_window_set_shadow_type().
+func (v *ScrolledWindow) SetShadowType(t ShadowType) {
+	C.gtk_scrolled_window_set_shadow_type(v.native(), C.GtkShadowType(t))
+}
+
 /*
  * GtkSearchEntry
  */
