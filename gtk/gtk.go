@@ -3932,6 +3932,28 @@ func (v *FileChooser) AddShortcutFolder(folder string) bool {
 	return gobool(c)
 }
 
+// SetLocalOnly is a wrapper around gtk_file_chooser_set_local_only().
+func (v *FileChooser) SetLocalOnly(value bool) {
+	C.gtk_file_chooser_set_local_only(v.native(), gbool(value))
+}
+
+// GetLocalOnly is a wrapper around gtk_file_chooser_get_local_only().
+func (v *FileChooser) GetLocalOnly() bool {
+	c := C.gtk_file_chooser_get_local_only(v.native())
+	return gobool(c)
+}
+
+// SetSelectMultiple is a wrapper around gtk_file_chooser_set_select_multiple().
+func (v *FileChooser) SetSelectMultiple(value bool) {
+	C.gtk_file_chooser_set_select_multiple(v.native(), gbool(value))
+}
+
+// GetSelectMultiple is a wrapper around gtk_file_chooser_get_select_multiple().
+func (v *FileChooser) GetSelectMultiple() bool {
+	c := C.gtk_file_chooser_get_select_multiple(v.native())
+	return gobool(c)
+}
+
 /*
  * GtkFileChooserButton
  */
