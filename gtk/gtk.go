@@ -2791,9 +2791,9 @@ func DialogNew() (*Dialog, error) {
 }
 
 // Run() is a wrapper around gtk_dialog_run().
-func (v *Dialog) Run() int {
+func (v *Dialog) Run() ResponseType {
 	c := C.gtk_dialog_run(v.native())
-	return int(c)
+	return ResponseType(c)
 }
 
 // Response() is a wrapper around gtk_dialog_response().
@@ -3836,6 +3836,15 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// GetFilenames is a wrapper around gtk_file_chooser_get_filenames().
+func (v *FileChooser) GetFilenames() (*glib.SList, error) {
+	c := C.gtk_file_chooser_get_filenames(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
+}
+
 // SetDoOverwriteConfirmation is a wrapper around gtk_file_chooser_set_do_overwrite_confirmation().
 func (v *FileChooser) SetDoOverwriteConfirmation(value bool) {
 	C.gtk_file_chooser_set_do_overwrite_confirmation(v.native(), gbool(value))
@@ -3929,6 +3938,28 @@ func (v *FileChooser) AddShortcutFolder(folder string) bool {
 	cstr := C.CString(folder)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_file_chooser_add_shortcut_folder(v.native(), cstr, nil)
+	return gobool(c)
+}
+
+// SetLocalOnly is a wrapper around gtk_file_chooser_set_local_only().
+func (v *FileChooser) SetLocalOnly(value bool) {
+	C.gtk_file_chooser_set_local_only(v.native(), gbool(value))
+}
+
+// GetLocalOnly is a wrapper around gtk_file_chooser_get_local_only().
+func (v *FileChooser) GetLocalOnly() bool {
+	c := C.gtk_file_chooser_get_local_only(v.native())
+	return gobool(c)
+}
+
+// SetSelectMultiple is a wrapper around gtk_file_chooser_set_select_multiple().
+func (v *FileChooser) SetSelectMultiple(value bool) {
+	C.gtk_file_chooser_set_select_multiple(v.native(), gbool(value))
+}
+
+// GetSelectMultiple is a wrapper around gtk_file_chooser_get_select_multiple().
+func (v *FileChooser) GetSelectMultiple() bool {
+	c := C.gtk_file_chooser_get_select_multiple(v.native())
 	return gobool(c)
 }
 
@@ -6795,6 +6826,17 @@ func (v *ScrolledWindow) GetVAdjustment() *Adjustment {
 // SetVAdjustment is a wrapper around gtk_scrolled_window_set_vadjustment().
 func (v *ScrolledWindow) SetVAdjustment(adjustment *Adjustment) {
 	C.gtk_scrolled_window_set_vadjustment(v.native(), adjustment.native())
+}
+
+// GetShadowType is a wrapper around gtk_scrolled_window_get_shadow_type().
+func (v *ScrolledWindow) GetShadowType() ShadowType {
+	c := C.gtk_scrolled_window_get_shadow_type(v.native())
+	return ShadowType(c)
+}
+
+// SetShadowType is a wrapper around gtk_scrolled_window_set_shadow_type().
+func (v *ScrolledWindow) SetShadowType(t ShadowType) {
+	C.gtk_scrolled_window_set_shadow_type(v.native(), C.GtkShadowType(t))
 }
 
 /*

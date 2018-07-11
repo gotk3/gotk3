@@ -96,13 +96,13 @@ func (v *TreeViewColumn) GetMinWidth() int {
 }
 
 // PackStart() is a wrapper around gtk_tree_view_column_pack_start().
-func (v *TreeViewColumn) PackStart(cell *CellRenderer, expand bool) {
-	C.gtk_tree_view_column_pack_start(v.native(), cell.native(), gbool(expand))
+func (v *TreeViewColumn) PackStart(cell ICellRenderer, expand bool) {
+	C.gtk_tree_view_column_pack_start(v.native(), cell.toCellRenderer(), gbool(expand))
 }
 
 // PackEnd() is a wrapper around gtk_tree_view_column_pack_end().
-func (v *TreeViewColumn) PackEnd(cell *CellRenderer, expand bool) {
-	C.gtk_tree_view_column_pack_end(v.native(), cell.native(), gbool(expand))
+func (v *TreeViewColumn) PackEnd(cell ICellRenderer, expand bool) {
+	C.gtk_tree_view_column_pack_end(v.native(), cell.toCellRenderer(), gbool(expand))
 }
 
 // Clear() is a wrapper around gtk_tree_view_column_clear().
