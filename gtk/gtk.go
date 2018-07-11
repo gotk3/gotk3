@@ -1581,6 +1581,12 @@ func (v *Button) GetAlwaysShowImage() bool {
 	return gobool(c)
 }
 
+func (v *Button) SetColor(color string) {
+	rgba := C.GdkRGBA{}
+	C.gdk_rgba_parse(&rgba, C.CString(color));
+	C.gtk_widget_override_background_color(v.toWidget(), C.GTK_STATE_FLAG_NORMAL, &rgba)
+}
+
 // GetEventWindow() is a wrapper around gtk_button_get_event_window().
 func (v *Button) GetEventWindow() (*gdk.Window, error) {
 	c := C.gtk_button_get_event_window(v.native())
