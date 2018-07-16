@@ -12,11 +12,14 @@ import (
 func init() {
 	tm := []glib.TypeMarshaler{
 		{glib.Type(C.gtk_font_chooser_get_type()), marshalFontChooser},
+		{glib.Type(C.gtk_font_button_get_type()), marshalFontButton},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
 
 	WrapMap["GtkFontChooser"] = wrapFontChooser
+	WrapMap["GtkFontButton"] = wrapFontButton
+
 }
 
 /*
@@ -89,3 +92,58 @@ func (v *FontChooser) SetFont(font string) {
 //void	gtk_font_chooser_set_filter_func ()
 //void	gtk_font_chooser_set_font_map ()
 //PangoFontMap *	gtk_font_chooser_get_font_map ()
+
+/*
+ * GtkFontButton
+ */
+
+// FontButton is a representation of GTK's GtkFontButton.
+type FontButton struct {
+	Button
+
+	// Interfaces
+	FontChooser
+}
+
+// native returns a pointer to the underlying GtkFontButton.
+func (v *FontButton) native() *C.GtkFontButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkFontButton(p)
+}
+
+func marshalFontButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapFontButton(obj), nil
+}
+
+func wrapFontButton(obj *glib.Object) *FontButton {
+	button := wrapButton(obj)
+	fc := wrapFontChooser(obj)
+	return &FontButton{*button,*fc}
+}
+
+// FontButtonNew is a wrapper around gtk_font_button_new().
+func FontButtonNew() (*FontButton, error) {
+	c := C.gtk_font_button_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapFontButton(obj), nil
+}
+
+// FontButtonNewWithFont is a wrapper around gtk_font_button_new_with_font().
+func FontButtonNewWithFont(fontname string) (*FontButton, error) {
+	cstr := C.CString(fontname)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_font_button_new_with_font((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapFontButton(obj), nil
+}

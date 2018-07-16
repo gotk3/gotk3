@@ -138,7 +138,6 @@ func init() {
 		{glib.Type(C.gtk_file_chooser_button_get_type()), marshalFileChooserButton},
 		{glib.Type(C.gtk_file_chooser_dialog_get_type()), marshalFileChooserDialog},
 		{glib.Type(C.gtk_file_chooser_widget_get_type()), marshalFileChooserWidget},
-		{glib.Type(C.gtk_font_button_get_type()), marshalFontButton},
 		{glib.Type(C.gtk_frame_get_type()), marshalFrame},
 		{glib.Type(C.gtk_aspect_frame_get_type()), marshalAspectFrame},
 		{glib.Type(C.gtk_grid_get_type()), marshalGrid},
@@ -4184,61 +4183,6 @@ func (v *FileFilter) AddPattern(pattern string) {
 // AddPixbufFormats is a wrapper around gtk_file_filter_add_pixbuf_formats().
 func (v *FileFilter) AddPixbufFormats() {
 	C.gtk_file_filter_add_pixbuf_formats(v.native())
-}
-
-/*
- * GtkFontButton
- */
-
-// FontButton is a representation of GTK's GtkFontButton.
-type FontButton struct {
-	Button
-
-	// Interfaces
-	FontChooser
-}
-
-// native returns a pointer to the underlying GtkFontButton.
-func (v *FontButton) native() *C.GtkFontButton {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	p := unsafe.Pointer(v.GObject)
-	return C.toGtkFontButton(p)
-}
-
-func marshalFontButton(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapFontButton(obj), nil
-}
-
-func wrapFontButton(obj *glib.Object) *FontButton {
-	button := wrapButton(obj)
-	fc := wrapFontChooser(obj)
-	return &FontButton{*button,*fc}
-}
-
-// FontButtonNew is a wrapper around gtk_font_button_new().
-func FontButtonNew() (*FontButton, error) {
-	c := C.gtk_font_button_new()
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapFontButton(obj), nil
-}
-
-// FontButtonNewWithFont is a wrapper around gtk_font_button_new_with_font().
-func FontButtonNewWithFont(fontname string) (*FontButton, error) {
-	cstr := C.CString(fontname)
-	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_font_button_new_with_font((*C.gchar)(cstr))
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapFontButton(obj), nil
 }
 
 /*
@@ -8865,7 +8809,6 @@ var WrapMap = map[string]WrapFn{
 	"GtkFileChooserButton":   wrapFileChooserButton,
 	"GtkFileChooserDialog":   wrapFileChooserDialog,
 	"GtkFileChooserWidget":   wrapFileChooserWidget,
-	"GtkFontButton":          wrapFontButton,
 	"GtkGrid":                wrapGrid,
 	"GtkIconView":            wrapIconView,
 	"GtkImage":               wrapImage,
