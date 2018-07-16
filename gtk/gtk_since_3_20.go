@@ -154,6 +154,35 @@ func FileChooserNativeDialogNew(
 	return wrapFileChooserNativeDialog(obj), nil
 }
 
+/*
+ * FileChooserNative
+ */
+func OpenFileChooserNative(title string, parent_window *Window) *string {
+	c_title := C.CString(title)
+
+	var native *C.GtkFileChooserNative
+
+	native = C.gtk_file_chooser_native_new((*C.gchar)(c_title),
+		parent_window.native(),
+		C.GtkFileChooserAction(FILE_CHOOSER_ACTION_OPEN),
+		(*C.gchar)(C.CString("_Open")),
+		(*C.gchar)(C.CString("_Cancel")))
+
+	p := unsafe.Pointer(unsafe.Pointer(native))
+	dlg := C.toGtkNativeDialog(p)
+	res := C.gtk_native_dialog_run(dlg)
+
+	if res == C.GTK_RESPONSE_ACCEPT {
+		c := C.gtk_file_chooser_get_filename(C.toGtkFileChooser(p))
+		s := goString(c)
+		defer C.g_free((C.gpointer)(c))
+
+		return &s
+	}
+
+	return nil
+}
+
 // SetAcceptLabel is a wrapper around gtk_file_chooser_native_set_accept_label().
 func (v *FileChooserNativeDialog) SetAcceptLabel(accept_label string) {
 	cstr := C.CString(accept_label)
