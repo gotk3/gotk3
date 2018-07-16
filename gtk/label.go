@@ -42,7 +42,7 @@ func wrapLabel(obj *glib.Object) *Label {
 	return &Label{Widget{glib.InitiallyUnowned{obj}}}
 }
 
-func WidgetToLabel(widget *Widget) (interface{}, error)   {
+func WidgetToLabel(widget *Widget) (interface{}, error) {
 	obj := glib.Take(unsafe.Pointer(widget.GObject))
 	return wrapLabel(obj), nil
 }
@@ -132,7 +132,7 @@ func (v *Label) SetLineWrap(wrap bool) {
 }
 
 func (v *Label) SetFont(font string) {
-	C.gtk_widget_modify_font(v.Widget.native(), C.pango_font_description_from_string(C.CString(font)))
+	C.gtk_widget_override_font(v.Widget.native(), C.pango_font_description_from_string(C.CString(font)))
 }
 
 // SetLineWrapMode is a wrapper around gtk_label_set_line_wrap_mode().
