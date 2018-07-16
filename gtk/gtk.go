@@ -167,7 +167,7 @@ func init() {
 		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
 		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
 		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
-		{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
+		//{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
 		{glib.Type(C.gtk_separator_get_type()), marshalSeparator},
 		{glib.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
 		{glib.Type(C.gtk_separator_tool_item_get_type()), marshalSeparatorToolItem},
@@ -1578,6 +1578,12 @@ func (v *Button) SetAlwaysShowImage(alwaysShow bool) {
 func (v *Button) GetAlwaysShowImage() bool {
 	c := C.gtk_button_get_always_show_image(v.native())
 	return gobool(c)
+}
+
+func (v *Button) SetColor(color string) {
+	rgba := C.GdkRGBA{}
+	C.gdk_rgba_parse(&rgba, C.CString(color));
+	C.gtk_widget_override_background_color(v.toWidget(), C.GTK_STATE_FLAG_NORMAL, &rgba)
 }
 
 // GetEventWindow() is a wrapper around gtk_button_get_event_window().
@@ -4039,6 +4045,35 @@ func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
 	return &FileChooserDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}, *fc}
 }
 
+/*
+ * FileChooserNative
+ */
+func OpenFileChooserNative(title string, parent_window *Window) (*string) {
+	c_title := C.CString(title)
+
+	var native *C.GtkFileChooserNative;
+
+	native = C.gtk_file_chooser_native_new((*C.gchar)(c_title),
+		parent_window.native(),
+		C.GtkFileChooserAction(FILE_CHOOSER_ACTION_OPEN),
+		(*C.gchar)(C.CString("_Open")),
+		(*C.gchar)(C.CString("_Cancel")));
+
+	p := unsafe.Pointer(unsafe.Pointer(native))
+	dlg := C.toGtkNativeDialog(p)
+	res := C.gtk_native_dialog_run(dlg)
+
+	if res == C.GTK_RESPONSE_ACCEPT {
+		c := C.gtk_file_chooser_get_filename( C.toGtkFileChooser(p))
+		s := goString(c)
+		defer C.g_free((C.gpointer)(c))
+
+		return &s
+	}
+
+	return nil
+}
+
 // FileChooserDialogNewWith1Button is a wrapper around gtk_file_chooser_dialog_new() with one button.
 func FileChooserDialogNewWith1Button(
 	title string,
@@ -4559,8 +4594,7 @@ func ImageNewFromResource(resourcePath string) (*Image, error) {
 
 // ImageNewFromPixbuf is a wrapper around gtk_image_new_from_pixbuf().
 func ImageNewFromPixbuf(pixbuf *gdk.Pixbuf) (*Image, error) {
-	ptr := (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
-	c := C.gtk_image_new_from_pixbuf(ptr)
+	c := C.gtk_image_new_from_pixbuf((*C.GdkPixbuf)(pixbuf.NativePrivate()))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -6848,6 +6882,23 @@ func (v *SelectionData) GetData() (data []byte) {
 	return
 }
 
+//fixed GetData directly from ptr
+func GetData(pointer uintptr) (data []byte) {
+	c := (*C.GValue)(unsafe.Pointer(pointer))
+	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
+	C.gtk_selection_data_get_text(p)
+
+	var byteData []byte
+	var length C.gint
+	cptr := C.gtk_selection_data_get_data_with_length(p, &length)
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&byteData))
+	sliceHeader.Data = uintptr(unsafe.Pointer(cptr))
+	sliceHeader.Len = int(length)
+	sliceHeader.Cap = int(length)
+
+	return byteData
+}
+
 func (v *SelectionData) free() {
 	C.gtk_selection_data_free(v.native())
 }
@@ -7317,7 +7368,8 @@ func TargetEntryNew(target string, flags TargetFlags, info uint) (*TargetEntry, 
 		return nil, nilPtrErr
 	}
 	t := (*TargetEntry)(unsafe.Pointer(c))
-	runtime.SetFinalizer(t, (*TargetEntry).free)
+	// causes setFinilizer error
+	//	runtime.SetFinalizer(t, (*TargetEntry).free)
 	return t, nil
 }
 

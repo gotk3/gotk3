@@ -1226,6 +1226,14 @@ func (v *Pixbuf) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
+func (v *Pixbuf) NativePrivate() *C.GdkPixbuf {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkPixbuf(p)
+}
+
 func marshalPixbuf(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
@@ -1587,6 +1595,39 @@ func (v *PixbufLoader) Write(data []byte) (int, error) {
 
 	return len(data), nil
 }
+
+
+func (v *PixbufLoader) WriteAndReturnPixbuf(data []byte) (*Pixbuf, error) {
+
+	if len(data) == 0 {
+		return nil, errors.New("no data")
+	}
+
+	var err *C.GError
+	c := C.gdk_pixbuf_loader_write(v.native(), (*C.guchar)(unsafe.Pointer(&data[0])), C.gsize(len(data)), &err)
+
+	if !gobool(c) {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	v.Close()
+
+	c2 := C.gdk_pixbuf_loader_get_pixbuf(v.native())
+	if c2 == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c2))}
+	p := &Pixbuf{obj}
+	//obj.Ref() // Don't call Ref here, gdk_pixbuf_loader_get_pixbuf already did that for us.
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
+	return p, nil
+}
+
+
+
 
 // Close is a wrapper around gdk_pixbuf_loader_close().  An error is
 // returned instead of a bool like the native C function to support the

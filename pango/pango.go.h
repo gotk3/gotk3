@@ -26,7 +26,6 @@
 #include "pangocairo.go.h"
 
 
-
 static PangoRectangle *
 createPangoRectangle(int x, int y, int width, int height)
 {
