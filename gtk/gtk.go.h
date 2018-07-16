@@ -586,12 +586,6 @@ toGtkFileChooser(void *p)
 	return (GTK_FILE_CHOOSER(p));
 }
 
-static GtkNativeDialog *
-toGtkNativeDialog(void *p)
-{
-	return (GTK_NATIVE_DIALOG(p));
-}
-
 static GtkFileChooserButton *
 toGtkFileChooserButton(void *p)
 {

@@ -31,3 +31,9 @@ toGtkFileChooserNative(void *p)
 {
 	return (GTK_FILE_CHOOSER_NATIVE(p));
 }
+
+static GtkNativeDialog *
+toGtkNativeDialog(void *p)
+{
+	return (GTK_NATIVE_DIALOG(p));
+}
