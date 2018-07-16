@@ -39,7 +39,7 @@ type IColorChooser interface {
 	toColorChooser() *C.GtkColorChooser
 }
 
-// native returns a pointer to the underlying GtkAppChooser.
+// native returns a pointer to the underlying GtkColorChooser.
 func (v *ColorChooser) native() *C.GtkColorChooser {
 	if v == nil || v.GObject == nil {
 		return nil

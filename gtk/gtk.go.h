@@ -640,6 +640,12 @@ toGtkColorChooser(void *p)
 	return (GTK_COLOR_CHOOSER(p));
 }
 
+static GtkFontChooser *
+toGtkFontChooser(void *p)
+{
+	return (GTK_FONT_CHOOSER(p));
+}
+
 static GtkRecentFilter *
 toGtkRecentFilter(void *p)
 {

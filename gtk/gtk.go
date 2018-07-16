@@ -4193,6 +4193,9 @@ func (v *FileFilter) AddPixbufFormats() {
 // FontButton is a representation of GTK's GtkFontButton.
 type FontButton struct {
 	Button
+
+	// Interfaces
+	FontChooser
 }
 
 // native returns a pointer to the underlying GtkFontButton.
@@ -4211,8 +4214,9 @@ func marshalFontButton(p uintptr) (interface{}, error) {
 }
 
 func wrapFontButton(obj *glib.Object) *FontButton {
-	return &FontButton{Button{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}}
+	button := wrapButton(obj)
+	fc := wrapFontChooser(obj)
+	return &FontButton{*button,*fc}
 }
 
 // FontButtonNew is a wrapper around gtk_font_button_new().
@@ -4235,20 +4239,6 @@ func FontButtonNewWithFont(fontname string) (*FontButton, error) {
 	}
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapFontButton(obj), nil
-}
-
-// GetFontName is a wrapper around gtk_font_button_get_font_name().
-func (v *FontButton) GetFontName() string {
-	c := C.gtk_font_button_get_font_name(v.native())
-	return goString(c)
-}
-
-// SetFontName is a wrapper around gtk_font_button_set_font_name().
-func (v *FontButton) SetFontName(fontname string) bool {
-	cstr := C.CString(fontname)
-	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_font_button_set_font_name(v.native(), (*C.gchar)(cstr))
-	return gobool(c)
 }
 
 /*
