@@ -4,9 +4,9 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
-"unsafe"
+	"unsafe"
 
-"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/glib"
 )
 
 func init() {
@@ -78,7 +78,6 @@ func (v *FontChooser) SetFont(font string) {
 	C.gtk_font_chooser_set_font(v.native(), (*C.gchar)(cstr))
 }
 
-
 //PangoFontFamily *	gtk_font_chooser_get_font_family ()
 //PangoFontFace *	gtk_font_chooser_get_font_face ()
 //gint	gtk_font_chooser_get_font_size ()
@@ -123,7 +122,7 @@ func marshalFontButton(p uintptr) (interface{}, error) {
 func wrapFontButton(obj *glib.Object) *FontButton {
 	button := wrapButton(obj)
 	fc := wrapFontChooser(obj)
-	return &FontButton{*button,*fc}
+	return &FontButton{*button, *fc}
 }
 
 // FontButtonNew is a wrapper around gtk_font_button_new().
