@@ -20,10 +20,10 @@
 
 #include <stdlib.h>
 
-static GtkNativeDialog *
-toGtkNativeDialog(void *p)
+static GtkFileChooser *
+toGtkFileChooser(void *p)
 {
-	return (GTK_NATIVE_DIALOG(p));
+	return (GTK_FILE_CHOOSER(p));
 }
 
 static GtkFileChooserNative *
