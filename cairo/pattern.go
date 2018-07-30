@@ -11,93 +11,52 @@ import (
 	"unsafe"
 )
 
-/*
- * cairo_pattern_t
- */
+//--------------------------------------------[ cairo_pattern_t  ==  Pattern ]--
 
 // Pattern is a representation of Cairo's cairo_pattern_t.
 type Pattern struct {
 	pattern *C.cairo_pattern_t
 }
 
+// NewPatternFromRGB is a wrapper around cairo_pattern_create_rgb().
 func NewPatternFromRGB(red, green, blue float64) (*Pattern, error) {
-	patternNative := C.cairo_pattern_create_rgb(C.double(red), C.double(green), C.double(blue))
-	status := Status(C.cairo_pattern_status(patternNative))
-	if status != STATUS_SUCCESS {
-		return nil, ErrorStatus(status)
-	}
-	pattern := wrapPattern(patternNative)
-	runtime.SetFinalizer(pattern, (*Pattern).destroy)
-	return pattern, nil
+	c := C.cairo_pattern_create_rgb(C.double(red), C.double(green), C.double(blue))
+	return newPatternFromNative(c)
 }
 
+// NewPatternFromRGBA is a wrapper around cairo_pattern_create_rgba().
 func NewPatternFromRGBA(red, green, blue, alpha float64) (*Pattern, error) {
-	patternNative := C.cairo_pattern_create_rgba(C.double(red), C.double(green), C.double(blue), C.double(alpha))
-	status := Status(C.cairo_pattern_status(patternNative))
-	if status != STATUS_SUCCESS {
-		return nil, ErrorStatus(status)
-	}
-	pattern := wrapPattern(patternNative)
-	runtime.SetFinalizer(pattern, (*Pattern).destroy)
-	return pattern, nil
+	c := C.cairo_pattern_create_rgba(C.double(red), C.double(green), C.double(blue), C.double(alpha))
+	return newPatternFromNative(c)
 }
 
+// NewPatternForSurface is a wrapper around cairo_pattern_create_for_surface().
 func NewPatternForSurface(s *Surface) (*Pattern, error) {
-	patternNative := C.cairo_pattern_create_for_surface(s.native())
-	status := Status(C.cairo_pattern_status(patternNative))
-	if status != STATUS_SUCCESS {
-		return nil, ErrorStatus(status)
-	}
-	pattern := wrapPattern(patternNative)
-	runtime.SetFinalizer(pattern, (*Pattern).destroy)
-	return pattern, nil
+	c := C.cairo_pattern_create_for_surface(s.native())
+	return newPatternFromNative(c)
 }
 
+// NewPatternLinear is a wrapper around cairo_pattern_create_linear().
 func NewPatternLinear(x0, y0, x1, y1 float64) (*Pattern, error) {
-	patternNative := C.cairo_pattern_create_linear(C.double(x0), C.double(y0), C.double(x1), C.double(y1))
-	status := Status(C.cairo_pattern_status(patternNative))
-	if status != STATUS_SUCCESS {
-		return nil, ErrorStatus(status)
-	}
-	pattern := wrapPattern(patternNative)
-	runtime.SetFinalizer(pattern, (*Pattern).destroy)
-	return pattern, nil
+	c := C.cairo_pattern_create_linear(C.double(x0), C.double(y0), C.double(x1), C.double(y1))
+	return newPatternFromNative(c)
 }
 
+// NewPatternRadial is a wrapper around cairo_pattern_create_radial().
 func NewPatternRadial(x0, y0, r0, x1, y1, r1 float64) (*Pattern, error) {
-	patternNative := C.cairo_pattern_create_radial(C.double(x0), C.double(y0), C.double(r0),
+	c := C.cairo_pattern_create_radial(C.double(x0), C.double(y0), C.double(r0),
 		C.double(x1), C.double(y1), C.double(r1))
-	status := Status(C.cairo_pattern_status(patternNative))
-	if status != STATUS_SUCCESS {
-		return nil, ErrorStatus(status)
-	}
-	pattern := wrapPattern(patternNative)
-	runtime.SetFinalizer(pattern, (*Pattern).destroy)
-	return pattern, nil
+	return newPatternFromNative(c)
 }
 
-func (p *Pattern) AddColorStopRGB(offset, red, green, blue float64) error {
-	C.cairo_pattern_add_color_stop_rgb(p.native(), C.double(offset),
-		C.double(red), C.double(green), C.double(blue))
-	status := Status(C.cairo_pattern_status(p.native()))
-	if status != STATUS_SUCCESS {
-		return ErrorStatus(status)
+func newPatternFromNative(patternNative *C.cairo_pattern_t) (*Pattern, error) {
+	ptr := wrapPattern(patternNative)
+	e := ptr.Status().ToError()
+	if e != nil {
+		return nil, e
 	}
-	return nil
-}
-
-func (p *Pattern) AddColorStopRGBA(offset, red, green, blue, alpha float64) error {
-	C.cairo_pattern_add_color_stop_rgba(p.native(), C.double(offset),
-		C.double(red), C.double(green), C.double(blue), C.double(alpha))
-	status := Status(C.cairo_pattern_status(p.native()))
-	if status != STATUS_SUCCESS {
-		return ErrorStatus(status)
-	}
-	return nil
-}
-
-func (v *Context) SetSource(p *Pattern) {
-	C.cairo_set_source(v.native(), p.native())
+	runtime.SetFinalizer(ptr, (*Pattern).destroy)
+	return ptr, nil
 }
 
 // native returns a pointer to the underlying cairo_pattern_t.
@@ -137,4 +96,18 @@ func (v *Pattern) destroy() {
 func (v *Pattern) Status() Status {
 	c := C.cairo_pattern_status(v.native())
 	return Status(c)
+}
+
+// AddColorStopRGB is a wrapper around cairo_pattern_add_color_stop_rgb().
+func (v *Pattern) AddColorStopRGB(offset, red, green, blue float64) error {
+	C.cairo_pattern_add_color_stop_rgb(v.native(), C.double(offset),
+		C.double(red), C.double(green), C.double(blue))
+	return v.Status().ToError()
+}
+
+// AddColorStopRGBA is a wrapper around cairo_pattern_add_color_stop_rgba().
+func (v *Pattern) AddColorStopRGBA(offset, red, green, blue, alpha float64) error {
+	C.cairo_pattern_add_color_stop_rgba(v.native(), C.double(offset),
+		C.double(red), C.double(green), C.double(blue), C.double(alpha))
+	return v.Status().ToError()
 }

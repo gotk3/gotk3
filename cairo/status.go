@@ -6,6 +6,8 @@ package cairo
 // #include <cairo-gobject.h>
 import "C"
 import (
+	"errors"
+	"strings"
 	"unsafe"
 )
 
@@ -94,16 +96,30 @@ var key_Status = map[Status]string{
 }
 
 func StatusToString(status Status) string {
-
 	s, ok := key_Status[status]
 	if !ok {
 		s = "CAIRO_STATUS_UNDEFINED"
 	}
-
 	return s
 }
 
 func marshalStatus(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Status(c), nil
+}
+
+// String returns a readable status messsage usable in texts.
+func (s Status) String() string {
+	str := StatusToString(s)
+	str = strings.Replace(str, "CAIRO_STATUS_", "", 1)
+	str = strings.Replace(str, "_", " ", 0)
+	return strings.ToLower(str)
+}
+
+// ToError returns the error for the status. Returns nil if success.
+func (s Status) ToError() error {
+	if s == STATUS_SUCCESS {
+		return nil
+	}
+	return errors.New(s.String())
 }
