@@ -83,8 +83,7 @@ func (v *Surface) Native() uintptr {
 
 func marshalSurface(p uintptr) (interface{}, error) {
 	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
-	surface := (*C.cairo_surface_t)(unsafe.Pointer(c))
-	return wrapSurface(surface), nil
+	return WrapSurface(uintptr(c)), nil
 }
 
 func wrapSurface(surface *C.cairo_surface_t) *Surface {
@@ -95,13 +94,17 @@ func wrapSurface(surface *C.cairo_surface_t) *Surface {
 // C cairo_surface_t.  This is primarily designed for use with other
 // gotk3 packages and should be avoided by applications.
 func NewSurface(s uintptr, needsRef bool) *Surface {
-	ptr := (*C.cairo_surface_t)(unsafe.Pointer(s))
-	surface := wrapSurface(ptr)
+	surface := WrapSurface(s)
 	if needsRef {
 		surface.reference()
 	}
 	runtime.SetFinalizer(surface, (*Surface).destroy)
 	return surface
+}
+
+func WrapSurface(s uintptr) *Surface {
+	ptr := (*C.cairo_surface_t)(unsafe.Pointer(s))
+	return wrapSurface(ptr)
 }
 
 // Closes the surface. The surface must not be used afterwards.
@@ -256,3 +259,18 @@ func (v *Surface) WriteToPNG(fileName string) error {
 // TODO(jrick) MapToImage (since 1.12)
 
 // TODO(jrick) UnmapImage (since 1.12)
+
+// GetHeight is a wrapper around cairo_image_surface_get_height().
+func (v *Surface) GetHeight() int {
+	return int(C.cairo_image_surface_get_height(v.surface))
+}
+
+// GetWidth is a wrapper around cairo_image_surface_get_width().
+func (v *Surface) GetWidth() int {
+	return int(C.cairo_image_surface_get_width(v.surface))
+}
+
+// GetData is a wrapper around cairo_image_surface_get_data().
+func (v *Surface) GetData() unsafe.Pointer {
+	return unsafe.Pointer(C.cairo_image_surface_get_data(v.surface))
+}
