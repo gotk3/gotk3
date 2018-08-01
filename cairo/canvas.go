@@ -126,6 +126,11 @@ func (v *Context) GetGroupTarget() *Surface {
 	return s
 }
 
+// SetSource is a wrapper around cairo_set_source().
+func (v *Context) SetSource(p *Pattern) {
+	C.cairo_set_source(v.native(), p.native())
+}
+
 // SetSourceRGB is a wrapper around cairo_set_source_rgb().
 func (v *Context) SetSourceRGB(red, green, blue float64) {
 	C.cairo_set_source_rgb(v.native(), C.double(red), C.double(green),
@@ -411,4 +416,13 @@ func (v *Context) CopyPage() {
 // ShowPage is a wrapper around cairo_show_page().
 func (v *Context) ShowPage() {
 	C.cairo_show_page(v.native())
+}
+
+// IdentityMatrix is a wrapper around cairo_identity_matrix().
+//
+// Resets the current transformation matrix (CTM) by setting it equal to the
+// identity matrix. That is, the user-space and device-space axes will be
+// aligned and one user-space unit will transform to one device-space unit.
+func (v *Context) IdentityMatrix() {
+	C.cairo_identity_matrix(v.native())
 }
