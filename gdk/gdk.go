@@ -1596,7 +1596,6 @@ func (v *PixbufLoader) Write(data []byte) (int, error) {
 	return len(data), nil
 }
 
-
 func (v *PixbufLoader) WriteAndReturnPixbuf(data []byte) (*Pixbuf, error) {
 
 	if len(data) == 0 {
@@ -1625,9 +1624,6 @@ func (v *PixbufLoader) WriteAndReturnPixbuf(data []byte) (*Pixbuf, error) {
 
 	return p, nil
 }
-
-
-
 
 // Close is a wrapper around gdk_pixbuf_loader_close().  An error is
 // returned instead of a bool like the native C function to support the
@@ -1667,8 +1663,11 @@ type RGBA struct {
 
 func marshalRGBA(p uintptr) (interface{}, error) {
 	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
-	c2 := (*C.GdkRGBA)(unsafe.Pointer(c))
-	return wrapRGBA(c2), nil
+	return WrapRGBA(unsafe.Pointer(c)), nil
+}
+
+func WrapRGBA(p unsafe.Pointer) *RGBA {
+	return wrapRGBA((*C.GdkRGBA)(p))
 }
 
 func wrapRGBA(obj *C.GdkRGBA) *RGBA {
@@ -1695,6 +1694,14 @@ func NewRGBA(values ...float64) *RGBA {
 
 func (c *RGBA) Floats() []float64 {
 	return []float64{float64(c.rgba.red), float64(c.rgba.green), float64(c.rgba.blue), float64(c.rgba.alpha)}
+}
+
+// SetColors sets all colors values in the RGBA.
+func (c *RGBA) SetColors(r, g, b, a float64) {
+	c.rgba.red = C.gdouble(r)
+	c.rgba.green = C.gdouble(g)
+	c.rgba.blue = C.gdouble(b)
+	c.rgba.alpha = C.gdouble(a)
 }
 
 func (v *RGBA) Native() uintptr {
