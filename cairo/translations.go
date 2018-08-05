@@ -23,12 +23,12 @@ func (v *Context) Rotate(angle float64) {
 
 // Transform is a wrapper around cairo_transform.
 func (v *Context) Transform(matrix *Matrix) {
-	C.cairo_transform(v.native(), matrix.Native())
+	C.cairo_transform(v.native(), matrix.native())
 }
 
 // SetMatrix is a wrapper around cairo_set_matrix.
 func (v *Context) SetMatrix(matrix *Matrix) {
-	C.cairo_set_matrix(v.native(), matrix.Native())
+	C.cairo_set_matrix(v.native(), matrix.native())
 }
 
 // GetMatrix is a wrapper around cairo_get_matrix.
