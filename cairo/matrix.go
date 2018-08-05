@@ -1,6 +1,9 @@
 package cairo
 
-// #include <cairo/cairo.h>
+// #cgo pkg-config: cairo cairo-gobject
+// #include <stdlib.h>
+// #include <cairo.h>
+// #include <cairo-gobject.h>
 import "C"
 
 import (
