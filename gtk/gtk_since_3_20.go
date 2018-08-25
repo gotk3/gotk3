@@ -63,12 +63,12 @@ func (v *NativeDialog) GetModal() bool {
 func (v *NativeDialog) SetTitle(title string) {
 	cstr := C.CString(title)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_native_dialog_set_title(v.native(), (*C.gchar)(cstr))
+	C.gtk_native_dialog_set_title(v.native(), (*C.char)(cstr))
 }
 
 // GetTitle() is a wrapper around gtk_native_dialog_get_title().
 func (v *NativeDialog) GetTitle() (string, error) {
-	return stringReturn(C.gtk_native_dialog_get_title(v.native()))
+	return stringReturn((*C.gchar)(C.gtk_native_dialog_get_title(v.native())))
 }
 
 // SetTransientFor() is a wrapper around gtk_native_dialog_set_transient_for().
@@ -187,28 +187,28 @@ func OpenFileChooserNative(title string, parent_window *Window) *string {
 func (v *FileChooserNativeDialog) SetAcceptLabel(accept_label string) {
 	cstr := C.CString(accept_label)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_file_chooser_native_set_accept_label(v.native(), (*C.gchar)(cstr))
+	C.gtk_file_chooser_native_set_accept_label(v.native(), (*C.char)(cstr))
 }
 
 // GetAcceptLabel() is a wrapper around gtk_file_chooser_native_get_accept_label().
 func (v *FileChooserNativeDialog) GetAcceptLabel() (string, error) {
-	return stringReturn(C.gtk_file_chooser_native_get_accept_label(v.native()))
+	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_accept_label(v.native())))
 }
 
 // SetCancelLabel is a wrapper around gtk_file_chooser_native_set_cancel_label().
 func (v *FileChooserNativeDialog) SetCancelLabel(cancel_label string) {
 	cstr := C.CString(cancel_label)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_file_chooser_native_set_cancel_label(v.native(), (*C.gchar)(cstr))
+	C.gtk_file_chooser_native_set_cancel_label(v.native(), (*C.char)(cstr))
 }
 
 // GetCancelLabel() is a wrapper around gtk_file_chooser_native_get_cancel_label().
 func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
-	return stringReturn(C.gtk_file_chooser_native_get_cancel_label(v.native()))
+	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_cancel_label(v.native())))
 }
 
 func (v *Button) SetColor(color string) {
 	rgba := C.GdkRGBA{}
-	C.gdk_rgba_parse(&rgba, C.CString(color))
+	C.gdk_rgba_parse(&rgba, (*C.gchar)(C.CString(color)))
 	C.gtk_widget_override_background_color(v.toWidget(), C.GTK_STATE_FLAG_NORMAL, &rgba)
 }
