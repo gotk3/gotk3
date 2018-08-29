@@ -417,12 +417,3 @@ func (v *Context) CopyPage() {
 func (v *Context) ShowPage() {
 	C.cairo_show_page(v.native())
 }
-
-// IdentityMatrix is a wrapper around cairo_identity_matrix().
-//
-// Resets the current transformation matrix (CTM) by setting it equal to the
-// identity matrix. That is, the user-space and device-space axes will be
-// aligned and one user-space unit will transform to one device-space unit.
-func (v *Context) IdentityMatrix() {
-	C.cairo_identity_matrix(v.native())
-}

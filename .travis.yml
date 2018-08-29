@@ -6,6 +6,8 @@ go:
   - "1.10"
   - "tip"
 
+go_import_path: github.com/gotk3/gotk3
+
 env:
   - GOARCH=amd64
 
@@ -23,9 +25,6 @@ before_install:
   - "export Cairo_VERSION=$(pkg-config --modversion cairo)"
   - "export Pango_VERSION=$(pkg-config --modversion pango)"
   - echo "GTK version ${GTK_VERSION} (Glib ${Glib_VERSION}, Cairo ${Cairo_VERSION}, Pango ${Pango_VERSION})"
-# hack for building on forks -> move to original repo name:
-  - RepoName=`basename $PWD`; SrcDir=`dirname $PWD`; DestDir="`dirname $SrcDir`/gotk3"
-  - if [[ "$SrcDir" != "$DestDir" ]]; then mv "$SrcDir" "$DestDir"; cd ../../gotk3/$RepoName; export TRAVIS_BUILD_DIR=`dirname $TRAVIS_BUILD_DIR`/$RepoName; fi
 
 install:
   - go get -t -tags "gtk_${GTK_VERSION}" ./...
