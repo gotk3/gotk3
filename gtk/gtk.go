@@ -3831,7 +3831,7 @@ func wrapFileChooser(obj *glib.Object) *FileChooser {
 func (v *FileChooser) SetFilename(filename string) bool {
 	cstr := C.CString(filename)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_file_chooser_set_filename(v.native(), (*C.gchar)(cstr))
+	c := C.gtk_file_chooser_set_filename(v.native(), cstr)
 	return gobool(c)
 }
 
