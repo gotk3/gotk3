@@ -1070,6 +1070,24 @@ func (v *EventMotion) MotionValRoot() (float64, float64) {
 	return float64(x), float64(y)
 }
 
+// Time returns the time of the event in milliseconds.
+func (v *EventMotion) Time() uint32 {
+	c := v.native().time
+	return uint32(c)
+}
+
+func (v *EventMotion) Type() EventType {
+	c := v.native()._type
+	return EventType(c)
+}
+
+// A bit-mask representing the state of the modifier keys (e.g. Control, Shift
+// and Alt) and the pointer buttons. See gdk.ModifierType constants.
+func (v *EventMotion) State() ModifierType {
+	c := v.native().state
+	return ModifierType(c)
+}
+
 /*
  * GdkEventScroll
  */
