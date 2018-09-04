@@ -3827,6 +3827,14 @@ func wrapFileChooser(obj *glib.Object) *FileChooser {
 	return &FileChooser{obj}
 }
 
+// SetFilename is a wrapper around gtk_file_chooser_set_filename().
+func (v *FileChooser) SetFilename(filename string) bool {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_file_chooser_set_filename(v.native(), cstr)
+	return gobool(c)
+}
+
 // GetFilename is a wrapper around gtk_file_chooser_get_filename().
 func (v *FileChooser) GetFilename() string {
 	c := C.gtk_file_chooser_get_filename(v.native())
