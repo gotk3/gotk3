@@ -328,6 +328,12 @@ toGtkMenuBar(void *p)
 	return (GTK_MENU_BAR(p));
 }
 
+static GtkShortcutsWindow *
+toGtkShortcutsWindow(void *p)
+{
+	return (GTK_SHORTCUTS_WINDOW(p));
+}
+
 static GtkSizeGroup *
 toGtkSizeGroup(void *p)
 {
