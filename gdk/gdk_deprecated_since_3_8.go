@@ -14,7 +14,7 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-// This file includes wrapers for symbols deprecated beginning with GTK 3.10,
+// This file includes wrappers for symbols deprecated beginning with GTK 3.10,
 // and should only be included in a build targeted intended to target GTK
 // 3.8 or earlier.  To target an earlier build build, use the build tag
 // gtk_MAJOR_MINOR.  For example, to target GTK 3.8, run
