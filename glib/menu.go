@@ -174,6 +174,24 @@ func (v *Menu) AppendSection(label string, section *MenuModel) {
 	C.g_menu_append_section(v.native(), cstr1, section.native())
 }
 
+// InsertSectionWithoutLabel is a wrapper around g_menu_insert_section()
+// with label set to null.
+func (v *Menu) InsertSectionWithoutLabel(position int, section *MenuModel) {
+	C.g_menu_insert_section(v.native(), C.gint(position), nil, section.native())
+}
+
+// PrependSectionWithoutLabel is a wrapper around
+// g_menu_prepend_section() with label set to null.
+func (v *Menu) PrependSectionWithoutLabel(section *MenuModel) {
+	C.g_menu_prepend_section(v.native(), nil, section.native())
+}
+
+// AppendSectionWithoutLabel is a wrapper around g_menu_append_section()
+// with label set to null.
+func (v *Menu) AppendSectionWithoutLabel(section *MenuModel) {
+	C.g_menu_append_section(v.native(), nil, section.native())
+}
+
 // InsertSubmenu is a wrapper around g_menu_insert_submenu().
 func (v *Menu) InsertSubmenu(position int, label string, submenu *MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(label))
