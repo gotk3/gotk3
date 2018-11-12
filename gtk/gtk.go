@@ -8579,6 +8579,16 @@ func (v *TreeSelection) GetMode() SelectionMode {
 	return SelectionMode(C.gtk_tree_selection_get_mode(v.native()))
 }
 
+// SelectAll() is a wrapper around gtk_tree_selection_select_all()
+func (v *TreeSelection) SelectAll() {
+	C.gtk_tree_selection_select_all(v.native())
+}
+
+// UnelectAll() is a wrapper around gtk_tree_selection_unselect_all()
+func (v *TreeSelection) UnselectAll() {
+	C.gtk_tree_selection_unselect_all(v.native())
+}
+
 /*
  * GtkTreeStore
  */
