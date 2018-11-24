@@ -58,4 +58,10 @@ toGtkStackSwitcher(void *p)
 	return (GTK_STACK_SWITCHER(p));
 }
 
-
+extern gboolean goListBoxFilterFuncs (GtkListBoxRow *row,
+                                    gpointer user_data);
+
+static inline void _gtk_list_box_set_filter_func(GtkListBox *box, gpointer user_data) {
+    gtk_list_box_set_filter_func(box, (GtkListBoxFilterFunc)(goListBoxFilterFuncs), user_data, NULL);
+}
+
