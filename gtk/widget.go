@@ -60,8 +60,6 @@ func (v *Widget) toWidget() *C.GtkWidget {
 	return v.native()
 }
 
-
-
 func marshalWidget(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := glib.Take(unsafe.Pointer(c))

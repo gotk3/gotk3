@@ -125,4 +125,3 @@ func (v *StackSidebar) GetStack() *Stack {
 func (v *Entry) GrabFocusWithoutSelecting() {
 	C.gtk_entry_grab_focus_without_selecting(v.native())
 }
-

@@ -30,13 +30,13 @@ import (
 
 func init() {
 	tm := []glib.TypeMarshaler{
-	// Enums
-	//		{glib.Type(C.pango_alignment_get_type()), marshalAlignment},
-	//		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
-	//		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
+		// Enums
+		//		{glib.Type(C.pango_alignment_get_type()), marshalAlignment},
+		//		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
+		//		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
 
-	// Objects/Interfaces
-	// {glib.Type(C.pango_context_get_type()), marshalContext},
+		// Objects/Interfaces
+		// {glib.Type(C.pango_context_get_type()), marshalContext},
 	}
 	glib.RegisterGValueMarshalers(tm)
 }

@@ -111,7 +111,6 @@ func wrapShortcutsGroup(obj *glib.Object) *ShortcutsGroup {
 	return &ShortcutsGroup{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
-
 /*
  * GtkShortcutsShortcut
  */

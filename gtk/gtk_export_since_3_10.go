@@ -23,4 +23,3 @@ func goListBoxFilterFuncs(row *C.GtkListBoxRow, userData C.gpointer) C.gboolean 
 
 	return gbool(r.fn(wrapListBoxRow(glib.Take(unsafe.Pointer(row))), r.userData))
 }
-
