@@ -3853,7 +3853,7 @@ func (v *FileChooser) GetFilenames() (*glib.SList, error) {
 }
 
 // GetURIs is a wrapper around gtk_file_chooser_get_uris().
-func (v FileChooser) GetURIs() (glib.SList, error) {
+func (v FileChooser) GetURIs() (*glib.SList, error) {
 	c := C.gtk_file_chooser_get_uris(v.native())
 	if c == nil {
 		return nil, nilPtrErr
