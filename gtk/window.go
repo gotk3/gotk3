@@ -198,7 +198,7 @@ func (v *Window) SetFocus(w *Widget) {
 	C.gtk_window_set_focus(v.native(), w.native())
 }
 
-// GetDefaultWidget is a wrapper arround gtk_window_get_default_widget().
+// GetDefaultWidget is a wrapper around gtk_window_get_default_widget().
 func (v *Window) GetDefaultWidget() *Widget {
 	c := C.gtk_window_get_default_widget(v.native())
 	if c == nil {
@@ -208,7 +208,7 @@ func (v *Window) GetDefaultWidget() *Widget {
 	return wrapWidget(obj)
 }
 
-// SetDefault is a wrapper arround gtk_window_set_default().
+// SetDefault is a wrapper around gtk_window_set_default().
 func (v *Window) SetDefault(widget IWidget) {
 	C.gtk_window_set_default(v.native(), widget.toWidget())
 }
@@ -617,7 +617,7 @@ func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
 // TODO gtk_window_get_window_type().
 // TODO gtk_window_list_toplevels().
 // TODO gtk_window_parse_geometry().
-// TODO gtk_window_propogate_key_event().
+// TODO gtk_window_propagate_key_event().
 // TODO gtk_window_set_attached_to().
 // TODO gtk_window_set_default_icon_list().
 // TODO gtk_window_set_icon_list().

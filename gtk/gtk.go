@@ -20,7 +20,7 @@
 // CamelCase.  In cases where native GTK uses pointers to values to
 // simulate multiple return values, Go's native multiple return values
 // are used instead.  Whenever a native GTK call could return an
-// unexpected NULL pointer, an additonal error is returned in the Go
+// unexpected NULL pointer, an additional error is returned in the Go
 // binding.
 //
 // GTK's C API documentation can be very useful for understanding how the
@@ -2129,7 +2129,7 @@ func (v *CellRendererToggle) GetRadio() bool {
 	return gobool(c)
 }
 
-// SetActive is a wrapper arround gtk_cell_renderer_toggle_set_active().
+// SetActive is a wrapper around gtk_cell_renderer_toggle_set_active().
 func (v *CellRendererToggle) SetActive(active bool) {
 	C.gtk_cell_renderer_toggle_set_active(v.native(), gbool(active))
 }
@@ -7341,7 +7341,7 @@ func (v *TargetEntry) native() *C.GtkTargetEntry {
 	return (*C.GtkTargetEntry)(unsafe.Pointer(v))
 }
 
-// TargetEntryNew is a wrapper aroud gtk_target_entry_new().
+// TargetEntryNew is a wrapper around gtk_target_entry_new().
 func TargetEntryNew(target string, flags TargetFlags, info uint) (*TargetEntry, error) {
 	cstr := C.CString(target)
 	defer C.free(unsafe.Pointer(cstr))
@@ -7897,7 +7897,7 @@ func (v *ToolButton) SetLabel(label string) {
 	C.gtk_tool_button_set_label(v.native(), (*C.gchar)(cstr))
 }
 
-// GetLabel is a wrapper aroud gtk_tool_button_get_label().
+// GetLabel is a wrapper around gtk_tool_button_get_label().
 func (v *ToolButton) GetLabel() string {
 	c := C.gtk_tool_button_get_label(v.native())
 	return goString(c)

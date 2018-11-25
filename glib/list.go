@@ -140,7 +140,7 @@ func (v *List) Data() interface{} {
 }
 
 // Foreach acts the same as g_list_foreach().
-// No user_data arguement is implemented because of Go clojure capabilities.
+// No user_data argument is implemented because of Go clojure capabilities.
 func (v *List) Foreach(fn func(item interface{})) {
 	for l := v; l != nil; l = l.Next() {
 		fn(l.Data())

@@ -9,7 +9,7 @@ import (
 // Should be implemented by  any class which need special conversion like
 // gtk.Application -> gio.Application
 type IGlibConvert interface {
-	//  If convertion can't be done, function have to panic with a message that it can't convert to type
+	//  If conversion can't be done, the function has to panic with a message that it can't convert to type
 	Convert(reflect.Type) reflect.Value
 }
 

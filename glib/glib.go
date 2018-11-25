@@ -1045,7 +1045,7 @@ func GValue(v interface{}) (gvalue *Value, err error) {
 }
 
 // GValueMarshaler is a marshal function to convert a GValue into an
-// appropiate Go type.  The uintptr parameter is a *C.GValue.
+// appropriate Go type.  The uintptr parameter is a *C.GValue.
 type GValueMarshaler func(uintptr) (interface{}, error)
 
 // TypeMarshaler represents an actual type and it's associated marshaler.
