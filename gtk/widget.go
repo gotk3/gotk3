@@ -625,3 +625,13 @@ func (v *Widget) GetPreferredWidth() (int, int) {
 func (v *Widget) InsertActionGroup(name string, group glib.IActionGroup) {
 	C.gtk_widget_insert_action_group(v.native(), (*C.gchar)(C.CString(name)), C.toGActionGroup(unsafe.Pointer(group.Native())))
 }
+
+// GetScreen is a wrapper around gtk_widget_get_screen().
+func (v *Widget) GetScreen() (*gdk.Screen, error) {
+	c := C.gtk_widget_get_screen(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	s := &gdk.Screen{glib.Take(unsafe.Pointer(c))}
+	return s, nil
+}
