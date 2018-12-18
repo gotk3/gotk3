@@ -105,17 +105,6 @@ func (v *Window) SetDefaultSize(width, height int) {
 	C.gtk_window_set_default_size(v.native(), C.gint(width), C.gint(height))
 }
 
-// GetScreen is a wrapper around gtk_window_get_screen().
-func (v *Window) GetScreen() (*gdk.Screen, error) {
-	c := C.gtk_window_get_screen(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	s := &gdk.Screen{glib.Take(unsafe.Pointer(c))}
-	return s, nil
-}
-
 // SetIcon is a wrapper around gtk_window_set_icon().
 func (v *Window) SetIcon(icon *gdk.Pixbuf) {
 	iconPtr := (*C.GdkPixbuf)(unsafe.Pointer(icon.Native()))
