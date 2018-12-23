@@ -1445,6 +1445,9 @@ func (b *Builder) ConnectSignals(signals map[string]interface{}) {
 // Button is a representation of GTK's GtkButton.
 type Button struct {
 	Bin
+
+	// Interfaces
+	IActionable
 }
 
 // native() returns a pointer to the underlying GtkButton.
@@ -1463,7 +1466,8 @@ func marshalButton(p uintptr) (interface{}, error) {
 }
 
 func wrapButton(obj *glib.Object) *Button {
-	return &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+	actionable := &Actionable{obj}
+	return &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}
 }
 
 // ButtonNew() is a wrapper around gtk_button_new().
@@ -1614,8 +1618,9 @@ func (v *ColorButton) native() *C.GtkColorButton {
 
 func wrapColorButton(obj *glib.Object) *ColorButton {
 	cc := wrapColorChooser(obj)
+	actionable := wrapActionable(obj)
 	return &ColorButton{Button{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}, *cc}
+		glib.InitiallyUnowned{obj}}}}, actionable}, *cc}
 }
 
 // ColorButtonNew is a wrapper around gtk_color_button_new().
@@ -2177,8 +2182,9 @@ func marshalCheckButton(p uintptr) (interface{}, error) {
 }
 
 func wrapCheckButton(obj *glib.Object) *CheckButton {
+	actionable := wrapActionable(obj)
 	return &CheckButton{ToggleButton{Button{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}}}
+		glib.InitiallyUnowned{obj}}}}, actionable}}}
 }
 
 // CheckButtonNew is a wrapper around gtk_check_button_new().
@@ -2811,7 +2817,7 @@ func (v *Dialog) AddButton(text string, id ResponseType) (*Button, error) {
 		return nil, nilPtrErr
 	}
 	obj := glib.Take(unsafe.Pointer(c))
-	return &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}, nil
+	return wrapButton(obj), nil
 }
 
 // AddActionWidget() is a wrapper around gtk_dialog_add_action_widget().
@@ -4806,8 +4812,9 @@ func marshalLinkButton(p uintptr) (interface{}, error) {
 }
 
 func wrapLinkButton(obj *glib.Object) *LinkButton {
+	actionable := wrapActionable(obj)
 	return &LinkButton{Button{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}}
+		glib.InitiallyUnowned{obj}}}}, actionable}}
 }
 
 // LinkButtonNew is a wrapper around gtk_link_button_new().
@@ -5133,8 +5140,9 @@ func marshalMenuButton(p uintptr) (interface{}, error) {
 }
 
 func wrapMenuButton(obj *glib.Object) *MenuButton {
+	actionable := wrapActionable(obj)
 	return &MenuButton{ToggleButton{Button{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}}}
+		glib.InitiallyUnowned{obj}}}}, actionable}}}
 }
 
 // MenuButtonNew is a wrapper around gtk_menu_button_new().
@@ -6056,8 +6064,9 @@ func marshalRadioButton(p uintptr) (interface{}, error) {
 }
 
 func wrapRadioButton(obj *glib.Object) *RadioButton {
+	actionable := wrapActionable(obj)
 	return &RadioButton{CheckButton{ToggleButton{Button{Bin{Container{
-		Widget{glib.InitiallyUnowned{obj}}}}}}}}
+		Widget{glib.InitiallyUnowned{obj}}}}, actionable}}}}
 }
 
 // RadioButtonNew is a wrapper around gtk_radio_button_new().
@@ -6549,7 +6558,8 @@ func marshalScaleButton(p uintptr) (interface{}, error) {
 }
 
 func wrapScaleButton(obj *glib.Object) *ScaleButton {
-	return &ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+	actionable := wrapActionable(obj)
+	return &ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}
 }
 
 // ScaleButtonNew() is a wrapper around gtk_scale_button_new().
@@ -7665,8 +7675,9 @@ func marshalToggleButton(p uintptr) (interface{}, error) {
 }
 
 func wrapToggleButton(obj *glib.Object) *ToggleButton {
+	actionable := wrapActionable(obj)
 	return &ToggleButton{Button{Bin{Container{Widget{
-		glib.InitiallyUnowned{obj}}}}}}
+		glib.InitiallyUnowned{obj}}}}, actionable}}
 }
 
 // ToggleButtonNew is a wrapper around gtk_toggle_button_new().
@@ -8805,7 +8816,8 @@ func marshalVolumeButton(p uintptr) (interface{}, error) {
 }
 
 func wrapVolumeButton(obj *glib.Object) *VolumeButton {
-	return &VolumeButton{ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
+	actionable := wrapActionable(obj)
+	return &VolumeButton{ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}}
 }
 
 // VolumeButtonNew() is a wrapper around gtk_button_new().
