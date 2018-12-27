@@ -2634,30 +2634,6 @@ func GdkCairoSetSourcePixBuf(cr *cairo.Context, pixbuf *gdk.Pixbuf, pixbufX, pix
 	C.gdk_cairo_set_source_pixbuf(context, ptr, C.gdouble(pixbufX), C.gdouble(pixbufY))
 }
 
-// GetFocusChain is a wrapper around gtk_container_get_focus_chain().
-func (v *Container) GetFocusChain() ([]*Widget, bool) {
-	var cwlist *C.GList
-	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
-
-	var widgets []*Widget
-	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
-	for ; wlist.Data() != nil; wlist = wlist.Next() {
-		widgets = append(widgets, wrapWidget(glib.Take(wlist.Data().(unsafe.Pointer))))
-	}
-	return widgets, gobool(c)
-}
-
-// SetFocusChain is a wrapper around gtk_container_set_focus_chain().
-func (v *Container) SetFocusChain(focusableWidgets []IWidget) {
-	var list *glib.List
-	for _, w := range focusableWidgets {
-		data := uintptr(unsafe.Pointer(w.toWidget()))
-		list = list.Append(data)
-	}
-	glist := (*C.GList)(unsafe.Pointer(list))
-	C.gtk_container_set_focus_chain(v.native(), glist)
-}
-
 /*
  * GtkCssProvider
  */
@@ -2728,17 +2704,6 @@ func (v *CssProvider) ToString() (string, error) {
 		return "", nilPtrErr
 	}
 	return C.GoString(c), nil
-}
-
-// CssProviderGetDefault is a wrapper around gtk_css_provider_get_default().
-func CssProviderGetDefault() (*CssProvider, error) {
-	c := C.gtk_css_provider_get_default()
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapCssProvider(obj), nil
 }
 
 // GetNamed is a wrapper around gtk_css_provider_get_named().

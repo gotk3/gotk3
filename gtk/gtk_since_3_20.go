@@ -206,9 +206,3 @@ func (v *FileChooserNativeDialog) SetCancelLabel(cancel_label string) {
 func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
 	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_cancel_label(v.native())))
 }
-
-func (v *Button) SetColor(color string) {
-	rgba := C.GdkRGBA{}
-	C.gdk_rgba_parse(&rgba, (*C.gchar)(C.CString(color)))
-	C.gtk_widget_override_background_color(v.toWidget(), C.GTK_STATE_FLAG_NORMAL, &rgba)
-}
