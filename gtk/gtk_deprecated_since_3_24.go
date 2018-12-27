@@ -9,7 +9,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/d2r2/gotk3/glib"
+	"github.com/gotk3/gotk3/glib"
 )
 
 // GetFocusChain is a wrapper around gtk_container_get_focus_chain().
