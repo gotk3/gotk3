@@ -42,7 +42,6 @@ func CssProviderGetDefault() (*CssProvider, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapCssProvider(obj), nil
 }
