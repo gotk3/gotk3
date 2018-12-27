@@ -27,7 +27,7 @@ func (v *Widget) OverrideBackgroundColor(state StateFlags, color *gdk.RGBA) {
 	if color != nil {
 		cColor = (*C.GdkRGBA)(unsafe.Pointer(color.Native()))
 	}
-	C.gtk_widget_override_background_color(v.native(), C.GtkStateFlags(state), &rgba)
+	C.gtk_widget_override_background_color(v.native(), C.GtkStateFlags(state), cColor)
 }
 
 // OverrideFont is a wrapper around gtk_widget_override_font().
