@@ -202,3 +202,6 @@ For detailed instructions see the wiki pages: [installation](https://github.com/
 ## License
 
 Package gotk3 is licensed under the liberal ISC License.
+
+Actually if you use gotk3, then gotk3 is statically linked into your application (with the ISC licence).
+The system libraries (e.g. GTK+, GLib) used via cgo use dynamic linking.
