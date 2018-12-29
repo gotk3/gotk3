@@ -401,6 +401,11 @@ func (v *TextView) ResetImContext() {
 	C.gtk_text_view_reset_im_context(v.native())
 }
 
+// AddChildAtAnchor is a wrapper around gtk_text_view_add_child_at_anchor().
+func (v *TextView) AddChildAtAnchor(child IWidget, anchor *TextChildAnchor) {
+	C.gtk_text_view_add_child_at_anchor(v.native(), child.toWidget(), anchor.native())
+}
+
 // GtkAdjustment * 	gtk_text_view_get_hadjustment ()  -- DEPRECATED
 // GtkAdjustment * 	gtk_text_view_get_vadjustment ()  -- DEPRECATED
 // void 	gtk_text_view_add_child_at_anchor ()

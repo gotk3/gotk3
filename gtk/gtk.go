@@ -7535,6 +7535,14 @@ func (v *TextBuffer) ApplyTagByName(name string, start, end *TextIter) {
 		(*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
 }
 
+// CreateChildAnchor() is a wrapper around gtk_text_buffer_create_child_anchor().
+// Since it copies garbage from the stack into the padding bytes of iter,
+// iter can't be reliably reused after this call unless GODEBUG=cgocheck=0.
+func (v *TextBuffer) CreateChildAnchor(iter *TextIter) *TextChildAnchor {
+	ret := C.gtk_text_buffer_create_child_anchor(v.native(), iter.native())
+	return (*TextChildAnchor)(ret)
+}
+
 // Delete() is a wrapper around gtk_text_buffer_delete().
 func (v *TextBuffer) Delete(start, end *TextIter) {
 	C.gtk_text_buffer_delete(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
