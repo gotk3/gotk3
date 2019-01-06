@@ -31,7 +31,9 @@ func (v *Widget) OverrideBackgroundColor(state StateFlags, color *gdk.RGBA) {
 }
 
 func (v *Button) SetColor(color string) {
-	v.OverrideBackgroundColor(gtk.STATE_FLAG_NORMAL, color)
+	rgba := C.GdkRGBA{}
+	C.gdk_rgba_parse(&rgba, (*C.gchar)(C.CString(color)))
+	C.gtk_widget_override_background_color(v.toWidget(), C.GTK_STATE_FLAG_NORMAL, &rgba)
 }
 
 // OverrideFont is a wrapper around gtk_widget_override_font().
