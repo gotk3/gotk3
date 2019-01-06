@@ -131,10 +131,6 @@ func (v *Label) SetLineWrap(wrap bool) {
 	C.gtk_label_set_line_wrap(v.native(), gbool(wrap))
 }
 
-func (v *Label) SetFont(font string) {
-	C.gtk_widget_override_font(v.Widget.native(), C.pango_font_description_from_string(C.CString(font)))
-}
-
 // SetLineWrapMode is a wrapper around gtk_label_set_line_wrap_mode().
 func (v *Label) SetLineWrapMode(wrapMode pango.WrapMode) {
 	C.gtk_label_set_line_wrap_mode(v.native(), C.PangoWrapMode(wrapMode))
