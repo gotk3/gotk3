@@ -30,10 +30,18 @@ func (v *Widget) OverrideBackgroundColor(state StateFlags, color *gdk.RGBA) {
 	C.gtk_widget_override_background_color(v.native(), C.GtkStateFlags(state), cColor)
 }
 
+func (v *Button) SetColor(color string) {
+	v.OverrideBackgroundColor(gtk.STATE_FLAG_NORMAL, color)
+}
+
 // OverrideFont is a wrapper around gtk_widget_override_font().
 func (v *Widget) OverrideFont(description string) {
 	cstr := C.CString(description)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.pango_font_description_from_string(cstr)
 	C.gtk_widget_override_font(v.native(), c)
+}
+
+func (v *Label) SetFont(font string) {
+	v.OverrideFont(font)
 }
