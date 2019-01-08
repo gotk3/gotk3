@@ -17,7 +17,7 @@
 // Go bindings for GDK 3.  Supports version 3.6 and later.
 package gdk
 
-// #cgo pkg-config: gdk-3.0
+// #cgo pkg-config: gdk-3.0 glib-2.0 gobject-2.0
 // #include <gdk/gdk.h>
 // #include "gdk.go.h"
 import "C"

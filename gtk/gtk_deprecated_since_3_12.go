@@ -23,7 +23,6 @@
 
 package gtk
 
-// #cgo pkg-config: gtk+-3.0
 // #include <gtk/gtk.h>
 import "C"
 import (

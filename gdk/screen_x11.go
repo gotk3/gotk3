@@ -3,7 +3,6 @@
 
 package gdk
 
-// #cgo pkg-config: gdk-x11-3.0
 // #include <gdk/gdk.h>
 // #include <gdk/gdkx.h>
 import "C"

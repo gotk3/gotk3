@@ -18,7 +18,6 @@
 
 package pango
 
-// #cgo pkg-config: pango fontconfig
 // #include <pango/pango.h>
 // #include "pango.go.h"
 // #include "fontconfig.go.h"

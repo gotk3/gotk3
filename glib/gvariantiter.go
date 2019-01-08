@@ -5,7 +5,6 @@
 
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"

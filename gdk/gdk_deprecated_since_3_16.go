@@ -2,7 +2,6 @@
 
 package gdk
 
-// #cgo pkg-config: gdk-3.0
 // #include <gdk/gdk.h>
 import "C"
 

@@ -18,7 +18,6 @@
 
 package pango
 
-// #cgo pkg-config: pango
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
