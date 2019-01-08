@@ -3,7 +3,6 @@
 
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0
 // #include "gvariant.go.h"
 // #include "glib.go.h"
 import "C"

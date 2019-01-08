@@ -18,7 +18,6 @@
 
 package pango
 
-// #cgo pkg-config: pango pangocairo
 // #include <pango/pango.h>
 // #include <cairo.h>
 // #include <pango/pangocairo.h>

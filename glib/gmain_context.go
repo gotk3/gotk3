@@ -1,6 +1,5 @@
 package glib
 
-// #cgo pkg-config: glib-2.0 gobject-2.0 gio-2.0
 // #include <gio/gio.h>
 // #include <glib.h>
 // #include <glib-object.h>

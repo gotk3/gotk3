@@ -3,7 +3,6 @@
 
 package gtk
 
-// #cgo pkg-config: gtk+-3.0
 // #include <stdlib.h>
 // #include <gtk/gtk.h>
 // #include "gtk_since_3_12.go.h"

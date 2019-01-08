@@ -1,6 +1,5 @@
 package cairo
 
-// #cgo pkg-config: cairo cairo-gobject
 // #include <stdlib.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>

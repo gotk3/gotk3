@@ -17,7 +17,7 @@
 // Go bindings for Pango.
 package pango
 
-// #cgo pkg-config: pango
+// #cgo pkg-config: fontconfig pango pangocairo
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
