@@ -18,7 +18,7 @@
 // later.
 package cairo
 
-// #cgo pkg-config: cairo cairo-gobject
+// #cgo pkg-config: cairo cairo-gobject gobject-2.0
 // #include <stdlib.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>
