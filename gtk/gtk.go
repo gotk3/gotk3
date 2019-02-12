@@ -8708,6 +8708,21 @@ func (v *TreeStore) Clear() {
 }
 
 /*
+ * TreeSortable
+ */
+
+// TreeSortable is a representation of GTK's GtkTreeSortable Interface.
+type TreeSortable interface {
+	SetSortColumnId(column int, order SortType)
+}
+
+// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
+func (v *TreeStore) SetSortColumnId(column int, order SortType) {
+	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
+	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
+}
+
+/*
  * GtkViewport
  */
 
