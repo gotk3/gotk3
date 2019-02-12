@@ -7596,6 +7596,11 @@ func (v *TextBuffer) RemoveTag(tag *TextTag, start, end *TextIter) {
 	C.gtk_text_buffer_remove_tag(v.native(), tag.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
 }
 
+// RemoveAllTags() is a wrapper around gtk_text_buffer_remove_all_tags().
+func (v *TextBuffer) RemoveAllTags(start, end *TextIter) {
+	C.gtk_text_buffer_remove_all_tags(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+}
+
 // SetModified() is a wrapper around gtk_text_buffer_set_modified().
 func (v *TextBuffer) SetModified(setting bool) {
 	C.gtk_text_buffer_set_modified(v.native(), gbool(setting))
