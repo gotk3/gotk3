@@ -3348,6 +3348,13 @@ func (v *Entry) SetIconFromIconName(iconPos EntryIconPosition, name string) {
 		C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
 }
 
+// RemoveIcon() is a wrapper around gtk_entry_set_icon_from_icon_name()
+// with a nil pointer to the icon name.
+func (v *Entry) RemoveIcon(iconPos EntryIconPosition) {
+	C.gtk_entry_set_icon_from_icon_name(v.native(),
+		C.GtkEntryIconPosition(iconPos), nil)
+}
+
 // TODO(jrick) GIcon
 /*
 func (v *Entry) SetIconFromGIcon() {
