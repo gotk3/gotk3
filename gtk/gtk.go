@@ -7623,6 +7623,14 @@ func (v *TextBuffer) CreateMark(mark_name string, where *TextIter, left_gravity 
 	return (*TextMark)(ret)
 }
 
+// GetMark() is a wrapper around gtk_text_buffer_get_mark().
+func (v *TextBuffer) GetMark(mark_name string) *TextMark {
+	cstr := C.CString(mark_name)
+	defer C.free(unsafe.Pointer(cstr))
+	ret := C.gtk_text_buffer_get_mark(v.native(), (*C.gchar)(cstr))
+	return (*TextMark)(ret)
+}
+
 /*
  * GtkToggleButton
  */
