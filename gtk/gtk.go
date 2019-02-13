@@ -3348,6 +3348,13 @@ func (v *Entry) SetIconFromIconName(iconPos EntryIconPosition, name string) {
 		C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
 }
 
+// RemoveIcon() is a wrapper around gtk_entry_set_icon_from_icon_name()
+// with a nil pointer to the icon name.
+func (v *Entry) RemoveIcon(iconPos EntryIconPosition) {
+	C.gtk_entry_set_icon_from_icon_name(v.native(),
+		C.GtkEntryIconPosition(iconPos), nil)
+}
+
 // TODO(jrick) GIcon
 /*
 func (v *Entry) SetIconFromGIcon() {
@@ -7596,6 +7603,11 @@ func (v *TextBuffer) RemoveTag(tag *TextTag, start, end *TextIter) {
 	C.gtk_text_buffer_remove_tag(v.native(), tag.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
 }
 
+// RemoveAllTags() is a wrapper around gtk_text_buffer_remove_all_tags().
+func (v *TextBuffer) RemoveAllTags(start, end *TextIter) {
+	C.gtk_text_buffer_remove_all_tags(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+}
+
 // SetModified() is a wrapper around gtk_text_buffer_set_modified().
 func (v *TextBuffer) SetModified(setting bool) {
 	C.gtk_text_buffer_set_modified(v.native(), gbool(setting))
@@ -7620,6 +7632,14 @@ func (v *TextBuffer) CreateMark(mark_name string, where *TextIter, left_gravity 
 	cstr := C.CString(mark_name)
 	defer C.free(unsafe.Pointer(cstr))
 	ret := C.gtk_text_buffer_create_mark(v.native(), (*C.gchar)(cstr), (*C.GtkTextIter)(where), gbool(left_gravity))
+	return (*TextMark)(ret)
+}
+
+// GetMark() is a wrapper around gtk_text_buffer_get_mark().
+func (v *TextBuffer) GetMark(mark_name string) *TextMark {
+	cstr := C.CString(mark_name)
+	defer C.free(unsafe.Pointer(cstr))
+	ret := C.gtk_text_buffer_get_mark(v.native(), (*C.gchar)(cstr))
 	return (*TextMark)(ret)
 }
 
@@ -8692,6 +8712,21 @@ func (v *TreeStore) Remove(iter *TreeIter) bool {
 // Clear is a wrapper around gtk_tree_store_clear().
 func (v *TreeStore) Clear() {
 	C.gtk_tree_store_clear(v.native())
+}
+
+/*
+ * TreeSortable
+ */
+
+// TreeSortable is a representation of GTK's GtkTreeSortable Interface.
+type TreeSortable interface {
+	SetSortColumnId(column int, order SortType)
+}
+
+// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
+func (v *TreeStore) SetSortColumnId(column int, order SortType) {
+	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
+	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
 }
 
 /*

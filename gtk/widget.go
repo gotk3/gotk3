@@ -380,6 +380,16 @@ func (v *Widget) AddEvents(events int) {
 	C.gtk_widget_add_events(v.native(), C.gint(events))
 }
 
+// FreezeChildNotify is a wrapper around gtk_widget_freeze_child_notify().
+func (v *Widget) FreezeChildNotify() {
+	C.gtk_widget_freeze_child_notify(v.native())
+}
+
+// ThawChildNotify is a wrapper around gtk_widget_thaw_child_notify().
+func (v *Widget) ThawChildNotify() {
+	C.gtk_widget_thaw_child_notify(v.native())
+}
+
 // HasDefault is a wrapper around gtk_widget_has_default().
 func (v *Widget) HasDefault() bool {
 	c := C.gtk_widget_has_default(v.native())
