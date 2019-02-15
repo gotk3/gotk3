@@ -83,6 +83,10 @@ func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions 
 	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
 }
 
+func (v *Widget) DragSourceSet(start_button_mask gdk.ModifierType, targets []TargetEntry, actions gdk.DragAction) {
+	C.gtk_drag_source_set(v.native(), C.GdkModifierType(start_button_mask), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
 // ResetStyle is a wrapper around gtk_widget_reset_style().
 func (v *Widget) ResetStyle() {
 	C.gtk_widget_reset_style(v.native())
