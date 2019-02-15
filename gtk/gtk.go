@@ -6863,8 +6863,22 @@ func GetData(pointer uintptr) (data []byte) {
 	return byteData
 }
 
+//for "drag-data-get"
+func SetData(pointer uintptr, atom gdk.Atom, data []byte) {
+	c := (*C.GValue)(unsafe.Pointer(pointer))
+	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
+	C.gtk_selection_data_set(p, C.GdkAtom(unsafe.Pointer(atom)), C.gint(8), (*C.guchar)(unsafe.Pointer(&data[0])), C.gint(len(data)))
+}
+
 func (v *SelectionData) free() {
 	C.gtk_selection_data_free(v.native())
+}
+
+//for "drag-begin" event
+func DragSetIconPixbuf(context *gdk.DragContext, pixbuf *gdk.Pixbuf, hot_x int, hot_y int) {
+	ctx := unsafe.Pointer(context.Native())
+	pix := unsafe.Pointer(pixbuf.Native())
+	C.gtk_drag_set_icon_pixbuf((*C.GdkDragContext)(ctx), (*C.GdkPixbuf)(pix), C.gint(hot_x), C.gint(hot_y))
 }
 
 /*
