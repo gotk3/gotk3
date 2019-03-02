@@ -416,6 +416,11 @@ func (v *TreeView) SetTooltipColumn(c int) {
 	C.gtk_tree_view_set_tooltip_column(v.native(), C.gint(c))
 }
 
+// SetGridLines is a wrapper around gtk_tree_view_set_grid_lines().
+func (v *TreeView) SetGridLines(gridLines TreeViewGridLines) {
+	C.gtk_tree_view_set_grid_lines(v.native(), C.GtkTreeViewGridLines(gridLines))
+}
+
 // void 	gtk_tree_view_set_tooltip_row ()
 // void 	gtk_tree_view_set_tooltip_cell ()
 // gboolean 	gtk_tree_view_get_tooltip_context ()

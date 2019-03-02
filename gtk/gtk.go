@@ -624,6 +624,16 @@ func marshalPolicyType(p uintptr) (interface{}, error) {
 	return PolicyType(c), nil
 }
 
+// TreeViewGridLine is a representation of GTK's GtkTreeViewGridLine.
+type TreeViewGridLines int
+
+const (
+	TREE_VIEW_GRID_LINES_NONE       TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_NONE
+	TREE_VIEW_GRID_LINES_HORIZONTAL TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_HORIZONTAL
+	TREE_VIEW_GRID_LINES_VERTICAL   TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_VERTICAL
+	TREE_VIEW_GRID_LINES_BOTH       TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_BOTH
+)
+
 // PositionType is a representation of GTK's GtkPositionType.
 type PositionType int
 
