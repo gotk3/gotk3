@@ -421,11 +421,14 @@ func (v *TreeView) SetGridLines(gridLines TreeViewGridLines) {
 	C.gtk_tree_view_set_grid_lines(v.native(), C.GtkTreeViewGridLines(gridLines))
 }
 
+// GetGridLines is a wrapper around gtk_tree_view_get_grid_lines().
+func (v *TreeView) GetGridLines() TreeViewGridLines {
+	return TreeViewGridLines(C.gtk_tree_view_get_grid_lines(v.native()))
+}
+
 // void 	gtk_tree_view_set_tooltip_row ()
 // void 	gtk_tree_view_set_tooltip_cell ()
 // gboolean 	gtk_tree_view_get_tooltip_context ()
-// void 	gtk_tree_view_set_grid_lines ()
-// GtkTreeViewGridLines 	gtk_tree_view_get_grid_lines ()
 // void 	(*GtkTreeDestroyCountFunc) ()
 // void 	gtk_tree_view_set_destroy_count_func ()
 // gboolean 	(*GtkTreeViewRowSeparatorFunc) ()
