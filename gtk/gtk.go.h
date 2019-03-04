@@ -100,6 +100,12 @@ toGtkEventBox(void *p)
 	return (GTK_EVENT_BOX(p));
 }
 
+static GtkGLArea *
+toGtkGLArea(void *p)
+{
+	return (GTK_GL_AREA(p));
+}
+
 static GtkGrid *
 toGtkGrid(void *p)
 {
