@@ -55,6 +55,12 @@ toGdkDragContext(void *p)
 	return (GDK_DRAG_CONTEXT(p));
 }
 
+static GdkGLContext *
+toGdkGLContext(void *p)
+{
+	return (GDK_GL_CONTEXT(p));
+}
+
 static GdkPixbuf *
 toGdkPixbuf(void *p)
 {
