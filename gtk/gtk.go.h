@@ -100,11 +100,15 @@ toGtkEventBox(void *p)
 	return (GTK_EVENT_BOX(p));
 }
 
+#ifdef __GTK_GL_AREA_H__
+
 static GtkGLArea *
 toGtkGLArea(void *p)
 {
-	return (GTK_GL_AREA(p));
+  return (GTK_GL_AREA(p));
 }
+
+#endif
 
 static GtkGrid *
 toGtkGrid(void *p)

@@ -1,3 +1,4 @@
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14
 package gtk
 
 // #include <gtk/gtk.h>
@@ -10,6 +11,17 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 )
+
+func init() {
+
+	tm := []glib.TypeMarshaler{
+		{glib.Type(C.gtk_gl_area_get_type()), marshalGLArea},
+	}
+
+	glib.RegisterGValueMarshalers(tm)
+
+	WrapMap["GtkGLArea"] = wrapGLArea
+}
 
 /*
  * GtkGLArea

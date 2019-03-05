@@ -48,7 +48,6 @@ func init() {
 		{glib.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
 		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
-		{glib.Type(C.gdk_gl_context_get_type()), marshalGLContext},
 		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
 		{glib.Type(C.gdk_rgba_get_type()), marshalRGBA},
 		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
