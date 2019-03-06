@@ -1,4 +1,4 @@
-gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3)
+gotk3 [![GoDoc](https://godoc.org/github.com/patknight/gotk3?status.svg)](https://godoc.org/github.com/patknight/gotk3)
 =====
 
 [![Build Status](https://travis-ci.org/gotk3/gotk3.svg?branch=master)](https://travis-ci.org/gotk3/gotk3)
@@ -19,13 +19,13 @@ floating references.
 
 ## Sample Use
 
-The following example can be found in [Examples](https://github.com/gotk3/gotk3-examples/).
+The following example can be found in [Examples](https://github.com/patknight/gotk3-examples/).
 
 ```Go
 package main
 
 import (
-    "github.com/gotk3/gotk3/gtk"
+    "github.com/patknight/gotk3/gtk"
     "log"
 )
 
@@ -86,8 +86,8 @@ import (
     "log"
     "os"
 
-    "github.com/gotk3/gotk3/glib"
-    "github.com/gotk3/gotk3/gtk"
+    "github.com/patknight/gotk3/glib"
+    "github.com/patknight/gotk3/gtk"
 )
 
 // Simple Gtk3 Application written in go.
@@ -134,8 +134,8 @@ import (
     "log"
     "os"
 
-    "github.com/gotk3/gotk3/glib"
-    "github.com/gotk3/gotk3/gtk"
+    "github.com/patknight/gotk3/glib"
+    "github.com/patknight/gotk3/gtk"
 )
 
 // Simple Gtk3 Application written in go.
@@ -177,22 +177,22 @@ func main() {
 
 Each package's internal `go doc` style documentation can be viewed
 online without installing this package by using the GoDoc site (links
-to [cairo](http://godoc.org/github.com/gotk3/gotk3/cairo),
-[glib](http://godoc.org/github.com/gotk3/gotk3/glib),
-[gdk](http://godoc.org/github.com/gotk3/gotk3/gdk), and
-[gtk](http://godoc.org/github.com/gotk3/gotk3/gtk) documentation).
+to [cairo](http://godoc.org/github.com/patknight/gotk3/cairo),
+[glib](http://godoc.org/github.com/patknight/gotk3/glib),
+[gdk](http://godoc.org/github.com/patknight/gotk3/gdk), and
+[gtk](http://godoc.org/github.com/patknight/gotk3/gtk) documentation).
 
 You can also view the documentation locally once the package is
 installed with the `godoc` tool by running `godoc -http=":6060"` and
 pointing your browser to
-http://localhost:6060/pkg/github.com/gotk3/gotk3
+http://localhost:6060/pkg/github.com/patknight/gotk3
 
 ## Installation
 
 gotk3 currently requires GTK 3.6-3.22, GLib 2.36-2.40, and
 Cairo 1.10 or 1.12.  A recent Go (1.8 or newer) is also required.
 
-For detailed instructions see the wiki pages: [installation](https://github.com/gotk3/gotk3/wiki#installation)
+For detailed instructions see the wiki pages: [installation](https://github.com/patknight/gotk3/wiki#installation)
 
 ## TODO
 

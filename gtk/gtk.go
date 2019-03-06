@@ -56,9 +56,9 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/cairo"
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
+	"github.com/patknight/gotk3/cairo"
+	"github.com/patknight/gotk3/gdk"
+	"github.com/patknight/gotk3/glib"
 )
 
 func init() {

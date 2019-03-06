@@ -9,9 +9,9 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/pango"
+	"github.com/patknight/gotk3/pango"
 
-	"github.com/gotk3/gotk3/glib"
+	"github.com/patknight/gotk3/glib"
 )
 
 /*
