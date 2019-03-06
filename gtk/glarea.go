@@ -141,7 +141,7 @@ func (v *GLArea) GetContext() (*gdk.GLContext, error) {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return &GLContext{obj}, nil
+	return &(gdk.GLContext{obj}), nil
 }
 
 // MakeCurrent is a wrapper around gtk_gl_area_make_current().
