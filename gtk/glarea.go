@@ -1,4 +1,5 @@
 // +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14
+
 package gtk
 
 // #include <gtk/gtk.h>
@@ -139,8 +140,8 @@ func (v *GLArea) GetContext() (*gdk.GLContext, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-
-	return &gdk.GLContext{glib.Take(unsafe.Pointer(c))}, nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &GLContext{obj}, nil
 }
 
 // MakeCurrent is a wrapper around gtk_gl_area_make_current().
