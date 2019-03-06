@@ -114,6 +114,7 @@ func init() {
 		{glib.Type(C.gtk_bin_get_type()), marshalBin},
 		{glib.Type(C.gtk_builder_get_type()), marshalBuilder},
 		{glib.Type(C.gtk_button_get_type()), marshalButton},
+		{glib.Type(C.gtk_button_box_get_type()), marshalButtonBox},
 		{glib.Type(C.gtk_box_get_type()), marshalBox},
 		{glib.Type(C.gtk_calendar_get_type()), marshalCalendar},
 		{glib.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},

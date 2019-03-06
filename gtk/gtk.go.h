@@ -268,6 +268,12 @@ toGtkButton(void *p)
 	return (GTK_BUTTON(p));
 }
 
+static GtkButtonBox *
+toGtkButtonBox(void *p)
+{
+	return (GTK_BUTTON_BOX(p));
+}
+
 static GtkScaleButton *
 toGtkScaleButton(void *p)
 {
