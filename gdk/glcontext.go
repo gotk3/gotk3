@@ -3,7 +3,7 @@
 package gdk
 
 // #include <gdk/gdk.h>
-// #include "gdk.go.h"
+// #include "glarea_since_3_16.go.h"
 import "C"
 import (
 	"errors"

@@ -1,9 +1,9 @@
-// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14
+//+build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14
 
 package gtk
 
 // #include <gtk/gtk.h>
-// #include "gtk.go.h"
+// #include "glarea_since_3_16.go.h"
 import "C"
 import (
 	"errors"

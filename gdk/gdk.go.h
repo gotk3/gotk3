@@ -55,14 +55,6 @@ toGdkDragContext(void *p)
 	return (GDK_DRAG_CONTEXT(p));
 }
 
-#if GDK_VERSION_CUR_STABLE > GDK_VERSION_3_14
-static GdkGLContext *
-toGdkGLContext(void *p)
-{
-  return (GDK_GL_CONTEXT(p));
-}
-#endif
-
 static GdkPixbuf *
 toGdkPixbuf(void *p)
 {

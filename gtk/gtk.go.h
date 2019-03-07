@@ -100,14 +100,6 @@ toGtkEventBox(void *p)
 	return (GTK_EVENT_BOX(p));
 }
 
-#if GDK_VERSION_CUR_STABLE > GDK_VERSION_3_14
-static GtkGLArea *
-toGtkGLArea(void *p)
-{
-  return (GTK_GL_AREA(p));
-}
-#endif
-
 static GtkGrid *
 toGtkGrid(void *p)
 {
