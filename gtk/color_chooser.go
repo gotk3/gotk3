@@ -6,8 +6,8 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/patknight/gotk3/gdk"
-	"github.com/patknight/gotk3/glib"
+	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/glib"
 )
 
 func init() {
