@@ -19,13 +19,13 @@ floating references.
 
 ## Sample Use
 
-The following example can be found in [Examples](https://github.com/patknight/gotk3-examples/).
+The following example can be found in [Examples](https://github.com/gotk3/gotk3-examples/).
 
 ```Go
 package main
 
 import (
-    "github.com/patknight/gotk3/gtk"
+    "github.com/gotk3/gotk3/gtk"
     "log"
 )
 
