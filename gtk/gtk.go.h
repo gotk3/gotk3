@@ -262,6 +262,12 @@ toGtkImage(void *p)
 	return (GTK_IMAGE(p));
 }
 
+static GtkButtonBox *
+toGtkButtonBox(void *p)
+{
+	return (GTK_BUTTON_BOX(p));
+}
+
 static GtkButton *
 toGtkButton(void *p)
 {
