@@ -1,4 +1,4 @@
-gotk3 [![GoDoc](https://godoc.org/github.com/patknight/gotk3?status.svg)](https://godoc.org/github.com/patknight/gotk3)
+gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3)
 =====
 
 [![Build Status](https://travis-ci.org/gotk3/gotk3.svg?branch=master)](https://travis-ci.org/gotk3/gotk3)
