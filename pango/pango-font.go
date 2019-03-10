@@ -41,7 +41,8 @@ func init() {
 
 // AddFont add the font to the configuration.
 func AddFont(fontPath string) {
-	C.addFont(C.UChar(C.CString(fontPath)))
+	path := (*C.uchar)(unsafe.Pointer(C.CString(fontPath)))
+	C.addFont(path)
 }
 
 // FontDescription is a representation of PangoFontDescription.
