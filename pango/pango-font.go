@@ -39,7 +39,7 @@ func init() {
 	glib.RegisterGValueMarshalers(tm)
 }
 
-// AddFont add the font to the configuration.
+// AddFont adds the font to the configuration.
 func AddFont(fontPath string) {
 	path := (*C.uchar)(unsafe.Pointer(C.CString(fontPath)))
 	C.addFont(path)
