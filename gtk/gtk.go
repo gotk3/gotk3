@@ -7616,6 +7616,12 @@ func (v *TextBuffer) Insert(iter *TextIter, text string) {
 	C.gtk_text_buffer_insert(v.native(), (*C.GtkTextIter)(iter), (*C.gchar)(cstr), C.gint(len(text)))
 }
 
+// InsertPixbuf() is a wrapper around gtk_text_buffer_insert_pixbuf().
+func (v *TextBuffer) InsertPixbuf(iter *TextIter, pixbuf *gdk.Pixbuf) {
+	C.gtk_text_buffer_insert_pixbuf(v.native(), (*C.GtkTextIter)(iter),
+		(*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native())))
+}
+
 // InsertAtCursor() is a wrapper around gtk_text_buffer_insert_at_cursor().
 func (v *TextBuffer) InsertAtCursor(text string) {
 	cstr := C.CString(text)
