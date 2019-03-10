@@ -39,8 +39,9 @@ func init() {
 	glib.RegisterGValueMarshalers(tm)
 }
 
+// AddFont add the font to the configuration.
 func AddFont(fontPath string) {
-	C.addFont(C.CString(fontPath))
+	C.addFont(C.UChar(C.CString(fontPath)))
 }
 
 // FontDescription is a representation of PangoFontDescription.
