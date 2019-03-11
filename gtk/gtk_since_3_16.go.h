@@ -21,3 +21,9 @@ toGtkStackSidebar(void *p)
 {
 	return (GTK_STACK_SIDEBAR(p));
 }
+
+static GtkGLArea *
+toGtkGLArea(void *p)
+{
+  return (GTK_GL_AREA(p));
+}
