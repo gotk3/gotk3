@@ -9,7 +9,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/gdk"
+	"github.com/diamondburned/gotk3/gdk"
 )
 
 // OverrideColor is a wrapper around gtk_widget_override_color().

@@ -3,7 +3,7 @@ package gtk
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import "github.com/gotk3/gotk3/gdk"
+import "github.com/diamondburned/gotk3/gdk"
 
 func nativeGdkRectangle(rect gdk.Rectangle) *C.GdkRectangle {
 	// Note: Here we can't use rect.GdkRectangle because it would return

@@ -7,7 +7,7 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
-	"github.com/gotk3/gotk3/glib"
+	"github.com/diamondburned/gotk3/glib"
 	"unsafe"
 )
 

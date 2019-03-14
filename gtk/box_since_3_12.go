@@ -31,7 +31,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/glib"
+	"github.com/diamondburned/gotk3/glib"
 )
 
 //gtk_box_bar_set_center_widget(GtkBox *box,GtkWidget *center_widget)
