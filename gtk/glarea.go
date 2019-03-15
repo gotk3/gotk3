@@ -71,7 +71,7 @@ func wrapGLArea(obj *glib.Object) *GLArea {
 	return &GLArea{Widget{glib.InitiallyUnowned{obj}}}
 }
 
-func WidgetToGLArea(widget *Widget) (interface{}, error) {
+func WidgetToGLArea(widget *Widget) (*GLArea, error) {
 	obj := glib.Take(unsafe.Pointer(widget.GObject))
 	return wrapGLArea(obj), nil
 }
