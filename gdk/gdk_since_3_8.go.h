@@ -16,14 +16,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-static GtkStackSidebar *
-toGtkStackSidebar(void *p)
+#include <stdlib.h>
+
+// Type Casting
+static GdkFrameClock *
+toGdkFrameClock(void *p)
 {
-	return (GTK_STACK_SIDEBAR(p));
+	return (GDK_FRAME_CLOCK(p));
 }
 
-static GtkGLArea *
-toGtkGLArea(void *p)
+static GdkFrameTimings *
+toGdkFrameTimings(void *p)
 {
-  return (GTK_GL_AREA(p));
+	return ((GdkFrameTimings*)p);
 }

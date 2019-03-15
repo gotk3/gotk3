@@ -16,14 +16,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-static GtkStackSidebar *
-toGtkStackSidebar(void *p)
-{
-	return (GTK_STACK_SIDEBAR(p));
-}
+#include <stdlib.h>
 
-static GtkGLArea *
-toGtkGLArea(void *p)
-{
-  return (GTK_GL_AREA(p));
+extern gboolean goTickCallbacks (GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data);
+
+static inline guint _gtk_widget_add_tick_callback(GtkWidget *widget, gpointer user_data) {
+    return gtk_widget_add_tick_callback(widget, (GtkTickCallback)(goTickCallbacks), user_data, NULL);
 }
