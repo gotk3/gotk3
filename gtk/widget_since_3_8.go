@@ -28,7 +28,6 @@ package gtk
 import "C"
 
 import ( 
-	"sync"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"

@@ -25,7 +25,11 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
+import (
+	"sync"
 
+	"github.com/gotk3/gotk3/gdk"
+)
 /*
  * Constants
  */

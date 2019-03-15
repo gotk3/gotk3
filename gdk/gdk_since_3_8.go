@@ -88,8 +88,12 @@ func (v *FrameClock) Native() uintptr {
 
 func marshalFrameClock(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	return &FrameClock{obj}, nil
+	return WrapFrameClock(unsafe.Pointer(c)), nil
+}
+
+func WrapFrameClock(ptr unsafe.Pointer) *FrameClock {
+	obj := &glib.Object{glib.ToGObject(ptr)}
+	return &FrameClock{obj}
 }
 
 // BeginUpdating is a wrapper around gdk_frame_clock_begin_updating().
