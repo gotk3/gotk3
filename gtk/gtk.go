@@ -8453,6 +8453,14 @@ func (v *TreeModelFilter) SetVisibleColumn(column int) {
 	C.gtk_tree_model_filter_set_visible_column(v.native(), C.gint(column))
 }
 
+// ConvertIterToChildIter is a wrapper around gtk_tree_model_filter_convert_child_iter_to_iter().
+func (v *TreeModelFilter) ConvertIterToChildIter(filterIter *TreeIter) *TreeIter {
+	var iter C.GtkTreeIter
+	C.gtk_tree_model_filter_convert_iter_to_child_iter(v.native(), &iter, filterIter.native())
+	t := &TreeIter{iter}
+	return t
+}
+
 /*
  * GtkTreePath
  */
