@@ -7532,6 +7532,11 @@ func (v *TextBuffer) ApplyTagByName(name string, start, end *TextIter) {
 		(*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
 }
 
+// SelectRange is a wrapper around gtk_text_buffer_select_range.
+func (v *TextBuffer) SelectRange(start, end *TextIter) {
+	C.gtk_text_buffer_select_range(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+}
+
 // CreateChildAnchor() is a wrapper around gtk_text_buffer_create_child_anchor().
 // Since it copies garbage from the stack into the padding bytes of iter,
 // iter can't be reliably reused after this call unless GODEBUG=cgocheck=0.
