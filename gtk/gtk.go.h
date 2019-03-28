@@ -706,6 +706,12 @@ toGtkToolButton(void *p)
 	return (GTK_TOOL_BUTTON(p));
 }
 
+static GtkToggleToolButton *
+toGtkToggleToolButton(void *p)
+{
+	return (GTK_TOGGLE_TOOL_BUTTON(p));
+}
+
 static GtkSeparatorToolItem *
 toGtkSeparatorToolItem(void *p)
 {

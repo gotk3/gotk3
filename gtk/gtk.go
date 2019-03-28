@@ -183,6 +183,7 @@ func init() {
 		{glib.Type(C.gtk_toggle_button_get_type()), marshalToggleButton},
 		{glib.Type(C.gtk_toolbar_get_type()), marshalToolbar},
 		{glib.Type(C.gtk_tool_button_get_type()), marshalToolButton},
+		{glib.Type(C.gtk_toggle_tool_button_get_type()), marshalToggleToolButton},
 		{glib.Type(C.gtk_tool_item_get_type()), marshalToolItem},
 		{glib.Type(C.gtk_tooltip_get_type()), marshalTooltip},
 		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
@@ -7996,6 +7997,55 @@ func (v *ToolButton) GetLabelWidget() *Widget {
 }
 
 /*
+ * GtkToggleToolButton
+ */
+
+// ToggleToolButton is a representation of GTK's GtkToggleToolButton.
+type ToggleToolButton struct {
+	ToolButton
+}
+
+// native returns a pointer to the underlying GtkToggleToolButton.
+func (v *ToggleToolButton) native() *C.GtkToggleToolButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkToggleToolButton(p)
+}
+
+func marshalToggleToolButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapToggleToolButton(obj), nil
+}
+
+func wrapToggleToolButton(obj *glib.Object) *ToggleToolButton {
+	return &ToggleToolButton{ToolButton{ToolItem{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}}}}
+}
+
+// ToggleToolButtonNew is a wrapper around gtk_toggle_tool_button_new().
+func ToggleToolButtonNew() (*ToggleToolButton, error) {
+	c := C.gtk_toggle_tool_button_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapToggleToolButton(glib.Take(unsafe.Pointer(c))), nil
+}
+
+// GetActive is a wrapper around gtk_toggle_tool_button_get_active().
+func (v *ToggleToolButton) GetActive() bool {
+	c := C.gtk_toggle_tool_button_get_active(v.native())
+	return gobool(c)
+}
+
+// SetActive is a wrapper around gtk_toggle_tool_button_set_active().
+func (v *ToggleToolButton) SetActive(isActive bool) {
+	C.gtk_toggle_tool_button_set_active(v.native(), gbool(isActive))
+}
+
+/*
  * GtkToolItem
  */
 
@@ -9021,6 +9071,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkToggleButton":        wrapToggleButton,
 	"GtkToolbar":             wrapToolbar,
 	"GtkToolButton":          wrapToolButton,
+	"GtkToggleToolButton":    wrapToggleToolButton,
 	"GtkToolItem":            wrapToolItem,
 	"GtkTreeModel":           wrapTreeModel,
 	"GtkTreeModelFilter":     wrapTreeModelFilter,
