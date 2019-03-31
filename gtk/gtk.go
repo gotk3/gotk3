@@ -8516,6 +8516,62 @@ func (v *TreeModelFilter) ConvertIterToChildIter(filterIter *TreeIter) *TreeIter
 	return t
 }
 
+// ConvertPathToChildPath is a wrapper around gtk_tree_model_filter_convert_path_to_child_path().
+func (v *TreeModelFilter) ConvertPathToChildPath(filterPath *TreePath) *TreePath {
+	path := C.gtk_tree_model_filter_convert_path_to_child_path(v.native(), filterPath.native())
+	if path == nil {
+		return nil
+	}
+
+	p := &TreePath{path}
+	runtime.SetFinalizer(p, (*TreePath).free)
+
+	return p
+}
+
+// Refilter is a wrapper around gtk_tree_model_filter_refilter().
+func (v *TreeModelFilter) Refilter() {
+	C.gtk_tree_model_filter_refilter(v.native())
+}
+
+type TreeModelFilterVisibleFunc func(model *TreeModelFilter, iter *TreeIter, userData interface{}) bool
+
+type treeModelFilterVisibleFuncData struct {
+	fn       TreeModelFilterVisibleFunc
+	userData interface{}
+}
+
+var (
+	treeModelVisibleFilterFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]treeModelFilterVisibleFuncData
+	}{
+		next: 1,
+		m:    make(map[int]treeModelFilterVisibleFuncData),
+	}
+)
+
+// SetVisibleFunc is a wrapper around gtk_tree_model_filter_set_visible_func().
+func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc, userData ...interface{}) error {
+	if len(userData) > 1 {
+		return errors.New("userData len must be 0 or 1")
+	}
+
+	t := treeModelFilterVisibleFuncData{fn: f}
+	if len(userData) > 0 {
+		t.userData = userData[0]
+	}
+	treeModelVisibleFilterFuncRegistry.Lock()
+	id := treeModelVisibleFilterFuncRegistry.next
+	treeModelVisibleFilterFuncRegistry.next++
+	treeModelVisibleFilterFuncRegistry.m[id] = t
+	treeModelVisibleFilterFuncRegistry.Unlock()
+
+	C._gtk_tree_model_filter_set_visible_func(v.native(), C.gpointer(uintptr(id)))
+	return nil
+}
+
 /*
  * GtkTreePath
  */

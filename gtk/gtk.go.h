@@ -921,3 +921,9 @@ static inline void _gtk_print_run_page_setup_dialog_async(GtkWindow *parent, Gtk
 	gtk_print_run_page_setup_dialog_async(parent, setup, settings,
 		(GtkPageSetupDoneFunc)(goPageSetupDone), data);
 }
+
+extern gboolean goTreeModelFilterFuncs (GtkTreeModel *model, GtkTreeIter *iter, gpointer data);
+
+static inline void _gtk_tree_model_filter_set_visible_func(GtkTreeModelFilter *filter, gpointer user_data) {
+    gtk_tree_model_filter_set_visible_func(filter, (GtkTreeModelFilterVisibleFunc)(goTreeModelFilterFuncs), user_data, NULL);
+}
