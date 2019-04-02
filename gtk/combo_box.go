@@ -147,7 +147,11 @@ func (v *ComboBox) GetModel() (*TreeModel, error) {
 
 // SetModel is a wrapper around gtk_combo_box_set_model().
 func (v *ComboBox) SetModel(model ITreeModel) {
-	C.gtk_combo_box_set_model(v.native(), model.toTreeModel())
+	var mptr *C.GtkTreeModel
+	if model != nil {
+		mptr = model.toTreeModel()
+	}
+	C.gtk_combo_box_set_model(v.native(), mptr)
 }
 
 func (v *ComboBox) Popup() {
