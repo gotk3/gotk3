@@ -8534,6 +8534,8 @@ func (v *TreeModelFilter) Refilter() {
 	C.gtk_tree_model_filter_refilter(v.native())
 }
 
+// TreeModelFilterVisibleFunc defines the function prototype for the filter visibility function (f arg)
+// to TreeModelFilter.SetVisibleFunc.
 type TreeModelFilterVisibleFunc func(model *TreeModelFilter, iter *TreeIter, userData interface{}) bool
 
 type treeModelFilterVisibleFuncData struct {
