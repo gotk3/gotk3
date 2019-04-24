@@ -93,3 +93,13 @@ func (v *Monitor) GetGeometry() *Rectangle {
 
 	return WrapRectangle(uintptr(unsafe.Pointer(&rect)))
 }
+
+// GetUseES is a wrapper around gdk_gl_context_get_use_es().
+func (v *GLContext) GetUseES() bool {
+	return gobool(C.gdk_gl_context_get_use_es(v.native()))
+}
+
+// SetUseES is a wrapper around gdk_gl_context_set_use_es().
+func (v *GLContext) SetUseES(es int) {
+	C.gdk_gl_context_set_use_es(v.native(), (C.int)(es))
+}

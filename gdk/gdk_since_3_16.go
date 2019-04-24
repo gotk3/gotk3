@@ -148,16 +148,6 @@ func (v *GLContext) SetForwardCompatible(compatible bool) {
 	C.gdk_gl_context_set_forward_compatible(v.native(), gbool(compatible))
 }
 
-// GetUseES is a wrapper around gdk_gl_context_get_use_es().
-func (v *GLContext) GetUseES() bool {
-	return gobool(C.gdk_gl_context_get_use_es(v.native()))
-}
-
-// SetUseES is a wrapper around gdk_gl_context_set_use_es().
-func (v *GLContext) SetUseES(es int) {
-	C.gdk_gl_context_set_use_es(v.native(), (C.int)(es))
-}
-
 // Realize is a wrapper around gdk_gl_context_realize().
 func (v *GLContext) Realize() (bool, error) {
 	var err *C.GError
@@ -173,11 +163,6 @@ func (v *GLContext) Realize() (bool, error) {
 // MakeCurrent is a wrapper around gdk_gl_context_make_current().
 func (v *GLContext) MakeCurrent() {
 	C.gdk_gl_context_make_current(v.native())
-}
-
-// IsLegacy is a wrapper around gdk_gl_context_is_legacy().
-func (v *GLContext) IsLegacy() bool {
-	return gobool(C.gdk_gl_context_is_legacy(v.native()))
 }
 
 // GetCurrent is a wrapper around gdk_gl_context_get_current().
