@@ -87,16 +87,6 @@ func GLAreaNew() (*GLArea, error) {
 	return wrapGLArea(obj), nil
 }
 
-// GetUseES is a wrapper around gtk_gl_area_get_use_es().
-func (v *GLArea) GetUseES() bool {
-	return gobool(C.gtk_gl_area_get_use_es(v.native()))
-}
-
-// SetUseES is a wrapper around gtk_gl_area_set_use_es().
-func (v *GLArea) SetUseES(es bool) {
-	C.gtk_gl_area_set_use_es(v.native(), gbool(es))
-}
- 
 // MajorVersion is a representation of OpenGL major version.
 type MajorVersion int
 
