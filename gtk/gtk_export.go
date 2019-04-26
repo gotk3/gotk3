@@ -102,3 +102,18 @@ func goPrintSettings(key *C.gchar,
 	r.fn(C.GoString((*C.char)(key)), C.GoString((*C.char)(value)), r.userData)
 
 }
+
+//export goTreeModelFilterFuncs
+func goTreeModelFilterFuncs(filter *C.GtkTreeModelFilter, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
+	id := int(uintptr(data))
+
+	treeModelVisibleFilterFuncRegistry.Lock()
+	r := treeModelVisibleFilterFuncRegistry.m[id]
+	treeModelVisibleFilterFuncRegistry.Unlock()
+
+	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
+	return gbool(r.fn(
+		wrapTreeModelFilter(glib.Take(unsafe.Pointer(filter))),
+		goIter,
+		r.userData))
+}
