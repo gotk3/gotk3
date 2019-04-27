@@ -427,6 +427,7 @@ func (v *Object) goValue() (interface{}, error) {
 		return nil, err
 	}
 
+	// The marshalers expect Values, not Objects
 	val, err := ValueInit(objType)
 	if err != nil {
 		return nil, err
