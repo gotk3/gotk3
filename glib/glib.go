@@ -201,6 +201,23 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 				"no suitable Go value for arg %d: %v\n", i, err)
 			return
 		}
+		// Parameters that are descendants of GObject come wrapped in another GObject.
+		// For C applications, the default marshaller (g_cclosure_marshal_VOID__VOID in
+		// gmarshal.c in the GTK glib library) 'peeks' into the enclosing object and
+		// passes the wrapped object to the handler. Use the *Object.goValue function
+		// to emulate that for Go signal handlers.
+		switch objVal := val.(type) {
+		case *Object:
+			innerVal, err := objVal.goValue()
+			if err != nil {
+				// print warning and leave val unchanged to preserve old
+				// behavior
+				fmt.Fprintf(os.Stderr,
+					"warning: no suitable Go value from object for arg %d: %v\n", i, err)
+			} else {
+				val = innerVal
+			}
+		}
 		rv := reflect.ValueOf(val)
 		args = append(args, rv.Convert(cc.rf.Type().In(i)))
 	}
@@ -398,6 +415,26 @@ func (v *Object) native() *C.GObject {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGObject(p)
+}
+
+// goValue converts a *Object to a Go type (e.g. *Object => *gtk.Entry).
+// It is used in goMarshal to convert generic GObject parameters to
+// signal handlers to the actual types expected by the signal handler.
+func (v *Object) goValue() (interface{}, error) {
+	objType := Type(C._g_type_from_instance(C.gpointer(v.native())))
+	f, err := gValueMarshalers.lookupType(objType)
+	if err != nil {
+		return nil, err
+	}
+
+	// The marshalers expect Values, not Objects
+	val, err := ValueInit(objType)
+	if err != nil {
+		return nil, err
+	}
+	val.SetInstance(uintptr(unsafe.Pointer(v.GObject)))
+	rv, err := f(uintptr(unsafe.Pointer(val.native())))
+	return rv, err
 }
 
 // Take wraps a unsafe.Pointer as a glib.Object, taking ownership of it.
@@ -1106,6 +1143,13 @@ func (m marshalMap) lookup(v *Value) (GValueMarshaler, error) {
 		return f, nil
 	}
 	if f, ok := m[fundamental]; ok {
+		return f, nil
+	}
+	return nil, errors.New("missing marshaler for type")
+}
+
+func (m marshalMap) lookupType(t Type) (GValueMarshaler, error) {
+	if f, ok := m[Type(t)]; ok {
 		return f, nil
 	}
 	return nil, errors.New("missing marshaler for type")
