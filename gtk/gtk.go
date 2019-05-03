@@ -7285,6 +7285,11 @@ func (v *Statusbar) GetMessageArea() (*Box, error) {
 	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, nil
 }
 
+// RemoveAll() is a wrapper around gtk_statusbar_remove_all()
+func (v *Statusbar) RemoveAll(contextID uint) {
+	C.gtk_statusbar_remove_all(v.native(), C.guint(contextID))
+}
+
 /*
  * GtkSwitch
  */
