@@ -5290,6 +5290,12 @@ func (v *MenuItem) SetUseUnderline(settings bool) {
 	C.gtk_menu_item_set_use_underline(v.native(), gbool(settings))
 }
 
+// GetUseUnderline() is a wrapper around gtk_menu_item_get_use_underline()
+func (v *MenuItem) GetUseUnderline() bool {
+	c := C.gtk_menu_item_get_use_underline(v.native())
+	return gobool(c)
+}
+
 /*
  * GtkMessageDialog
  */
