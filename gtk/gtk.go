@@ -7658,6 +7658,14 @@ func (v *TextBuffer) InsertAtCursor(text string) {
 	C.gtk_text_buffer_insert_at_cursor(v.native(), (*C.gchar)(cstr), C.gint(len(text)))
 }
 
+// InsertWithTag() is a wrapper around gtk_text_buffer_insert_with_tags() that supports only one tag
+// as cgo does not support functions with variable-argument lists (see https://github.com/golang/go/issues/975)
+func (v *TextBuffer) InsertWithTag(iter *TextIter, text string, tag *TextTag) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C._gtk_text_buffer_insert_with_tag(v.native(), (*C.GtkTextIter)(iter), (*C.gchar)(cstr), C.gint(len(text)), tag.native())
+}
+
 // RemoveTag() is a wrapper around gtk_text_buffer_remove_tag().
 func (v *TextBuffer) RemoveTag(tag *TextTag, start, end *TextIter) {
 	C.gtk_text_buffer_remove_tag(v.native(), tag.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
