@@ -7666,6 +7666,16 @@ func (v *TextBuffer) InsertWithTag(iter *TextIter, text string, tag *TextTag) {
 	C._gtk_text_buffer_insert_with_tag(v.native(), (*C.GtkTextIter)(iter), (*C.gchar)(cstr), C.gint(len(text)), tag.native())
 }
 
+// InsertWithTagByName() is a wrapper around gtk_text_buffer_insert_with_tags_by_name() that supports only one tag
+// as cgo does not support functions with variable-argument lists (see https://github.com/golang/go/issues/975)
+func (v *TextBuffer) InsertWithTagByName(iter *TextIter, text string, tagName string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	ctag := C.CString(tagName)
+	defer C.free(unsafe.Pointer(ctag))
+	C._gtk_text_buffer_insert_with_tag_by_name(v.native(), (*C.GtkTextIter)(iter), (*C.gchar)(cstr), C.gint(len(text)), (*C.gchar)(ctag))
+}
+
 // RemoveTag() is a wrapper around gtk_text_buffer_remove_tag().
 func (v *TextBuffer) RemoveTag(tag *TextTag, start, end *TextIter) {
 	C.gtk_text_buffer_remove_tag(v.native(), tag.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
