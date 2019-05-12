@@ -928,6 +928,10 @@ static inline void _gtk_tree_model_filter_set_visible_func(GtkTreeModelFilter *f
     gtk_tree_model_filter_set_visible_func(filter, (GtkTreeModelFilterVisibleFunc)(goTreeModelFilterFuncs), user_data, NULL);
 }
 
+static inline void _gtk_text_buffer_insert_with_tag_by_name(GtkTextBuffer* buffer, GtkTextIter* iter, const gchar* text, gint len, const gchar* first_tag_name) {
+	gtk_text_buffer_insert_with_tags_by_name(buffer, iter, text, len, first_tag_name, NULL);
+}
+
 static inline void _gtk_text_buffer_insert_with_tag(GtkTextBuffer* buffer, GtkTextIter* iter, const gchar* text, gint len, GtkTextTag* tag) {
 	gtk_text_buffer_insert_with_tags(buffer, iter, text, len, tag, NULL);
 }
