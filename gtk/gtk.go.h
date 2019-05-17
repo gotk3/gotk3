@@ -935,3 +935,9 @@ static inline void _gtk_text_buffer_insert_with_tag_by_name(GtkTextBuffer* buffe
 static inline void _gtk_text_buffer_insert_with_tag(GtkTextBuffer* buffer, GtkTextIter* iter, const gchar* text, gint len, GtkTextTag* tag) {
 	gtk_text_buffer_insert_with_tags(buffer, iter, text, len, tag, NULL);
 }
+
+extern gint goTreeSortableSortFuncs(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer data);
+
+static inline void _gtk_tree_sortable_set_sort_func(GtkTreeSortable *sortable, gint sort_column_id, gpointer user_data) {
+    gtk_tree_sortable_set_sort_func(sortable, sort_column_id, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data, NULL);
+}
