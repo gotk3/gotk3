@@ -133,7 +133,7 @@ func wrapFileChooserNativeDialog(obj *glib.Object) *FileChooserNativeDialog {
 // FileChooserNativeDialogNew is a wrapper around gtk_file_chooser_native_new().
 func FileChooserNativeDialogNew(
 	title string,
-	parent *Window,
+	parent IWindow,
 	action FileChooserAction,
 	accept_label string,
 	cancel_label string) (*FileChooserNativeDialog, error) {
@@ -144,7 +144,7 @@ func FileChooserNativeDialogNew(
 	c_cancel_label := C.CString(cancel_label)
 	defer C.free(unsafe.Pointer(c_cancel_label))
 	c := C.gtk_file_chooser_native_new(
-		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_title), parent.toWindow(), C.GtkFileChooserAction(action),
 		(*C.gchar)(c_accept_label), (*C.gchar)(c_cancel_label))
 	if c == nil {
 		return nil, nilPtrErr
@@ -156,13 +156,13 @@ func FileChooserNativeDialogNew(
 /*
  * FileChooserNative
  */
-func OpenFileChooserNative(title string, parent_window *Window) *string {
+func OpenFileChooserNative(title string, parent_window IWindow) *string {
 	c_title := C.CString(title)
 
 	var native *C.GtkFileChooserNative
 
 	native = C.gtk_file_chooser_native_new((*C.gchar)(c_title),
-		parent_window.native(),
+		parent_window.toWindow(),
 		C.GtkFileChooserAction(FILE_CHOOSER_ACTION_OPEN),
 		(*C.gchar)(C.CString("_Open")),
 		(*C.gchar)(C.CString("_Cancel")))
