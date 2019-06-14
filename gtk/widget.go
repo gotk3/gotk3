@@ -8,11 +8,10 @@ package gtk
 import "C"
 import (
 	"errors"
-	"sync"
 	"unsafe"
 
-	"github.com/diamondburned/gotk3/gdk"
-	"github.com/diamondburned/gotk3/glib"
+	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/glib"
 )
 
 /*
@@ -22,7 +21,6 @@ import (
 // Widget is a representation of GTK's GtkWidget.
 type Widget struct {
 	glib.InitiallyUnowned
-	sync sync.Mutex
 }
 
 // IWidget is an interface type implemented by all structs
@@ -112,17 +110,11 @@ func (v *Widget) Unparent() {
 
 // Show is a wrapper around gtk_widget_show().
 func (v *Widget) Show() {
-	v.lock.Lock()
-	defer v.lock.Unlock()
-
 	C.gtk_widget_show(v.native())
 }
 
 // Hide is a wrapper around gtk_widget_hide().
 func (v *Widget) Hide() {
-	v.lock.Lock()
-	defer v.lock.Unlock()
-
 	C.gtk_widget_hide(v.native())
 }
 
@@ -183,17 +175,11 @@ func (v *Widget) SetHasWindow(hasWindow bool) {
 
 // ShowNow is a wrapper around gtk_widget_show_now().
 func (v *Widget) ShowNow() {
-	v.lock.Lock()
-	defer v.lock.Unlock()
-
 	C.gtk_widget_show_now(v.native())
 }
 
 // ShowAll is a wrapper around gtk_widget_show_all().
 func (v *Widget) ShowAll() {
-	v.lock.Lock()
-	defer v.lock.Unlock()
-
 	C.gtk_widget_show_all(v.native())
 }
 
