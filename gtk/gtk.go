@@ -619,6 +619,7 @@ const (
 	POLICY_ALWAYS    PolicyType = C.GTK_POLICY_ALWAYS
 	POLICY_AUTOMATIC PolicyType = C.GTK_POLICY_AUTOMATIC
 	POLICY_NEVER     PolicyType = C.GTK_POLICY_NEVER
+	POLICY_EXTERNAL  PolicyType = C.GTK_POLICY_EXTERNAL
 )
 
 func marshalPolicyType(p uintptr) (interface{}, error) {
