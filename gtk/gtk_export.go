@@ -117,3 +117,17 @@ func goTreeModelFilterFuncs(filter *C.GtkTreeModelFilter, iter *C.GtkTreeIter, d
 		goIter,
 		r.userData))
 }
+
+//export goTreeSortableSortFuncs
+func goTreeSortableSortFuncs(model *C.GtkTreeModel, a, b *C.GtkTreeIter, data C.gpointer) C.gint {
+	id := int(uintptr(data))
+
+	treeStoreSortFuncRegistry.Lock()
+	r := treeStoreSortFuncRegistry.m[id]
+	treeStoreSortFuncRegistry.Unlock()
+
+	goIterA := &TreeIter{(C.GtkTreeIter)(*a)}
+	goIterB := &TreeIter{(C.GtkTreeIter)(*b)}
+
+	return C.gint(r.fn(wrapTreeModel(glib.Take(unsafe.Pointer(model))), goIterA, goIterB, r.userData))
+}

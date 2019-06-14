@@ -4876,6 +4876,13 @@ func (v *ListStore) toTreeModel() *C.GtkTreeModel {
 	return C.toGtkTreeModel(unsafe.Pointer(v.GObject))
 }
 
+func (v *ListStore) toTreeSortable() *C.GtkTreeSortable {
+	if v == nil {
+		return nil
+	}
+	return C.toGtkTreeSortable(unsafe.Pointer(v.GObject))
+}
+
 // ListStoreNew is a wrapper around gtk_list_store_newv().
 func ListStoreNew(types ...glib.Type) (*ListStore, error) {
 	gtypes := C.alloc_types(C.int(len(types)))
@@ -4953,6 +4960,11 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 func (v *ListStore) SetSortColumnId(column int, order SortType) {
 	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
 	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
+}
+
+// SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
+func (v *ListStore) SetSortFunc(sortColumn int, f TreeIterCompareFunc, data ...interface{}) error {
+	return v.toTreeSortable().setSortFunc(sortColumn, f, data)
 }
 
 func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
@@ -8978,6 +8990,45 @@ type TreeSortable interface {
 func (v *TreeStore) SetSortColumnId(column int, order SortType) {
 	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
 	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
+}
+
+// TreeIterCompareFunc defines the function prototype for the sort function (f arg) for
+// (* TreeSortable).SetSortFunc
+type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData interface{}) int
+
+type treeStoreSortFuncData struct {
+	fn       TreeIterCompareFunc
+	userData interface{}
+}
+
+var (
+	treeStoreSortFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]treeStoreSortFuncData
+	}{
+		next: 1,
+		m:    make(map[int]treeStoreSortFuncData),
+	}
+)
+
+func (v *C.GtkTreeSortable) setSortFunc(sortColumn int, f TreeIterCompareFunc, userData ...interface{}) error {
+	if len(userData) > 1 {
+		return errors.New("userData len must be 0 or 1")
+	}
+
+	t := treeStoreSortFuncData{fn: f}
+	if len(userData) > 0 {
+		t.userData = userData[0]
+	}
+	treeStoreSortFuncRegistry.Lock()
+	id := treeStoreSortFuncRegistry.next
+	treeStoreSortFuncRegistry.next++
+	treeStoreSortFuncRegistry.m[id] = t
+	treeStoreSortFuncRegistry.Unlock()
+
+	C._gtk_tree_sortable_set_sort_func(v, C.gint(sortColumn), C.gpointer(uintptr(id)))
+	return nil
 }
 
 /*
