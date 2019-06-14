@@ -13,6 +13,10 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+const(
+	POLICY_EXTERNAL  PolicyType = C.GTK_POLICY_EXTERNAL
+)
+
 func init() {
 	tm := []glib.TypeMarshaler{
 
