@@ -4049,7 +4049,7 @@ func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
 // FileChooserDialogNewWith1Button is a wrapper around gtk_file_chooser_dialog_new() with one button.
 func FileChooserDialogNewWith1Button(
 	title string,
-	parent *Window,
+	parent IWindow,
 	action FileChooserAction,
 	first_button_text string,
 	first_button_id ResponseType) (*FileChooserDialog, error) {
@@ -4058,7 +4058,7 @@ func FileChooserDialogNewWith1Button(
 	c_first_button_text := C.CString(first_button_text)
 	defer C.free(unsafe.Pointer(c_first_button_text))
 	c := C.gtk_file_chooser_dialog_new_1(
-		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_title), parent.toWindow(), C.GtkFileChooserAction(action),
 		(*C.gchar)(c_first_button_text), C.int(first_button_id))
 	if c == nil {
 		return nil, nilPtrErr
@@ -4070,7 +4070,7 @@ func FileChooserDialogNewWith1Button(
 // FileChooserDialogNewWith2Buttons is a wrapper around gtk_file_chooser_dialog_new() with two buttons.
 func FileChooserDialogNewWith2Buttons(
 	title string,
-	parent *Window,
+	parent IWindow,
 	action FileChooserAction,
 	first_button_text string,
 	first_button_id ResponseType,
@@ -4083,7 +4083,7 @@ func FileChooserDialogNewWith2Buttons(
 	c_second_button_text := C.CString(second_button_text)
 	defer C.free(unsafe.Pointer(c_second_button_text))
 	c := C.gtk_file_chooser_dialog_new_2(
-		(*C.gchar)(c_title), parent.native(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_title), parent.toWindow(), C.GtkFileChooserAction(action),
 		(*C.gchar)(c_first_button_text), C.int(first_button_id),
 		(*C.gchar)(c_second_button_text), C.int(second_button_id))
 	if c == nil {

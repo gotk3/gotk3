@@ -137,10 +137,10 @@ func wrapColorChooserDialog(obj *glib.Object) *ColorChooserDialog {
 }
 
 // ColorChooserDialogNew() is a wrapper around gtk_color_chooser_dialog_new().
-func ColorChooserDialogNew(title string, parent *Window) (*ColorChooserDialog, error) {
+func ColorChooserDialogNew(title string, parent IWindow) (*ColorChooserDialog, error) {
 	cstr := C.CString(title)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_color_chooser_dialog_new((*C.gchar)(cstr), parent.native())
+	c := C.gtk_color_chooser_dialog_new((*C.gchar)(cstr), parent.toWindow())
 	if c == nil {
 		return nil, nilPtrErr
 	}

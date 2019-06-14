@@ -870,9 +870,9 @@ func (po *PrintOperation) SetCustomTabLabel(label string) {
 }
 
 // Run() is a wrapper around gtk_print_operation_run().
-func (po *PrintOperation) Run(action PrintOperationAction, parent *Window) (PrintOperationResult, error) {
+func (po *PrintOperation) Run(action PrintOperationAction, parent IWindow) (PrintOperationResult, error) {
 	var err *C.GError = nil
-	c := C.gtk_print_operation_run(po.native(), C.GtkPrintOperationAction(action), parent.native(), &err)
+	c := C.gtk_print_operation_run(po.native(), C.GtkPrintOperationAction(action), parent.toWindow(), &err)
 	res := PrintOperationResult(c)
 	if res == PRINT_OPERATION_RESULT_ERROR {
 		defer C.g_error_free(err)
@@ -948,8 +948,8 @@ func (po *PrintOperation) GetEmbedPageSetup() bool {
 }
 
 // PrintRunPageSetupDialog() is a wrapper around gtk_print_run_page_setup_dialog().
-func PrintRunPageSetupDialog(parent *Window, pageSetup *PageSetup, settings *PrintSettings) *PageSetup {
-	c := C.gtk_print_run_page_setup_dialog(parent.native(), pageSetup.native(), settings.native())
+func PrintRunPageSetupDialog(parent IWindow, pageSetup *PageSetup, settings *PrintSettings) *PageSetup {
+	c := C.gtk_print_run_page_setup_dialog(parent.toWindow(), pageSetup.native(), settings.native())
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj)
 }
@@ -973,7 +973,7 @@ var (
 )
 
 // PrintRunPageSetupDialogAsync() is a wrapper around gtk_print_run_page_setup_dialog_async().
-func PrintRunPageSetupDialogAsync(parent *Window, setup *PageSetup,
+func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
 	settings *PrintSettings, cb PageSetupDoneCallback, data uintptr) {
 
 	pageSetupDoneCallbackRegistry.Lock()
@@ -983,7 +983,7 @@ func PrintRunPageSetupDialogAsync(parent *Window, setup *PageSetup,
 		pageSetupDoneCallbackData{fn: cb, data: data}
 	pageSetupDoneCallbackRegistry.Unlock()
 
-	C._gtk_print_run_page_setup_dialog_async(parent.native(), setup.native(),
+	C._gtk_print_run_page_setup_dialog_async(parent.toWindow(), setup.native(),
 		settings.native(), C.gpointer(uintptr(id)))
 }
 
