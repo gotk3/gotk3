@@ -61,7 +61,11 @@ func IconViewNewWithModel(model ITreeModel) (*IconView, error) {
 
 // SetModel is a wrapper around gtk_icon_view_set_model().
 func (v *IconView) SetModel(model ITreeModel) {
-	C.gtk_icon_view_set_model(v.native(), model.toTreeModel())
+	var mptr *C.GtkTreeModel
+	if model != nil {
+		mptr = model.toTreeModel()
+	}
+	C.gtk_icon_view_set_model(v.native(), mptr)
 }
 
 // GetModel is a wrapper around gtk_icon_view_get_model().
