@@ -12,7 +12,7 @@ env:
   - GOARCH=amd64
 
 sudo: required
-dist: trusty
+dist: disco
 
 before_install:
   - sudo apt-get update
