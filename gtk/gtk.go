@@ -122,6 +122,7 @@ func init() {
 		{glib.Type(C.gtk_cell_renderer_spinner_get_type()), marshalCellRendererSpinner},
 		{glib.Type(C.gtk_cell_renderer_pixbuf_get_type()), marshalCellRendererPixbuf},
 		{glib.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
+		{glib.Type(C.gtk_cell_renderer_progress_get_type()), marshalCellRendererProgress},
 		{glib.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
 		{glib.Type(C.gtk_check_button_get_type()), marshalCheckButton},
 		{glib.Type(C.gtk_check_menu_item_get_type()), marshalCheckMenuItem},
@@ -2004,7 +2005,7 @@ func wrapCellRendererSpinner(obj *glib.Object) *CellRendererSpinner {
 	return &CellRendererSpinner{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
-// CellRendererSpinnerNew is a wrapper around gtk_cell_renderer_text_new().
+// CellRendererSpinnerNew is a wrapper around gtk_cell_renderer_spinner_new().
 func CellRendererSpinnerNew() (*CellRendererSpinner, error) {
 	c := C.gtk_cell_renderer_spinner_new()
 	if c == nil {
@@ -2050,6 +2051,44 @@ func CellRendererPixbufNew() (*CellRendererPixbuf, error) {
 	}
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapCellRendererPixbuf(obj), nil
+}
+
+/*
+ * GtkCellRendererProgress
+ */
+
+// CellRendererProgress is a representation of GTK's GtkCellRendererProgress.
+type CellRendererProgress struct {
+	CellRenderer
+}
+
+// native returns a pointer to the underlying GtkCellRendererProgress.
+func (v *CellRendererProgress) native() *C.GtkCellRendererProgress {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellRendererProgress(p)
+}
+
+func marshalCellRendererProgress(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererProgress(obj), nil
+}
+
+func wrapCellRendererProgress(obj *glib.Object) *CellRendererProgress {
+	return &CellRendererProgress{CellRenderer{glib.InitiallyUnowned{obj}}}
+}
+
+// CellRendererProgressNew is a wrapper around gtk_cell_renderer_progress_new().
+func CellRendererProgressNew() (*CellRendererProgress, error) {
+	c := C.gtk_cell_renderer_progress_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererProgress(obj), nil
 }
 
 /*
@@ -9156,6 +9195,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkCellRendererSpinner": wrapCellRendererSpinner,
 	"GtkCellRendererPixbuf":  wrapCellRendererPixbuf,
 	"GtkCellRendererText":    wrapCellRendererText,
+	"GtkCellRendererProgress":wrapCellRendererProgress,
 	"GtkCellRendererToggle":  wrapCellRendererToggle,
 	"GtkCheckButton":         wrapCheckButton,
 	"GtkCheckMenuItem":       wrapCheckMenuItem,

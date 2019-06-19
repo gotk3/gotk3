@@ -430,6 +430,12 @@ toGtkCellRendererPixbuf(void *p)
 	return (GTK_CELL_RENDERER_PIXBUF(p));
 }
 
+static GtkCellRendererProgress *
+toGtkCellRendererProgress(void *p)
+{
+    return (GTK_CELL_RENDERER_PROGRESS(p));
+}
+
 static GtkCellRendererText *
 toGtkCellRendererText(void *p)
 {
