@@ -59,9 +59,24 @@ toGtkStackSwitcher(void *p)
 }
 
 extern gboolean goListBoxFilterFuncs (GtkListBoxRow *row,
-                                    gpointer user_data);
+                                      gpointer user_data);
 
 static inline void _gtk_list_box_set_filter_func(GtkListBox *box, gpointer user_data) {
-    gtk_list_box_set_filter_func(box, (GtkListBoxFilterFunc)(goListBoxFilterFuncs), user_data, NULL);
+	gtk_list_box_set_filter_func(box, (GtkListBoxFilterFunc)(goListBoxFilterFuncs), user_data, NULL);
 }
 
+extern void goListBoxHeaderFuncs (GtkListBoxRow *row,
+                                  GtkListBoxRow *before,
+                                  gpointer user_data);
+
+static inline void _gtk_list_box_set_header_func(GtkListBox *box, gpointer user_data) {
+	gtk_list_box_set_header_func(box, (GtkListBoxUpdateHeaderFunc)(goListBoxHeaderFuncs), user_data, NULL);
+}
+
+extern gint goListBoxSortFuncs (GtkListBoxRow *row1,
+                                GtkListBoxRow *row2,
+                                gpointer user_data);
+
+static inline void _gtk_list_box_set_sort_func(GtkListBox *box, gpointer user_data) {
+	gtk_list_box_set_sort_func(box, (GtkListBoxSortFunc)(goListBoxSortFuncs), user_data, NULL);
+}

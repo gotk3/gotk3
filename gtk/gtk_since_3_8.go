@@ -44,7 +44,6 @@ const (
  */
 
 type TickCallback func(widget *Widget, frameClock *gdk.FrameClock, userData uintptr) bool
-// type ListBoxFilterFunc func(row *ListBoxRow, userData uintptr) bool
 
 type tickCallbackData struct {
 	fn       TickCallback
