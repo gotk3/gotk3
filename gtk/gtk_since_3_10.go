@@ -395,8 +395,61 @@ func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData uintptr) {
 	C._gtk_list_box_set_filter_func(v.native(), C.gpointer(uintptr(id)))
 }
 
-// TODO: SetHeaderFunc
-// TODO: SetSortFunc
+type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow, userData uintptr)
+
+type listBoxHeaderFuncData struct {
+	fn       ListBoxHeaderFunc
+	userData uintptr
+}
+
+var (
+	listBoxHeaderFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]listBoxHeaderFuncData
+	}{
+		next: 1,
+		m:    make(map[int]listBoxHeaderFuncData),
+	}
+)
+
+func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData uintptr) {
+	listBoxHeaderFuncRegistry.Lock()
+	id := listBoxHeaderFuncRegistry.next
+	listBoxHeaderFuncRegistry.next++
+	listBoxHeaderFuncRegistry.m[id] = listBoxHeaderFuncData{fn: fn, userData: userData}
+	listBoxHeaderFuncRegistry.Unlock()
+
+	C._gtk_list_box_set_header_func(v.native(), C.gpointer(uintptr(id)))
+}
+
+type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow, userData uintptr) int
+
+type listBoxSortFuncData struct {
+	fn       ListBoxSortFunc
+	userData uintptr
+}
+
+var (
+	listBoxSortFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]listBoxSortFuncData
+	}{
+		next: 1,
+		m:    make(map[int]listBoxSortFuncData),
+	}
+)
+
+func (v *ListBox) SetSortFunc(fn ListBoxSortFunc, userData uintptr) {
+	listBoxSortFuncRegistry.Lock()
+	id := listBoxSortFuncRegistry.next
+	listBoxSortFuncRegistry.next++
+	listBoxSortFuncRegistry.m[id] = listBoxSortFuncData{fn: fn, userData: userData}
+	listBoxSortFuncRegistry.Unlock()
+
+	C._gtk_list_box_set_sort_func(v.native(), C.gpointer(uintptr(id)))
+}
 
 // DragHighlightRow is a wrapper around gtk_list_box_drag_highlight_row()
 func (v *ListBox) DragHighlightRow(row *ListBoxRow) {
