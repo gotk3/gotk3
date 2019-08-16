@@ -7742,6 +7742,100 @@ func (v *TextBuffer) SetModified(setting bool) {
 	C.gtk_text_buffer_set_modified(v.native(), gbool(setting))
 }
 
+// GetHasSelection() is a variant solution around gtk_text_buffer_get_has_selection().
+func (v *TextBuffer) GetHasSelection() bool {
+	value, _ := v.GetProperty("has-selection")
+	return value.(bool)
+}
+
+// DeleteSelection() is a wrapper around gtk_text_buffer_delete_selection().
+func (v *TextBuffer) DeleteSelection(interactive, defaultEditable bool) bool {
+	return gobool(C.gtk_text_buffer_delete_selection(v.native(), gbool(interactive), gbool(defaultEditable)))
+}
+
+// GetSelectionBound() is a wrapper around gtk_text_buffer_get_selection_bound().
+func (v *TextBuffer) GetSelectionBound() *TextMark {
+	ret := C.gtk_text_buffer_get_selection_bound(v.native())
+	return (*TextMark)(ret)
+}
+
+// GetSelectionBounds() is a wrapper around gtk_text_buffer_get_selection_bounds().
+func (v *TextBuffer) GetSelectionBounds() (start, end *TextIter) {
+	start, end = new(TextIter), new(TextIter)
+	C.gtk_text_buffer_get_selection_bounds(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+	return
+}
+
+// GetIterAtLineOffset() is a wrapper around gtk_text_buffer_get_iter_at_line_offset().
+func (v *TextBuffer) GetIterAtLineOffset(lineNumber, charOffset int) (iter *TextIter) {
+	iter = new(TextIter)
+	C.gtk_text_buffer_get_iter_at_line_offset(v.native(), (*C.GtkTextIter)(iter), (C.gint)(lineNumber), (C.gint)(charOffset))
+	return
+}
+
+// CreateTag() is a variant solution around gtk_text_buffer_create_tag().
+func (v *TextBuffer) CreateTag(name string, props map[string]interface{}) (tag *TextTag, err error) {
+	if tag, err = TextTagNew(name); err == nil {
+		if tagTable, err := v.GetTagTable(); err == nil {
+			tagTable.Add(tag)
+			for n, p := range props {
+				err = tag.SetProperty(n, p)
+			}
+		}
+	}
+	return
+}
+
+// RemoveTagByName() is a wrapper around  gtk_text_buffer_remove_tag_by_name()
+func (v *TextBuffer) RemoveTagByName(name string, start, end *TextIter) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_text_buffer_remove_tag_by_name(v.native(), (*C.gchar)(cstr), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+}
+
+// InsertMarkup() is a wrapper around  gtk_text_buffer_register_serialize_tagset()
+func (v *TextBuffer) RegisterSerializeTagset(tagsetName string) gdk.Atom {
+	cstr := C.CString(tagsetName)
+	if len(tagsetName) == 0 {
+		cstr = nil
+	}
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_text_buffer_register_serialize_tagset(v.native(), (*C.gchar)(cstr))
+	return gdk.Atom(uintptr(unsafe.Pointer(c)))
+}
+
+// RegisterDeserializeTagset() is a wrapper around  gtk_text_buffer_register_deserialize_tagset()
+func (v *TextBuffer) RegisterDeserializeTagset(tagsetName string) gdk.Atom {
+	cstr := C.CString(tagsetName)
+	if len(tagsetName) == 0 {
+		cstr = nil
+	}
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_text_buffer_register_deserialize_tagset(v.native(), (*C.gchar)(cstr))
+	return gdk.Atom(uintptr(unsafe.Pointer(c)))
+}
+
+// Serialize() is a wrapper around  gtk_text_buffer_serialize()
+func (v *TextBuffer) Serialize(contentBuffer *TextBuffer, format gdk.Atom, start, end *TextIter) string {
+	var length = new(C.ulong)
+	ptr := C.gtk_text_buffer_serialize(v.native(), contentBuffer.native(), C.GdkAtom(unsafe.Pointer(format)),
+		(*C.GtkTextIter)(start), (*C.GtkTextIter)(end), length)
+	return C.GoStringN((*C.char)(unsafe.Pointer(ptr)), (C.int)(*length))
+}
+
+// Deserialize() is a wrapper around  gtk_text_buffer_deserialize()
+func (v *TextBuffer) Deserialize(contentBuffer *TextBuffer, format gdk.Atom, iter *TextIter, data []byte) (ok bool, err error) {
+	var length = (C.ulong)(len(data))
+	var cerr *C.GError = nil
+	cbool := C.gtk_text_buffer_deserialize(v.native(), contentBuffer.native(), C.GdkAtom(unsafe.Pointer(format)),
+		(*C.GtkTextIter)(iter), (*C.guchar)(unsafe.Pointer(&data[0])), length, &cerr)
+	if !gobool(cbool) {
+		defer C.g_error_free(cerr)
+		return false, errors.New(goString(cerr.message))
+	}
+	return gobool(cbool), nil
+}
+
 func (v *TextBuffer) SetText(text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
@@ -9181,98 +9275,98 @@ func VolumeButtonNew() (*VolumeButton, error) {
 type WrapFn interface{}
 
 var WrapMap = map[string]WrapFn{
-	"GtkAccelGroup":          wrapAccelGroup,
-	"GtkAccelMao":            wrapAccelMap,
-	"GtkAdjustment":          wrapAdjustment,
-	"GtkApplicationWindow":   wrapApplicationWindow,
-	"GtkAssistant":           wrapAssistant,
-	"GtkBin":                 wrapBin,
-	"GtkBox":                 wrapBox,
-	"GtkButton":              wrapButton,
-	"GtkCalendar":            wrapCalendar,
-	"GtkCellLayout":          wrapCellLayout,
-	"GtkCellRenderer":        wrapCellRenderer,
-	"GtkCellRendererSpinner": wrapCellRendererSpinner,
-	"GtkCellRendererPixbuf":  wrapCellRendererPixbuf,
-	"GtkCellRendererText":    wrapCellRendererText,
-	"GtkCellRendererProgress":wrapCellRendererProgress,
-	"GtkCellRendererToggle":  wrapCellRendererToggle,
-	"GtkCheckButton":         wrapCheckButton,
-	"GtkCheckMenuItem":       wrapCheckMenuItem,
-	"GtkClipboard":           wrapClipboard,
-	"GtkColorButton":         wrapColorButton,
-	"GtkContainer":           wrapContainer,
-	"GtkDialog":              wrapDialog,
-	"GtkDrawingArea":         wrapDrawingArea,
-	"GtkEditable":            wrapEditable,
-	"GtkEntry":               wrapEntry,
-	"GtkEntryBuffer":         wrapEntryBuffer,
-	"GtkEntryCompletion":     wrapEntryCompletion,
-	"GtkEventBox":            wrapEventBox,
-	"GtkExpander":            wrapExpander,
-	"GtkFrame":               wrapFrame,
-	"GtkFileChooser":         wrapFileChooser,
-	"GtkFileChooserButton":   wrapFileChooserButton,
-	"GtkFileChooserDialog":   wrapFileChooserDialog,
-	"GtkFileChooserWidget":   wrapFileChooserWidget,
-	"GtkGrid":                wrapGrid,
-	"GtkIconView":            wrapIconView,
-	"GtkImage":               wrapImage,
-	"GtkLabel":               wrapLabel,
-	"GtkLayout":              wrapLayout,
-	"GtkLinkButton":          wrapLinkButton,
-	"GtkListStore":           wrapListStore,
-	"GtkMenu":                wrapMenu,
-	"GtkMenuBar":             wrapMenuBar,
-	"GtkMenuButton":          wrapMenuButton,
-	"GtkMenuItem":            wrapMenuItem,
-	"GtkMenuShell":           wrapMenuShell,
-	"GtkMessageDialog":       wrapMessageDialog,
-	"GtkNotebook":            wrapNotebook,
-	"GtkOffscreenWindow":     wrapOffscreenWindow,
-	"GtkOrientable":          wrapOrientable,
-	"GtkOverlay":             wrapOverlay,
-	"GtkPaned":               wrapPaned,
-	"GtkProgressBar":         wrapProgressBar,
-	"GtkRadioButton":         wrapRadioButton,
-	"GtkRadioMenuItem":       wrapRadioMenuItem,
-	"GtkRange":               wrapRange,
-	"GtkRecentChooser":       wrapRecentChooser,
-	"GtkRecentChooserMenu":   wrapRecentChooserMenu,
-	"GtkRecentFilter":        wrapRecentFilter,
-	"GtkRecentManager":       wrapRecentManager,
-	"GtkScaleButton":         wrapScaleButton,
-	"GtkScale":               wrapScale,
-	"GtkScrollable":          wrapScrollable,
-	"GtkScrollbar":           wrapScrollbar,
-	"GtkScrolledWindow":      wrapScrolledWindow,
-	"GtkSearchEntry":         wrapSearchEntry,
-	"GtkSeparator":           wrapSeparator,
-	"GtkSeparatorMenuItem":   wrapSeparatorMenuItem,
-	"GtkSeparatorToolItem":   wrapSeparatorToolItem,
-	"GtkSpinButton":          wrapSpinButton,
-	"GtkSpinner":             wrapSpinner,
-	"GtkStatusbar":           wrapStatusbar,
-	"GtkSwitch":              wrapSwitch,
-	"GtkTextView":            wrapTextView,
-	"GtkTextBuffer":          wrapTextBuffer,
-	"GtkTextTag":             wrapTextTag,
-	"GtkTextTagTable":        wrapTextTagTable,
-	"GtkToggleButton":        wrapToggleButton,
-	"GtkToolbar":             wrapToolbar,
-	"GtkToolButton":          wrapToolButton,
-	"GtkToggleToolButton":    wrapToggleToolButton,
-	"GtkToolItem":            wrapToolItem,
-	"GtkTreeModel":           wrapTreeModel,
-	"GtkTreeModelFilter":     wrapTreeModelFilter,
-	"GtkTreeSelection":       wrapTreeSelection,
-	"GtkTreeStore":           wrapTreeStore,
-	"GtkTreeView":            wrapTreeView,
-	"GtkTreeViewColumn":      wrapTreeViewColumn,
-	"GtkViewport":            wrapViewport,
-	"GtkVolumeButton":        wrapVolumeButton,
-	"GtkWidget":              wrapWidget,
-	"GtkWindow":              wrapWindow,
+	"GtkAccelGroup":           wrapAccelGroup,
+	"GtkAccelMao":             wrapAccelMap,
+	"GtkAdjustment":           wrapAdjustment,
+	"GtkApplicationWindow":    wrapApplicationWindow,
+	"GtkAssistant":            wrapAssistant,
+	"GtkBin":                  wrapBin,
+	"GtkBox":                  wrapBox,
+	"GtkButton":               wrapButton,
+	"GtkCalendar":             wrapCalendar,
+	"GtkCellLayout":           wrapCellLayout,
+	"GtkCellRenderer":         wrapCellRenderer,
+	"GtkCellRendererSpinner":  wrapCellRendererSpinner,
+	"GtkCellRendererPixbuf":   wrapCellRendererPixbuf,
+	"GtkCellRendererText":     wrapCellRendererText,
+	"GtkCellRendererProgress": wrapCellRendererProgress,
+	"GtkCellRendererToggle":   wrapCellRendererToggle,
+	"GtkCheckButton":          wrapCheckButton,
+	"GtkCheckMenuItem":        wrapCheckMenuItem,
+	"GtkClipboard":            wrapClipboard,
+	"GtkColorButton":          wrapColorButton,
+	"GtkContainer":            wrapContainer,
+	"GtkDialog":               wrapDialog,
+	"GtkDrawingArea":          wrapDrawingArea,
+	"GtkEditable":             wrapEditable,
+	"GtkEntry":                wrapEntry,
+	"GtkEntryBuffer":          wrapEntryBuffer,
+	"GtkEntryCompletion":      wrapEntryCompletion,
+	"GtkEventBox":             wrapEventBox,
+	"GtkExpander":             wrapExpander,
+	"GtkFrame":                wrapFrame,
+	"GtkFileChooser":          wrapFileChooser,
+	"GtkFileChooserButton":    wrapFileChooserButton,
+	"GtkFileChooserDialog":    wrapFileChooserDialog,
+	"GtkFileChooserWidget":    wrapFileChooserWidget,
+	"GtkGrid":                 wrapGrid,
+	"GtkIconView":             wrapIconView,
+	"GtkImage":                wrapImage,
+	"GtkLabel":                wrapLabel,
+	"GtkLayout":               wrapLayout,
+	"GtkLinkButton":           wrapLinkButton,
+	"GtkListStore":            wrapListStore,
+	"GtkMenu":                 wrapMenu,
+	"GtkMenuBar":              wrapMenuBar,
+	"GtkMenuButton":           wrapMenuButton,
+	"GtkMenuItem":             wrapMenuItem,
+	"GtkMenuShell":            wrapMenuShell,
+	"GtkMessageDialog":        wrapMessageDialog,
+	"GtkNotebook":             wrapNotebook,
+	"GtkOffscreenWindow":      wrapOffscreenWindow,
+	"GtkOrientable":           wrapOrientable,
+	"GtkOverlay":              wrapOverlay,
+	"GtkPaned":                wrapPaned,
+	"GtkProgressBar":          wrapProgressBar,
+	"GtkRadioButton":          wrapRadioButton,
+	"GtkRadioMenuItem":        wrapRadioMenuItem,
+	"GtkRange":                wrapRange,
+	"GtkRecentChooser":        wrapRecentChooser,
+	"GtkRecentChooserMenu":    wrapRecentChooserMenu,
+	"GtkRecentFilter":         wrapRecentFilter,
+	"GtkRecentManager":        wrapRecentManager,
+	"GtkScaleButton":          wrapScaleButton,
+	"GtkScale":                wrapScale,
+	"GtkScrollable":           wrapScrollable,
+	"GtkScrollbar":            wrapScrollbar,
+	"GtkScrolledWindow":       wrapScrolledWindow,
+	"GtkSearchEntry":          wrapSearchEntry,
+	"GtkSeparator":            wrapSeparator,
+	"GtkSeparatorMenuItem":    wrapSeparatorMenuItem,
+	"GtkSeparatorToolItem":    wrapSeparatorToolItem,
+	"GtkSpinButton":           wrapSpinButton,
+	"GtkSpinner":              wrapSpinner,
+	"GtkStatusbar":            wrapStatusbar,
+	"GtkSwitch":               wrapSwitch,
+	"GtkTextView":             wrapTextView,
+	"GtkTextBuffer":           wrapTextBuffer,
+	"GtkTextTag":              wrapTextTag,
+	"GtkTextTagTable":         wrapTextTagTable,
+	"GtkToggleButton":         wrapToggleButton,
+	"GtkToolbar":              wrapToolbar,
+	"GtkToolButton":           wrapToolButton,
+	"GtkToggleToolButton":     wrapToggleToolButton,
+	"GtkToolItem":             wrapToolItem,
+	"GtkTreeModel":            wrapTreeModel,
+	"GtkTreeModelFilter":      wrapTreeModelFilter,
+	"GtkTreeSelection":        wrapTreeSelection,
+	"GtkTreeStore":            wrapTreeStore,
+	"GtkTreeView":             wrapTreeView,
+	"GtkTreeViewColumn":       wrapTreeViewColumn,
+	"GtkViewport":             wrapViewport,
+	"GtkVolumeButton":         wrapVolumeButton,
+	"GtkWidget":               wrapWidget,
+	"GtkWindow":               wrapWindow,
 }
 
 // cast takes a native GObject and casts it to the appropriate Go struct.
