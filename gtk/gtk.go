@@ -7817,7 +7817,7 @@ func (v *TextBuffer) RegisterDeserializeTagset(tagsetName string) gdk.Atom {
 
 // Serialize() is a wrapper around  gtk_text_buffer_serialize()
 func (v *TextBuffer) Serialize(contentBuffer *TextBuffer, format gdk.Atom, start, end *TextIter) string {
-	var length = new(C.ulong)
+	var length = new(C.gsize)
 	ptr := C.gtk_text_buffer_serialize(v.native(), contentBuffer.native(), C.GdkAtom(unsafe.Pointer(format)),
 		(*C.GtkTextIter)(start), (*C.GtkTextIter)(end), length)
 	return C.GoStringN((*C.char)(unsafe.Pointer(ptr)), (C.int)(*length))
@@ -7825,10 +7825,10 @@ func (v *TextBuffer) Serialize(contentBuffer *TextBuffer, format gdk.Atom, start
 
 // Deserialize() is a wrapper around  gtk_text_buffer_deserialize()
 func (v *TextBuffer) Deserialize(contentBuffer *TextBuffer, format gdk.Atom, iter *TextIter, data []byte) (ok bool, err error) {
-	var length = (C.ulong)(len(data))
+	var length = (C.gsize)(len(data))
 	var cerr *C.GError = nil
 	cbool := C.gtk_text_buffer_deserialize(v.native(), contentBuffer.native(), C.GdkAtom(unsafe.Pointer(format)),
-		(*C.GtkTextIter)(iter), (*C.guchar)(unsafe.Pointer(&data[0])), length, &cerr)
+		(*C.GtkTextIter)(iter), (*C.guint8)(unsafe.Pointer(&data[0])), length, &cerr)
 	if !gobool(cbool) {
 		defer C.g_error_free(cerr)
 		return false, errors.New(goString(cerr.message))
