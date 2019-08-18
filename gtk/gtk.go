@@ -7760,10 +7760,10 @@ func (v *TextBuffer) GetSelectionBound() *TextMark {
 }
 
 // GetSelectionBounds() is a wrapper around gtk_text_buffer_get_selection_bounds().
-func (v *TextBuffer) GetSelectionBounds() (start, end *TextIter) {
+func (v *TextBuffer) GetSelectionBounds() (start, end *TextIter, ok bool) {
 	start, end = new(TextIter), new(TextIter)
-	C.gtk_text_buffer_get_selection_bounds(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
-	return
+	cbool := C.gtk_text_buffer_get_selection_bounds(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+	return start, end, gobool(cbool)
 }
 
 // GetIterAtLineOffset() is a wrapper around gtk_text_buffer_get_iter_at_line_offset().
