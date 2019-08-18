@@ -7836,6 +7836,12 @@ func (v *TextBuffer) Deserialize(contentBuffer *TextBuffer, format gdk.Atom, ite
 	return gobool(cbool), nil
 }
 
+// GetInsert() is a wrapper around gtk_text_buffer_get_insert().
+func (v *TextBuffer) GetInsert() *TextMark {
+	ret := C.gtk_text_buffer_get_insert(v.native())
+	return (*TextMark)(ret)
+}
+
 func (v *TextBuffer) SetText(text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
