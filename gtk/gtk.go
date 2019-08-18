@@ -7842,6 +7842,31 @@ func (v *TextBuffer) GetInsert() *TextMark {
 	return (*TextMark)(ret)
 }
 
+// CopyClipboard() is a wrapper around gtk_text_buffer_copy_clipboard().
+func (v *TextBuffer) CopyClipboard(clipboard *Clipboard) {
+	C.gtk_text_buffer_copy_clipboard(v.native(), clipboard.native())
+}
+
+// CutClipboard() is a wrapper around gtk_text_buffer_cut_clipboard().
+func (v *TextBuffer) CutClipboard(clipboard *Clipboard, defaultEditable bool) {
+	C.gtk_text_buffer_cut_clipboard(v.native(), clipboard.native(), gbool(defaultEditable))
+}
+
+// PastClipboard() is a wrapper around gtk_text_buffer_paste_clipboard().
+func (v *TextBuffer) PastClipboard(clipboard *Clipboard, overrideLocation *TextIter, defaultEditable bool) {
+	C.gtk_text_buffer_paste_clipboard(v.native(), clipboard.native(), (*C.GtkTextIter)(overrideLocation), gbool(defaultEditable))
+}
+
+// AddSelectionClipboard() is a wrapper around gtk_text_buffer_add_selection_clipboard().
+func (v *TextBuffer) AddSelectionClipboard(clipboard *Clipboard) {
+	C.gtk_text_buffer_add_selection_clipboard(v.native(), clipboard.native())
+}
+
+// RemoveSelectionClipboard() is a wrapper around gtk_text_buffer_remove_selection_clipboard().
+func (v *TextBuffer) RemoveSelectionClipboard(clipboard *Clipboard) {
+	C.gtk_text_buffer_remove_selection_clipboard(v.native(), clipboard.native())
+}
+
 func (v *TextBuffer) SetText(text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
