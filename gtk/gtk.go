@@ -7774,17 +7774,22 @@ func (v *TextBuffer) GetIterAtLineOffset(lineNumber, charOffset int) (iter *Text
 }
 
 // CreateTag() is a variant solution around gtk_text_buffer_create_tag().
-func (v *TextBuffer) CreateTag(name string, props map[string]interface{}) (tag *TextTag, err error) {
+func (v *TextBuffer) CreateTag(name string, props map[string]interface{}) (tag *TextTag) {
+	var err error
 	var tagTable *TextTagTable
 	if tag, err = TextTagNew(name); err == nil {
 		if tagTable, err = v.GetTagTable(); err == nil {
 			tagTable.Add(tag)
-			for n, p := range props {
-				if err = tag.SetProperty(n, p); err != nil {
+			for p, v := range props {
+				if err = tag.SetProperty(p, v); err != nil {
+					err = errors.New(fmt.Sprintf("%s, %v: %v\n", err.Error(), p, v))
 					break
 				}
 			}
 		}
+	}
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 	return
 }
