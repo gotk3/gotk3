@@ -73,6 +73,7 @@ func init() {
 		{glib.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
 		{glib.Type(C.gtk_buttons_type_get_type()), marshalButtonsType},
 		{glib.Type(C.gtk_calendar_display_options_get_type()), marshalCalendarDisplayOptions},
+		{glib.Type(C.gtk_corner_type_get_type()), marshalCornerType},
 		{glib.Type(C.gtk_dest_defaults_get_type()), marshalDestDefaults},
 		{glib.Type(C.gtk_dialog_flags_get_type()), marshalDialogFlags},
 		{glib.Type(C.gtk_entry_icon_position_get_type()), marshalEntryIconPosition},
@@ -98,6 +99,7 @@ func init() {
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
 		{glib.Type(C.gtk_target_flags_get_type()), marshalTargetFlags},
 		{glib.Type(C.gtk_text_direction_get_type()), marshalTextDirection},
+		{glib.Type(C.gtk_text_search_flags_get_type()), marshalTextSearchFlags},
 		{glib.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
 		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
 		{glib.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
@@ -872,6 +874,35 @@ const (
 func marshalWrapMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return WrapMode(c), nil
+}
+
+// CornerType is a representation of GTK's GtkCornerType.
+type CornerType int
+
+const (
+	CORNER_TOP_LEFT     CornerType = C.GTK_CORNER_TOP_LEFT
+	CORNER_BOTTOM_LEFT  CornerType = C.GTK_CORNER_BOTTOM_LEFT
+	CORNER_TOP_RIGHT    CornerType = C.GTK_CORNER_TOP_RIGHT
+	CORNER_BOTTOM_RIGHT CornerType = C.GTK_CORNER_BOTTOM_RIGHT
+)
+
+func marshalCornerType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return CornerType(c), nil
+}
+
+// TextSearchFlags is a representation of GTK's GtkTextSearchFlags.
+type TextSearchFlags int
+
+const (
+	TEXT_SEARCH_VISIBLE_ONLY     TextSearchFlags = C.GTK_TEXT_SEARCH_VISIBLE_ONLY
+	TEXT_SEARCH_TEXT_ONLY        TextSearchFlags = C.GTK_TEXT_SEARCH_TEXT_ONLY
+	TEXT_SEARCH_CASE_INSENSITIVE TextSearchFlags = C.GTK_TEXT_SEARCH_CASE_INSENSITIVE
+)
+
+func marshalTextSearchFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TextSearchFlags(c), nil
 }
 
 /*
@@ -7771,6 +7802,140 @@ func (v *TextBuffer) GetMark(mark_name string) *TextMark {
 	ret := C.gtk_text_buffer_get_mark(v.native(), (*C.gchar)(cstr))
 	return (*TextMark)(ret)
 }
+
+// GetHasSelection() is a variant solution around gtk_text_buffer_get_has_selection().
+func (v *TextBuffer) GetHasSelection() bool {
+	value, _ := v.GetProperty("has-selection")
+	return value.(bool)
+}
+
+// DeleteSelection() is a wrapper around gtk_text_buffer_delete_selection().
+func (v *TextBuffer) DeleteSelection(interactive, defaultEditable bool) bool {
+	return gobool(C.gtk_text_buffer_delete_selection(v.native(), gbool(interactive), gbool(defaultEditable)))
+}
+
+// GetSelectionBound() is a wrapper around gtk_text_buffer_get_selection_bound().
+func (v *TextBuffer) GetSelectionBound() *TextMark {
+	ret := C.gtk_text_buffer_get_selection_bound(v.native())
+	return (*TextMark)(ret)
+}
+
+// GetSelectionBounds() is a wrapper around gtk_text_buffer_get_selection_bounds().
+func (v *TextBuffer) GetSelectionBounds() (start, end *TextIter, ok bool) {
+	start, end = new(TextIter), new(TextIter)
+	cbool := C.gtk_text_buffer_get_selection_bounds(v.native(), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+	return start, end, gobool(cbool)
+}
+
+// GetIterAtLineOffset() is a wrapper around gtk_text_buffer_get_iter_at_line_offset().
+func (v *TextBuffer) GetIterAtLineOffset(lineNumber, charOffset int) (iter *TextIter) {
+	iter = new(TextIter)
+	C.gtk_text_buffer_get_iter_at_line_offset(v.native(), (*C.GtkTextIter)(iter), (C.gint)(lineNumber), (C.gint)(charOffset))
+	return
+}
+
+// CreateTag() is a variant solution around gtk_text_buffer_create_tag().
+func (v *TextBuffer) CreateTag(name string, props map[string]interface{}) (tag *TextTag) {
+	var err error
+	var tagTable *TextTagTable
+	if tag, err = TextTagNew(name); err == nil {
+		if tagTable, err = v.GetTagTable(); err == nil {
+			tagTable.Add(tag)
+			for p, v := range props {
+				if err = tag.SetProperty(p, v); err != nil {
+					err = errors.New(fmt.Sprintf("%s, %v: %v\n", err.Error(), p, v))
+					break
+				}
+			}
+		}
+	}
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return
+}
+
+// RemoveTagByName() is a wrapper around  gtk_text_buffer_remove_tag_by_name()
+func (v *TextBuffer) RemoveTagByName(name string, start, end *TextIter) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_text_buffer_remove_tag_by_name(v.native(), (*C.gchar)(cstr), (*C.GtkTextIter)(start), (*C.GtkTextIter)(end))
+}
+
+// InsertMarkup() is a wrapper around  gtk_text_buffer_register_serialize_tagset()
+func (v *TextBuffer) RegisterSerializeTagset(tagsetName string) gdk.Atom {
+	cstr := C.CString(tagsetName)
+	if len(tagsetName) == 0 {
+		cstr = nil
+	}
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_text_buffer_register_serialize_tagset(v.native(), (*C.gchar)(cstr))
+	return gdk.Atom(uintptr(unsafe.Pointer(c)))
+}
+
+// RegisterDeserializeTagset() is a wrapper around  gtk_text_buffer_register_deserialize_tagset()
+func (v *TextBuffer) RegisterDeserializeTagset(tagsetName string) gdk.Atom {
+	cstr := C.CString(tagsetName)
+	if len(tagsetName) == 0 {
+		cstr = nil
+	}
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_text_buffer_register_deserialize_tagset(v.native(), (*C.gchar)(cstr))
+	return gdk.Atom(uintptr(unsafe.Pointer(c)))
+}
+
+// Serialize() is a wrapper around  gtk_text_buffer_serialize()
+func (v *TextBuffer) Serialize(contentBuffer *TextBuffer, format gdk.Atom, start, end *TextIter) string {
+	var length = new(C.gsize)
+	ptr := C.gtk_text_buffer_serialize(v.native(), contentBuffer.native(), C.GdkAtom(unsafe.Pointer(format)),
+		(*C.GtkTextIter)(start), (*C.GtkTextIter)(end), length)
+	return C.GoStringN((*C.char)(unsafe.Pointer(ptr)), (C.int)(*length))
+}
+
+// Deserialize() is a wrapper around  gtk_text_buffer_deserialize()
+func (v *TextBuffer) Deserialize(contentBuffer *TextBuffer, format gdk.Atom, iter *TextIter, data []byte) (ok bool, err error) {
+	var length = (C.gsize)(len(data))
+	var cerr *C.GError = nil
+	cbool := C.gtk_text_buffer_deserialize(v.native(), contentBuffer.native(), C.GdkAtom(unsafe.Pointer(format)),
+		(*C.GtkTextIter)(iter), (*C.guint8)(unsafe.Pointer(&data[0])), length, &cerr)
+	if !gobool(cbool) {
+		defer C.g_error_free(cerr)
+		return false, errors.New(goString(cerr.message))
+	}
+	return gobool(cbool), nil
+}
+
+// GetInsert() is a wrapper around gtk_text_buffer_get_insert().
+func (v *TextBuffer) GetInsert() *TextMark {
+	ret := C.gtk_text_buffer_get_insert(v.native())
+	return (*TextMark)(ret)
+}
+
+// CopyClipboard() is a wrapper around gtk_text_buffer_copy_clipboard().
+func (v *TextBuffer) CopyClipboard(clipboard *Clipboard) {
+	C.gtk_text_buffer_copy_clipboard(v.native(), clipboard.native())
+}
+
+// CutClipboard() is a wrapper around gtk_text_buffer_cut_clipboard().
+func (v *TextBuffer) CutClipboard(clipboard *Clipboard, defaultEditable bool) {
+	C.gtk_text_buffer_cut_clipboard(v.native(), clipboard.native(), gbool(defaultEditable))
+}
+
+// PastClipboard() is a wrapper around gtk_text_buffer_paste_clipboard().
+func (v *TextBuffer) PastClipboard(clipboard *Clipboard, overrideLocation *TextIter, defaultEditable bool) {
+	C.gtk_text_buffer_paste_clipboard(v.native(), clipboard.native(), (*C.GtkTextIter)(overrideLocation), gbool(defaultEditable))
+}
+
+// AddSelectionClipboard() is a wrapper around gtk_text_buffer_add_selection_clipboard().
+func (v *TextBuffer) AddSelectionClipboard(clipboard *Clipboard) {
+	C.gtk_text_buffer_add_selection_clipboard(v.native(), clipboard.native())
+}
+
+// RemoveSelectionClipboard() is a wrapper around gtk_text_buffer_remove_selection_clipboard().
+func (v *TextBuffer) RemoveSelectionClipboard(clipboard *Clipboard) {
+	C.gtk_text_buffer_remove_selection_clipboard(v.native(), clipboard.native())
+}
+
 
 /*
  * GtkToggleButton
