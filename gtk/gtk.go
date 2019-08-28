@@ -7921,8 +7921,8 @@ func (v *TextBuffer) CutClipboard(clipboard *Clipboard, defaultEditable bool) {
 	C.gtk_text_buffer_cut_clipboard(v.native(), clipboard.native(), gbool(defaultEditable))
 }
 
-// PastClipboard() is a wrapper around gtk_text_buffer_paste_clipboard().
-func (v *TextBuffer) PastClipboard(clipboard *Clipboard, overrideLocation *TextIter, defaultEditable bool) {
+// PasteClipboard() is a wrapper around gtk_text_buffer_paste_clipboard().
+func (v *TextBuffer) PasteClipboard(clipboard *Clipboard, overrideLocation *TextIter, defaultEditable bool) {
 	C.gtk_text_buffer_paste_clipboard(v.native(), clipboard.native(), (*C.GtkTextIter)(overrideLocation), gbool(defaultEditable))
 }
 
