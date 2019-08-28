@@ -8666,6 +8666,21 @@ func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc, userData 
 	return nil
 }
 
+// Down() is a wrapper around gtk_tree_path_down()
+func (v *TreePath) Down() {
+	C.gtk_tree_path_down(v.native())
+}
+
+// IsAncestor() is a wrapper around gtk_tree_path_is_ancestor()
+func (v *TreePath) IsAncestor(descendant *TreePath) bool {
+	return gobool(C.gtk_tree_path_is_ancestor(v.native(), descendant.native()))
+}
+
+// IsDescendant() is a wrapper around gtk_tree_path_is_descendant()
+func (v *TreePath) IsDescendant(ancestor *TreePath) bool {
+	return gobool(C.gtk_tree_path_is_descendant(v.native(), ancestor.native()))
+}
+
 /*
  * GtkTreePath
  */
