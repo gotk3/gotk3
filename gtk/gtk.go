@@ -8577,7 +8577,7 @@ var (
 	}
 )
 
-// ForEach() is a wrapper around gtk_tree_model_foreach()
+// ForEach() is a wrapper around gtk_tree_model_foreach ()
 func (v *TreeModel) ForEach(f TreeModelForeachFunc, userData ...interface{}) error {
 	if len(userData) > 1 {
 		return errors.New("userData len must be 0 or 1")
