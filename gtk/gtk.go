@@ -8734,6 +8734,21 @@ func TreePathNewFromString(path string) (*TreePath, error) {
 	return t, nil
 }
 
+// Next() is a wrapper around gtk_tree_path_next()
+func (v *TreePath) Next() {
+	C.gtk_tree_path_next(v.native())
+}
+
+// Prev() is a wrapper around gtk_tree_path_prev()
+func (v *TreePath) Prev() bool {
+	return gobool(C.gtk_tree_path_prev(v.native()))
+}
+
+// Up() is a wrapper around gtk_tree_path_up()
+func (v *TreePath) Up() bool {
+	return gobool(C.gtk_tree_path_up(v.native()))
+}
+
 /*
  * GtkTreeSelection
  */
