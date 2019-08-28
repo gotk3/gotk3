@@ -951,5 +951,5 @@ static inline void _gtk_tree_sortable_set_sort_func(GtkTreeSortable *sortable, g
 extern gint goTreeModelForeachFunc(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
 static inline void _gtk_tree_model_foreach(GtkTreeModel *model, gpointer user_data) {
-    gtk_tree_sortable_set_sort_func(model, (GtkTreeModelForeachFunc)(goTreeModelForeachFunc), user_data, NULL);
+    gtk_tree_model_foreach(model, (GtkTreeModelForeachFunc)(goTreeModelForeachFunc), user_data);
 }
