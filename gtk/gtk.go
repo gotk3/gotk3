@@ -8846,6 +8846,21 @@ func (v *TreeSelection) UnselectAll() {
 	C.gtk_tree_selection_unselect_all(v.native())
 }
 
+// UnselectIter() is a wrapper around gtk_tree_selection_unselect_iter().
+func (v *TreeSelection) UnselectIter(iter *TreeIter) {
+	C.gtk_tree_selection_unselect_iter(v.native(), iter.native())
+}
+
+// IterIsSelected() is a wrapper around gtk_tree_selection_iter_is_selected().
+func (v *TreeSelection) IterIsSelected(iter *TreeIter) bool {
+	return gobool(C.gtk_tree_selection_iter_is_selected(v.native(), iter.native()))
+}
+
+// SelectRange() is a wrapper around gtk_tree_selection_select_range().
+func (v *TreeSelection) SelectRange(start, end *TreePath) {
+	C.gtk_tree_selection_select_range(v.native(), start.native(), end.native())
+}
+
 /*
  * GtkTreeRowReference
  */
