@@ -426,6 +426,11 @@ func (v *TreeView) GetGridLines() TreeViewGridLines {
 	return TreeViewGridLines(C.gtk_tree_view_get_grid_lines(v.native()))
 }
 
+// ScrollToCell() is a wrapper around gtk_tree_view_scroll_to_cell().
+func (v *TreeView) ScrollToCell(path *TreePath, column *TreeViewColumn, align bool, xAlign, yAlign float32) {
+	C.gtk_tree_view_scroll_to_cell(v.native(), path.native(), column.native(), gbool(align), C.gfloat(xAlign), C.gfloat(yAlign))
+}
+
 // void 	gtk_tree_view_set_tooltip_row ()
 // void 	gtk_tree_view_set_tooltip_cell ()
 // gboolean 	gtk_tree_view_get_tooltip_context ()
@@ -444,7 +449,6 @@ func (v *TreeView) GetGridLines() TreeViewGridLines {
 // gint 	gtk_tree_view_insert_column_with_attributes ()
 // gint 	gtk_tree_view_insert_column_with_data_func ()
 // void 	gtk_tree_view_set_column_drag_function ()
-// void 	gtk_tree_view_scroll_to_cell ()
 // gboolean 	gtk_tree_view_is_blank_at_pos ()
 // void 	gtk_tree_view_get_cell_area ()
 // void 	gtk_tree_view_get_background_area ()
