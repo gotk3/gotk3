@@ -3693,6 +3693,90 @@ func wrapEntryCompletion(obj *glib.Object) *EntryCompletion {
 	return &EntryCompletion{obj}
 }
 
+// EntryCompletionNew is a wrapper around gtk_entry_completion_new
+func EntryCompletionNew() (*EntryCompletion, error) {
+	c := C.gtk_entry_completion_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapEntryCompletion(obj), nil
+}
+
+// SetModel is a wrapper around gtk_entry_completion_set_model
+func (v *EntryCompletion) SetModel(model ITreeModel) {
+	var mptr *C.GtkTreeModel
+	if model != nil {
+		mptr = model.toTreeModel()
+	}
+	C.gtk_entry_completion_set_model(v.native(), mptr)
+}
+
+// GetModel is a wrapper around gtk_entry_completion_get_model
+func (v *EntryCompletion) GetModel() (*TreeModel, error) {
+	c := C.gtk_entry_completion_get_model(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapTreeModel(obj), nil
+}
+
+// SetMinimumKeyLength is a wrapper around gtk_entry_completion_set_minimum_key_length
+func (v *EntryCompletion) SetMinimumKeyLength(minimumLength int) {
+	C.gtk_entry_completion_set_minimum_key_length(v.native(), C.gint(minimumLength))
+}
+
+// GetMinimumKeyLength is a wrapper around gtk_entry_completion_get_minimum_key_length
+func (v *EntryCompletion) GetMinimumKeyLength() int {
+	c := C.gtk_entry_completion_get_minimum_key_length(v.native())
+	return int(c)
+}
+
+// SetTextColumn is a wrapper around gtk_entry_completion_set_text_column
+func (v *EntryCompletion) SetTextColumn(textColumn int) {
+	C.gtk_entry_completion_set_text_column(v.native(), C.gint(textColumn))
+}
+
+// GetTextColumn is a wrapper around gtk_entry_completion_get_text_column
+func (v *EntryCompletion) GetTextColumn() int {
+	c := C.gtk_entry_completion_get_text_column(v.native())
+	return int(c)
+}
+
+// SetInlineCompletion is a wrapper around gtk_entry_completion_set_inline_completion
+func (v *EntryCompletion) SetInlineCompletion(inlineCompletion bool) {
+	C.gtk_entry_completion_set_inline_completion(v.native(), gbool(inlineCompletion))
+}
+
+// GetInlineCompletion is a wrapper around gtk_entry_completion_get_inline_completion
+func (v *EntryCompletion) GetInlineCompletion() bool {
+	c := C.gtk_entry_completion_get_inline_completion(v.native())
+	return gobool(c)
+}
+
+// SetPopupCompletion is a wrapper around gtk_entry_completion_set_popup_completion
+func (v *EntryCompletion) SetPopupCompletion(popupCompletion bool) {
+	C.gtk_entry_completion_set_popup_completion(v.native(), gbool(popupCompletion))
+}
+
+// GetPopupCompletion is a wrapper around gtk_entry_completion_get_popup_completion
+func (v *EntryCompletion) GetPopupCompletion() bool {
+	c := C.gtk_entry_completion_get_popup_completion(v.native())
+	return gobool(c)
+}
+
+// SetPopupSetWidth is a wrapper around gtk_entry_completion_set_popup_set_width
+func (v *EntryCompletion) SetPopupSetWidth(popupSetWidth bool) {
+	C.gtk_entry_completion_set_popup_set_width(v.native(), gbool(popupSetWidth))
+}
+
+// GetPopupSetWidth is a wrapper around gtk_entry_completion_get_popup_set_width
+func (v *EntryCompletion) GetPopupSetWidth() bool {
+	c := C.gtk_entry_completion_get_popup_set_width(v.native())
+	return gobool(c)
+}
+
 /*
  * GtkEventBox
  */
