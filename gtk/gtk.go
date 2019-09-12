@@ -2882,6 +2882,38 @@ func (v *Dialog) GetContentArea() (*Box, error) {
 	return b, nil
 }
 
+// DialogNewWithButtons() is a wrapper around gtk_dialog_new_with_buttons().
+func DialogNewWithButtons(title string, parent IWindow, flags DialogFlags, buttons ...string) (dialog *Dialog, err error) {
+	cstr := C.CString(title)
+	defer C.free(unsafe.Pointer(cstr))
+
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+
+	var cbutton *C.char = nil
+	if len(buttons) > 0 {
+		cbutton = C.CString(buttons[0])
+		defer C.free(unsafe.Pointer(cbutton))
+	}
+
+	c := C._gtk_dialog_new_with_buttons(cstr, w, C.GtkDialogFlags(flags), cbutton)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	dialog = wrapDialog(glib.Take(unsafe.Pointer(c)))
+
+	for idx := 1; idx < len(buttons); idx++ {
+		cbutton = C.CString(buttons[idx])
+		defer C.free(unsafe.Pointer(cbutton))
+		if C.gtk_dialog_add_button(dialog.native(), (*C.gchar)(cbutton), C.gint(idx)) == nil {
+			return nil, nilPtrErr
+		}
+	}
+	return
+}
+
 // TODO(jrick)
 /*
 func (v *gdk.Screen) AlternativeDialogButtonOrder() bool {
