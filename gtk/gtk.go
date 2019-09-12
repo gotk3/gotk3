@@ -2892,13 +2892,13 @@ func DialogNewWithButtons(title string, parent IWindow, flags DialogFlags, butto
 		w = parent.toWindow()
 	}
 
-	var cbutton *C.gchar = nil
+	var cbutton *C.char = nil
 	if len(buttons) > 0 {
 		cbutton = C.CString(buttons[0])
 		defer C.free(unsafe.Pointer(cbutton))
 	}
 
-	c := C._gtk_dialog_new_with_buttons(cstr, w, C.GtkDialogFlags(flags), cbutton)
+	c := C._gtk_dialog_new_with_buttons(cstr, w, C.GtkDialogFlags(flags), (*C.gchar)(cbutton))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -2907,7 +2907,7 @@ func DialogNewWithButtons(title string, parent IWindow, flags DialogFlags, butto
 	for idx := 1; idx < len(buttons); idx++ {
 		cbutton = C.CString(buttons[idx])
 		defer C.free(unsafe.Pointer(cbutton))
-		if C.gtk_dialog_add_button(dialog.native(), cbutton, C.gint(idx)) == nil {
+		if C.gtk_dialog_add_button(dialog.native(), (*C.gchar)(cbutton), C.gint(idx)) == nil {
 			return nil, nilPtrErr
 		}
 	}
