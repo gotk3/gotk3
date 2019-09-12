@@ -947,3 +947,15 @@ extern gint goTreeSortableSortFuncs(GtkTreeModel *model, GtkTreeIter *a, GtkTree
 static inline void _gtk_tree_sortable_set_sort_func(GtkTreeSortable *sortable, gint sort_column_id, gpointer user_data) {
     gtk_tree_sortable_set_sort_func(sortable, sort_column_id, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data, NULL);
 }
+
+static GtkWidget *
+_gtk_dialog_new_with_buttons(const gchar    *title,
+                             GtkWindow      *parent,
+                             GtkDialogFlags  flags,
+                             const gchar    *first_button_text)
+{
+	GtkWidget		*w;
+
+	w = gtk_dialog_new_with_buttons(title, parent, flags, first_button_text, NULL);
+	return (w);
+}
