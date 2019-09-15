@@ -9,21 +9,38 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
+)
 
 // ReorderOverlay() is a wrapper around gtk_overlay_reorder_overlay().
 func (v *Overlay) ReorderOverlay(child IWidget, position int) {
 	C.gtk_overlay_reorder_overlay(v.native(), child.toWidget(), C.gint(position))
 }
 
-// GetOverlayPassThrough() is a wrapper around
-// gtk_overlay_get_overlay_pass_through().
+// GetOverlayPassThrough() is a wrapper around gtk_overlay_get_overlay_pass_through().
 func (v *Overlay) GetOverlayPassThrough(widget IWidget) bool {
 	c := C.gtk_overlay_get_overlay_pass_through(v.native(), widget.toWidget())
 	return gobool(c)
 }
 
-// SetOverlayPassThrough() is a wrapper around
-// gtk_overlay_set_overlay_pass_through().
+// SetOverlayPassThrough() is a wrapper around gtk_overlay_set_overlay_pass_through().
 func (v *Overlay) SetOverlayPassThrough(widget IWidget, passThrough bool) {
 	C.gtk_overlay_set_overlay_pass_through(v.native(), widget.toWidget(), gbool(passThrough))
+}
+
+// SetDefaultWidget is a wrapper around gtk_popover_set_default_widget().
+func (p *Popover) SetDefaultWidget(widget IWidget) {
+	C.gtk_popover_set_default_widget(p.native(), widget.toWidget())
+}
+
+// GetDefaultWidget is a wrapper around gtk_popover_get_default_widget().
+func (p *Popover) GetDefaultWidget() *Widget {
+	w := C.gtk_popover_get_default_widget(p.native())
+	if w == nil {
+		return nil
+	}
+	return &Widget{glib.InitiallyUnowned{glib.Take(unsafe.Pointer(w))}}
 }
