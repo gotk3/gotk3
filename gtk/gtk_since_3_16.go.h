@@ -16,6 +16,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+static GtkPopoverMenu *
+toGtkPopoverMenu(void *p)
+{
+	return (GTK_POPOVER_MENU(p));
+}
+
 static GtkStackSidebar *
 toGtkStackSidebar(void *p)
 {
