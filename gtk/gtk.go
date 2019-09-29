@@ -8853,6 +8853,7 @@ func (v *TreeSelection) UnselectRange(start, end *TreePath) {
 
 // PathIsSelected() is a wrapper around gtk_tree_selection_path_is_selected().
 func (v *TreeSelection) PathIsSelected(path *TreePath) bool {
+	
 	return gobool(C.gtk_tree_selection_path_is_selected(v.native(), path.native()))
 }
 
