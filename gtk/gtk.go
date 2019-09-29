@@ -7772,6 +7772,23 @@ func (v *TextBuffer) GetMark(mark_name string) *TextMark {
 	return (*TextMark)(ret)
 }
 
+// DeleteMark() is a wrapper around gtk_text_buffer_delete_mark()
+func (v *TextBuffer) DeleteMark(mark *TextMark) {
+	C.gtk_text_buffer_delete_mark(v.native(), (*C.GtkTextMark)(mark))
+}
+
+// DeleteMarkByName() is a wrapper around  gtk_text_buffer_delete_mark_by_name()
+func (v *TextBuffer) DeleteMarkByName(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_text_buffer_delete_mark_by_name(v.native(), (*C.gchar)(cstr))
+}
+
+// PlaceCursor() is a wrapper around gtk_text_buffer_place_cursor()
+func (v *TextBuffer) PlaceCursor(iter *TextIter) {
+	C.gtk_text_buffer_place_cursor(v.native(), (*C.GtkTextIter)(iter))
+}
+
 /*
  * GtkToggleButton
  */
