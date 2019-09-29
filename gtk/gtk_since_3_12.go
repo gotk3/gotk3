@@ -25,6 +25,8 @@ package gtk
 import "C"
 
 import (
+	"errors"
+	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -380,7 +382,7 @@ func (fbc *FlowBoxChild) Changed() {
 
 /*
 * GtkPopover
-*/
+ */
 
 // Popover is a representation of GTK's GtkPopover.
 type Popover struct {
@@ -458,7 +460,7 @@ func (v *Popover) GetPosition() PositionType {
 	return PositionType(c)
 }
 
- /*
+/*
  * TreePath
  */
 
