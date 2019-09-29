@@ -21,12 +21,14 @@ func init() {
 	tm := []glib.TypeMarshaler{
 
 		// Objects/Interfaces
+		{glib.Type(C.gtk_model_button_get_type()), marshalModelButton},
 		{glib.Type(C.gtk_stack_sidebar_get_type()), marshalStackSidebar},
 	}
 	glib.RegisterGValueMarshalers(tm)
 
 	//Contribute to casting
 	for k, v := range map[string]WrapFn{
+		"GtkModelButton":  wrapModelButton,
 		"GtkStackSidebar": wrapStackSidebar,
 	} {
 		WrapMap[k] = v
@@ -74,6 +76,43 @@ func (v *Label) SetXAlign(n float64) {
 func (v *Label) SetYAlign(n float64) {
 	C.gtk_label_set_yalign(v.native(), C.gfloat(n))
 }
+
+/*
+* GtkModelButton
+*/
+
+// ModelButton is a representation of GTK's GtkModelButton.
+type ModelButton struct {
+	Button
+ }
+ 
+ func (v *ModelButton) native() *C.GtkModelButton {
+	 if v == nil || v.GObject == nil {
+		 return nil
+	 }
+ 
+	 p := unsafe.Pointer(v.GObject)
+	 return C.toGtkModelButton(p)
+ }
+ 
+ func marshalModelButton(p uintptr) (interface{}, error) {
+	 c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	 return wrapModelButton(glib.Take(unsafe.Pointer(c))), nil
+ }
+ 
+ func wrapModelButton(obj *glib.Object) *ModelButton {
+	 actionable := wrapActionable(obj)
+	 return &ModelButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}
+ }
+ 
+ // ModelButtonNew is a wrapper around gtk_model_button_new
+ func ModelButtonNew() (*ModelButton, error) {
+	 c := C.gtk_model_button_new()
+	 if c == nil {
+		 return nil, nilPtrErr
+	 }
+	 return wrapModelButton(glib.Take(unsafe.Pointer(c))), nil
+ }
 
 /*
  * GtkStackSidebar

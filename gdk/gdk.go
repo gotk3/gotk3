@@ -1285,6 +1285,13 @@ func (v *EventScroll) Direction() ScrollDirection {
 	return ScrollDirection(c)
 }
 
+// A bit-mask representing the state of the modifier keys (e.g. Control, Shift
+// and Alt) and the pointer buttons. See gdk.ModifierType constants.
+func (v *EventScroll) State() ModifierType {
+	c := v.native().state
+	return ModifierType(c)
+}
+
 /*
  * GdkEventWindowState
  */
