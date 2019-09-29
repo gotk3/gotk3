@@ -952,10 +952,16 @@ static GtkWidget *
 _gtk_dialog_new_with_buttons(const gchar    *title,
                              GtkWindow      *parent,
                              GtkDialogFlags  flags,
-                             const gchar    *first_button_text)
-{
+                             const gchar    *first_button_text) {
 	GtkWidget		*w;
 
 	w = gtk_dialog_new_with_buttons(title, parent, flags, first_button_text, NULL);
 	return (w);
+}
+
+extern gint goTreeModelForeachFunc(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
+
+static inline void _gtk_tree_model_foreach(GtkTreeModel *model, gpointer user_data) {
+    gtk_tree_model_foreach(model, (GtkTreeModelForeachFunc)(goTreeModelForeachFunc), user_data);
+
 }

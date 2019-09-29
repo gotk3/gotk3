@@ -330,6 +330,35 @@ func sourceAttach(src *C.struct__GSource, rf reflect.Value, args ...interface{})
 	return SourceHandle(cid), nil
 }
 
+// Destroy is a wrapper around g_source_destroy()
+func (v *Source) Destroy() {
+	C.g_source_destroy(v.native())
+}
+
+// IsDestroyed is a wrapper around g_source_is_destroyed()
+func (v *Source) IsDestroyed() bool {
+	return gobool(C.g_source_is_destroyed(v.native()))
+}
+
+// Unref is a wrapper around g_source_unref()
+func (v *Source) Unref() {
+	C.g_source_unref(v.native())
+}
+
+// Ref is a wrapper around g_source_ref()
+func (v *Source) Ref() *Source {
+	c := C.g_source_ref(v.native())
+	if c == nil {
+		return nil
+	}
+	return (*Source)(c)
+}
+
+// SourceRemove is a wrapper around g_source_remove()
+func SourceRemove(src SourceHandle) bool {
+	return gobool(C.g_source_remove(C.guint(src)))
+}
+
 /*
  * Miscellaneous Utility Functions
  */
