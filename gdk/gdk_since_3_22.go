@@ -48,6 +48,33 @@ func (v *Display) GetPrimaryMonitor() (*Monitor, error) {
 	return &Monitor{glib.Take(unsafe.Pointer(c))}, nil
 }
 
+// GetMonitor is a wrapper around gdk_display_get_monitor().
+func (v *Display) GetMonitor(num int) (*Monitor, error) {
+	c := C.gdk_display_get_monitor(v.native(), C.int(num))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return &Monitor{glib.Take(unsafe.Pointer(c))}, nil
+}
+
+// GetMonitorAtWindow is a wrapper around gdk_display_get_monitor_at_window().
+func (v *Display) GetMonitorAtWindow(w *Window) (*Monitor, error) {
+	c := C.gdk_display_get_monitor_at_window(v.native(), w.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return &Monitor{glib.Take(unsafe.Pointer(c))}, nil
+}
+
+// GetMonitorAtPoint is a wrapper around gdk_display_get_monitor_at_point().
+func (v *Display) GetMonitorAtPoint(x int, y int) (*Monitor, error) {
+	c := C.gdk_display_get_monitor_at_point(v.native(), C.int(x), C.int(y))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return &Monitor{glib.Take(unsafe.Pointer(c))}, nil
+}
+
 /*
  * GdkMonitor
  */
