@@ -9117,6 +9117,17 @@ func (v *TreeSelection) SelectRange(start, end *TreePath) {
 	C.gtk_tree_selection_select_range(v.native(), start.native(), end.native())
 }
 
+// UnselectRange() is a wrapper around gtk_tree_selection_unselect_range().
+func (v *TreeSelection) UnselectRange(start, end *TreePath) {
+	C.gtk_tree_selection_unselect_range(v.native(), start.native(), end.native())
+}
+
+// PathIsSelected() is a wrapper around gtk_tree_selection_path_is_selected().
+func (v *TreeSelection) PathIsSelected(path *TreePath) bool {
+	
+	return gobool(C.gtk_tree_selection_path_is_selected(v.native(), path.native()))
+}
+
 /*
  * GtkTreeRowReference
  */
