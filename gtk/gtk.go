@@ -8734,12 +8734,12 @@ func TreePathNewFromString(path string) (*TreePath, error) {
 	return t, nil
 }
 
-// GetDepth() is a wrapper around gtk_tree_path_get_depth().
+// GetDepth is a wrapper around gtk_tree_path_get_depth().
 func (v *TreePath) GetDepth() int {
 	return int(C.gtk_tree_path_get_depth(v.native()))
 }
 
-// Copy() is a wrapper around gtk_tree_path_copy().
+// Copy is a wrapper around gtk_tree_path_copy().
 func (v *TreePath) Copy() (*TreePath, error) {
 	c := C.gtk_tree_path_copy(v.native())
 	if c == nil {
@@ -8750,7 +8750,7 @@ func (v *TreePath) Copy() (*TreePath, error) {
 	return t, nil
 }
 
-// Compare() is a wrapper around gtk_tree_path_compare().
+// Compare is a wrapper around gtk_tree_path_compare().
 func (v *TreePath) Compare(b *TreePath) int {
 	return int(C.gtk_tree_path_compare(v.native(), b.native()))
 }
