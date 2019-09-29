@@ -7772,6 +7772,23 @@ func (v *TextBuffer) GetMark(mark_name string) *TextMark {
 	return (*TextMark)(ret)
 }
 
+// DeleteMark() is a wrapper around gtk_text_buffer_delete_mark()
+func (v *TextBuffer) DeleteMark(mark *TextMark) {
+	C.gtk_text_buffer_delete_mark(v.native(), (*C.GtkTextMark)(mark))
+}
+
+// DeleteMarkByName() is a wrapper around  gtk_text_buffer_delete_mark_by_name()
+func (v *TextBuffer) DeleteMarkByName(name string) {
+	cstr := C.CString(name)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_text_buffer_delete_mark_by_name(v.native(), (*C.gchar)(cstr))
+}
+
+// PlaceCursor() is a wrapper around gtk_text_buffer_place_cursor()
+func (v *TextBuffer) PlaceCursor(iter *TextIter) {
+	C.gtk_text_buffer_place_cursor(v.native(), (*C.GtkTextIter)(iter))
+}
+
 /*
  * GtkToggleButton
  */
@@ -8557,6 +8574,46 @@ func (v *TreeModel) FilterNew(root *TreePath) (*TreeModelFilter, error) {
 	return wrapTreeModelFilter(obj), nil
 }
 
+// TreeModelForeachFunc defines the function prototype for the foreach function (f arg) for
+// (* TreeModel).ForEach
+type TreeModelForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData interface{}) bool
+
+type treeModelForeachFuncData struct {
+	fn       TreeModelForeachFunc
+	userData interface{}
+}
+
+var (
+	treeModelForeachFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]treeModelForeachFuncData
+	}{
+		next: 1,
+		m:    make(map[int]treeModelForeachFuncData),
+	}
+)
+
+// ForEach() is a wrapper around gtk_tree_model_foreach ()
+func (v *TreeModel) ForEach(f TreeModelForeachFunc, userData ...interface{}) error {
+	if len(userData) > 1 {
+		return errors.New("userData len must be 0 or 1")
+	}
+
+	t := treeModelForeachFuncData{fn: f}
+	if len(userData) > 0 {
+		t.userData = userData[0]
+	}
+	treeModelForeachFuncRegistry.Lock()
+	id := treeModelForeachFuncRegistry.next
+	treeModelForeachFuncRegistry.next++
+	treeModelForeachFuncRegistry.m[id] = t
+	treeModelForeachFuncRegistry.Unlock()
+
+	C._gtk_tree_model_foreach(v.toTreeModel(), C.gpointer(uintptr(id)))
+	return nil
+}
+
 /*
  * GtkTreeModelFilter
  */
@@ -8666,6 +8723,21 @@ func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc, userData 
 	return nil
 }
 
+// Down() is a wrapper around gtk_tree_path_down()
+func (v *TreePath) Down() {
+	C.gtk_tree_path_down(v.native())
+}
+
+// IsAncestor() is a wrapper around gtk_tree_path_is_ancestor()
+func (v *TreePath) IsAncestor(descendant *TreePath) bool {
+	return gobool(C.gtk_tree_path_is_ancestor(v.native(), descendant.native()))
+}
+
+// IsDescendant() is a wrapper around gtk_tree_path_is_descendant()
+func (v *TreePath) IsDescendant(ancestor *TreePath) bool {
+	return gobool(C.gtk_tree_path_is_descendant(v.native(), ancestor.native()))
+}
+
 /*
  * GtkTreePath
  */
@@ -8747,6 +8819,26 @@ func (v *TreePath) Prev() bool {
 // Up() is a wrapper around gtk_tree_path_up()
 func (v *TreePath) Up() bool {
 	return gobool(C.gtk_tree_path_up(v.native()))
+
+// TreePathNewFirst() is a wrapper around gtk_tree_path_new_first().
+func TreePathNewFirst() (*TreePath, error) {
+	c := C.gtk_tree_path_new_first()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	t := &TreePath{c}
+	runtime.SetFinalizer(t, (*TreePath).free)
+	return t, nil
+}
+
+// AppendIndex() is a wrapper around gtk_tree_path_append_index().
+func (v *TreePath) AppendIndex(index int) {
+	C.gtk_tree_path_append_index(v.native(), C.gint(index))
+}
+
+// PrependIndex() is a wrapper around gtk_tree_path_prepend_index().
+func (v *TreePath) PrependIndex(index int) {
+	C.gtk_tree_path_prepend_index(v.native(), C.gint(index))
 }
 
 /*
@@ -8859,6 +8951,21 @@ func (v *TreeSelection) SelectAll() {
 // UnelectAll() is a wrapper around gtk_tree_selection_unselect_all()
 func (v *TreeSelection) UnselectAll() {
 	C.gtk_tree_selection_unselect_all(v.native())
+}
+
+// UnselectIter() is a wrapper around gtk_tree_selection_unselect_iter().
+func (v *TreeSelection) UnselectIter(iter *TreeIter) {
+	C.gtk_tree_selection_unselect_iter(v.native(), iter.native())
+}
+
+// IterIsSelected() is a wrapper around gtk_tree_selection_iter_is_selected().
+func (v *TreeSelection) IterIsSelected(iter *TreeIter) bool {
+	return gobool(C.gtk_tree_selection_iter_is_selected(v.native(), iter.native()))
+}
+
+// SelectRange() is a wrapper around gtk_tree_selection_select_range().
+func (v *TreeSelection) SelectRange(start, end *TreePath) {
+	C.gtk_tree_selection_select_range(v.native(), start.native(), end.native())
 }
 
 /*
@@ -9029,6 +9136,22 @@ func (v *TreeStore) Remove(iter *TreeIter) bool {
 // Clear is a wrapper around gtk_tree_store_clear().
 func (v *TreeStore) Clear() {
 	C.gtk_tree_store_clear(v.native())
+}
+
+// InsertBefore() is a wrapper around gtk_tree_store_insert_before().
+func (v *TreeStore) InsertBefore(parent, sibling *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_tree_store_insert_before(v.native(), &ti, parent.native(), sibling.native())
+	iter := &TreeIter{ti}
+	return iter
+}
+
+// InsertAfter() is a wrapper around gtk_tree_store_insert_after().
+func (v *TreeStore) InsertAfter(parent, sibling *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_tree_store_insert_after(v.native(), &ti, parent.native(), sibling.native())
+	iter := &TreeIter{ti}
+	return iter
 }
 
 /*

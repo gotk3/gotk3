@@ -94,30 +94,23 @@ func (v *TreeView) AppendColumn(column *TreeViewColumn) int {
 }
 
 // GetPathAtPos is a wrapper around gtk_tree_view_get_path_at_pos().
-func (v *TreeView) GetPathAtPos(x, y int, path *TreePath, column *TreeViewColumn, cellX, cellY *int) bool {
-	var ctp **C.GtkTreePath
-	if path != nil {
-		ctp = (**C.GtkTreePath)(unsafe.Pointer(&path.GtkTreePath))
-	} else {
-		ctp = nil
-	}
+func (v *TreeView) GetPathAtPos(x, y int, path **TreePath, column **TreeViewColumn, cellX, cellY *int) bool {
+	var ctp *C.GtkTreePath
+	var pctvcol *C.GtkTreeViewColumn
 
-	var pctvcol **C.GtkTreeViewColumn
-	if column != nil {
-		ctvcol := column.native()
-		pctvcol = &ctvcol
-	} else {
-		pctvcol = nil
-	}
-
-	return 0 != C.gtk_tree_view_get_path_at_pos(
+	ok := C.gtk_tree_view_get_path_at_pos(
 		v.native(),
 		(C.gint)(x),
 		(C.gint)(y),
-		ctp,
-		pctvcol,
+		&ctp,
+		&pctvcol,
 		(*C.gint)(unsafe.Pointer(cellX)),
 		(*C.gint)(unsafe.Pointer(cellY)))
+
+	*path = &TreePath{ctp}
+	*column = wrapTreeViewColumn(glib.Take(unsafe.Pointer(pctvcol)))
+
+	return gobool(ok)
 }
 
 // GetLevelIndentation is a wrapper around gtk_tree_view_get_level_indentation().
@@ -426,6 +419,11 @@ func (v *TreeView) GetGridLines() TreeViewGridLines {
 	return TreeViewGridLines(C.gtk_tree_view_get_grid_lines(v.native()))
 }
 
+// ScrollToCell() is a wrapper around gtk_tree_view_scroll_to_cell().
+func (v *TreeView) ScrollToCell(path *TreePath, column *TreeViewColumn, align bool, xAlign, yAlign float32) {
+	C.gtk_tree_view_scroll_to_cell(v.native(), path.native(), column.native(), gbool(align), C.gfloat(xAlign), C.gfloat(yAlign))
+}
+
 // void 	gtk_tree_view_set_tooltip_row ()
 // void 	gtk_tree_view_set_tooltip_cell ()
 // gboolean 	gtk_tree_view_get_tooltip_context ()
@@ -444,7 +442,6 @@ func (v *TreeView) GetGridLines() TreeViewGridLines {
 // gint 	gtk_tree_view_insert_column_with_attributes ()
 // gint 	gtk_tree_view_insert_column_with_data_func ()
 // void 	gtk_tree_view_set_column_drag_function ()
-// void 	gtk_tree_view_scroll_to_cell ()
 // gboolean 	gtk_tree_view_is_blank_at_pos ()
 // void 	gtk_tree_view_get_cell_area ()
 // void 	gtk_tree_view_get_background_area ()
