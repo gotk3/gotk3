@@ -8751,6 +8751,27 @@ func TreePathNewFromString(path string) (*TreePath, error) {
 	return t, nil
 }
 
+// TreePathNewFirst() is a wrapper around gtk_tree_path_new_first().
+func TreePathNewFirst() (*TreePath, error) {
+	c := C.gtk_tree_path_new_first()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	t := &TreePath{c}
+	runtime.SetFinalizer(t, (*TreePath).free)
+	return t, nil
+}
+
+// AppendIndex() is a wrapper around gtk_tree_path_append_index().
+func (v *TreePath) AppendIndex(index int) {
+	C.gtk_tree_path_append_index(v.native(), C.gint(index))
+}
+
+// PrependIndex() is a wrapper around gtk_tree_path_prepend_index().
+func (v *TreePath) PrependIndex(index int) {
+	C.gtk_tree_path_prepend_index(v.native(), C.gint(index))
+}
+
 /*
  * GtkTreeSelection
  */
