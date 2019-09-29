@@ -5435,6 +5435,17 @@ func (v *MessageDialog) FormatSecondaryMarkup(format string, a ...interface{}) {
 		(*C.gchar)(cstr))
 }
 
+// GetMessageArea() is a wrapper around gtk_message_dialog_get_message_area().
+func (v *MessageDialog) GetMessageArea() (*Box, error) {
+	c := C.gtk_message_dialog_get_message_area(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	b := &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
+	return b, nil
+}
+
 /*
  * GtkNotebook
  */
