@@ -21,6 +21,7 @@ func init() {
 	tm := []glib.TypeMarshaler{
 
 		// Objects/Interfaces
+		{glib.Type(C.gtk_popover_menu_get_type()), marshalPopoverMenu},
 		{glib.Type(C.gtk_model_button_get_type()), marshalModelButton},
 		{glib.Type(C.gtk_stack_sidebar_get_type()), marshalStackSidebar},
 	}
@@ -28,6 +29,7 @@ func init() {
 
 	//Contribute to casting
 	for k, v := range map[string]WrapFn{
+		"GtkPopoverMenu":  wrapPopoverMenu,
 		"GtkModelButton":  wrapModelButton,
 		"GtkStackSidebar": wrapStackSidebar,
 	} {
@@ -113,6 +115,50 @@ type ModelButton struct {
 	 }
 	 return wrapModelButton(glib.Take(unsafe.Pointer(c))), nil
  }
+
+/*
+ * GtkPopoverMenu
+ */
+
+// PopoverMenu is a representation of GTK's GtkPopoverMenu.
+type PopoverMenu struct {
+	Popover
+}
+
+func (v *PopoverMenu) native() *C.GtkPopoverMenu {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkPopoverMenu(p)
+}
+
+func marshalPopoverMenu(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	return wrapPopoverMenu(glib.Take(unsafe.Pointer(c))), nil
+}
+
+func wrapPopoverMenu(obj *glib.Object) *PopoverMenu {
+	return &PopoverMenu{Popover{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
+}
+
+// PopoverMenuNew is a wrapper around gtk_popover_menu_new
+func PopoverMenuNew() (*PopoverMenu, error) {
+	c := C.gtk_popover_menu_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapPopoverMenu(glib.Take(unsafe.Pointer(c))), nil
+}
+
+// OpenSubmenu is a wrapper around gtk_popover_menu_open_submenu
+func (v *PopoverMenu) OpenSubmenu(name string) {
+	cstr1 := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	C.gtk_popover_menu_open_submenu(v.native(), cstr1)
+}
 
 /*
  * GtkStackSidebar

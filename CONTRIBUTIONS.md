@@ -9,4 +9,5 @@
   - [raichu](https://github.com/raichu/gotk3)
   - [juniorz](https://github.com/juniorz)
   - [thanhps42](https://github.com/thanhps42)
+  - [MJacred](https://github.com/MJacred/gotk3)
   - you?
