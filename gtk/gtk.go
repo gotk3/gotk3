@@ -8574,6 +8574,46 @@ func (v *TreeModel) FilterNew(root *TreePath) (*TreeModelFilter, error) {
 	return wrapTreeModelFilter(obj), nil
 }
 
+// TreeModelForeachFunc defines the function prototype for the foreach function (f arg) for
+// (* TreeModel).ForEach
+type TreeModelForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData interface{}) bool
+
+type treeModelForeachFuncData struct {
+	fn       TreeModelForeachFunc
+	userData interface{}
+}
+
+var (
+	treeModelForeachFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]treeModelForeachFuncData
+	}{
+		next: 1,
+		m:    make(map[int]treeModelForeachFuncData),
+	}
+)
+
+// ForEach() is a wrapper around gtk_tree_model_foreach ()
+func (v *TreeModel) ForEach(f TreeModelForeachFunc, userData ...interface{}) error {
+	if len(userData) > 1 {
+		return errors.New("userData len must be 0 or 1")
+	}
+
+	t := treeModelForeachFuncData{fn: f}
+	if len(userData) > 0 {
+		t.userData = userData[0]
+	}
+	treeModelForeachFuncRegistry.Lock()
+	id := treeModelForeachFuncRegistry.next
+	treeModelForeachFuncRegistry.next++
+	treeModelForeachFuncRegistry.m[id] = t
+	treeModelForeachFuncRegistry.Unlock()
+
+	C._gtk_tree_model_foreach(v.toTreeModel(), C.gpointer(uintptr(id)))
+	return nil
+}
+
 /*
  * GtkTreeModelFilter
  */

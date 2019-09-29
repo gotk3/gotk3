@@ -947,3 +947,9 @@ extern gint goTreeSortableSortFuncs(GtkTreeModel *model, GtkTreeIter *a, GtkTree
 static inline void _gtk_tree_sortable_set_sort_func(GtkTreeSortable *sortable, gint sort_column_id, gpointer user_data) {
     gtk_tree_sortable_set_sort_func(sortable, sort_column_id, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data, NULL);
 }
+
+extern gint goTreeModelForeachFunc(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
+
+static inline void _gtk_tree_model_foreach(GtkTreeModel *model, gpointer user_data) {
+    gtk_tree_model_foreach(model, (GtkTreeModelForeachFunc)(goTreeModelForeachFunc), user_data);
+}
