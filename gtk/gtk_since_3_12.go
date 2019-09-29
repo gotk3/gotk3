@@ -1,3 +1,19 @@
+// Copyright (c) 2013-2014 Conformal Systems <info@conformal.com>
+//
+// Wrapper for GtkPopover originated from: http://opensource.conformal.com/
+//
+// Permission to use, copy, modify, and distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+// WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+// MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+// ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+// ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+// OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
 // +build !gtk_3_6,!gtk_3_8,!gtk_3_10
 // not use this: go build -tags gtk_3_8'. Otherwise, if no build tags are used, GTK 3.10
 
@@ -11,6 +27,7 @@ import "C"
 import (
 	"unsafe"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -23,11 +40,18 @@ func init() {
 		// Objects/Interfaces
 		{glib.Type(C.gtk_flow_box_get_type()), marshalFlowBox},
 		{glib.Type(C.gtk_flow_box_child_get_type()), marshalFlowBoxChild},
+		{glib.Type(C.gtk_popover_get_type()), marshalPopover},
 	}
 	glib.RegisterGValueMarshalers(tm)
 
-	WrapMap["GtkFlowBox"] = wrapFlowBox
-	WrapMap["GtkFlowBoxChild"] = wrapFlowBoxChild
+	//Contribute to casting
+	for k, v := range map[string]WrapFn{
+		"GtkFlowBox":      wrapFlowBox,
+		"GtkFlowBoxChild": wrapFlowBoxChild,
+		"GtkPopover":      wrapPopover,
+	} {
+		WrapMap[k] = v
+	}
 }
 
 // GetLocaleDirection() is a wrapper around gtk_get_locale_direction().
@@ -355,6 +379,86 @@ func (fbc *FlowBoxChild) Changed() {
 }
 
 /*
+* GtkPopover
+*/
+
+// Popover is a representation of GTK's GtkPopover.
+type Popover struct {
+	Bin
+}
+
+func (v *Popover) native() *C.GtkPopover {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkPopover(p)
+}
+
+func marshalPopover(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	return wrapPopover(glib.Take(unsafe.Pointer(c))), nil
+}
+
+func wrapPopover(obj *glib.Object) *Popover {
+	return &Popover{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
+}
+
+// PopoverNew is a wrapper around gtk_popover_new().
+func PopoverNew(relative IWidget) (*Popover, error) {
+	//Takes relative to widget
+	var c *C.struct__GtkWidget
+	if relative == nil {
+		c = C.gtk_popover_new(nil)
+	} else {
+		c = C.gtk_popover_new(relative.toWidget())
+	}
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapPopover(glib.Take(unsafe.Pointer(c))), nil
+}
+
+// SetRelativeTo is a wrapper around gtk_popover_set_relative_to().
+func (v *Popover) SetRelativeTo(relative IWidget) {
+	C.gtk_popover_set_relative_to(v.native(), relative.toWidget())
+}
+
+// GetRelativeTo is a wrapper around gtk_popover_get_relative_to().
+func (v *Popover) GetRelativeTo() *Widget {
+	c := C.gtk_popover_get_relative_to(v.native())
+	if c == nil {
+		return nil
+	}
+	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+}
+
+// SetPointingTo is a wrapper around gtk_popover_set_pointing_to().
+func (v *Popover) SetPointingTo(rect gdk.Rectangle) {
+	C.gtk_popover_set_pointing_to(v.native(), nativeGdkRectangle(rect))
+}
+
+// GetPointingTo is a wrapper around gtk_popover_get_pointing_to().
+func (v *Popover) GetPointingTo(rect *gdk.Rectangle) bool {
+	var crect C.GdkRectangle
+	isSet := C.gtk_popover_get_pointing_to(v.native(), &crect)
+	*rect = *gdk.WrapRectangle(uintptr(unsafe.Pointer(&crect)))
+	return gobool(isSet)
+}
+
+// SetPosition is a wrapper around gtk_popover_set_position().
+func (v *Popover) SetPosition(position PositionType) {
+	C.gtk_popover_set_position(v.native(), C.GtkPositionType(position))
+}
+
+// GetPosition is a wrapper around gtk_popover_get_position().
+func (v *Popover) GetPosition() PositionType {
+	c := C.gtk_popover_get_position(v.native())
+	return PositionType(c)
+}
+
+ /*
  * TreePath
  */
 
