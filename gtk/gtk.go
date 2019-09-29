@@ -98,6 +98,7 @@ func init() {
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
 		{glib.Type(C.gtk_target_flags_get_type()), marshalTargetFlags},
 		{glib.Type(C.gtk_text_direction_get_type()), marshalTextDirection},
+		{glib.Type(C.gtk_text_search_flags_get_type()), marshalTextSearchFlags},
 		{glib.Type(C.gtk_toolbar_style_get_type()), marshalToolbarStyle},
 		{glib.Type(C.gtk_tree_model_flags_get_type()), marshalTreeModelFlags},
 		{glib.Type(C.gtk_window_position_get_type()), marshalWindowPosition},
@@ -872,6 +873,20 @@ const (
 func marshalWrapMode(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return WrapMode(c), nil
+}
+
+// TextSearchFlags is a representation of GTK's GtkTextSearchFlags.
+type TextSearchFlags int
+
+const (
+	TEXT_SEARCH_VISIBLE_ONLY     TextSearchFlags = C.GTK_TEXT_SEARCH_VISIBLE_ONLY
+	TEXT_SEARCH_TEXT_ONLY        TextSearchFlags = C.GTK_TEXT_SEARCH_TEXT_ONLY
+	TEXT_SEARCH_CASE_INSENSITIVE TextSearchFlags = C.GTK_TEXT_SEARCH_CASE_INSENSITIVE
+)
+
+func marshalTextSearchFlags(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TextSearchFlags(c), nil
 }
 
 /*
