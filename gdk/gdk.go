@@ -1285,6 +1285,13 @@ func (v *EventScroll) Direction() ScrollDirection {
 	return ScrollDirection(c)
 }
 
+// A bit-mask representing the state of the modifier keys (e.g. Control, Shift
+// and Alt) and the pointer buttons. See gdk.ModifierType constants.
+func (v *EventScroll) State() ModifierType {
+	c := v.native().state
+	return ModifierType(c)
+}
+
 /*
  * GdkEventWindowState
  */
@@ -1975,9 +1982,19 @@ func (r *Rectangle) GetX() int {
 	return int(r.native().x)
 }
 
+// SetX sets x field of the underlying GdkRectangle.
+func (r *Rectangle) SetX(x int) {
+	r.native().x = C.int(x)
+}
+
 // GetY returns y field of the underlying GdkRectangle.
 func (r *Rectangle) GetY() int {
 	return int(r.native().y)
+}
+
+// SetY sets y field of the underlying GdkRectangle.
+func (r *Rectangle) SetY(y int) {
+	r.native().y = C.int(y)
 }
 
 // GetWidth returns width field of the underlying GdkRectangle.
@@ -1985,9 +2002,19 @@ func (r *Rectangle) GetWidth() int {
 	return int(r.native().width)
 }
 
+// SetWidth sets width field of the underlying GdkRectangle.
+func (r *Rectangle) SetWidth(width int) {
+	r.native().width = C.int(width)
+}
+
 // GetHeight returns height field of the underlying GdkRectangle.
 func (r *Rectangle) GetHeight() int {
 	return int(r.native().height)
+}
+
+// SetHeight sets height field of the underlying GdkRectangle.
+func (r *Rectangle) SetHeight(height int) {
+	r.native().height = C.int(height)
 }
 
 /*

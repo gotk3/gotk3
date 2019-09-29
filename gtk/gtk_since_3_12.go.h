@@ -27,3 +27,9 @@ toGtkFlowBoxChild(void *p)
 {
 	return (GTK_FLOW_BOX_CHILD(p));
 }
+
+static GtkPopover *
+toGtkPopover(void *p)
+{
+	return (GTK_POPOVER(p));
+}

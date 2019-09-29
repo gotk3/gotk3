@@ -121,6 +121,17 @@ func (v *ComboBox) SetActiveIter(iter *TreeIter) {
 	C.gtk_combo_box_set_active_iter(v.native(), cIter)
 }
 
+// GetEntryTextColumn is a wrapper around gtk_combo_box_get_entry_text_column()
+func (v *ComboBox) GetEntryTextColumn() int {
+	c := C.gtk_combo_box_get_entry_text_column(v.native())
+	return int(c)
+}
+
+// SetEntryTextColumn is a wrapper around gtk_combo_box_set_entry_text_column()
+func (v *ComboBox) SetEntryTextColumn(textColumn int) {
+	C.gtk_combo_box_set_entry_text_column(v.native(), C.gint(textColumn))
+}
+
 // GetActiveID is a wrapper around gtk_combo_box_get_active_id().
 func (v *ComboBox) GetActiveID() string {
 	c := C.gtk_combo_box_get_active_id(v.native())
@@ -160,6 +171,17 @@ func (v *ComboBox) Popup() {
 
 func (v *ComboBox) Popdown() {
 	C.gtk_combo_box_popdown(v.native())
+}
+
+// GetIDColumn is a wrapper around gtk_combo_box_get_id_column()
+func (v *ComboBox) GetIDColumn() int {
+	c := C.gtk_combo_box_get_id_column(v.native())
+	return int(c)
+}
+
+// SetIDColumn is a wrapper around gtk_combo_box_set_id_column()
+func (v *ComboBox) SetIDColumn(idColumn int) {
+	C.gtk_combo_box_set_id_column(v.native(), C.gint(idColumn))
 }
 
 /*
