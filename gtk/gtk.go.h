@@ -948,8 +948,20 @@ static inline void _gtk_tree_sortable_set_sort_func(GtkTreeSortable *sortable, g
     gtk_tree_sortable_set_sort_func(sortable, sort_column_id, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data, NULL);
 }
 
+static GtkWidget *
+_gtk_dialog_new_with_buttons(const gchar    *title,
+                             GtkWindow      *parent,
+                             GtkDialogFlags  flags,
+                             const gchar    *first_button_text) {
+	GtkWidget		*w;
+
+	w = gtk_dialog_new_with_buttons(title, parent, flags, first_button_text, NULL);
+	return (w);
+}
+
 extern gint goTreeModelForeachFunc(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
 
 static inline void _gtk_tree_model_foreach(GtkTreeModel *model, gpointer user_data) {
     gtk_tree_model_foreach(model, (GtkTreeModelForeachFunc)(goTreeModelForeachFunc), user_data);
+
 }
