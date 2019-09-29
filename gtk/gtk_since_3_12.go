@@ -353,3 +353,28 @@ func (fbc *FlowBoxChild) IsSelected() bool {
 func (fbc *FlowBoxChild) Changed() {
 	C.gtk_flow_box_child_changed(fbc.native())
 }
+
+/*
+ * TreePath
+ */
+
+// TreePathNewFromIndicesv() is a wrapper around gtk_tree_path_new_from_indicesv().
+func TreePathNewFromIndicesv(indices []int) (*TreePath, error) {
+	if len(indices) == 0 {
+		return nil, errors.New("no indice")
+	}
+
+	var cIndices []C.gint
+	for i := 0; i < len(indices); i++ {
+		cIndices = append(cIndices, C.gint(indices[i]))
+	}
+
+	var cIndicesPointer *C.gint = &cIndices[0]
+	c := C.gtk_tree_path_new_from_indicesv(cIndicesPointer, C.gsize(len(indices)))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	t := &TreePath{c}
+	runtime.SetFinalizer(t, (*TreePath).free)
+	return t, nil
+}
