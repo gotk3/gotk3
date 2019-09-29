@@ -8969,6 +8969,27 @@ func (v *TreePath) PrependIndex(index int) {
 	C.gtk_tree_path_prepend_index(v.native(), C.gint(index))
 }
 
+// GetDepth() is a wrapper around gtk_tree_path_get_depth().
+func (v *TreePath) GetDepth() int {
+	return int(C.gtk_tree_path_get_depth(v.native()))
+}
+
+// Copy() is a wrapper around gtk_tree_path_copy().
+func (v *TreePath) Copy() (*TreePath, error) {
+	c := C.gtk_tree_path_copy(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	t := &TreePath{c}
+	runtime.SetFinalizer(t, (*TreePath).free)
+	return t, nil
+}
+
+// Compare() is a wrapper around gtk_tree_path_compare().
+func (v *TreePath) Compare(b *TreePath) int {
+	return int(C.gtk_tree_path_compare(v.native(), b.native()))
+}
+
 /*
  * GtkTreeSelection
  */
