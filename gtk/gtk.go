@@ -9124,6 +9124,22 @@ func (v *TreeStore) Clear() {
 	C.gtk_tree_store_clear(v.native())
 }
 
+// InsertBefore() is a wrapper around gtk_tree_store_insert_before().
+func (v *TreeStore) InsertBefore(parent, sibling *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_tree_store_insert_before(v.native(), &ti, parent.native(), sibling.native())
+	iter := &TreeIter{ti}
+	return iter
+}
+
+// InsertAfter() is a wrapper around gtk_tree_store_insert_after().
+func (v *TreeStore) InsertAfter(parent, sibling *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_tree_store_insert_after(v.native(), &ti, parent.native(), sibling.native())
+	iter := &TreeIter{ti}
+	return iter
+}
+
 /*
  * TreeSortable
  */
