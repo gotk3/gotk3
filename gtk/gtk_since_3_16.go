@@ -213,3 +213,10 @@ func (v *StackSidebar) GetStack() *Stack {
 func (v *Entry) GrabFocusWithoutSelecting() {
 	C.gtk_entry_grab_focus_without_selecting(v.native())
 }
+
+// InsertMarkup() is a wrapper around  gtk_text_buffer_insert_markup()
+func (v *TextBuffer) InsertMarkup(start *TextIter, text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_text_buffer_insert_markup(v.native(), (*C.GtkTextIter)(start), (*C.gchar)(cstr), C.gint(len(text)))
+}

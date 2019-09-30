@@ -8969,6 +8969,27 @@ func (v *TreePath) PrependIndex(index int) {
 	C.gtk_tree_path_prepend_index(v.native(), C.gint(index))
 }
 
+// GetDepth() is a wrapper around gtk_tree_path_get_depth().
+func (v *TreePath) GetDepth() int {
+	return int(C.gtk_tree_path_get_depth(v.native()))
+}
+
+// Copy() is a wrapper around gtk_tree_path_copy().
+func (v *TreePath) Copy() (*TreePath, error) {
+	c := C.gtk_tree_path_copy(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	t := &TreePath{c}
+	runtime.SetFinalizer(t, (*TreePath).free)
+	return t, nil
+}
+
+// Compare() is a wrapper around gtk_tree_path_compare().
+func (v *TreePath) Compare(b *TreePath) int {
+	return int(C.gtk_tree_path_compare(v.native(), b.native()))
+}
+
 /*
  * GtkTreeSelection
  */
@@ -9094,6 +9115,17 @@ func (v *TreeSelection) IterIsSelected(iter *TreeIter) bool {
 // SelectRange() is a wrapper around gtk_tree_selection_select_range().
 func (v *TreeSelection) SelectRange(start, end *TreePath) {
 	C.gtk_tree_selection_select_range(v.native(), start.native(), end.native())
+}
+
+// UnselectRange() is a wrapper around gtk_tree_selection_unselect_range().
+func (v *TreeSelection) UnselectRange(start, end *TreePath) {
+	C.gtk_tree_selection_unselect_range(v.native(), start.native(), end.native())
+}
+
+// PathIsSelected() is a wrapper around gtk_tree_selection_path_is_selected().
+func (v *TreeSelection) PathIsSelected(path *TreePath) bool {
+	
+	return gobool(C.gtk_tree_selection_path_is_selected(v.native(), path.native()))
 }
 
 /*
