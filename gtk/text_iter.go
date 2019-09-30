@@ -385,12 +385,32 @@ func (v *TextIter) InRange(v1 *TextIter, v2 *TextIter) bool {
 	return gobool(C.gtk_text_iter_in_range(v.native(), v1.native(), v2.native()))
 }
 
+// ForwardSearch is a wrapper around gtk_text_iter_forward_search().
+func (v *TextIter) ForwardSearch(text string, flags TextSearchFlags, limit *TextIter) (matchStart, matchEnd *TextIter, ok bool) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+
+	matchStart, matchEnd = new(TextIter), new(TextIter)
+	cbool := C.gtk_text_iter_forward_search(v.native(), (*C.gchar)(cstr), (C.GtkTextSearchFlags)(flags),
+		(*C.GtkTextIter)(matchStart), (*C.GtkTextIter)(matchEnd), (*C.GtkTextIter)(limit))
+	return matchStart, matchEnd, gobool(cbool)
+}
+
+// BackwardSearch is a wrapper around gtk_text_iter_backward_search().
+func (v *TextIter) BackwardSearch(text string, flags TextSearchFlags, limit *TextIter) (matchStart, matchEnd *TextIter, ok bool) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+
+	matchStart, matchEnd = new(TextIter), new(TextIter)
+	cbool := C.gtk_text_iter_backward_search(v.native(), (*C.gchar)(cstr), (C.GtkTextSearchFlags)(flags),
+		(*C.GtkTextIter)(matchStart), (*C.GtkTextIter)(matchEnd), (*C.GtkTextIter)(limit))
+	return matchStart, matchEnd, gobool(cbool)
+}
+
 // void 	gtk_text_iter_order ()
 // gboolean 	(*GtkTextCharPredicate) ()
 // gboolean 	gtk_text_iter_forward_find_char ()
 // gboolean 	gtk_text_iter_backward_find_char ()
-// gboolean 	gtk_text_iter_forward_search ()
-// gboolean 	gtk_text_iter_backward_search ()
 // gboolean 	gtk_text_iter_get_attributes ()
 // GtkTextIter * 	gtk_text_iter_copy ()
 // void 	gtk_text_iter_assign ()
