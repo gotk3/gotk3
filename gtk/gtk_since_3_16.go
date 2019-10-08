@@ -4,6 +4,7 @@
 
 package gtk
 
+// #include <stdlib.h>
 // #include <gtk/gtk.h>
 // #include "gtk_since_3_16.go.h"
 import "C"
