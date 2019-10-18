@@ -61,6 +61,12 @@ toGdkPixbuf(void *p)
 	return (GDK_PIXBUF(p));
 }
 
+static GdkPixbufAnimation *
+toGdkPixbufAnimation(void *p)
+{
+	return (GDK_PIXBUF_ANIMATION(p));
+}
+
 static gboolean
 _gdk_pixbuf_save_png(GdkPixbuf *pixbuf,
 const char *filename, GError ** err, const char *compression)
