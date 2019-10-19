@@ -1771,6 +1771,7 @@ func marshalPixbufAnimation(p uintptr) (interface{}, error) {
 	return &PixbufAnimation{obj}, nil
 }
 
+// PixbufAnimationNewFromFile is a wrapper around gdk_pixbuf_animation_new_from_file().
 func PixbufAnimationNewFromFile(filename string) (*PixbufAnimation, error) {
 	cstr := C.CString(filename)
 	defer C.free(unsafe.Pointer(cstr))
@@ -1941,7 +1942,7 @@ func (v *PixbufLoader) GetAnimation() (*PixbufAnimation, error) {
 	return p, nil
 }
 
-// Conveignant function like above for Pixbuf. Write data, close loader return pixbufAnimation.
+// Convenient function like above for Pixbuf. Write data, close loader and return PixbufAnimation.
 func (v *PixbufLoader) WriteAndReturnPixbufAnimation(data []byte) (*PixbufAnimation, error) {
 
 	if len(data) == 0 {
