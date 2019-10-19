@@ -4870,11 +4870,24 @@ func (v *Image) GetIconSet() {
 }
 */
 
-// TODO(jrick) GdkPixbufAnimation
-/*
-func (v *Image) GetAnimation() {
+// GetAnimation() is a wrapper around gtk_image_get_animation()
+func (v *Image) GetAnimation() *gdk.PixbufAnimation {
+	c := C.gtk_image_get_animation(v.native())
+	if c == nil {
+		return nil
+	}
+	return &gdk.PixbufAnimation{glib.Take(unsafe.Pointer(c))}
 }
-*/
+
+// ImageNewFromAnimation() is a wrapper around gtk_image_new_from_animation()
+func ImageNewFromAnimation(animation *gdk.PixbufAnimation) (*Image, error) {
+	c := C.gtk_image_new_from_animation((*C.GdkPixbufAnimation)(animation.NativePrivate()))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapImage(obj), nil
+}
 
 // GetIconName() is a wrapper around gtk_image_get_icon_name().
 func (v *Image) GetIconName() (string, IconSize) {
