@@ -4889,6 +4889,12 @@ func ImageNewFromAnimation(animation *gdk.PixbufAnimation) (*Image, error) {
 	return wrapImage(obj), nil
 }
 
+// SetFromAnimation is a wrapper around gtk_image_set_from_animation().
+func (v *Image) SetFromAnimation(animation *gdk.PixbufAnimation) {
+	pbaptr := (*C.GdkPixbufAnimation)(unsafe.Pointer(animation.NativePrivate()))
+	C.gtk_image_set_from_animation(v.native(), pbaptr)
+}
+
 // GetIconName() is a wrapper around gtk_image_get_icon_name().
 func (v *Image) GetIconName() (string, IconSize) {
 	var iconName *C.gchar
