@@ -9292,6 +9292,46 @@ func (v *TreeSelection) PathIsSelected(path *TreePath) bool {
 	return gobool(C.gtk_tree_selection_path_is_selected(v.native(), path.native()))
 }
 
+// TreeSelectionForeachFunc defines the function prototype for the selected_foreach function (f arg) for
+// (* TreeSelection).SelectedForEach
+type TreeSelectionForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData interface{})
+
+type treeSelectionForeachFuncData struct {
+	fn       TreeSelectionForeachFunc
+	userData interface{}
+}
+
+var (
+	treeSelectionForeachFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]treeSelectionForeachFuncData
+	}{
+		next: 1,
+		m:    make(map[int]treeSelectionForeachFuncData),
+	}
+)
+
+// SelectedForEach() is a wrapper around gtk_tree_selection_selected_foreach()
+func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc, userData ...interface{}) error {
+	if len(userData) > 1 {
+		return errors.New("userData len must be 0 or 1")
+	}
+
+	t := treeSelectionForeachFuncData{fn: f}
+	if len(userData) > 0 {
+		t.userData = userData[0]
+	}
+	treeSelectionForeachFuncRegistry.Lock()
+	id := treeSelectionForeachFuncRegistry.next
+	treeSelectionForeachFuncRegistry.next++
+	treeSelectionForeachFuncRegistry.m[id] = t
+	treeSelectionForeachFuncRegistry.Unlock()
+
+	C._gtk_tree_selection_selected_foreach(v.native(), C.gpointer(uintptr(id)))
+	return nil
+}
+
 /*
  * GtkTreeRowReference
  */
