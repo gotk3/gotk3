@@ -148,3 +148,21 @@ func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.
 		goIter,
 		r.userData))
 }
+
+//export goTreeSelectionForeachFunc
+func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.gpointer) {
+	id := int(uintptr(data))
+
+	treeSelectionForeachFuncRegistry.Lock()
+	r := treeSelectionForeachFuncRegistry.m[id]
+	treeSelectionForeachFuncRegistry.Unlock()
+
+	goPath := &TreePath{(*C.GtkTreePath)(path)}
+	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
+
+	r.fn(
+		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
+		goPath,
+		goIter,
+		r.userData)
+}

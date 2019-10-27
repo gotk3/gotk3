@@ -965,3 +965,9 @@ static inline void _gtk_tree_model_foreach(GtkTreeModel *model, gpointer user_da
     gtk_tree_model_foreach(model, (GtkTreeModelForeachFunc)(goTreeModelForeachFunc), user_data);
 
 }
+
+extern void goTreeSelectionForeachFunc(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data);
+
+static inline void _gtk_tree_selection_selected_foreach(GtkTreeSelection *selection, gpointer user_data) {
+    gtk_tree_selection_selected_foreach(selection, (GtkTreeSelectionForeachFunc)(goTreeSelectionForeachFunc), user_data);
+}
