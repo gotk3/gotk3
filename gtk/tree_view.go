@@ -94,23 +94,39 @@ func (v *TreeView) AppendColumn(column *TreeViewColumn) int {
 }
 
 // GetPathAtPos is a wrapper around gtk_tree_view_get_path_at_pos().
-func (v *TreeView) GetPathAtPos(x, y int, path **TreePath, column **TreeViewColumn, cellX, cellY *int) bool {
-	var ctp *C.GtkTreePath
-	var pctvcol *C.GtkTreeViewColumn
+func (v *TreeView) GetPathAtPos(x, y int) (*TreePath, *TreeViewColumn, int, int, bool) {
+	var (
+		cpath          *C.GtkTreePath
+		ccol           *C.GtkTreeViewColumn
+		ccellX, ccellY *C.gint
+		cellX, cellY   int
+	)
+	path := new(TreePath)
+	column := new(TreeViewColumn)
 
-	ok := C.gtk_tree_view_get_path_at_pos(
+	cbool := C.gtk_tree_view_get_path_at_pos(
 		v.native(),
 		(C.gint)(x),
 		(C.gint)(y),
-		&ctp,
-		&pctvcol,
-		(*C.gint)(unsafe.Pointer(cellX)),
-		(*C.gint)(unsafe.Pointer(cellY)))
+		&cpath,
+		&ccol,
+		ccellX,
+		ccellY)
 
-	*path = &TreePath{ctp}
-	*column = wrapTreeViewColumn(glib.Take(unsafe.Pointer(pctvcol)))
-
-	return gobool(ok)
+	if cpath != nil {
+		path = &TreePath{cpath}
+		runtime.SetFinalizer(path, (*TreePath).free)
+	}
+	if ccol != nil {
+		column = wrapTreeViewColumn(glib.Take(unsafe.Pointer(ccol)))
+	}
+	if ccellX != nil {
+		cellX = int(*((*C.gint)(unsafe.Pointer(ccellX))))
+	}
+	if ccellY != nil {
+		cellY = int(*((*C.gint)(unsafe.Pointer(ccellY))))
+	}
+	return path, column, cellX, cellY, gobool(cbool)
 }
 
 // GetCellArea is a wrapper around gtk_tree_view_get_cell_area().
