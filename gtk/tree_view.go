@@ -452,6 +452,42 @@ func (v *TreeView) GetGridLines() TreeViewGridLines {
 	return TreeViewGridLines(C.gtk_tree_view_get_grid_lines(v.native()))
 }
 
+// IsBlankAtPos is a wrapper around gtk_tree_view_is_blank_at_pos().
+func (v *TreeView) IsBlankAtPos(x, y int) (*TreePath, *TreeViewColumn, int, int, bool) {
+	var (
+		cpath          *C.GtkTreePath
+		ccol           *C.GtkTreeViewColumn
+		ccellX, ccellY *C.gint
+		cellX, cellY   int
+	)
+	path := new(TreePath)
+	column := new(TreeViewColumn)
+
+	cbool := C.gtk_tree_view_is_blank_at_pos(
+		v.native(),
+		(C.gint)(x),
+		(C.gint)(y),
+		&cpath,
+		&ccol,
+		ccellX,
+		ccellY)
+
+	if cpath != nil {
+		path = &TreePath{cpath}
+		runtime.SetFinalizer(path, (*TreePath).free)
+	}
+	if ccol != nil {
+		column = wrapTreeViewColumn(glib.Take(unsafe.Pointer(ccol)))
+	}
+	if ccellX != nil {
+		cellX = int(*((*C.gint)(unsafe.Pointer(ccellX))))
+	}
+	if ccellY != nil {
+		cellY = int(*((*C.gint)(unsafe.Pointer(ccellY))))
+	}
+	return path, column, cellX, cellY, gobool(cbool)
+}
+
 // ScrollToCell() is a wrapper around gtk_tree_view_scroll_to_cell().
 func (v *TreeView) ScrollToCell(path *TreePath, column *TreeViewColumn, align bool, xAlign, yAlign float32) {
 	C.gtk_tree_view_scroll_to_cell(v.native(), path.native(), column.native(), gbool(align), C.gfloat(xAlign), C.gfloat(yAlign))
@@ -483,7 +519,6 @@ func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
 // gint 	gtk_tree_view_insert_column_with_attributes ()
 // gint 	gtk_tree_view_insert_column_with_data_func ()
 // void 	gtk_tree_view_set_column_drag_function ()
-// gboolean 	gtk_tree_view_is_blank_at_pos ()
 // void 	gtk_tree_view_get_background_area ()
 // void 	gtk_tree_view_get_visible_rect ()
 // gboolean 	gtk_tree_view_get_visible_range ()
