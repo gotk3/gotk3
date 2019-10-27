@@ -457,8 +457,16 @@ func (v *TreeView) ScrollToCell(path *TreePath, column *TreeViewColumn, align bo
 	C.gtk_tree_view_scroll_to_cell(v.native(), path.native(), column.native(), gbool(align), C.gfloat(xAlign), C.gfloat(yAlign))
 }
 
-// void 	gtk_tree_view_set_tooltip_row ()
-// void 	gtk_tree_view_set_tooltip_cell ()
+// SetTooltipCell() is a wrapper around gtk_tree_view_set_tooltip_cell().
+func (v *TreeView) SetTooltipCell(tooltip *Tooltip, path *TreePath, column *TreeViewColumn, cell *CellRenderer) {
+	C.gtk_tree_view_set_tooltip_cell(v.native(), tooltip.native(), path.native(), column.native(), cell.native())
+}
+
+// SetTooltipRow() is a wrapper around gtk_tree_view_set_tooltip_row().
+func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
+	C.gtk_tree_view_set_tooltip_row(v.native(), tooltip.native(), path.native())
+}
+
 // gboolean 	gtk_tree_view_get_tooltip_context ()
 // void 	(*GtkTreeDestroyCountFunc) ()
 // void 	gtk_tree_view_set_destroy_count_func ()
