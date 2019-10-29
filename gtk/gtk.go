@@ -8080,6 +8080,13 @@ func (v *TextBuffer) RemoveSelectionClipboard(clipboard *Clipboard) {
 	C.gtk_text_buffer_remove_selection_clipboard(v.native(), clipboard.native())
 }
 
+// GetIterAtLineIndex() is a wrapper around gtk_text_buffer_get_iter_at_line_index().
+func (v *TextBuffer) GetIterAtLineIndex(lineNumber, charIndex int) (iter *TextIter) {
+	iter = new(TextIter)
+	C.gtk_text_buffer_get_iter_at_line_index(v.native(), (*C.GtkTextIter)(iter), (C.gint)(lineNumber), (C.gint)(charIndex))
+	return
+}
+
 /*
  * GtkToggleButton
  */
