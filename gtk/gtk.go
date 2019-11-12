@@ -9478,6 +9478,34 @@ func (v *TreeStore) InsertAfter(parent, sibling *TreeIter) *TreeIter {
 	return iter
 }
 
+// InsertWithValues() is a wrapper around gtk_tree_store_insert_with_valuesv().
+func (v *TreeStore) InsertWithValues(iter, parent *TreeIter, position int, inColumns []int, inValues []interface{}) error {
+	length := len(inColumns)
+	if len(inValues) < length {
+		length = len(inValues)
+	}
+
+	var cColumns []C.gint
+	var cValues []C.GValue
+	for i := 0; i < length; i++ {
+		cColumns = append(cColumns, C.gint(inColumns[i]))
+
+		gv, err := glib.GValue(inValues[i])
+		if err != nil {
+			return err
+		}
+
+		var cvp *C.GValue = (*C.GValue)(gv.Native())
+		cValues = append(cValues, *cvp)
+	}
+	var cColumnsPointer *C.gint = &cColumns[0]
+	var cValuesPointer *C.GValue = &cValues[0]
+
+	C.gtk_tree_store_insert_with_valuesv(v.native(), iter.native(), parent.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(length))
+
+	return nil
+}
+
 /*
  * TreeSortable
  */
