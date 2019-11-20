@@ -70,7 +70,7 @@ func SocketNew() (*Socket, error) {
 // to get the window ID for the socket, and call gtk_plug_new() passing in that ID.
 // The GtkSocket must have already be added into a toplevel window before you can make this call.
 func (v *Socket) AddId(window uint) {
-	C.gtk_socket_add_id(v.native(), C.ulong(window))
+	C.gtk_socket_add_id(v.native(), C.Window(window))
 }
 
 // GetId is a wrapper around gtk_socket_get_id().
@@ -135,7 +135,7 @@ func wrapPlug(obj *glib.Object) *Plug {
 // Creates a new plug widget inside the GtkSocket identified by socket_id.
 // If socket_id is 0, the plug is left “unplugged” and can later be plugged into a GtkSocket by gtk_socket_add_id().
 func PlugNew(socketId uint) (*Plug, error) {
-	c := C.gtk_plug_new(C.ulong(socketId))
+	c := C.gtk_plug_new(C.Window(socketId))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -146,7 +146,7 @@ func PlugNew(socketId uint) (*Plug, error) {
 // Creates a new plug widget inside the GtkSocket identified by socket_id.
 // If socket_id is 0, the plug is left “unplugged” and can later be plugged into a GtkSocket by gtk_socket_add_id().
 func PlugNewForDisplay(display *gdk.Display, socketId uint) (*Plug, error) {
-	c := C.gtk_plug_new_for_display(native(display), C.ulong(socketId))
+	c := C.gtk_plug_new_for_display(native(display), C.Window(socketId))
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -157,7 +157,7 @@ func PlugNewForDisplay(display *gdk.Display, socketId uint) (*Plug, error) {
 // Finish the initialization of plug for a given GtkSocket identified by socket_id.
 // This function will generally only be used by classes deriving from GtkPlug.
 func (v *Plug) Construct(socketId uint) {
-	C.gtk_plug_construct(v.native(), C.ulong(socketId))
+	C.gtk_plug_construct(v.native(), C.Window(socketId))
 }
 
 // ConstructForDisplay is a wrapper around gtk_plug_construct_for_display().
@@ -165,7 +165,7 @@ func (v *Plug) Construct(socketId uint) {
 // displayed on display.
 // This function will generally only be used by classes deriving from GtkPlug.
 func (v *Plug) ConstructForDisplay(display *gdk.Display, socketId uint) {
-	C.gtk_plug_construct_for_display(v.native(), native(display), C.ulong(socketId))
+	C.gtk_plug_construct_for_display(v.native(), native(display), C.Window(socketId))
 }
 
 // GetId is a wrapper around gtk_plug_get_id().
