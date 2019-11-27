@@ -783,6 +783,13 @@ set_type(GType *types, int n, GType t)
 	types[n] = t;
 }
 
+// _gtk_test_init is a wrapper to use gtk_test_init directly from go.
+// The variadic part on gtk_test_init is not used at the moment, according to the documentation.
+static void _gtk_test_init(int *argcp, char ***argvp)
+{
+	gtk_test_init(argcp, argvp);
+}
+
 static GtkTreeViewColumn *
 _gtk_tree_view_column_new_with_attributes_one(const gchar *title,
     GtkCellRenderer *renderer, const gchar *attribute, gint column)

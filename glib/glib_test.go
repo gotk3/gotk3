@@ -56,3 +56,36 @@ func TestTimeoutAdd(t *testing.T) {
 
 	gtk.Main()
 }
+
+// TestTypeNames tests both glib.TypeFromName and glib.Type.Name
+func TestTypeNames(t *testing.T) {
+	tp := glib.TypeFromName("GtkWindow")
+	name := tp.Name()
+
+	if name != "GtkWindow" {
+		t.Error("Expected GtkWindow, got", name)
+	}
+}
+
+func TestTypeIsA(t *testing.T) {
+	tp := glib.TypeFromName("GtkApplicationWindow")
+	tpParent := glib.TypeFromName("GtkWindow")
+
+	isA := tp.IsA(tpParent)
+
+	if !isA {
+		t.Error("Expected true, GtkApplicationWindow is a GtkWindow")
+	}
+}
+
+func TestTypeNextBase(t *testing.T) {
+	tpLeaf := glib.TypeFromName("GtkWindow")
+	tpParent := glib.TypeFromName("GtkContainer")
+
+	tpNextBase := glib.TypeNextBase(tpLeaf, tpParent)
+	name := tpNextBase.Name()
+
+	if name != "GtkBin" {
+		t.Error("Expected GtkBin, got", name)
+	}
+}

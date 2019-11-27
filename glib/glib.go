@@ -121,6 +121,23 @@ func (t Type) Parent() Type {
 	return Type(C.g_type_parent(C.GType(t)))
 }
 
+// IsA is a wrapper around g_type_is_a().
+func (t Type) IsA(isAType Type) bool {
+	return gobool(C.g_type_is_a(C.GType(t), C.GType(isAType)))
+}
+
+// TypeFromName is a wrapper around g_type_from_name
+func TypeFromName(typeName string) Type {
+	cstr := (*C.gchar)(C.CString(typeName))
+	defer C.free(unsafe.Pointer(cstr))
+	return Type(C.g_type_from_name(cstr))
+}
+
+//TypeNextBase is a wrapper around g_type_next_base
+func TypeNextBase(leafType, rootType Type) Type {
+	return Type(C.g_type_next_base(C.GType(leafType), C.GType(rootType)))
+}
+
 // UserDirectory is a representation of GLib's GUserDirectory.
 type UserDirectory int
 
