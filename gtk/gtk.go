@@ -9976,3 +9976,24 @@ func cast(c *C.GObject) (glib.IObject, error) {
 
 	return ret, nil
 }
+
+// cast takes a native GtkWidget and casts it to the appropriate Go struct.
+func castWidget(c *C.GtkWidget) (IWidget, error) {
+	var (
+		className = goString(C.object_get_class_name(C.toGObject(unsafe.Pointer(c))))
+		obj       = glib.Take(unsafe.Pointer(c))
+	)
+
+	intf, err := castInternal(className, obj)
+	if err != nil {
+		return nil, err
+	}
+
+	ret, ok := intf.(IWidget)
+	if !ok {
+		return nil, errors.New("did not return an IWidget")
+	}
+
+	return ret, nil
+}
+

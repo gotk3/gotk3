@@ -766,6 +766,12 @@ toGdkPixbuf(void *p)
 	return (GDK_PIXBUF(p));
 }
 
+static GObject *
+toGObject(void *p)
+{
+	return (G_OBJECT(p));
+}
+
 static GType *
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
