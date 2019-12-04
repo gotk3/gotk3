@@ -2914,7 +2914,8 @@ func (v *Dialog) GetContentArea() (*Box, error) {
 }
 
 // DialogNewWithButtons() is a wrapper around gtk_dialog_new_with_buttons().
-func DialogNewWithButtons(title string, parent IWindow, flags DialogFlags, buttons ...string) (dialog *Dialog, err error) {
+// i.e: []interface{}{"Accept", gtk.RESPONSE_ACCEPT}.
+func DialogNewWithButtons(title string, parent IWindow, flags DialogFlags, buttons ...[]interface{}) (dialog *Dialog, err error) {
 	cstr := (*C.gchar)(C.CString(title))
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -2924,21 +2925,17 @@ func DialogNewWithButtons(title string, parent IWindow, flags DialogFlags, butto
 	}
 
 	var cbutton *C.gchar = nil
-	if len(buttons) > 0 {
-		cbutton = (*C.gchar)(C.CString(buttons[0]))
-		defer C.free(unsafe.Pointer(cbutton))
-	}
-
 	c := C._gtk_dialog_new_with_buttons(cstr, w, C.GtkDialogFlags(flags), cbutton)
 	if c == nil {
 		return nil, nilPtrErr
 	}
 	dialog = wrapDialog(glib.Take(unsafe.Pointer(c)))
 
-	for idx := 1; idx < len(buttons); idx++ {
-		cbutton = (*C.gchar)(C.CString(buttons[idx]))
+	for idx := 0; idx < len(buttons); idx++ {
+		cbutton = (*C.gchar)(C.CString(buttons[idx][0].(string)))
 		defer C.free(unsafe.Pointer(cbutton))
-		if C.gtk_dialog_add_button(dialog.native(), cbutton, C.gint(idx)) == nil {
+
+		if C.gtk_dialog_add_button(dialog.native(), cbutton, C.gint(buttons[idx][1].(ResponseType))) == nil {
 			return nil, nilPtrErr
 		}
 	}
