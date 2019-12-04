@@ -338,29 +338,28 @@ const (
 type CrossingMode int
 
 const (
-	CROSSING_NORMAL CrossingMode = C.GDK_CROSSING_NORMAL
-	CROSSING_GRAB CrossingMode = C.GDK_CROSSING_GRAB
-	CROSSING_UNGRAB CrossingMode = C.GDK_CROSSING_UNGRAB
-	CROSSING_GTK_GRAB CrossingMode = C.GDK_CROSSING_GTK_GRAB
-	CROSSING_GTK_UNGRAB CrossingMode = C.GDK_CROSSING_GTK_UNGRAB
+	CROSSING_NORMAL        CrossingMode = C.GDK_CROSSING_NORMAL
+	CROSSING_GRAB          CrossingMode = C.GDK_CROSSING_GRAB
+	CROSSING_UNGRAB        CrossingMode = C.GDK_CROSSING_UNGRAB
+	CROSSING_GTK_GRAB      CrossingMode = C.GDK_CROSSING_GTK_GRAB
+	CROSSING_GTK_UNGRAB    CrossingMode = C.GDK_CROSSING_GTK_UNGRAB
 	CROSSING_STATE_CHANGED CrossingMode = C.GDK_CROSSING_STATE_CHANGED
-	CROSSING_TOUCH_BEGIN CrossingMode = C.GDK_CROSSING_TOUCH_BEGIN
-	CROSSING_TOUCH_END CrossingMode = C.GDK_CROSSING_TOUCH_END
+	CROSSING_TOUCH_BEGIN   CrossingMode = C.GDK_CROSSING_TOUCH_BEGIN
+	CROSSING_TOUCH_END     CrossingMode = C.GDK_CROSSING_TOUCH_END
 	CROSSING_DEVICE_SWITCH CrossingMode = C.GDK_CROSSING_DEVICE_SWITCH
 )
-
 
 // NotifyType is a representation of GDK's GdkNotifyType.
 
 type NotifyType int
 
 const (
-	NOTIFY_ANCESTOR NotifyType = C.GDK_NOTIFY_ANCESTOR
-	NOTIFY_VIRTUAL NotifyType = C.GDK_NOTIFY_VIRTUAL
-	NOTIFY_INFERIOR NotifyType = C.GDK_NOTIFY_INFERIOR
-	NOTIFY_NONLINEAR NotifyType = C.GDK_NOTIFY_NONLINEAR
+	NOTIFY_ANCESTOR          NotifyType = C.GDK_NOTIFY_ANCESTOR
+	NOTIFY_VIRTUAL           NotifyType = C.GDK_NOTIFY_VIRTUAL
+	NOTIFY_INFERIOR          NotifyType = C.GDK_NOTIFY_INFERIOR
+	NOTIFY_NONLINEAR         NotifyType = C.GDK_NOTIFY_NONLINEAR
 	NOTIFY_NONLINEAR_VIRTUAL NotifyType = C.GDK_NOTIFY_NONLINEAR_VIRTUAL
-	NOTIFY_UNKNOWN NotifyType = C.GDK_NOTIFY_UNKNOWN
+	NOTIFY_UNKNOWN           NotifyType = C.GDK_NOTIFY_UNKNOWN
 )
 
 /*
@@ -1216,12 +1215,10 @@ func (v *EventCrossing) Detail() NotifyType {
 	return NotifyType(c)
 }
 
-
 func (v *EventCrossing) Focus() bool {
 	c := v.native().focus
 	return gobool(c)
 }
-
 
 /*
  * GdkEventScroll
@@ -2163,6 +2160,30 @@ func (v *Window) native() *C.GdkWindow {
 // Native returns a pointer to the underlying GdkWindow.
 func (v *Window) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
+}
+
+// WindowGetWidth is a wrapper around gdk_window_get_width()
+func (v *Window) WindowGetWidth() (width int) {
+	return int(C.gdk_window_get_width(v.native()))
+}
+
+// WindowGetHeight is a wrapper around gdk_window_get_height()
+func (v *Window) WindowGetHeight() (height int) {
+	return int(C.gdk_window_get_height(v.native()))
+}
+
+//PixbufGetFromWindow is a wrapper around gdk_pixbuf_get_from_window()
+func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
+	c := C.gdk_pixbuf_get_from_window(v.native(), C.gint(x), C.gint(y), C.gint(w), C.gint(h))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
 }
 
 func marshalWindow(p uintptr) (interface{}, error) {
