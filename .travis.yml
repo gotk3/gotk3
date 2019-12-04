@@ -1,23 +1,54 @@
 language: go
 
-go:
-  - "1.8"
-  - "1.9"
-  - "1.10"
-  - "tip"
-
 go_import_path: github.com/gotk3/gotk3
 
 env:
   - GOARCH=amd64
 
-sudo: required
-dist: trusty
+jobs:
+  include:
+      # Testing on trusty, gtk 3.10
+    - os: linux
+      dist: trusty
+      go: "1.13"
+
+      # Testing on xenial, gtk 3.18
+    - os: linux
+      dist: xenial
+      go: "1.13"
+
+      # Testing on bionic, gtk 3.22
+      # Majority of the go versions here for compatibility checking
+    - os: linux
+      dist: bionic
+      go: "1.8"
+    - os: linux
+      dist: bionic
+      go: "1.9"
+    - os: linux
+      dist: bionic
+      go: "1.10"
+    - os: linux
+      dist: bionic
+      go: "1.11"
+    - os: linux
+      dist: bionic
+      go: "1.12"
+    - os: linux
+      dist: bionic
+      go: "1.13"
+    - os: linux
+      dist: bionic
+      go: tip
+
+addons:
+  apt:
+    packages:
+    - gtk+3.0
+    - libgtk-3-dev
+    - xvfb
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y gtk+3.0 libgtk-3-dev
-  - sudo apt-get install -y xvfb
   - "export DISPLAY=:99.0"
   - sudo /usr/bin/Xvfb $DISPLAY 2>1 > /dev/null &
   - "export GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _| cut -d '_' -f 1-2)"
