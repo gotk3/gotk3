@@ -220,6 +220,24 @@ func (v *TreeView) GetColumn(n int) *TreeViewColumn {
 	return wrapTreeViewColumn(glib.Take(unsafe.Pointer(c)))
 }
 
+// GetColumns is a wrapper around gtk_tree_view_get_columns().
+func (v *TreeView) GetColumns() *glib.List {
+	clist := C.gtk_tree_view_get_columns(v.native())
+	if clist == nil {
+		return nil
+	}
+	
+	list := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return wrapTreeViewColumn(glib.Take(unsafe.Pointer(ptr)))
+	})
+	runtime.SetFinalizer(list, func(glist *glib.List) {
+		glist.Free()
+	})
+	
+	return list
+}
+
 // MoveColumnAfter is a wrapper around gtk_tree_view_move_column_after().
 func (v *TreeView) MoveColumnAfter(column *TreeViewColumn, baseColumn *TreeViewColumn) {
 	C.gtk_tree_view_move_column_after(v.native(), column.native(), baseColumn.native())
@@ -531,7 +549,6 @@ func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
 // void 	gtk_tree_view_set_search_equal_func ()
 // GtkTreeViewSearchEqualFunc 	gtk_tree_view_get_search_equal_func ()
 // void 	gtk_tree_view_map_expanded_rows ()
-// GList * 	gtk_tree_view_get_columns ()
 // gint 	gtk_tree_view_insert_column_with_attributes ()
 // gint 	gtk_tree_view_insert_column_with_data_func ()
 // void 	gtk_tree_view_set_column_drag_function ()
