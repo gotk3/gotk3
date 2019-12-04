@@ -6549,6 +6549,17 @@ func (v *Range) SetRange(min, max float64) {
 	C.gtk_range_set_range(v.native(), C.gdouble(min), C.gdouble(max))
 }
 
+// GetInverted() is a wrapper around gtk_range_get_inverted().
+func (v *Range) GetInverted() bool {
+	c := C.gtk_range_get_inverted(v.native())
+	return gobool(c)
+}
+
+// SetInverted() is a wrapper around gtk_range_set_inverted().
+func (v *Range) SetInverted(inverted bool) {
+	C.gtk_range_set_inverted(v.native(), gbool(inverted))
+}
+
 // IRecentChooser is an interface type implemented by all structs
 // embedding a RecentChooser.  It is meant to be used as an argument type
 // for wrapper functions that wrap around a C GTK function taking a
