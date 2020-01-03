@@ -98,6 +98,23 @@ toGNotification(void *p)
 	return (G_NOTIFICATION(p));
 }
 
+static GIcon *
+toGIcon(void *p)
+{
+	return (G_ICON(p));
+}
+static GFileIcon *
+toGFileIcon(void *p)
+{
+	return (G_FILE_ICON(p));
+}
+
+static GFile *
+toGFile(void *p)
+{
+	return (G_FILE(p));
+}
+
 static GApplication *
 toGApplication(void *p)
 {
