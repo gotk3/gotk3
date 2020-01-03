@@ -21,7 +21,7 @@ func (v *File ) Native() *C.GFile  {
 
 // FileNew is a wrapper around g_file_new_for_path().
 func FileNew(title string) *File {
-	cstr1 := (*C.gchar)(C.CString(title))
+	cstr1 := (*C.char)(C.CString(title))
 	defer C.free(unsafe.Pointer(cstr1))
 
 	c := C.g_file_new_for_path(cstr1)
