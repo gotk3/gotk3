@@ -25,3 +25,9 @@ func marshalFormat(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return Format(c), nil
 }
+
+// FormatStrideForWidth is a wrapper for cairo_format_stride_for_width().
+func FormatStrideForWidth(format Format, width int) int {
+	c := C.cairo_format_stride_for_width(C.cairo_format_t(format), C.int(width))
+	return int(c)
+}
