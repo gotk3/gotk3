@@ -1,3 +1,5 @@
+// +build linux
+
 package gtk
 
 // #include <gtk/gtkx.h>
