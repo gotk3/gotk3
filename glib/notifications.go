@@ -97,9 +97,15 @@ func (v *Notification) AddButton(label, detailedAction string) {
 	C.g_notification_add_button(v.native(), cstr1, cstr2)
 }
 
+// SetIcon is a wrapper around g_notification_set_icon().
+func (v *Notification) SetIcon(iconPath string) {
+	fileIcon := FileIconNew(iconPath)
+
+	C.g_notification_set_icon(v.native(), (*C.GIcon)(fileIcon.Native()))
+}
+
 // void 	g_notification_set_default_action_and_target () // requires varargs
 // void 	g_notification_set_default_action_and_target_value () // requires variant
 // void 	g_notification_add_button_with_target () // requires varargs
 // void 	g_notification_add_button_with_target_value () //requires variant
 // void 	g_notification_set_urgent () // Deprecated, so not implemented
-// void 	g_notification_set_icon () // Requires support for GIcon, which we don't have yet.
