@@ -121,6 +121,22 @@ func (v *ComboBox) SetActiveIter(iter *TreeIter) {
 	C.gtk_combo_box_set_active_iter(v.native(), cIter)
 }
 
+// GetEntry is a convenience func to get the Entry within the ComboBox.
+// If the Combobox does not contain an Entry, an error is returned.
+func (v *ComboBox) GetEntry() (*Entry, error) {
+	hasEntry := C.gtk_combo_box_get_has_entry(v.native())
+	if hasEntry == C.FALSE {
+		return nil, errors.New("combobox has no entry")
+	}
+	bin := &v.Bin
+	widget, err := bin.GetChild()
+	if err != nil {
+		return nil, err
+	}
+	obj := glib.Take(unsafe.Pointer(widget.GObject))
+	return wrapEntry(obj), nil
+}
+
 // GetEntryTextColumn is a wrapper around gtk_combo_box_get_entry_text_column()
 func (v *ComboBox) GetEntryTextColumn() int {
 	c := C.gtk_combo_box_get_entry_text_column(v.native())
