@@ -4363,6 +4363,13 @@ func (v *FileFilter) SetName(name string) {
 	C.gtk_file_filter_set_name(v.native(), (*C.gchar)(cstr))
 }
 
+// AddMimeType is a wrapper around gtk_file_filter_add_mime_type().
+func (v *FileFilter) AddMimeType(mimeType string) {
+	cstr := C.CString(mimeType)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_filter_add_mime_type(v.native(), (*C.gchar)(cstr))
+}
+
 // AddPattern is a wrapper around gtk_file_filter_add_pattern().
 func (v *FileFilter) AddPattern(pattern string) {
 	cstr := C.CString(pattern)
