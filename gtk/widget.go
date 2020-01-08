@@ -470,6 +470,24 @@ func (v *Widget) GetToplevel() (*Widget, error) {
 	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
 }
 
+// GetTooltipMarkup is a wrapper around gtk_widget_get_tooltip_markup().
+// A non-nil error is returned in the case that gtk_widget_get_tooltip_markup
+// returns NULL to differentiate between NULL and an empty string.
+func (v *Widget) GetTooltipMarkup() (string, error) {
+	c := C.gtk_widget_get_tooltip_markup(v.native())
+	if c == nil {
+		return "", nilPtrErr
+	}
+	return C.GoString((*C.char)(c)), nil
+}
+
+// SetTooltipMarkup is a wrapper around gtk_widget_set_tooltip_markup().
+func (v *Widget) SetTooltipMarkup(text string) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_widget_set_tooltip_markup(v.native(), (*C.gchar)(cstr))
+}
+
 // GetTooltipText is a wrapper around gtk_widget_get_tooltip_text().
 // A non-nil error is returned in the case that
 // gtk_widget_get_tooltip_text returns NULL to differentiate between NULL
