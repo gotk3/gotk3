@@ -4016,6 +4016,31 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// SelectFilename is a wrapper around gtk_file_chooser_select_filename().
+func (v *FileChooser) SelectFilename(filename string) bool {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_file_chooser_select_filename(v.native(), cstr)
+	return gobool(c)
+}
+
+// UnselectFilename is a wrapper around gtk_file_chooser_unselect_filename().
+func (v *FileChooser) UnselectFilename(filename string) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_chooser_unselect_filename(v.native(), cstr)
+}
+
+// SelectAll is a wrapper around gtk_file_chooser_select_all().
+func (v *FileChooser) SelectAll() {
+	C.gtk_file_chooser_select_all(v.native())
+}
+
+// UnselectAll is a wrapper around gtk_file_chooser_unselect_all().
+func (v *FileChooser) UnselectAll() {
+	C.gtk_file_chooser_unselect_all(v.native())
+}
+
 // GetFilenames is a wrapper around gtk_file_chooser_get_filenames().
 func (v *FileChooser) GetFilenames() (*glib.SList, error) {
 	c := C.gtk_file_chooser_get_filenames(v.native())
