@@ -148,6 +148,15 @@ func (v *Window) SetTransientFor(parent IWindow) {
 	C.gtk_window_set_transient_for(v.native(), pw)
 }
 
+// SetAttachedTo is a wrapper around gtk_window_set_attached_to().
+func (v *Window) SetAttachedTo(attachWidget IWidget) {
+	var aW *C.GtkWidget = nil
+	if attachWidget != nil {
+		aW = attachWidget.toWidget()
+	}
+	C.gtk_window_set_attached_to(v.native(), aW)
+}
+
 // SetDestroyWithParent is a wrapper around
 // gtk_window_set_destroy_with_parent().
 func (v *Window) SetDestroyWithParent(setting bool) {
@@ -607,7 +616,6 @@ func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
 // TODO gtk_window_list_toplevels().
 // TODO gtk_window_parse_geometry().
 // TODO gtk_window_propagate_key_event().
-// TODO gtk_window_set_attached_to().
 // TODO gtk_window_set_default_icon_list().
 // TODO gtk_window_set_icon_list().
 // TODO gtk_window_set_screen().
