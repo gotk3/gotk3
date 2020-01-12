@@ -5039,6 +5039,17 @@ func (v *LinkButton) SetUri(uri string) {
 	C.gtk_link_button_set_uri(v.native(), (*C.gchar)(cstr))
 }
 
+// GetVisited is a wrapper around gtk_link_button_get_visited().
+func (v *LinkButton) GetVisited() bool {
+	c := C.gtk_link_button_get_visited(v.native())
+	return gobool(c)
+}
+
+// SetVisited is a wrapper around gtk_link_button_set_visited().
+func (v *LinkButton) SetVisited(visited bool) {
+	C.gtk_link_button_set_visited(v.native(), gbool(visited))
+}
+
 /*
  * GtkListStore
  */
