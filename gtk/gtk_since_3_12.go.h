@@ -28,6 +28,12 @@ toGtkFlowBoxChild(void *p)
 	return (GTK_FLOW_BOX_CHILD(p));
 }
 
+static GMenuModel *
+toGMenuModel(void *p)
+{
+	return (G_MENU_MODEL(p));
+}
+
 static GtkPopover *
 toGtkPopover(void *p)
 {

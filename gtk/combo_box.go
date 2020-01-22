@@ -61,7 +61,7 @@ func wrapComboBox(obj *glib.Object) *ComboBox {
 	return &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl}
 }
 
-// ComboBoxNew() is a wrapper around gtk_combo_box_new().
+// ComboBoxNew is a wrapper around gtk_combo_box_new().
 func ComboBoxNew() (*ComboBox, error) {
 	c := C.gtk_combo_box_new()
 	if c == nil {
@@ -71,7 +71,7 @@ func ComboBoxNew() (*ComboBox, error) {
 	return wrapComboBox(obj), nil
 }
 
-// ComboBoxNewWithEntry() is a wrapper around gtk_combo_box_new_with_entry().
+// ComboBoxNewWithEntry is a wrapper around gtk_combo_box_new_with_entry().
 func ComboBoxNewWithEntry() (*ComboBox, error) {
 	c := C.gtk_combo_box_new_with_entry()
 	if c == nil {
@@ -81,7 +81,7 @@ func ComboBoxNewWithEntry() (*ComboBox, error) {
 	return wrapComboBox(obj), nil
 }
 
-// ComboBoxNewWithModel() is a wrapper around gtk_combo_box_new_with_model().
+// ComboBoxNewWithModel is a wrapper around gtk_combo_box_new_with_model().
 func ComboBoxNewWithModel(model ITreeModel) (*ComboBox, error) {
 	c := C.gtk_combo_box_new_with_model(model.toTreeModel())
 	if c == nil {
@@ -91,13 +91,13 @@ func ComboBoxNewWithModel(model ITreeModel) (*ComboBox, error) {
 	return wrapComboBox(obj), nil
 }
 
-// GetActive() is a wrapper around gtk_combo_box_get_active().
+// GetActive is a wrapper around gtk_combo_box_get_active().
 func (v *ComboBox) GetActive() int {
 	c := C.gtk_combo_box_get_active(v.native())
 	return int(c)
 }
 
-// SetActive() is a wrapper around gtk_combo_box_set_active().
+// SetActive is a wrapper around gtk_combo_box_set_active().
 func (v *ComboBox) SetActive(index int) {
 	C.gtk_combo_box_set_active(v.native(), C.gint(index))
 }
@@ -120,7 +120,7 @@ func (v *ComboBox) SetActiveIter(iter *TreeIter) {
 	}
 	C.gtk_combo_box_set_active_iter(v.native(), cIter)
 }
-
+  
 // GetEntry is a convenience func to get the Entry within the ComboBox.
 // If the Combobox does not contain an Entry, an error is returned.
 func (v *ComboBox) GetEntry() (*Entry, error) {
@@ -181,10 +181,12 @@ func (v *ComboBox) SetModel(model ITreeModel) {
 	C.gtk_combo_box_set_model(v.native(), mptr)
 }
 
+// Popup is a wrapper around gtk_combo_box_popup().
 func (v *ComboBox) Popup() {
 	C.gtk_combo_box_popup(v.native())
 }
 
+// Popdown is a wrapper around gtk_combo_box_popdown().
 func (v *ComboBox) Popdown() {
 	C.gtk_combo_box_popdown(v.native())
 }

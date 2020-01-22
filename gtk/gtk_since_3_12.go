@@ -422,6 +422,13 @@ func PopoverNew(relative IWidget) (*Popover, error) {
 	return wrapPopover(glib.Take(unsafe.Pointer(c))), nil
 }
 
+// BindModel is a wrapper around gtk_popover_bind_model().
+func (v *Popover) BindModel(menuModel *glib.MenuModel, actionNamespace string) {
+	cstr := C.CString(actionNamespace)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_popover_bind_model(v.native(), C.toGMenuModel(unsafe.Pointer(menuModel.Native())), (*C.gchar)(cstr))
+}
+
 // SetRelativeTo is a wrapper around gtk_popover_set_relative_to().
 func (v *Popover) SetRelativeTo(relative IWidget) {
 	C.gtk_popover_set_relative_to(v.native(), relative.toWidget())

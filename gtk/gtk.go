@@ -4016,6 +4016,31 @@ func (v *FileChooser) GetFilename() string {
 	return s
 }
 
+// SelectFilename is a wrapper around gtk_file_chooser_select_filename().
+func (v *FileChooser) SelectFilename(filename string) bool {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_file_chooser_select_filename(v.native(), cstr)
+	return gobool(c)
+}
+
+// UnselectFilename is a wrapper around gtk_file_chooser_unselect_filename().
+func (v *FileChooser) UnselectFilename(filename string) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_chooser_unselect_filename(v.native(), cstr)
+}
+
+// SelectAll is a wrapper around gtk_file_chooser_select_all().
+func (v *FileChooser) SelectAll() {
+	C.gtk_file_chooser_select_all(v.native())
+}
+
+// UnselectAll is a wrapper around gtk_file_chooser_unselect_all().
+func (v *FileChooser) UnselectAll() {
+	C.gtk_file_chooser_unselect_all(v.native())
+}
+
 // GetFilenames is a wrapper around gtk_file_chooser_get_filenames().
 func (v *FileChooser) GetFilenames() (*glib.SList, error) {
 	c := C.gtk_file_chooser_get_filenames(v.native())
@@ -4236,12 +4261,18 @@ func FileChooserDialogNewWith1Button(
 	action FileChooserAction,
 	first_button_text string,
 	first_button_id ResponseType) (*FileChooserDialog, error) {
+
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+
 	c_title := C.CString(title)
 	defer C.free(unsafe.Pointer(c_title))
 	c_first_button_text := C.CString(first_button_text)
 	defer C.free(unsafe.Pointer(c_first_button_text))
 	c := C.gtk_file_chooser_dialog_new_1(
-		(*C.gchar)(c_title), parent.toWindow(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_title), w, C.GtkFileChooserAction(action),
 		(*C.gchar)(c_first_button_text), C.int(first_button_id))
 	if c == nil {
 		return nil, nilPtrErr
@@ -4259,6 +4290,12 @@ func FileChooserDialogNewWith2Buttons(
 	first_button_id ResponseType,
 	second_button_text string,
 	second_button_id ResponseType) (*FileChooserDialog, error) {
+
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+
 	c_title := C.CString(title)
 	defer C.free(unsafe.Pointer(c_title))
 	c_first_button_text := C.CString(first_button_text)
@@ -4266,7 +4303,7 @@ func FileChooserDialogNewWith2Buttons(
 	c_second_button_text := C.CString(second_button_text)
 	defer C.free(unsafe.Pointer(c_second_button_text))
 	c := C.gtk_file_chooser_dialog_new_2(
-		(*C.gchar)(c_title), parent.toWindow(), C.GtkFileChooserAction(action),
+		(*C.gchar)(c_title), w, C.GtkFileChooserAction(action),
 		(*C.gchar)(c_first_button_text), C.int(first_button_id),
 		(*C.gchar)(c_second_button_text), C.int(second_button_id))
 	if c == nil {
@@ -4361,6 +4398,13 @@ func (v *FileFilter) SetName(name string) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_file_filter_set_name(v.native(), (*C.gchar)(cstr))
+}
+
+// AddMimeType is a wrapper around gtk_file_filter_add_mime_type().
+func (v *FileFilter) AddMimeType(mimeType string) {
+	cstr := C.CString(mimeType)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_filter_add_mime_type(v.native(), (*C.gchar)(cstr))
 }
 
 // AddPattern is a wrapper around gtk_file_filter_add_pattern().
@@ -5037,6 +5081,17 @@ func (v *LinkButton) GetUri() string {
 func (v *LinkButton) SetUri(uri string) {
 	cstr := C.CString(uri)
 	C.gtk_link_button_set_uri(v.native(), (*C.gchar)(cstr))
+}
+
+// GetVisited is a wrapper around gtk_link_button_get_visited().
+func (v *LinkButton) GetVisited() bool {
+	c := C.gtk_link_button_get_visited(v.native())
+	return gobool(c)
+}
+
+// SetVisited is a wrapper around gtk_link_button_set_visited().
+func (v *LinkButton) SetVisited(visited bool) {
+	C.gtk_link_button_set_visited(v.native(), gbool(visited))
 }
 
 /*
@@ -9322,7 +9377,6 @@ func (v *TreeSelection) UnselectRange(start, end *TreePath) {
 
 // PathIsSelected() is a wrapper around gtk_tree_selection_path_is_selected().
 func (v *TreeSelection) PathIsSelected(path *TreePath) bool {
-	
 	return gobool(C.gtk_tree_selection_path_is_selected(v.native(), path.native()))
 }
 
