@@ -2123,6 +2123,140 @@ func (r *Rectangle) SetHeight(height int) {
 }
 
 /*
+ * GdkGeometry
+ */
+
+type Geometry struct {
+	GdkGeometry C.GdkGeometry
+}
+
+func WrapGeometry(p uintptr) *Geometry {
+	return wrapGeometry((*C.GdkGeometry)(unsafe.Pointer(p)))
+}
+
+func wrapGeometry(obj *C.GdkGeometry) *Geometry {
+	if obj == nil {
+		return nil
+	}
+	return &Geometry{*obj}
+}
+
+// Native() returns a pointer to the underlying GdkGeometry.
+func (r *Geometry) native() *C.GdkGeometry {
+	return &r.GdkGeometry
+}
+
+// GetMinWidth returns min_width field of the underlying GdkGeometry.
+func (r *Geometry) GetMinWidth() int {
+	return int(r.native().min_width)
+}
+
+// SetMinWidth sets min_width field of the underlying GdkGeometry.
+func (r *Geometry) SetMinWidth(minWidth int) {
+	r.native().min_width = C.gint(minWidth)
+}
+
+// GetMinHeight returns min_height field of the underlying GdkGeometry.
+func (r *Geometry) GetMinHeight() int {
+	return int(r.native().min_height)
+}
+
+// SetMinHeight sets min_height field of the underlying GdkGeometry.
+func (r *Geometry) SetMinHeight(minHeight int) {
+	r.native().min_height = C.gint(minHeight)
+}
+
+// GetMaxWidth returns max_width field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxWidth() int {
+	return int(r.native().max_width)
+}
+
+// SetMaxWidth sets max_width field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxWidth(maxWidth int) {
+	r.native().max_width = C.gint(maxWidth)
+}
+
+// GetMaxHeight returns max_height field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxHeight() int {
+	return int(r.native().max_height)
+}
+
+// SetMaxHeight sets max_height field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxHeight(maxHeight int) {
+	r.native().max_height = C.gint(maxHeight)
+}
+
+// GetBaseWidth returns base_width field of the underlying GdkGeometry.
+func (r *Geometry) GetBaseWidth() int {
+	return int(r.native().base_width)
+}
+
+// SetBaseWidth sets base_width field of the underlying GdkGeometry.
+func (r *Geometry) SetBaseWidth(baseWidth int) {
+	r.native().base_width = C.gint(baseWidth)
+}
+
+// GetBaseHeight returns base_height field of the underlying GdkGeometry.
+func (r *Geometry) GetBaseHeight() int {
+	return int(r.native().base_height)
+}
+
+// SetBaseHeight sets base_height field of the underlying GdkGeometry.
+func (r *Geometry) SetBaseHeight(baseHeight int) {
+	r.native().base_height = C.gint(baseHeight)
+}
+
+// GetWidthInc returns width_inc field of the underlying GdkGeometry.
+func (r *Geometry) GetWidthInc() int {
+	return int(r.native().width_inc)
+}
+
+// SetWidthInc sets width_inc field of the underlying GdkGeometry.
+func (r *Geometry) SetWidthInc(widthInc int) {
+	r.native().width_inc = C.gint(widthInc)
+}
+
+// GetHeightInc returns height_inc field of the underlying GdkGeometry.
+func (r *Geometry) GetHeightInc() int {
+	return int(r.native().height_inc)
+}
+
+// SetHeightInc sets height_inc field of the underlying GdkGeometry.
+func (r *Geometry) SetHeightInc(heightInc int) {
+	r.native().height_inc = C.gint(heightInc)
+}
+
+// GetMinAspect returns min_aspect field of the underlying GdkGeometry.
+func (r *Geometry) GetMinAspect() float64 {
+	return float64(r.native().min_aspect)
+}
+
+// SetMinAspect sets min_aspect field of the underlying GdkGeometry.
+func (r *Geometry) SetMinAspect(minAspect float64) {
+	r.native().min_aspect = C.gdouble(minAspect)
+}
+
+// GetMaxAspect returns max_aspect field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxAspect() float64 {
+	return float64(r.native().max_aspect)
+}
+
+// SetMaxAspect sets max_aspect field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxAspect(maxAspect float64) {
+	r.native().max_aspect = C.gdouble(maxAspect)
+}
+
+// GetWinGravity returns win_gravity field of the underlying GdkGeometry.
+// func (r *Geometry) GetWinGravity() GdkGravity {
+// 	r.native().win_gravity
+// }
+
+// SetWinGravity sets win_gravity field of the underlying GdkGeometry.
+func (r *Geometry) SetWinGravity(winGravity GdkGravity) {
+	r.native().win_gravity = C.GdkGravity(winGravity)
+}
+
+/*
  * GdkVisual
  */
 
