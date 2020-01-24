@@ -3579,18 +3579,19 @@ func (v *Entry) SetIconDragSource() {
 }
 */
 
-// GetCurrentIconDragSource() is a wrapper around
-// gtk_entry_get_current_icon_drag_source().
+// GetCurrentIconDragSource() is a wrapper around gtk_entry_get_current_icon_drag_source().
 func (v *Entry) GetCurrentIconDragSource() int {
 	c := C.gtk_entry_get_current_icon_drag_source(v.native())
 	return int(c)
 }
 
-// TODO(jrick) GdkRectangle
-/*
-func (v *Entry) GetIconArea() {
+// GetIconArea is a wrapper around gtk_entry_get_icon_area().
+func (v *Entry) GetIconArea(iconPos EntryIconPosition) *gdk.Rectangle {
+	var cRect *C.GdkRectangle
+	C.gtk_entry_get_icon_area(v.native(), C.GtkEntryIconPosition(iconPos), cRect)
+	iconArea := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
+	return iconArea
 }
-*/
 
 // SetInputPurpose() is a wrapper around gtk_entry_set_input_purpose().
 func (v *Entry) SetInputPurpose(purpose InputPurpose) {
