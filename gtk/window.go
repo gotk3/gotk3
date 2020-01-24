@@ -117,11 +117,14 @@ func WindowSetDefaultIcon(icon *gdk.Pixbuf) {
 	C.gtk_window_set_default_icon(iconPtr)
 }
 
-// TODO(jrick) GdkGeometry GdkWindowHints.
-/*
-func (v *Window) SetGeometryHints() {
+// SetGeometryHints is a wrapper around gtk_window_set_geometry_hints().
+func (v *Window) SetGeometryHints(geometryWidget IWidget, geometry gdk.Geometry, geometryMask gdk.WindowHints) {
+	var gW *C.GtkWidget = nil
+	if geometryWidget != nil {
+		gW = geometryWidget.toWidget()
+	}
+	C.gtk_window_set_geometry_hints(v.native(), gW, geometry, geometryMask)
 }
-*/
 
 // SetGravity is a wrapper around gtk_window_set_gravity().
 func (v *Window) SetGravity(gravity gdk.GdkGravity) {
