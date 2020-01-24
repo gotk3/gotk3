@@ -17,6 +17,14 @@ func (v *TextIter) BeginsTag(v1 *TextTag) bool {
 	return gobool(C.gtk_text_iter_begins_tag(v.native(), v1.native()))
 }
 
+// ParseGeometry is a wrapper around gtk_window_parse_geometry().
+func (v *Window) ParseGeometry(geometry string) bool {
+	cstr := C.CString(file)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gtk_window_parse_geometry((*C.gchar)(cstr))
+	return gobool(c)
+}
+
 // ResizeToGeometry is a wrapper around gtk_window_resize_to_geometry().
 func (v *Window) ResizeToGeometry(width, height int) {
 	C.gtk_window_resize_to_geometry(v.native(), C.gint(width), C.gint(height))
