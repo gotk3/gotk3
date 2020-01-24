@@ -2147,7 +2147,7 @@ func wrapGeometry(obj *C.GdkGeometry) *Geometry {
 	return &Geometry{*obj}
 }
 
-// Native() returns a pointer to the underlying GdkGeometry.
+// native returns a pointer to the underlying GdkGeometry.
 func (r *Geometry) native() *C.GdkGeometry {
 	return &r.GdkGeometry
 }
