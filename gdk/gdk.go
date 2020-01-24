@@ -41,6 +41,7 @@ func init() {
 		{glib.Type(C.gdk_modifier_type_get_type()), marshalModifierType},
 		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
 		{glib.Type(C.gdk_event_mask_get_type()), marshalEventMask},
+		{glib.Type(C.gdk_gravity_get_type()), marshalGravity},
 
 		// Objects/Interfaces
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
@@ -1422,7 +1423,7 @@ func (v *EventConfigure) Height() int {
 /*
  * GdkGravity
  */
-type GdkGravity int
+type Gravity int
 
 const (
 	GDK_GRAVITY_NORTH_WEST = C.GDK_GRAVITY_NORTH_WEST
@@ -1436,6 +1437,11 @@ const (
 	GDK_GRAVITY_SOUTH_EAST = C.GDK_GRAVITY_SOUTH_EAST
 	GDK_GRAVITY_STATIC     = C.GDK_GRAVITY_STATIC
 )
+
+func marshalGravity(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Gravity(c), nil
+}
 
 /*
  * GdkPixbuf
@@ -2247,12 +2253,12 @@ func (r *Geometry) SetMaxAspect(maxAspect float64) {
 }
 
 // GetWinGravity returns win_gravity field of the underlying GdkGeometry.
-// func (r *Geometry) GetWinGravity() GdkGravity {
-// 	r.native().win_gravity
-// }
+func (r *Geometry) GetWinGravity() Gravity {
+	return Gravity(r.native().win_gravity)
+}
 
 // SetWinGravity sets win_gravity field of the underlying GdkGeometry.
-func (r *Geometry) SetWinGravity(winGravity GdkGravity) {
+func (r *Geometry) SetWinGravity(winGravity Gravity) {
 	r.native().win_gravity = C.GdkGravity(winGravity)
 }
 

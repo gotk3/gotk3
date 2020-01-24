@@ -127,7 +127,7 @@ func (v *Window) SetGeometryHints(geometryWidget IWidget, geometry gdk.Geometry,
 }
 
 // SetGravity is a wrapper around gtk_window_set_gravity().
-func (v *Window) SetGravity(gravity gdk.GdkGravity) {
+func (v *Window) SetGravity(gravity gdk.Gravity) {
 	C.gtk_window_set_gravity(v.native(), C.GdkGravity(gravity))
 }
 
