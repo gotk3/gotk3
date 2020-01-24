@@ -55,7 +55,7 @@ func (v *Window) ResizeGripIsVisible() bool {
 }
 
 // GetResizeGripArea is a wrapper around gtk_window_get_resize_grip_area().
-func (v *Window) GetResizeGripArea() (gdk.Rectangle, bool) {
+func (v *Window) GetResizeGripArea() (*gdk.Rectangle, bool) {
 	var cRect *C.GdkRectangle
 	wasRetrieved := C.gtk_window_get_resize_grip_area(v.native(), cRect)
 	rect := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))

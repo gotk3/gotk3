@@ -260,9 +260,9 @@ func (v *Widget) Activate() bool {
 }
 
 // Intersect is a wrapper around gtk_widget_intersect().
-func (v *Widget) Intersect(area *gdk.Rectangle) (*gdk.Rectangle, bool) {
+func (v *Widget) Intersect(area gdk.Rectangle) (*gdk.Rectangle, bool) {
 	var cRect *C.GdkRectangle
-	hadIntersection := C.gtk_widget_intersect(v.native(), cRect)
+	hadIntersection := C.gtk_widget_intersect(v.native(), nativeGdkRectangle(area), cRect)
 	intersection := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
 	return intersection, gobool(hadIntersection)
 }

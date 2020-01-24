@@ -3217,7 +3217,7 @@ func (v *Entry) GetTextLength() uint16 {
 // GetTextArea is a wrapper around gtk_entry_get_text_area().
 func (v *Entry) GetTextArea() *gdk.Rectangle {
 	var cRect *C.GdkRectangle
-	wasRetrieved := C.gtk_entry_get_text_area(v.native(), cRect)
+	C.gtk_entry_get_text_area(v.native(), cRect)
 	textArea := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
 	return textArea
 }

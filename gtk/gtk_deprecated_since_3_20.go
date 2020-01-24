@@ -5,6 +5,9 @@ package gtk
 // #include <gtk/gtk.h>
 // #include <stdlib.h>
 import "C"
+import (
+	"unsafe"
+)
 
 // GetFocusOnClick() is a wrapper around gtk_button_get_focus_on_click().
 func (v *Button) GetFocusOnClick() bool {
@@ -19,9 +22,9 @@ func (v *TextIter) BeginsTag(v1 *TextTag) bool {
 
 // ParseGeometry is a wrapper around gtk_window_parse_geometry().
 func (v *Window) ParseGeometry(geometry string) bool {
-	cstr := C.CString(file)
+	cstr := C.CString(geometry)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_window_parse_geometry((*C.gchar)(cstr))
+	c := C.gtk_window_parse_geometry(v.native(), (*C.gchar)(cstr))
 	return gobool(c)
 }
 
