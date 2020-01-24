@@ -288,6 +288,21 @@ const (
 	WINDOW_TYPE_HINT_DND           WindowTypeHint = C.GDK_WINDOW_TYPE_HINT_DND
 )
 
+// WindowHints is a representation of GDK's GdkWindowHints
+type WindowHints int
+
+const(
+	HINT_POS         WindowHints = C.GDK_HINT_POS
+	HINT_MIN_SIZE    WindowHints = C.GDK_HINT_MIN_SIZE
+	HINT_MAX_SIZE    WindowHints = C.GDK_HINT_MAX_SIZE
+	HINT_BASE_SIZE   WindowHints = C.GDK_HINT_BASE_SIZE
+	HINT_ASPECT      WindowHints = C.GDK_HINT_ASPECT
+	HINT_RESIZE_INC  WindowHints = C.GDK_HINT_RESIZE_INC
+	HINT_WIN_GRAVITY WindowHints = C.GDK_HINT_WIN_GRAVITY
+	HINT_USER_POS    WindowHints = C.GDK_HINT_USER_POS
+	HINT_USER_SIZE   WindowHints = C.GDK_HINT_USER_SIZE
+)
+
 // CURRENT_TIME is a representation of GDK_CURRENT_TIME
 
 const CURRENT_TIME = C.GDK_CURRENT_TIME
