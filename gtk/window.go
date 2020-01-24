@@ -131,11 +131,11 @@ func (v *Window) SetGravity(gravity gdk.Gravity) {
 	C.gtk_window_set_gravity(v.native(), C.GdkGravity(gravity))
 }
 
-// TODO(jrick) GdkGravity.
-/*
-func (v *Window) GetGravity() {
+// GetGravity is a wrapper around gtk_window_get_gravity().
+func (v *Window) GetGravity() gdk.Gravity {
+	c := C.gtk_window_get_gravity(v.native())
+	return gdk.Gravity(c)
 }
-*/
 
 // SetPosition is a wrapper around gtk_window_set_position().
 func (v *Window) SetPosition(position WindowPosition) {
