@@ -3214,11 +3214,13 @@ func (v *Entry) GetTextLength() uint16 {
 	return uint16(c)
 }
 
-// TODO(jrick) GdkRectangle
-/*
-func (v *Entry) GetTextArea() {
+// GetTextArea is a wrapper around gtk_entry_get_text_area().
+func (v *Entry) GetTextArea() *gdk.Rectangle {
+	var cRect *C.GdkRectangle
+	wasRetrieved := C.gtk_entry_get_text_area(v.native(), cRect)
+	textArea := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
+	return textArea
 }
-*/
 
 // SetVisibility() is a wrapper around gtk_entry_set_visibility().
 func (v *Entry) SetVisibility(visible bool) {
