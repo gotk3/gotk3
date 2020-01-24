@@ -1121,8 +1121,8 @@ type TypeMarshaler struct {
 }
 
 // RegisterGValueMarshalers adds marshalers for several types to the
-// internal marshalers map.  Once registered, calling GoValue on any
-// Value witha registered type will return the data returned by the
+// internal marshalers map. Once registered, calling GoValue on any
+// Value with a registered type will return the data returned by the
 // marshaler.
 func RegisterGValueMarshalers(tm []TypeMarshaler) {
 	gValueMarshalers.register(tm)
