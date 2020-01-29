@@ -6353,8 +6353,7 @@ func RadioButtonNew(group *glib.SList) (*RadioButton, error) {
 	return wrapRadioButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioButtonNewFromWidget is a wrapper around
-// gtk_radio_button_new_from_widget().
+// RadioButtonNewFromWidget is a wrapper around gtk_radio_button_new_from_widget().
 func RadioButtonNewFromWidget(radioGroupMember *RadioButton) (*RadioButton, error) {
 	c := C.gtk_radio_button_new_from_widget(radioGroupMember.native())
 	if c == nil {
@@ -6363,8 +6362,7 @@ func RadioButtonNewFromWidget(radioGroupMember *RadioButton) (*RadioButton, erro
 	return wrapRadioButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioButtonNewWithLabel is a wrapper around
-// gtk_radio_button_new_with_label().
+// RadioButtonNewWithLabel is a wrapper around gtk_radio_button_new_with_label().
 func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -6375,8 +6373,7 @@ func RadioButtonNewWithLabel(group *glib.SList, label string) (*RadioButton, err
 	return wrapRadioButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioButtonNewWithLabelFromWidget is a wrapper around
-// gtk_radio_button_new_with_label_from_widget().
+// RadioButtonNewWithLabelFromWidget is a wrapper around gtk_radio_button_new_with_label_from_widget().
 func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label string) (*RadioButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -6391,8 +6388,7 @@ func RadioButtonNewWithLabelFromWidget(radioGroupMember *RadioButton, label stri
 	return wrapRadioButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioButtonNewWithMnemonic is a wrapper around
-// gtk_radio_button_new_with_mnemonic()
+// RadioButtonNewWithMnemonic is a wrapper around gtk_radio_button_new_with_mnemonic().
 func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -6403,8 +6399,7 @@ func RadioButtonNewWithMnemonic(group *glib.SList, label string) (*RadioButton, 
 	return wrapRadioButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioButtonNewWithMnemonicFromWidget is a wrapper around
-// gtk_radio_button_new_with_mnemonic_from_widget().
+// RadioButtonNewWithMnemonicFromWidget is a wrapper around gtk_radio_button_new_with_mnemonic_from_widget().
 func RadioButtonNewWithMnemonicFromWidget(radioGroupMember *RadioButton, label string) (*RadioButton, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -8254,6 +8249,22 @@ func (v *ToggleButton) SetMode(drawIndicator bool) {
 	C.gtk_toggle_button_set_mode(v.native(), gbool(drawIndicator))
 }
 
+// Toggled is a wrapper around gtk_toggle_button_toggled().
+func (v *ToggleButton) Toggled() {
+	C.gtk_toggle_button_toggled(v.native())
+}
+
+// GetInconsistent gtk_toggle_button_get_inconsistent().
+func (v *ToggleButton) GetInconsistent() bool {
+	c := C.gtk_toggle_button_get_inconsistent(v.native())
+	return gobool(c)
+}
+
+// SetInconsistent gtk_toggle_button_set_inconsistent().
+func (v *ToggleButton) SetInconsistent(setting bool) {
+	C.gtk_toggle_button_set_inconsistent(v.native(), gbool(setting))
+}
+
 /*
  * GtkToolbar
  */
@@ -9787,7 +9798,7 @@ func wrapVolumeButton(obj *glib.Object) *VolumeButton {
 	return &VolumeButton{ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}}
 }
 
-// VolumeButtonNew() is a wrapper around gtk_button_new().
+// VolumeButtonNew is a wrapper around gtk_volume_button_new().
 func VolumeButtonNew() (*VolumeButton, error) {
 	c := C.gtk_volume_button_new()
 	if c == nil {
