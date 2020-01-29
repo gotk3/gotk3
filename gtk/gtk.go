@@ -1685,6 +1685,20 @@ func ColorButtonNewWithRGBA(gdkColor *gdk.RGBA) (*ColorButton, error) {
 	return wrapColorButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
+// SetTitle is a wrapper around gtk_color_button_set_title().
+func (v *ColorButton) SetTitle(title string) {
+	cstr := C.CString(title)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_color_button_set_title(v.native(), (*C.gchar)(cstr))
+}
+
+// GetTitle is a wrapper around gtk_color_button_get_title().
+func (v *ColorButton) GetTitle() string {
+	c := C.gtk_color_button_get_title(v.native())
+	defer C.free(unsafe.Pointer(c))
+	return goString(c)
+}
+
 /*
  * GtkBox
  */
