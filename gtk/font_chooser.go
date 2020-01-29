@@ -146,3 +146,61 @@ func FontButtonNewWithFont(fontname string) (*FontButton, error) {
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapFontButton(obj), nil
 }
+
+// SetShowStyle is a wrapper around gtk_font_button_set_show_style().
+func (v *FontButton) SetShowStyle(showStyle bool) {
+	C.gtk_font_button_set_show_style(v.native(), gbool(showStyle))
+}
+
+// GetShowStyle is a wrapper around gtk_font_button_get_show_style().
+func (v *FontButton) GetShowStyle() bool {
+	c := C.gtk_font_button_get_show_style(v.native())
+	return gobool(c)
+}
+
+// SetShowSize is a wrapper around gtk_font_button_set_show_size().
+func (v *FontButton) SetShowSize(showSize bool) {
+	C.gtk_font_button_set_show_size(v.native(), gbool(showSize))
+}
+
+// GetShowSize is a wrapper around gtk_font_button_get_show_size().
+func (v *FontButton) GetShowSize() bool {
+	c := C.gtk_font_button_get_show_size(v.native())
+	return gobool(c)
+}
+
+// SetUseFont is a wrapper around gtk_font_button_set_use_font().
+func (v *FontButton) SetUseFont(useFont bool) {
+	C.gtk_font_button_set_use_font(v.native(), gbool(useFont))
+}
+
+// GetUseFont is a wrapper around gtk_font_button_get_use_font().
+func (v *FontButton) GetUseFont() bool {
+	c := C.gtk_font_button_get_use_font(v.native())
+	return gobool(c)
+}
+
+// SetUseSize is a wrapper around gtk_font_button_set_use_size().
+func (v *FontButton) SetUseSize(useSize bool) {
+	C.gtk_font_button_set_use_size(v.native(), gbool(useSize))
+}
+
+// GetUseSize is a wrapper around gtk_font_button_get_use_size().
+func (v *FontButton) GetUseSize() bool {
+	c := C.gtk_font_button_get_use_size(v.native())
+	return gobool(c)
+}
+
+// SetTitle is a wrapper around gtk_font_button_set_title().
+func (v *FontButton) SetTitle(title string) {
+	cstr := C.CString(title)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_font_button_set_title(v.native(), (*C.gchar)(cstr))
+}
+
+// GetTitle is a wrapper around gtk_font_button_get_title().
+func (v *FontButton) GetTitle() string {
+	c := C.gtk_font_button_get_title(v.native())
+	defer C.free(unsafe.Pointer(c))
+	return goString(c)
+}
