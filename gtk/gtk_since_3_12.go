@@ -449,11 +449,11 @@ func (v *Popover) SetPointingTo(rect gdk.Rectangle) {
 }
 
 // GetPointingTo is a wrapper around gtk_popover_get_pointing_to().
-func (v *Popover) GetPointingTo(rect *gdk.Rectangle) bool {
-	var crect C.GdkRectangle
-	isSet := C.gtk_popover_get_pointing_to(v.native(), &crect)
-	*rect = *gdk.WrapRectangle(uintptr(unsafe.Pointer(&crect)))
-	return gobool(isSet)
+func (v *Popover) GetPointingTo() (*gdk.Rectangle, bool) {
+	var cRect *C.GdkRectangle
+	isSet := C.gtk_popover_get_pointing_to(v.native(), cRect)
+	rect := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
+	return rect, gobool(isSet)
 }
 
 // SetPosition is a wrapper around gtk_popover_set_position().

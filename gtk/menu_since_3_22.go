@@ -18,7 +18,7 @@ func (v *Menu) PopupAtPointer(triggerEvent *gdk.Event) {
 }
 
 // PopupAtWidget() is a wrapper for gtk_menu_popup_at_widget()
-func (v *Menu) PopupAtWidget(widget IWidget, widgetAnchor gdk.GdkGravity, menuAnchor gdk.GdkGravity, triggerEvent *gdk.Event) {
+func (v *Menu) PopupAtWidget(widget IWidget, widgetAnchor gdk.Gravity, menuAnchor gdk.Gravity, triggerEvent *gdk.Event) {
 	e := (*C.GdkEvent)(unsafe.Pointer(triggerEvent.Native()))
 	C.gtk_menu_popup_at_widget(v.native(), widget.toWidget(), C.GdkGravity(widgetAnchor), C.GdkGravity(menuAnchor), e)
 }

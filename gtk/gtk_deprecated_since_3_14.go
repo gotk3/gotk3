@@ -37,13 +37,6 @@ func init() {
  * deprecated since version 3.14 and should not be used in newly-written code
  */
 
-// ResizeGripIsVisible is a wrapper around
-// gtk_window_resize_grip_is_visible().
-func (v *Window) ResizeGripIsVisible() bool {
-	c := C.gtk_window_resize_grip_is_visible(v.native())
-	return gobool(c)
-}
-
 // SetHasResizeGrip is a wrapper around gtk_window_set_has_resize_grip().
 func (v *Window) SetHasResizeGrip(setting bool) {
 	C.gtk_window_set_has_resize_grip(v.native(), gbool(setting))
@@ -53,6 +46,20 @@ func (v *Window) SetHasResizeGrip(setting bool) {
 func (v *Window) GetHasResizeGrip() bool {
 	c := C.gtk_window_get_has_resize_grip(v.native())
 	return gobool(c)
+}
+
+// ResizeGripIsVisible is a wrapper around gtk_window_resize_grip_is_visible().
+func (v *Window) ResizeGripIsVisible() bool {
+	c := C.gtk_window_resize_grip_is_visible(v.native())
+	return gobool(c)
+}
+
+// GetResizeGripArea is a wrapper around gtk_window_get_resize_grip_area().
+func (v *Window) GetResizeGripArea() (*gdk.Rectangle, bool) {
+	var cRect *C.GdkRectangle
+	wasRetrieved := C.gtk_window_get_resize_grip_area(v.native(), cRect)
+	rect := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
+	return rect, gobool(wasRetrieved)
 }
 
 // Reparent() is a wrapper around gtk_widget_reparent().

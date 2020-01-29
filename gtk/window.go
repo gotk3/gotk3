@@ -117,22 +117,25 @@ func WindowSetDefaultIcon(icon *gdk.Pixbuf) {
 	C.gtk_window_set_default_icon(iconPtr)
 }
 
-// TODO(jrick) GdkGeometry GdkWindowHints.
-/*
-func (v *Window) SetGeometryHints() {
+// SetGeometryHints is a wrapper around gtk_window_set_geometry_hints().
+func (v *Window) SetGeometryHints(geometryWidget IWidget, geometry gdk.Geometry, geometryMask gdk.WindowHints) {
+	var gW *C.GtkWidget = nil
+	if geometryWidget != nil {
+		gW = geometryWidget.toWidget()
+	}
+	C.gtk_window_set_geometry_hints(v.native(), gW, nativeGdkGeometry(geometry), C.GdkWindowHints(geometryMask))
 }
-*/
 
 // SetGravity is a wrapper around gtk_window_set_gravity().
-func (v *Window) SetGravity(gravity gdk.GdkGravity) {
+func (v *Window) SetGravity(gravity gdk.Gravity) {
 	C.gtk_window_set_gravity(v.native(), C.GdkGravity(gravity))
 }
 
-// TODO(jrick) GdkGravity.
-/*
-func (v *Window) GetGravity() {
+// GetGravity is a wrapper around gtk_window_get_gravity().
+func (v *Window) GetGravity() gdk.Gravity {
+	c := C.gtk_window_get_gravity(v.native())
+	return gdk.Gravity(c)
 }
-*/
 
 // SetPosition is a wrapper around gtk_window_set_position().
 func (v *Window) SetPosition(position WindowPosition) {
@@ -614,9 +617,7 @@ func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
 // TODO gtk_window_get_icon_list().
 // TODO gtk_window_get_window_type().
 // TODO gtk_window_list_toplevels().
-// TODO gtk_window_parse_geometry().
 // TODO gtk_window_propagate_key_event().
 // TODO gtk_window_set_default_icon_list().
 // TODO gtk_window_set_icon_list().
 // TODO gtk_window_set_screen().
-// TODO gtk_window_get_resize_grip_area().

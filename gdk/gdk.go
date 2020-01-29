@@ -41,6 +41,7 @@ func init() {
 		{glib.Type(C.gdk_modifier_type_get_type()), marshalModifierType},
 		{glib.Type(C.gdk_pixbuf_alpha_mode_get_type()), marshalPixbufAlphaMode},
 		{glib.Type(C.gdk_event_mask_get_type()), marshalEventMask},
+		{glib.Type(C.gdk_gravity_get_type()), marshalGravity},
 
 		// Objects/Interfaces
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
@@ -286,6 +287,21 @@ const (
 	WINDOW_TYPE_HINT_NOTIFICATION  WindowTypeHint = C.GDK_WINDOW_TYPE_HINT_NOTIFICATION
 	WINDOW_TYPE_HINT_COMBO         WindowTypeHint = C.GDK_WINDOW_TYPE_HINT_COMBO
 	WINDOW_TYPE_HINT_DND           WindowTypeHint = C.GDK_WINDOW_TYPE_HINT_DND
+)
+
+// WindowHints is a representation of GDK's GdkWindowHints
+type WindowHints int
+
+const(
+	HINT_POS         WindowHints = C.GDK_HINT_POS
+	HINT_MIN_SIZE    WindowHints = C.GDK_HINT_MIN_SIZE
+	HINT_MAX_SIZE    WindowHints = C.GDK_HINT_MAX_SIZE
+	HINT_BASE_SIZE   WindowHints = C.GDK_HINT_BASE_SIZE
+	HINT_ASPECT      WindowHints = C.GDK_HINT_ASPECT
+	HINT_RESIZE_INC  WindowHints = C.GDK_HINT_RESIZE_INC
+	HINT_WIN_GRAVITY WindowHints = C.GDK_HINT_WIN_GRAVITY
+	HINT_USER_POS    WindowHints = C.GDK_HINT_USER_POS
+	HINT_USER_SIZE   WindowHints = C.GDK_HINT_USER_SIZE
 )
 
 // CURRENT_TIME is a representation of GDK_CURRENT_TIME
@@ -1407,7 +1423,7 @@ func (v *EventConfigure) Height() int {
 /*
  * GdkGravity
  */
-type GdkGravity int
+type Gravity int
 
 const (
 	GDK_GRAVITY_NORTH_WEST = C.GDK_GRAVITY_NORTH_WEST
@@ -1421,6 +1437,11 @@ const (
 	GDK_GRAVITY_SOUTH_EAST = C.GDK_GRAVITY_SOUTH_EAST
 	GDK_GRAVITY_STATIC     = C.GDK_GRAVITY_STATIC
 )
+
+func marshalGravity(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Gravity(c), nil
+}
 
 /*
  * GdkPixbuf
@@ -2105,6 +2126,140 @@ func (r *Rectangle) GetHeight() int {
 // SetHeight sets height field of the underlying GdkRectangle.
 func (r *Rectangle) SetHeight(height int) {
 	r.native().height = C.int(height)
+}
+
+/*
+ * GdkGeometry
+ */
+
+type Geometry struct {
+	GdkGeometry C.GdkGeometry
+}
+
+func WrapGeometry(p uintptr) *Geometry {
+	return wrapGeometry((*C.GdkGeometry)(unsafe.Pointer(p)))
+}
+
+func wrapGeometry(obj *C.GdkGeometry) *Geometry {
+	if obj == nil {
+		return nil
+	}
+	return &Geometry{*obj}
+}
+
+// native returns a pointer to the underlying GdkGeometry.
+func (r *Geometry) native() *C.GdkGeometry {
+	return &r.GdkGeometry
+}
+
+// GetMinWidth returns min_width field of the underlying GdkGeometry.
+func (r *Geometry) GetMinWidth() int {
+	return int(r.native().min_width)
+}
+
+// SetMinWidth sets min_width field of the underlying GdkGeometry.
+func (r *Geometry) SetMinWidth(minWidth int) {
+	r.native().min_width = C.gint(minWidth)
+}
+
+// GetMinHeight returns min_height field of the underlying GdkGeometry.
+func (r *Geometry) GetMinHeight() int {
+	return int(r.native().min_height)
+}
+
+// SetMinHeight sets min_height field of the underlying GdkGeometry.
+func (r *Geometry) SetMinHeight(minHeight int) {
+	r.native().min_height = C.gint(minHeight)
+}
+
+// GetMaxWidth returns max_width field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxWidth() int {
+	return int(r.native().max_width)
+}
+
+// SetMaxWidth sets max_width field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxWidth(maxWidth int) {
+	r.native().max_width = C.gint(maxWidth)
+}
+
+// GetMaxHeight returns max_height field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxHeight() int {
+	return int(r.native().max_height)
+}
+
+// SetMaxHeight sets max_height field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxHeight(maxHeight int) {
+	r.native().max_height = C.gint(maxHeight)
+}
+
+// GetBaseWidth returns base_width field of the underlying GdkGeometry.
+func (r *Geometry) GetBaseWidth() int {
+	return int(r.native().base_width)
+}
+
+// SetBaseWidth sets base_width field of the underlying GdkGeometry.
+func (r *Geometry) SetBaseWidth(baseWidth int) {
+	r.native().base_width = C.gint(baseWidth)
+}
+
+// GetBaseHeight returns base_height field of the underlying GdkGeometry.
+func (r *Geometry) GetBaseHeight() int {
+	return int(r.native().base_height)
+}
+
+// SetBaseHeight sets base_height field of the underlying GdkGeometry.
+func (r *Geometry) SetBaseHeight(baseHeight int) {
+	r.native().base_height = C.gint(baseHeight)
+}
+
+// GetWidthInc returns width_inc field of the underlying GdkGeometry.
+func (r *Geometry) GetWidthInc() int {
+	return int(r.native().width_inc)
+}
+
+// SetWidthInc sets width_inc field of the underlying GdkGeometry.
+func (r *Geometry) SetWidthInc(widthInc int) {
+	r.native().width_inc = C.gint(widthInc)
+}
+
+// GetHeightInc returns height_inc field of the underlying GdkGeometry.
+func (r *Geometry) GetHeightInc() int {
+	return int(r.native().height_inc)
+}
+
+// SetHeightInc sets height_inc field of the underlying GdkGeometry.
+func (r *Geometry) SetHeightInc(heightInc int) {
+	r.native().height_inc = C.gint(heightInc)
+}
+
+// GetMinAspect returns min_aspect field of the underlying GdkGeometry.
+func (r *Geometry) GetMinAspect() float64 {
+	return float64(r.native().min_aspect)
+}
+
+// SetMinAspect sets min_aspect field of the underlying GdkGeometry.
+func (r *Geometry) SetMinAspect(minAspect float64) {
+	r.native().min_aspect = C.gdouble(minAspect)
+}
+
+// GetMaxAspect returns max_aspect field of the underlying GdkGeometry.
+func (r *Geometry) GetMaxAspect() float64 {
+	return float64(r.native().max_aspect)
+}
+
+// SetMaxAspect sets max_aspect field of the underlying GdkGeometry.
+func (r *Geometry) SetMaxAspect(maxAspect float64) {
+	r.native().max_aspect = C.gdouble(maxAspect)
+}
+
+// GetWinGravity returns win_gravity field of the underlying GdkGeometry.
+func (r *Geometry) GetWinGravity() Gravity {
+	return Gravity(r.native().win_gravity)
+}
+
+// SetWinGravity sets win_gravity field of the underlying GdkGeometry.
+func (r *Geometry) SetWinGravity(winGravity Gravity) {
+	r.native().win_gravity = C.GdkGravity(winGravity)
 }
 
 /*

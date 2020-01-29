@@ -417,7 +417,7 @@ func (v *Window) AddAccelGroup(accelGroup *AccelGroup) {
 	C.gtk_window_add_accel_group(v.native(), accelGroup.native())
 }
 
-// RemoveAccelGroup() is a wrapper around gtk_window_add_accel_group().
+// RemoveAccelGroup() is a wrapper around gtk_window_remove_accel_group().
 func (v *Window) RemoveAccelGroup(accelGroup *AccelGroup) {
 	C.gtk_window_remove_accel_group(v.native(), accelGroup.native())
 }

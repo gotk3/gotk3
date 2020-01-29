@@ -259,11 +259,13 @@ func (v *Widget) Activate() bool {
 	return gobool(C.gtk_widget_activate(v.native()))
 }
 
-// TODO(jrick) GdkRectangle
-/*
-func (v *Widget) Intersect() {
+// Intersect is a wrapper around gtk_widget_intersect().
+func (v *Widget) Intersect(area gdk.Rectangle) (*gdk.Rectangle, bool) {
+	var cRect *C.GdkRectangle
+	hadIntersection := C.gtk_widget_intersect(v.native(), nativeGdkRectangle(area), cRect)
+	intersection := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
+	return intersection, gobool(hadIntersection)
 }
-*/
 
 // IsFocus() is a wrapper around gtk_widget_is_focus().
 func (v *Widget) IsFocus() bool {
