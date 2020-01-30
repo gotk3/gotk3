@@ -69,16 +69,16 @@ func (v *Permission) Acquire(cancellable *Cancellable) error {
 // }
 
 // AcquireFinish is a wrapper around g_permission_acquire_finish().
-// func (v *Permission) AcquireFinish(result *AsyncResult) error {
-// 	var err *C.GError
-// 	c := C.g_permission_acquire_finish(v.Native(), , &err)
-// 	acquired := gobool(c)
-// 	if !acquired {
-// 		defer C.g_error_free(err)
-// 		return errors.New(C.GoString((*C.char)(err.message)))
-// 	}
-// 	return nil
-// }
+func (v *Permission) AcquireFinish(result *AsyncResult) error {
+	var err *C.GError
+	c := C.g_permission_acquire_finish(v.Native(), result.native(), &err)
+	acquired := gobool(c)
+	if !acquired {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(err.message)))
+	}
+	return nil
+}
 
 // Release is a wrapper around g_permission_release().
 func (v *Permission) Release(cancellable *Cancellable) error {
@@ -98,16 +98,16 @@ func (v *Permission) Release(cancellable *Cancellable) error {
 // }
 
 // ReleaseFinish is a wrapper around g_permission_release_finish().
-// func (v *Permission) ReleaseFinish(result *AsyncResult) error {
-// 	var err *C.GError
-// 	c := C.g_permission_release_finish(v.Native(), , &err)
-// 	released := gobool(c)
-// 	if !released {
-// 		defer C.g_error_free(err)
-// 		return errors.New(C.GoString((*C.char)(err.message)))
-// 	}
-// 	return nil
-// }
+func (v *Permission) ReleaseFinish(result *AsyncResult) error {
+	var err *C.GError
+	c := C.g_permission_release_finish(v.Native(), result.native(), &err)
+	released := gobool(c)
+	if !released {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(err.message)))
+	}
+	return nil
+}
 
 // ImplUpdate is a wrapper around g_permission_impl_update().
 func (v *Permission) ImplUpdate(allowed, canAcquire, canRelease bool) {
