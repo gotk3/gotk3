@@ -52,20 +52,20 @@ func (v *Permission) GetCanRelease() bool {
 }
 
 // Acquire is a wrapper around g_permission_acquire().
-// func (v *Permission) Acquire(cancellable *Cancellable) error {
-// 	var err *C.GError
-// 	c := C.g_permission_acquire(v.Native(), cancellable.Native(), &err)
-// 	acquired := gobool(c)
-// 	if !acquired {
-// 		defer C.g_error_free(err)
-// 		return errors.New(C.GoString((*C.char)(err.message)))
-// 	}
-// 	return nil
-// }
+func (v *Permission) Acquire(cancellable *Cancellable) error {
+	var err *C.GError
+	c := C.g_permission_acquire(v.Native(), cancellable.native(), &err)
+	acquired := gobool(c)
+	if !acquired {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(err.message)))
+	}
+	return nil
+}
 
 // AcquireAsync is a wrapper around g_permission_acquire_async().
 // func (v *Permission) AcquireAsync(cancellable *Cancellable, callback AsyncReadyCallback, data uintptr) {
-// 	C.g_permission_acquire_async(v.Native(), cancellable.Native(), , C.gpointer(data))
+// 	C.g_permission_acquire_async(v.Native(), cancellable.native(), , C.gpointer(data))
 // }
 
 // AcquireFinish is a wrapper around g_permission_acquire_finish().
@@ -81,20 +81,20 @@ func (v *Permission) GetCanRelease() bool {
 // }
 
 // Release is a wrapper around g_permission_release().
-// func (v *Permission) Release(cancellable *Cancellable) error {
-// 	var err *C.GError
-// 	c := C.g_permission_release(v.Native(), cancellable.Native(), &err)
-// 	released := gobool(c)
-// 	if !released {
-// 		defer C.g_error_free(err)
-// 		return errors.New(C.GoString((*C.char)(err.message)))
-// 	}
-// 	return nil
-// }
+func (v *Permission) Release(cancellable *Cancellable) error {
+	var err *C.GError
+	c := C.g_permission_release(v.Native(), cancellable.native(), &err)
+	released := gobool(c)
+	if !released {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(err.message)))
+	}
+	return nil
+}
 
 // ReleaseAsync is a wrapper around g_permission_release_async().
 // func (v *Permission) ReleaseAsync(cancellable *Cancellable, callback AsyncReadyCallback, data uintptr) {
-// 	C.g_permission_release_async(v.Native(), cancellable.Native(), , C.gpointer(data))
+// 	C.g_permission_release_async(v.Native(), cancellable.native(), , C.gpointer(data))
 // }
 
 // ReleaseFinish is a wrapper around g_permission_release_finish().
