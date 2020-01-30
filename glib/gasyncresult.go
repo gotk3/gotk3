@@ -38,9 +38,6 @@ func wrapAsyncResult(obj *Object) *AsyncResult {
 // GetUserData is a wrapper around g_async_result_get_user_data()
 func (v *AsyncResult) GetUserData() uintptr {
 	c := C.g_async_result_get_user_data(v.native())
-	if c == nil {
-		return nil
-	}
 	return uintptr(unsafe.Pointer(c))
 }
 
@@ -54,8 +51,8 @@ func (v *AsyncResult) GetSourceObject() *Object {
 }
 
 // IsTagged is a wrapper around g_async_result_is_tagged
-func (v *AsyncResult) IsTagged() bool {
-	c := C.g_async_result_is_tagged(v.native())
+func (v *AsyncResult) IsTagged(sourceTag uintptr) bool {
+	c := C.g_async_result_is_tagged(v.native(), C.gpointer(sourceTag))
 	return gobool(c)
 }
 

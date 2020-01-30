@@ -5,7 +5,10 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"errors"
+	"unsafe"
+)
 
 // Permission is a representation of GIO's GPermission.
 type Permission struct {
