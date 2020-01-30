@@ -56,6 +56,12 @@ toGActionMap(void *p)
 	return (G_ACTION_MAP(p));
 }
 
+static GAsyncResult *
+toGAsyncResult(void *p)
+{
+	return (G_ASYNC_RESULT(p));
+}
+
 static GSimpleAction *
 toGSimpleAction(void *p)
 {
