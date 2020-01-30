@@ -98,6 +98,12 @@ toGNotification(void *p)
 	return (G_NOTIFICATION(p));
 }
 
+static GPermission *
+toGPermission(void *p)
+{
+	return (G_PERMISSION(p));
+}
+
 static GIcon *
 toGIcon(void *p)
 {
