@@ -104,6 +104,12 @@ toGPermission(void *p)
 	return (G_PERMISSION(p));
 }
 
+static GCancellable *
+toCancellable(void *p)
+{
+	return (G_CANCELLABLE(p));
+}
+
 static GIcon *
 toGIcon(void *p)
 {
