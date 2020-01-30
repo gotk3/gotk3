@@ -5155,7 +5155,7 @@ func LockButtonNew(permission *glib.Permission) (*LockButton, error) {
 // GetPermission is a wrapper around gtk_lock_button_get_permission().
 func (v *LockButton) GetPermission() *glib.Permission {
 	c := C.gtk_lock_button_get_permission(v.native())
-	return glib.WrapPermission(c)
+	return glib.WrapPermission(unsafe.Pointer(c))
 }
 
 // SetPermission is a wrapper around gtk_lock_button_set_permission().

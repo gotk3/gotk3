@@ -5,7 +5,10 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"errors"
+	"unsafe"
+)
 
 // Cancellable is a representation of GIO's GCancellable.
 type Cancellable struct {
@@ -25,7 +28,7 @@ func marshalCancellable(p uintptr) (interface{}, error) {
 	return wrapCancellable(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func wrapCancellable(obj *glib.Object) *Cancellable {
+func wrapCancellable(obj *Object) *Cancellable {
 	return &Cancellable{obj}
 }
 
@@ -69,7 +72,7 @@ func (v *Cancellable) GetFD() int {
 // }
 
 // ReleaseFD is a wrapper around g_cancellable_release_fd().
-func (v *Cancellable) ReleaseFD() int {
+func (v *Cancellable) ReleaseFD() {
 	C.g_cancellable_release_fd(v.native())
 }
 

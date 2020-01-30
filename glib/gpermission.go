@@ -22,11 +22,15 @@ func (v *Permission) Native() *C.GPermission {
 
 func marshalPermission(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return WrapPermission(c), nil
+	return wrapPermission(wrapObject(unsafe.Pointer(c))), nil
 }
 
-func WrapPermission(c *C.GPermission) *Permission {
-	return &Permission{wrapObject(unsafe.Pointer(c))}
+func wrapPermission(obj *Object) *Permission {
+	return &Permission{obj}
+}
+
+func WrapPermission(ptr unsafe.Pointer) *Permission {
+	return &Permission{wrapObject(ptr)}
 }
 
 // GetAllowed is a wrapper around g_permission_get_allowed().
