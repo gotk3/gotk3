@@ -452,7 +452,7 @@ func (v *Window) GetSkipTaskbarHint() bool {
 
 // GetSkipPagerHint is a wrapper around gtk_window_get_skip_pager_hint().
 func (v *Window) GetSkipPagerHint() bool {
-	c := C.gtk_window_get_skip_taskbar_hint(v.native())
+	c := C.gtk_window_get_skip_pager_hint(v.native())
 	return gobool(c)
 }
 
@@ -547,7 +547,7 @@ func (v *Window) GetMnemonicsVisible() bool {
 }
 
 // SetMnemonicsVisible is a wrapper around
-// gtk_window_get_mnemonics_visible().
+// gtk_window_set_mnemonics_visible().
 func (v *Window) SetMnemonicsVisible(setting bool) {
 	C.gtk_window_set_mnemonics_visible(v.native(), gbool(setting))
 }
