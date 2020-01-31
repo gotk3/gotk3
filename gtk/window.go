@@ -8,6 +8,7 @@ package gtk
 import "C"
 import (
 	"errors"
+	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -610,13 +611,26 @@ func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
 	C.gtk_window_set_mnemonic_modifier(v.native(), C.GdkModifierType(mods))
 }
 
+// WindowListToplevels is a wrapper around gtk_window_list_toplevels().
+// Returned list is wrapped to return *gtk.Window elements.
+func WindowListToplevels() *glib.List {
+	glist := C.gtk_window_list_toplevels()
+	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return wrapWindow(glib.Take(ptr))
+	})
+	runtime.SetFinalizer(list, func(l *glib.List) {
+		l.Free()
+	})
+	return list
+}
+
 // TODO gtk_window_begin_move_drag().
 // TODO gtk_window_begin_resize_drag().
 // TODO gtk_window_get_default_icon_list().
 // TODO gtk_window_get_group().
 // TODO gtk_window_get_icon_list().
 // TODO gtk_window_get_window_type().
-// TODO gtk_window_list_toplevels().
 // TODO gtk_window_propagate_key_event().
 // TODO gtk_window_set_default_icon_list().
 // TODO gtk_window_set_icon_list().
