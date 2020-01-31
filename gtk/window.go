@@ -19,6 +19,8 @@ import (
  * GtkWindow
  */
 
+// gtk_window_set_has_user_ref_count is NOT included, see GTK documentation for why that is.
+
 // Window is a representation of GTK's GtkWindow.
 type Window struct {
 	Bin
@@ -474,6 +476,12 @@ func (v *Window) GetFocusOnMap() bool {
 	return gobool(c)
 }
 
+// GetWindowType is a wrapper around gtk_window_get_window_type().
+func (v *Window) GetWindowType() WindowType {
+	c := C.gtk_window_get_window_type(v.native())
+	return WindowType(c)
+}
+
 // HasGroup is a wrapper around gtk_window_has_group().
 func (v *Window) HasGroup() bool {
 	c := C.gtk_window_has_group(v.native())
@@ -530,14 +538,11 @@ func (v *Window) SetIconName(name string) {
 	C.gtk_window_set_icon_name(v.native(), (*C.gchar)(cstr))
 }
 
-// SetAutoStartupNotification is a wrapper around
+// WindowSetAutoStartupNotification is a wrapper around
 // gtk_window_set_auto_startup_notification().
-// This doesn't seem write.  Might need to rethink?
-/*
-func (v *Window) SetAutoStartupNotification(setting bool) {
+func WindowSetAutoStartupNotification(setting bool) {
 	C.gtk_window_set_auto_startup_notification(gbool(setting))
 }
-*/
 
 // GetMnemonicsVisible is a wrapper around
 // gtk_window_get_mnemonics_visible().
@@ -611,6 +616,23 @@ func (v *Window) SetMnemonicModifier(mods gdk.ModifierType) {
 	C.gtk_window_set_mnemonic_modifier(v.native(), C.GdkModifierType(mods))
 }
 
+// SetScreen is a wrapper around gtk_window_set_screen().
+func (v *Window) SetScreen(screen *gdk.Screen) {
+	C.gtk_window_set_screen(v.native(), C.toGdkScreen(unsafe.Pointer(screen.Native())))
+}
+
+// GetScreen is a wrapper around gtk_window_get_screen().
+func (v *Window) GetScreen() *gdk.Screen {
+	c := C.gtk_window_get_screen(v.native())
+	return &gdk.Screen{glib.Take(unsafe.Pointer(c))}
+}
+
+// PropagateKeyEvent is a wrapper around gtk_window_propagate_key_event().
+func (v *Window) PropagateKeyEvent(event *gdk.EventKey) bool {
+	c := C.gtk_window_propagate_key_event(v.native(), (*C.GdkEventKey)(unsafe.Pointer(event.Native())))
+	return gobool(c)
+}
+
 // WindowListToplevels is a wrapper around gtk_window_list_toplevels().
 // Returned list is wrapped to return *gtk.Window elements.
 func WindowListToplevels() *glib.List {
@@ -625,13 +647,48 @@ func WindowListToplevels() *glib.List {
 	return list
 }
 
+// WindowGetDefaultIconList is a wrapper around gtk_window_get_default_icon_list().
+// Returned list is wrapped to return *gdk.Pixbuf elements.
+func WindowGetDefaultIconList() *glib.List {
+	glist := C.gtk_window_get_default_icon_list()
+	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return &gdk.Pixbuf{glib.Take(ptr)}
+	})
+	runtime.SetFinalizer(list, func(l *glib.List) {
+		l.Free()
+	})
+	return list
+}
+
+// GetIconList is a wrapper around gtk_window_get_icon_list().
+// Returned list is wrapped to return *gdk.Pixbuf elements.
+func (v *Window) GetIconList() *glib.List {
+	glist := C.gtk_window_get_icon_list(v.native())
+	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return &gdk.Pixbuf{glib.Take(ptr)}
+	})
+	runtime.SetFinalizer(list, func(l *glib.List) {
+		l.Free()
+	})
+	return list
+}
+
+// WindowSetDefaultIconList is a wrapper around gtk_window_set_default_icon_list().
+// List should only contain *gdk.Pixbuf elements!
+func WindowSetDefaultIconList(list *glib.List) {
+	native := (*C.struct__GList)(unsafe.Pointer(list.Native()))
+	C.gtk_window_set_default_icon_list(native)
+}
+
+// SetIconList is a wrapper around gtk_window_set_icon_list().
+// List should only contain *gdk.Pixbuf elements!
+func (v *Window) SetIconList(list *glib.List) {
+	native := (*C.struct__GList)(unsafe.Pointer(list.Native()))
+	C.gtk_window_set_icon_list(v.native(), native)
+}
+
 // TODO gtk_window_begin_move_drag().
 // TODO gtk_window_begin_resize_drag().
-// TODO gtk_window_get_default_icon_list().
 // TODO gtk_window_get_group().
-// TODO gtk_window_get_icon_list().
-// TODO gtk_window_get_window_type().
-// TODO gtk_window_propagate_key_event().
-// TODO gtk_window_set_default_icon_list().
-// TODO gtk_window_set_icon_list().
-// TODO gtk_window_set_screen().

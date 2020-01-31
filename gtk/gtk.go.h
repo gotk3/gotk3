@@ -766,6 +766,12 @@ toGdkPixbuf(void *p)
 	return (GDK_PIXBUF(p));
 }
 
+static GdkScreen *
+toGdkScreen(void *p)
+{
+	return (GDK_SCREEN(p));
+}
+
 static GObject *
 toGObject(void *p)
 {
