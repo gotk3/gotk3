@@ -1,5 +1,4 @@
 // Same copyright and license as the rest of the files in this project
-// This file contains accelerator related functions and structures
 
 package gtk
 
@@ -203,6 +202,8 @@ func (v *Window) SetFocus(w *Widget) {
 }
 
 // GetDefaultWidget is a wrapper around gtk_window_get_default_widget().
+// See SetDefault() for the setter.
+// TODO: Use IWidget here
 func (v *Window) GetDefaultWidget() *Widget {
 	c := C.gtk_window_get_default_widget(v.native())
 	if c == nil {
@@ -213,6 +214,7 @@ func (v *Window) GetDefaultWidget() *Widget {
 }
 
 // SetDefault is a wrapper around gtk_window_set_default().
+// See GetDefaultWidget() for the getter.
 func (v *Window) SetDefault(widget IWidget) {
 	C.gtk_window_set_default(v.native(), widget.toWidget())
 }
