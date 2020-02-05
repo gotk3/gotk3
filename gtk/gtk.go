@@ -9507,6 +9507,52 @@ func (v *TreeRowReference) Valid() bool {
 }
 
 /*
+ * GtkTreeModelSort
+ */
+
+// TreeModelSort is a representation of GTK's GtkTreeModelSort
+type TreeModelSort struct {
+	*glib.Object
+
+	// Interfaces
+	TreeModel
+}
+
+// native returns a pointer to the underlying GtkTreeModelSort
+func (v *TreeModelSort) native() *C.GtkTreeModelSort {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTreeModel(p)
+}
+
+func marshalTreeModelSort(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapTreeModelSort(obj), nil
+}
+
+func wrapTreeModelSort(obj *glib.Object) *TreeModelSort {
+	tm := wrapTreeModel(obj)
+	return &TreeModelSort{obj, *tm}
+}
+
+func (v *TreeModelSort) toTreeModel() *C.GtkTreeModel {
+	if v == nil {
+		return nil
+	}
+	return C.toGtkTreeModel(unsafe.Pointer(v.GObject))
+}
+
+func (v *TreeModelSort) toTreeSortable() *C.GtkTreeSortable {
+	if v == nil {
+		return nil
+	}
+	return C.toGtkTreeSortable(unsafe.Pointer(v.GObject))
+}
+
+/*
  * GtkTreeStore
  */
 
