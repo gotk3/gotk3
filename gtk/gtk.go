@@ -9066,6 +9066,21 @@ func (v *TreeModelFilter) SetVisibleColumn(column int) {
 	C.gtk_tree_model_filter_set_visible_column(v.native(), C.gint(column))
 }
 
+// ConvertChildPathToPath is a wrapper around gtk_tree_model_filter_convert_child_path_to_path().
+func (v *TreeModelFilter) ConvertChildPathToPath(childPath *TreePath) *TreePath {
+	path := C.gtk_tree_model_filter_convert_child_path_to_path(v.native(), childPath.native())
+	if path == nil {
+		return nil
+	}
+	p := &TreePath{path}
+	return p
+}
+
+// ConvertChildIterToIter is a wrapper around gtk_tree_model_filter_convert_child_iter_to_iter().
+func (v *TreeModelFilter) ConvertChildIterToIter(sortIter, childIter *TreeIter) bool {
+	return gobool(C.gtk_tree_model_filter_convert_child_iter_to_iter(v.native(), sortIter.native(), childIter.native()))
+}
+
 // ConvertIterToChildIter is a wrapper around gtk_tree_model_filter_convert_child_iter_to_iter().
 func (v *TreeModelFilter) ConvertIterToChildIter(filterIter *TreeIter) *TreeIter {
 	var iter C.GtkTreeIter
