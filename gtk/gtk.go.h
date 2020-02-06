@@ -376,6 +376,12 @@ toGtkLayout(void *p)
 	return (GTK_LAYOUT(p));
 }
 
+static GtkTreeModelSort *
+toGtkTreeModelSort(void *p)
+{
+    return (GTK_TREE_MODEL_SORT(p));
+}
+
 static GtkListStore *
 toGtkListStore(void *p)
 {

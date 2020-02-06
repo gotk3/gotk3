@@ -150,6 +150,7 @@ func init() {
 		{glib.Type(C.gtk_label_get_type()), marshalLabel},
 		{glib.Type(C.gtk_link_button_get_type()), marshalLinkButton},
 		{glib.Type(C.gtk_layout_get_type()), marshalLayout},
+		{glib.Type(C.gtk_tree_model_sort_get_type()), marshalTreeModelSort},
 		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
 		{glib.Type(C.gtk_menu_get_type()), marshalMenu},
 		{glib.Type(C.gtk_menu_bar_get_type()), marshalMenuBar},
@@ -9524,7 +9525,7 @@ func (v *TreeModelSort) native() *C.GtkTreeModelSort {
 		return nil
 	}
 	p := unsafe.Pointer(v.GObject)
-	return C.toGtkTreeModel(p)
+	return C.toGtkTreeModelSort(p)
 }
 
 func marshalTreeModelSort(p uintptr) (interface{}, error) {
@@ -9550,6 +9551,84 @@ func (v *TreeModelSort) toTreeSortable() *C.GtkTreeSortable {
 		return nil
 	}
 	return C.toGtkTreeSortable(unsafe.Pointer(v.GObject))
+}
+
+// TreeModelSortNew is a wrapper around gtk_tree_model_sort_new_with_model():
+func TreeModelSortNew(model ITreeModel) (*TreeModelSort, error) {
+	var mptr *C.GtkTreeModel
+	if model != nil {
+		mptr = model.toTreeModel()
+	}
+	c := C.gtk_tree_model_sort_new_with_model(mptr)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	tms := wrapTreeModelSort(glib.Take(unsafe.Pointer(c)))
+	return tms, nil
+}
+
+// GetModel is a wrapper around gtk_tree_model_sort_get_model()
+func (v *TreeModelSort) GetModel() ITreeModel {
+	c := C.gtk_tree_model_sort_get_model(v.native())
+	if c == nil {
+		return nil
+	}
+	m := wrapTreeModel(glib.Take(unsafe.Pointer(c)))
+	return m
+}
+
+// ConvertChildPathToPath is a wrapper around gtk_tree_model_sort_convert_child_path_to_path().
+func (v *TreeModelSort) ConvertChildPathToPath(childPath *TreePath) *TreePath {
+	path := C.gtk_tree_model_sort_convert_child_path_to_path(v.native(), childPath.native())
+	if path == nil {
+		return nil
+	}
+	p := &TreePath{path}
+	return p
+}
+
+// ConvertChildIterToIter is a wrapper around gtk_tree_model_sort_convert_child_iter_to_iter().
+func (v *TreeModelSort) ConvertChildIterToIter(sortIter, childIter *TreeIter) bool {
+	return gobool(C.gtk_tree_model_sort_convert_child_iter_to_iter(v.native(), sortIter.native(), childIter.native()))
+}
+
+// ConvertPathToChildPath is a wrapper around gtk_tree_model_sort_convert_path_to_child_path().
+func (v *TreeModelSort) ConvertPathToChildPath(sortPath *TreePath) *TreePath {
+	path := C.gtk_tree_model_sort_convert_path_to_child_path(v.native(), sortPath.native())
+	p := &TreePath{path}
+	return p
+}
+
+// ConvertIterToChildIter is a wrapper around gtk_tree_model_sort_convert_iter_to_child_iter().
+func (v *TreeModelSort) ConvertIterToChildIter(childIter, sortIter *TreeIter) {
+	C.gtk_tree_model_sort_convert_iter_to_child_iter(v.native(), childIter.native(), sortIter.native())
+}
+
+// ResetDefaultSortFunc is a wrapper around gtk_tree_model_sort_reset_default_sort_func().
+func (v *TreeModelSort) ResetDefaultSortFunc() {
+	C.gtk_tree_model_sort_reset_default_sort_func(v.native())
+}
+
+// ClearCache is a wrapper around gtk_tree_model_sort_clear_cache().
+func (v *TreeModelSort) ClearCache() {
+	C.gtk_tree_model_sort_clear_cache(v.native())
+}
+
+// IterIsValid is a wrapper around gtk_tree_model_sort_iter_is_valid().
+func (v *TreeModelSort) IterIsValid(iter *TreeIter) bool {
+	return gobool(C.gtk_tree_model_sort_iter_is_valid(v.native(), iter.native()))
+}
+
+// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
+func (v *TreeModelSort) SetSortColumnId(column int, order SortType) {
+	sort := C.toGtkTreeSortable(unsafe.Pointer(v.native()))
+	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
+}
+
+// SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
+func (v *TreeModelSort) SetSortFunc(sortColumn int, f TreeIterCompareFunc, data ...interface{}) error {
+	return v.toTreeSortable().setSortFunc(sortColumn, f, data)
 }
 
 /*
@@ -9957,6 +10036,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkToolItem":             wrapToolItem,
 	"GtkTreeModel":            wrapTreeModel,
 	"GtkTreeModelFilter":      wrapTreeModelFilter,
+	"GtkTreeModelSort":        wrapTreeModelSort,
 	"GtkTreeSelection":        wrapTreeSelection,
 	"GtkTreeStore":            wrapTreeStore,
 	"GtkTreeView":             wrapTreeView,
