@@ -188,6 +188,7 @@ func (v *Window) HasToplevelFocus() bool {
 }
 
 // GetFocus is a wrapper around gtk_window_get_focus().
+// TODO: Use IWidget here
 func (v *Window) GetFocus() (*Widget, error) {
 	c := C.gtk_window_get_focus(v.native())
 	if c == nil {
@@ -434,6 +435,7 @@ func (v *Window) GetTransientFor() (*Window, error) {
 }
 
 // GetAttachedTo is a wrapper around gtk_window_get_attached_to().
+// TODO: Use IWidget here
 func (v *Window) GetAttachedTo() (*Widget, error) {
 	c := C.gtk_window_get_attached_to(v.native())
 	if c == nil {
@@ -637,6 +639,7 @@ func (v *Window) PropagateKeyEvent(event *gdk.EventKey) bool {
 
 // WindowListToplevels is a wrapper around gtk_window_list_toplevels().
 // Returned list is wrapped to return *gtk.Window elements.
+// TODO: Use IWindow and wrap to correct type
 func WindowListToplevels() *glib.List {
 	glist := C.gtk_window_list_toplevels()
 	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
@@ -691,6 +694,14 @@ func (v *Window) SetIconList(list *glib.List) {
 	C.gtk_window_set_icon_list(v.native(), native)
 }
 
-// TODO gtk_window_begin_move_drag().
-// TODO gtk_window_begin_resize_drag().
+// BeginResizeDrag is a wrapper around gtk_window_begin_resize_drag().
+func (v *Window) BeginResizeDrag(edge gdk.WindowEdge, button, rootX, rootY int, timestamp uint32) {
+	C.gtk_window_begin_resize_drag(v.native(), C.GdkWindowEdge(edge), C.gint(button), C.gint(rootX), C.gint(rootY), C.guint32(timestamp))
+}
+
+// BeginMoveDrag is a wrapper around gtk_window_begin_move_drag().
+func (v *Window) BeginMoveDrag(button, rootX, rootY int, timestamp uint32) {
+	C.gtk_window_begin_move_drag(v.native(), C.gint(button), C.gint(rootX), C.gint(rootY), C.guint32(timestamp))
+}
+
 // TODO gtk_window_get_group().
