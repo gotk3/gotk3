@@ -704,4 +704,11 @@ func (v *Window) BeginMoveDrag(button, rootX, rootY int, timestamp uint32) {
 	C.gtk_window_begin_move_drag(v.native(), C.gint(button), C.gint(rootX), C.gint(rootY), C.guint32(timestamp))
 }
 
-// TODO gtk_window_get_group().
+// GetGroup is a wrapper around gtk_window_get_group().
+func (v *Window) GetGroup() *WindowGroup {
+	c := C.gtk_window_get_group(v.native())
+	if c == nil {
+		return nil
+	}
+	return wrapWindowGroup(glib.Take(unsafe.Pointer(c)))
+}

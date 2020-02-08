@@ -184,6 +184,12 @@ toGtkWindow(void *p)
 	return (GTK_WINDOW(p));
 }
 
+static GtkWindowGroup *
+toGtkWindowGroup(void *p)
+{
+	return (GTK_WINDOW_GROUP(p));
+}
+
 static GtkBox *
 toGtkBox(void *p)
 {
@@ -770,6 +776,12 @@ static GdkScreen *
 toGdkScreen(void *p)
 {
 	return (GDK_SCREEN(p));
+}
+
+static GdkDevice *
+toGdkDevice(void *p)
+{
+	return (GDK_DEVICE(p));
 }
 
 static GObject *

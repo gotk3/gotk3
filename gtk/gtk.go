@@ -197,6 +197,7 @@ func init() {
 		{glib.Type(C.gtk_volume_button_get_type()), marshalVolumeButton},
 		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
 		{glib.Type(C.gtk_window_get_type()), marshalWindow},
+		{glib.Type(C.gtk_window_group_get_type()), marshalWindowGroup},
 
 		// Boxed
 		{glib.Type(C.gtk_target_entry_get_type()), marshalTargetEntry},
