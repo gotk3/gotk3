@@ -207,6 +207,14 @@ func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
 }
 
 /*
+ * GtkExpander
+ */
+
+// TODO:
+// gtk_expander_set_spacing().
+// gtk_expander_get_spacing().
+
+/*
  * GtkPopover
  */
 

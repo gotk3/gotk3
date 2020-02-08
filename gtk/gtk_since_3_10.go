@@ -109,6 +109,14 @@ func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
 }
 
 /*
+ * GtkBox
+ */
+
+// TODO:
+// gtk_box_get_baseline_position().
+// gtk_box_set_baseline_position().
+
+/*
  * GtkGrid
  */
 
@@ -456,6 +464,9 @@ func (v *ListBox) DragHighlightRow(row *ListBoxRow) {
 	C.gtk_list_box_drag_highlight_row(v.native(), row.native())
 }
 
+// TODO:
+// gtk_list_box_drag_unhighlight_row().
+
 /*
  * GtkListBoxRow
  */
@@ -484,6 +495,7 @@ func wrapListBoxRow(obj *glib.Object) *ListBoxRow {
 	return &ListBoxRow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
+// ListBoxRowNew is a wrapper around gtk_list_box_row_new().
 func ListBoxRowNew() (*ListBoxRow, error) {
 	c := C.gtk_list_box_row_new()
 	if c == nil {
@@ -506,7 +518,7 @@ func (v *ListBoxRow) GetHeader() *Widget {
 	return wrapWidget(glib.Take(unsafe.Pointer(c)))
 }
 
-// SetHeader is a wrapper around gtk_list_box_row_get_header().
+// SetHeader is a wrapper around gtk_list_box_row_set_header().
 func (v *ListBoxRow) SetHeader(header IWidget) {
 	C.gtk_list_box_row_set_header(v.native(), header.toWidget())
 }

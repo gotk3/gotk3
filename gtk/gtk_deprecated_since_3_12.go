@@ -87,3 +87,11 @@ func (v *Widget) GetMarginRight() int {
 func (v *Widget) SetMarginRight(margin int) {
 	C.gtk_widget_set_margin_right(v.native(), C.gint(margin))
 }
+
+/*
+ * GtkContainer
+ */
+
+// TODO:
+// gtk_container_get_resize_mode().
+// gtk_container_set_resize_mode().

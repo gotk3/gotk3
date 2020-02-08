@@ -84,7 +84,7 @@ func wrapShortcutsSection(obj *glib.Object) *ShortcutsSection {
 }
 
 /*
- * GtkShortcutsSection
+ * GtkShortcutsGroup
  */
 
 // ShortcutsWindow is a representation of GTK's GtkShortcutsGroup.

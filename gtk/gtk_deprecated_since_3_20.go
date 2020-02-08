@@ -9,6 +9,14 @@ import (
 	"unsafe"
 )
 
+/*
+ * GtkFileChooserButton
+ */
+
+// TODO:
+// gtk_file_chooser_button_get_focus_on_click().
+// gtk_file_chooser_button_set_focus_on_click().
+
 // GetFocusOnClick() is a wrapper around gtk_button_get_focus_on_click().
 func (v *Button) GetFocusOnClick() bool {
 	c := C.gtk_button_get_focus_on_click(v.native())

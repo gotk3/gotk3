@@ -243,6 +243,34 @@ func (v *Window) ReshowWithInitialSize() {
 	C.gtk_window_reshow_with_initial_size(v.native())
 }
 
+/*
+ * GtkContainer
+ */
+
+// TODO:
+// gtk_container_resize_children().
+
+/*
+ * GtkImageMenuItem
+ */
+
+// TODO:
+// gtk_image_menu_item_set_image().
+// gtk_image_menu_item_get_image().
+// gtk_image_menu_item_new().
+// gtk_image_menu_item_new_from_stock().
+// gtk_image_menu_item_new_with_label().
+// gtk_image_menu_item_new_with_mnemonic().
+// gtk_image_menu_item_get_use_stock().
+// gtk_image_menu_item_set_use_stock().
+// gtk_image_menu_item_get_always_show_image().
+// gtk_image_menu_item_set_always_show_image().
+// gtk_image_menu_item_set_accel_group().
+
+/*
+ * GtkToolButton
+ */
+
 // TODO:
 // gtk_tool_button_new_from_stock().
 // gtk_tool_button_set_stock_id().

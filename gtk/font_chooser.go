@@ -204,3 +204,10 @@ func (v *FontButton) GetTitle() string {
 	defer C.free(unsafe.Pointer(c))
 	return goString(c)
 }
+
+/*
+ * GtkFontChooserWidget
+ */
+
+// TODO:
+// gtk_font_chooser_widget_new().

@@ -136,8 +136,7 @@ func (v *Button) GetAlignment() (xalign, yalign float32) {
 	return float32(x), float32(y)
 }
 
-// SetReallocateRedraws is a wrapper around
-// gtk_container_set_reallocate_redraws().
+// SetReallocateRedraws is a wrapper around gtk_container_set_reallocate_redraws().
 func (v *Container) SetReallocateRedraws(needsRedraws bool) {
 	C.gtk_container_set_reallocate_redraws(v.native(), gbool(needsRedraws))
 }

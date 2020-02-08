@@ -2356,8 +2356,7 @@ func CheckMenuItemNew() (*CheckMenuItem, error) {
 	return wrapCheckMenuItem(obj), nil
 }
 
-// CheckMenuItemNewWithLabel is a wrapper around
-// gtk_check_menu_item_new_with_label().
+// CheckMenuItemNewWithLabel is a wrapper around gtk_check_menu_item_new_with_label().
 func CheckMenuItemNewWithLabel(label string) (*CheckMenuItem, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -2369,8 +2368,7 @@ func CheckMenuItemNewWithLabel(label string) (*CheckMenuItem, error) {
 	return wrapCheckMenuItem(obj), nil
 }
 
-// CheckMenuItemNewWithMnemonic is a wrapper around
-// gtk_check_menu_item_new_with_mnemonic().
+// CheckMenuItemNewWithMnemonic is a wrapper around gtk_check_menu_item_new_with_mnemonic().
 func CheckMenuItemNewWithMnemonic(label string) (*CheckMenuItem, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -2627,8 +2625,7 @@ func (v *Container) SetFocusChild(child IWidget) {
 	C.gtk_container_set_focus_child(v.native(), child.toWidget())
 }
 
-// GetFocusVAdjustment is a wrapper around
-// gtk_container_get_focus_vadjustment().
+// GetFocusVAdjustment is a wrapper around gtk_container_get_focus_vadjustment().
 func (v *Container) GetFocusVAdjustment() *Adjustment {
 	c := C.gtk_container_get_focus_vadjustment(v.native())
 	if c == nil {
@@ -2638,14 +2635,12 @@ func (v *Container) GetFocusVAdjustment() *Adjustment {
 	return wrapAdjustment(obj)
 }
 
-// SetFocusVAdjustment is a wrapper around
-// gtk_container_set_focus_vadjustment().
+// SetFocusVAdjustment is a wrapper around gtk_container_set_focus_vadjustment().
 func (v *Container) SetFocusVAdjustment(adjustment *Adjustment) {
 	C.gtk_container_set_focus_vadjustment(v.native(), adjustment.native())
 }
 
-// GetFocusHAdjustment is a wrapper around
-// gtk_container_get_focus_hadjustment().
+// GetFocusHAdjustment is a wrapper around gtk_container_get_focus_hadjustment().
 func (v *Container) GetFocusHAdjustment() *Adjustment {
 	c := C.gtk_container_get_focus_hadjustment(v.native())
 	if c == nil {
@@ -2655,8 +2650,7 @@ func (v *Container) GetFocusHAdjustment() *Adjustment {
 	return wrapAdjustment(obj)
 }
 
-// SetFocusHAdjustment is a wrapper around
-// gtk_container_set_focus_hadjustment().
+// SetFocusHAdjustment is a wrapper around gtk_container_set_focus_hadjustment().
 func (v *Container) SetFocusHAdjustment(adjustment *Adjustment) {
 	C.gtk_container_set_focus_hadjustment(v.native(), adjustment.native())
 }
@@ -2667,8 +2661,9 @@ func (v *Container) ChildType() glib.Type {
 	return glib.Type(c)
 }
 
-// TODO: gtk_container_child_get_valist
-// TODO: gtk_container_child_set_valist
+// TODO:
+// gtk_container_child_get().
+// gtk_container_child_set().
 
 // ChildNotify is a wrapper around gtk_container_child_notify().
 func (v *Container) ChildNotify(child IWidget, childProperty string) {
@@ -2704,7 +2699,11 @@ func (v *Container) ChildSetProperty(child IWidget, name string, value interface
 	return nil
 }
 
-// TODO: gtk_container_forall
+// TODO:
+// gtk_container_child_get_valist().
+// gtk_container_child_set_valist().
+// gtk_container_child_notify_by_pspec().
+// gtk_container_forall().
 
 // GetBorderWidth is a wrapper around gtk_container_get_border_width().
 func (v *Container) GetBorderWidth() uint {
@@ -2722,6 +2721,14 @@ func (v *Container) PropagateDraw(child IWidget, cr *cairo.Context) {
 	context := (*C.cairo_t)(unsafe.Pointer(cr.Native()))
 	C.gtk_container_propagate_draw(v.native(), child.toWidget(), context)
 }
+
+// TODO:
+// gtk_container_class_find_child_property().
+// gtk_container_class_install_child_property().
+// gtk_container_class_install_child_properties().
+// gtk_container_class_list_child_properties().
+// gtk_container_class_handle_border_width().
+// GtkResizeMode
 
 // GdkCairoSetSourcePixBuf() is a wrapper around gdk_cairo_set_source_pixbuf().
 func GdkCairoSetSourcePixBuf(cr *cairo.Context, pixbuf *gdk.Pixbuf, pixbufX, pixbufY float64) {
@@ -3957,6 +3964,9 @@ func ExpanderNew(label string) (*Expander, error) {
 	return wrapExpander(obj), nil
 }
 
+// TODO:
+// gtk_expander_new_with_mnemonic().
+
 // SetExpanded is a wrapper around gtk_expander_set_expanded().
 func (v *Expander) SetExpanded(expanded bool) {
 	C.gtk_expander_set_expanded(v.native(), gbool(expanded))
@@ -3984,10 +3994,23 @@ func (v *Expander) GetLabel() string {
 	return goString(c)
 }
 
+// TODO:
+// gtk_expander_set_use_underline().
+// gtk_expander_get_use_underline().
+// gtk_expander_set_use_markup().
+// gtk_expander_get_use_markup().
+
 // SetLabelWidget is a wrapper around gtk_expander_set_label_widget().
 func (v *Expander) SetLabelWidget(widget IWidget) {
 	C.gtk_expander_set_label_widget(v.native(), widget.toWidget())
 }
+
+// TODO:
+// gtk_expander_get_label_widget().
+// gtk_expander_set_label_fill().
+// gtk_expander_get_label_fill().
+// gtk_expander_set_resize_toplevel().
+// gtk_expander_get_resize_toplevel().
 
 /*
  * GtkFileChooser
@@ -4238,6 +4261,13 @@ func FileChooserButtonNew(title string, action FileChooserAction) (*FileChooserB
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapFileChooserButton(obj), nil
 }
+
+// TODO:
+// gtk_file_chooser_button_new_with_dialog().
+// gtk_file_chooser_button_get_title().
+// gtk_file_chooser_button_set_title().
+// gtk_file_chooser_button_get_width_chars().
+// gtk_file_chooser_button_set_width_chars().
 
 /*
  * GtkFileChooserDialog
@@ -4559,6 +4589,7 @@ func wrapAspectFrame(obj *glib.Object) *AspectFrame {
 	return &AspectFrame{Frame{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
+// AspectFrameNew is a wrapper around gtk_aspect_frame_new().
 func AspectFrameNew(label string, xalign, yalign, ratio float32, obeyChild bool) (*AspectFrame, error) {
 	var cstr *C.char
 	if label != "" {
@@ -4572,6 +4603,9 @@ func AspectFrameNew(label string, xalign, yalign, ratio float32, obeyChild bool)
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapAspectFrame(obj), nil
 }
+
+// TODO:
+// gtk_aspect_frame_set().
 
 /*
  * GtkGrid
@@ -5541,8 +5575,7 @@ func MenuItemNewWithLabel(label string) (*MenuItem, error) {
 	return wrapMenuItem(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// MenuItemNewWithMnemonic() is a wrapper around
-// gtk_menu_item_new_with_mnemonic().
+// MenuItemNewWithMnemonic() is a wrapper around gtk_menu_item_new_with_mnemonic().
 func MenuItemNewWithMnemonic(label string) (*MenuItem, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -5558,14 +5591,14 @@ func (v *MenuItem) SetSubmenu(submenu IWidget) {
 	C.gtk_menu_item_set_submenu(v.native(), submenu.toWidget())
 }
 
-// Sets text on the menu_item label
+// SetLabel is a wrapper around gtk_menu_item_set_label().
 func (v *MenuItem) SetLabel(label string) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_menu_item_set_label(v.native(), (*C.gchar)(cstr))
 }
 
-// Gets text on the menu_item label
+// GetLabel is a wrapper around gtk_menu_item_get_label().
 func (v *MenuItem) GetLabel() string {
 	l := C.gtk_menu_item_get_label(v.native())
 	return goString(l)
@@ -5581,6 +5614,16 @@ func (v *MenuItem) GetUseUnderline() bool {
 	c := C.gtk_menu_item_get_use_underline(v.native())
 	return gobool(c)
 }
+
+// TODO:
+// gtk_menu_item_get_submenu().
+// gtk_menu_item_select().
+// gtk_menu_item_deselect().
+// gtk_menu_item_activate().
+// gtk_menu_item_toggle_size_request().
+// gtk_menu_item_toggle_size_allocate().
+// gtk_menu_item_get_reserve_indicator().
+// gtk_menu_item_set_reserve_indicator().
 
 /*
  * GtkMessageDialog
@@ -6493,8 +6536,7 @@ func RadioMenuItemNew(group *glib.SList) (*RadioMenuItem, error) {
 	return wrapRadioMenuItem(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioMenuItemNewWithLabel is a wrapper around
-// gtk_radio_menu_item_new_with_label().
+// RadioMenuItemNewWithLabel is a wrapper around gtk_radio_menu_item_new_with_label().
 func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -6505,8 +6547,7 @@ func RadioMenuItemNewWithLabel(group *glib.SList, label string) (*RadioMenuItem,
 	return wrapRadioMenuItem(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioMenuItemNewWithMnemonic is a wrapper around
-// gtk_radio_menu_item_new_with_mnemonic().
+// RadioMenuItemNewWithMnemonic is a wrapper around gtk_radio_menu_item_new_with_mnemonic().
 func RadioMenuItemNewWithMnemonic(group *glib.SList, label string) (*RadioMenuItem, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -6517,8 +6558,7 @@ func RadioMenuItemNewWithMnemonic(group *glib.SList, label string) (*RadioMenuIt
 	return wrapRadioMenuItem(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioMenuItemNewFromWidget is a wrapper around
-// gtk_radio_menu_item_new_from_widget().
+// RadioMenuItemNewFromWidget is a wrapper around gtk_radio_menu_item_new_from_widget().
 func RadioMenuItemNewFromWidget(group *RadioMenuItem) (*RadioMenuItem, error) {
 	c := C.gtk_radio_menu_item_new_from_widget(group.native())
 	if c == nil {
@@ -6527,8 +6567,7 @@ func RadioMenuItemNewFromWidget(group *RadioMenuItem) (*RadioMenuItem, error) {
 	return wrapRadioMenuItem(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioMenuItemNewWithLabelFromWidget is a wrapper around
-// gtk_radio_menu_item_new_with_label_from_widget().
+// RadioMenuItemNewWithLabelFromWidget is a wrapper around gtk_radio_menu_item_new_with_label_from_widget().
 func RadioMenuItemNewWithLabelFromWidget(group *RadioMenuItem, label string) (*RadioMenuItem, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -6540,8 +6579,7 @@ func RadioMenuItemNewWithLabelFromWidget(group *RadioMenuItem, label string) (*R
 	return wrapRadioMenuItem(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// RadioMenuItemNewWithMnemonicFromWidget is a wrapper around
-// gtk_radio_menu_item_new_with_mnemonic_from_widget().
+// RadioMenuItemNewWithMnemonicFromWidget is a wrapper around gtk_radio_menu_item_new_with_mnemonic_from_widget().
 func RadioMenuItemNewWithMnemonicFromWidget(group *RadioMenuItem, label string) (*RadioMenuItem, error) {
 	cstr := C.CString(label)
 	defer C.free(unsafe.Pointer(cstr))
@@ -6673,6 +6711,14 @@ func (v *RecentChooser) AddFilter(filter *RecentFilter) {
 func (v *RecentChooser) RemoveFilter(filter *RecentFilter) {
 	C.gtk_recent_chooser_remove_filter(v.native(), filter.native())
 }
+
+/*
+ * GtkRecentChooserWidget
+ */
+
+// TODO:
+// gtk_recent_chooser_widget_new().
+// gtk_recent_chooser_widget_new_for_manager().
 
 /*
  * GtkRecentChooserMenu

@@ -57,6 +57,14 @@ func marshalButtonRole(p uintptr) (interface{}, error) {
 }
 
 /*
+ * GtkListBox
+ */
+
+// TODO:
+// GtkListBoxCreateWidgetFunc().
+// gtk_list_box_bind_model().
+
+/*
  * GtkScrolledWindow
  */
 

@@ -16,6 +16,13 @@ import (
 )
 
 /*
+ * GtkRadioMenuItem
+ */
+
+// TODO
+// gtk_radio_menu_item_join_group().
+
+/*
  * GtkOverlay
  */
 
