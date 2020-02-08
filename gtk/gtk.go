@@ -7086,6 +7086,15 @@ func (v *ScrolledWindow) SetVAdjustment(adjustment *Adjustment) {
 	C.gtk_scrolled_window_set_vadjustment(v.native(), adjustment.native())
 }
 
+// TODO:
+// gtk_scrolled_window_get_hscrollbar().
+// gtk_scrolled_window_get_vscrollbar().
+// gtk_scrolled_window_get_policy().
+// gtk_scrolled_window_get_placement().
+// gtk_scrolled_window_set_placement().
+// gtk_scrolled_window_unset_placement().
+
+
 // GetShadowType is a wrapper around gtk_scrolled_window_get_shadow_type().
 func (v *ScrolledWindow) GetShadowType() ShadowType {
 	c := C.gtk_scrolled_window_get_shadow_type(v.native())
@@ -7096,6 +7105,16 @@ func (v *ScrolledWindow) GetShadowType() ShadowType {
 func (v *ScrolledWindow) SetShadowType(t ShadowType) {
 	C.gtk_scrolled_window_set_shadow_type(v.native(), C.GtkShadowType(t))
 }
+
+// TODO:
+// gtk_scrolled_window_get_kinetic_scrolling().
+// gtk_scrolled_window_set_kinetic_scrolling().
+// gtk_scrolled_window_get_capture_button_press().
+// gtk_scrolled_window_set_capture_button_press().
+// gtk_scrolled_window_get_min_content_width().
+// gtk_scrolled_window_set_min_content_width().
+// gtk_scrolled_window_get_min_content_height().
+// gtk_scrolled_window_set_min_content_height().
 
 /*
  * GtkSearchEntry
@@ -8657,15 +8676,13 @@ func (v *ToolItem) GetUseDragWindow() bool {
 	return gobool(c)
 }
 
-// SetVisibleHorizontal is a wrapper around
-// gtk_tool_item_set_visible_horizontal().
+// SetVisibleHorizontal is a wrapper around gtk_tool_item_set_visible_horizontal().
 func (v *ToolItem) SetVisibleHorizontal(visibleHorizontal bool) {
 	C.gtk_tool_item_set_visible_horizontal(v.native(),
 		gbool(visibleHorizontal))
 }
 
-// GetVisibleHorizontal is a wrapper around
-// gtk_tool_item_get_visible_horizontal().
+// GetVisibleHorizontal is a wrapper around gtk_tool_item_get_visible_horizontal().
 func (v *ToolItem) GetVisibleHorizontal() bool {
 	c := C.gtk_tool_item_get_visible_horizontal(v.native())
 	return gobool(c)
@@ -8708,7 +8725,7 @@ func (v *ToolItem) GetOrientation() Orientation {
 }
 
 // GetToolbarStyle is a wrapper around gtk_tool_item_get_toolbar_style().
-func (v *ToolItem) gtk_tool_item_get_toolbar_style() ToolbarStyle {
+func (v *ToolItem) GetToolbarStyle() ToolbarStyle {
 	c := C.gtk_tool_item_get_toolbar_style(v.native())
 	return ToolbarStyle(c)
 }
@@ -8731,8 +8748,7 @@ func (v *ToolItem) GetTextOrientation() Orientation {
 	return Orientation(c)
 }
 
-// RetrieveProxyMenuItem is a wrapper around
-// gtk_tool_item_retrieve_proxy_menu_item()
+// RetrieveProxyMenuItem is a wrapper around gtk_tool_item_retrieve_proxy_menu_item()
 func (v *ToolItem) RetrieveProxyMenuItem() *MenuItem {
 	c := C.gtk_tool_item_retrieve_proxy_menu_item(v.native())
 	if c == nil {
@@ -8740,6 +8756,9 @@ func (v *ToolItem) RetrieveProxyMenuItem() *MenuItem {
 	}
 	return wrapMenuItem(glib.Take(unsafe.Pointer(c)))
 }
+
+// TODO:
+// gtk_tool_item_get_proxy_menu_item().
 
 // SetProxyMenuItem is a wrapper around gtk_tool_item_set_proxy_menu_item().
 func (v *ToolItem) SetProxyMenuItem(menuItemId string, menuItem IMenuItem) {

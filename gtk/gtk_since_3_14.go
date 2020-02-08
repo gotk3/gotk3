@@ -77,3 +77,11 @@ func (v *ListBoxRow) GetSelectable() bool {
 	c := C.gtk_list_box_row_get_selectable(v.native())
 	return gobool(c)
 }
+
+/*
+ * GtkPlacesSidebar
+ */
+
+// TODO:
+// gtk_places_sidebar_get_show_enter_location().
+// gtk_places_sidebar_set_show_enter_location().

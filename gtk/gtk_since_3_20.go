@@ -205,3 +205,12 @@ func (v *FileChooserNativeDialog) SetCancelLabel(cancel_label string) {
 func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
 	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_cancel_label(v.native())))
 }
+
+/*
+ * GtkPopover
+ */
+
+// TODO:
+// GtkPopoverConstraint
+// gtk_popover_set_constrain_to().
+// gtk_popover_get_constrain_to().

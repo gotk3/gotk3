@@ -15,6 +15,10 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+/*
+ * GtkOverlay
+ */
+
 // ReorderOverlay() is a wrapper around gtk_overlay_reorder_overlay().
 func (v *Overlay) ReorderOverlay(child IWidget, position int) {
 	C.gtk_overlay_reorder_overlay(v.native(), child.toWidget(), C.gint(position))
@@ -30,6 +34,23 @@ func (v *Overlay) GetOverlayPassThrough(widget IWidget) bool {
 func (v *Overlay) SetOverlayPassThrough(widget IWidget, passThrough bool) {
 	C.gtk_overlay_set_overlay_pass_through(v.native(), widget.toWidget(), gbool(passThrough))
 }
+
+/*
+ * GtkPlacesSidebar
+ */
+
+// TODO:
+// gtk_places_sidebar_set_show_recent().
+// gtk_places_sidebar_get_show_recent().
+// gtk_places_sidebar_get_show_trash().
+// gtk_places_sidebar_set_show_trash().
+// gtk_places_sidebar_get_show_other_locations().
+// gtk_places_sidebar_set_show_other_locations().
+// gtk_places_sidebar_set_drop_targets_visible().
+
+/*
+ * GtkPopover
+ */
 
 // SetDefaultWidget is a wrapper around gtk_popover_set_default_widget().
 func (p *Popover) SetDefaultWidget(widget IWidget) {

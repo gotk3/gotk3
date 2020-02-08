@@ -55,3 +55,11 @@ func (v *FontButton) SetFontName(fontname string) bool {
 	c := C.gtk_font_button_set_font_name(v.native(), (*C.gchar)(cstr))
 	return gobool(c)
 }
+
+/*
+ * GtkPopover
+ */
+
+// TODO
+// gtk_popover_set_transitions_enabled().
+// gtk_popover_get_transitions_enabled().

@@ -16,3 +16,17 @@ func (v *Popover) Popup() {
 func (v *Popover) Popdown() {
 	C.gtk_popover_popdown(v.native())
 }
+
+/*
+ * GtkScrolledWindow
+ */
+
+// TODO:
+// gtk_scrolled_window_get_max_content_width().
+// gtk_scrolled_window_set_max_content_width().
+// gtk_scrolled_window_get_max_content_height().
+// gtk_scrolled_window_set_max_content_height().
+// gtk_scrolled_window_get_propagate_natural_width().
+// gtk_scrolled_window_set_propagate_natural_width().
+// gtk_scrolled_window_get_propagate_natural_height().
+// gtk_scrolled_window_set_propagate_natural_height().

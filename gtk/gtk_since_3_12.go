@@ -381,7 +381,15 @@ func (fbc *FlowBoxChild) Changed() {
 }
 
 /*
-* GtkPopover
+ * GtkPlacesSidebar
+ */
+
+// TODO:
+// gtk_places_sidebar_get_local_only().
+// gtk_places_sidebar_set_local_only().
+
+/*
+ * GtkPopover
  */
 
 // Popover is a representation of GTK's GtkPopover.
@@ -421,6 +429,8 @@ func PopoverNew(relative IWidget) (*Popover, error) {
 	}
 	return wrapPopover(glib.Take(unsafe.Pointer(c))), nil
 }
+
+// TODO: gtk_popover_new_from_model().
 
 // BindModel is a wrapper around gtk_popover_bind_model().
 func (v *Popover) BindModel(menuModel *glib.MenuModel, actionNamespace string) {
@@ -466,6 +476,10 @@ func (v *Popover) GetPosition() PositionType {
 	c := C.gtk_popover_get_position(v.native())
 	return PositionType(c)
 }
+
+// TODO:
+// gtk_popover_set_modal().
+// gtk_popover_get_modal().
 
 /*
  * TreePath

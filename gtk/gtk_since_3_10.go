@@ -518,6 +518,24 @@ func (v *ListBoxRow) GetIndex() int {
 }
 
 /*
+ * GtkPlacesSidebar
+ */
+
+// TODO:
+// gtk_places_sidebar_new().
+// gtk_places_sidebar_set_open_flags().
+// gtk_places_sidebar_get_open_flags().
+// gtk_places_sidebar_set_location().
+// gtk_places_sidebar_get_location().
+// gtk_places_sidebar_set_show_desktop().
+// gtk_places_sidebar_get_show_desktop().
+// gtk_places_sidebar_add_shortcut().
+// gtk_places_sidebar_remove_shortcut().
+// gtk_places_sidebar_list_shortcuts().
+// gtk_places_sidebar_get_nth_bookmark().
+// enum GtkPlacesOpenFlags
+
+/*
  * GtkRevealer
  */
 

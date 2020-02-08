@@ -242,3 +242,8 @@ const (
 func (v *Window) ReshowWithInitialSize() {
 	C.gtk_window_reshow_with_initial_size(v.native())
 }
+
+// TODO:
+// gtk_tool_button_new_from_stock().
+// gtk_tool_button_set_stock_id().
+// gtk_tool_button_get_stock_id().
