@@ -1,10 +1,10 @@
-// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16,!gtk_3_18,!gtk_3_20
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12,!gtk_3_14,!gtk_3_16,!gtk_3_18
 
 package gtk
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
-// #include "shortcutswindow_since_3_22.go.h"
+// #include "shortcutswindow_since_3_20.go.h"
 import "C"
 import (
 	"unsafe"
