@@ -9611,7 +9611,7 @@ func (v *TreeModelSort) ConvertChildIterToIter(childIter *TreeIter) (*TreeIter, 
 	var iter C.GtkTreeIter
 	ok := gobool(C.gtk_tree_model_sort_convert_child_iter_to_iter(v.native(), &iter, childIter.native()))
 	t := &TreeIter{iter}
-	return iter, ok
+	return t, ok
 }
 
 // ConvertPathToChildPath is a wrapper around gtk_tree_model_sort_convert_path_to_child_path().
