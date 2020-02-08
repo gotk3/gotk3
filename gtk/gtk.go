@@ -9073,12 +9073,15 @@ func (v *TreeModelFilter) ConvertChildPathToPath(childPath *TreePath) *TreePath 
 		return nil
 	}
 	p := &TreePath{path}
+	runtime.SetFinalizer(p, (*TreePath).free)
 	return p
 }
 
 // ConvertChildIterToIter is a wrapper around gtk_tree_model_filter_convert_child_iter_to_iter().
-func (v *TreeModelFilter) ConvertChildIterToIter(sortIter, childIter *TreeIter) bool {
-	return gobool(C.gtk_tree_model_filter_convert_child_iter_to_iter(v.native(), sortIter.native(), childIter.native()))
+func (v *TreeModelFilter) ConvertChildIterToIter(childIter *TreeIter) (*TreeIter, bool) {
+	var iter C.GtkTreeIter
+	ok := gobool(C.gtk_tree_model_filter_convert_child_iter_to_iter(v.native(), &iter, childIter.native()))
+	return iter, ok
 }
 
 // ConvertIterToChildIter is a wrapper around gtk_tree_model_filter_convert_child_iter_to_iter().
@@ -9095,10 +9098,8 @@ func (v *TreeModelFilter) ConvertPathToChildPath(filterPath *TreePath) *TreePath
 	if path == nil {
 		return nil
 	}
-
 	p := &TreePath{path}
 	runtime.SetFinalizer(p, (*TreePath).free)
-
 	return p
 }
 
@@ -9600,24 +9601,34 @@ func (v *TreeModelSort) ConvertChildPathToPath(childPath *TreePath) *TreePath {
 		return nil
 	}
 	p := &TreePath{path}
+	runtime.SetFinalizer(p, (*TreePath).free)
 	return p
 }
 
 // ConvertChildIterToIter is a wrapper around gtk_tree_model_sort_convert_child_iter_to_iter().
-func (v *TreeModelSort) ConvertChildIterToIter(sortIter, childIter *TreeIter) bool {
-	return gobool(C.gtk_tree_model_sort_convert_child_iter_to_iter(v.native(), sortIter.native(), childIter.native()))
+func (v *TreeModelSort) ConvertChildIterToIter(childIter *TreeIter) (*TreeIter, bool) {
+	var iter C.GtkTreeIter
+	ok := gobool(C.gtk_tree_model_sort_convert_child_iter_to_iter(v.native(), &iter, childIter.native()))
+	return iter, ok
 }
 
 // ConvertPathToChildPath is a wrapper around gtk_tree_model_sort_convert_path_to_child_path().
 func (v *TreeModelSort) ConvertPathToChildPath(sortPath *TreePath) *TreePath {
 	path := C.gtk_tree_model_sort_convert_path_to_child_path(v.native(), sortPath.native())
+	if path == nil {
+		return nilPtrErr
+	}
 	p := &TreePath{path}
+	runtime.SetFinalizer(p, (*TreePath).free)
 	return p
 }
 
 // ConvertIterToChildIter is a wrapper around gtk_tree_model_sort_convert_iter_to_child_iter().
-func (v *TreeModelSort) ConvertIterToChildIter(childIter, sortIter *TreeIter) {
-	C.gtk_tree_model_sort_convert_iter_to_child_iter(v.native(), childIter.native(), sortIter.native())
+func (v *TreeModelSort) ConvertIterToChildIter(sortIter *TreeIter) *TreeIter {
+	var iter C.GtkTreeIter
+	C.gtk_tree_model_sort_convert_iter_to_child_iter(v.native(), &iter, sortIter.native())
+	t := &TreeIter{iter}
+	return t
 }
 
 // ResetDefaultSortFunc is a wrapper around gtk_tree_model_sort_reset_default_sort_func().
