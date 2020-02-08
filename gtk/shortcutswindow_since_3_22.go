@@ -59,7 +59,7 @@ func wrapShortcutsWindow(obj *glib.Object) *ShortcutsWindow {
  * GtkShortcutsSection
  */
 
-// ShortcutsWindow is a representation of GTK's GtkShortcutsSection.
+// ShortcutsSection is a representation of GTK's GtkShortcutsSection.
 type ShortcutsSection struct {
 	Box
 }
@@ -84,10 +84,10 @@ func wrapShortcutsSection(obj *glib.Object) *ShortcutsSection {
 }
 
 /*
- * GtkShortcutsSection
+ * GtkShortcutsGroup
  */
 
-// ShortcutsWindow is a representation of GTK's GtkShortcutsGroup.
+// ShortcutsGroup is a representation of GTK's GtkShortcutsGroup.
 type ShortcutsGroup struct {
 	Box
 }
@@ -115,7 +115,7 @@ func wrapShortcutsGroup(obj *glib.Object) *ShortcutsGroup {
  * GtkShortcutsShortcut
  */
 
-// ShortcutsWindow is a representation of GTK's GtkShortcutsShortcut.
+// ShortcutsShortcut is a representation of GTK's GtkShortcutsShortcut.
 type ShortcutsShortcut struct {
 	Box
 }
