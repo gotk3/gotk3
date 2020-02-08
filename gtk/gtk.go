@@ -9770,22 +9770,6 @@ func ViewportNew(hadjustment, vadjustment *Adjustment) (*Viewport, error) {
 	return wrapViewport(glib.Take(unsafe.Pointer(c))), nil
 }
 
-func (v *Viewport) SetHAdjustment(adjustment *Adjustment) {
-	wrapScrollable(v.Object).SetHAdjustment(adjustment)
-}
-
-func (v *Viewport) GetHAdjustment() (*Adjustment, error) {
-	return wrapScrollable(v.Object).GetHAdjustment()
-}
-
-func (v *Viewport) SetVAdjustment(adjustment *Adjustment) {
-	wrapScrollable(v.Object).SetVAdjustment(adjustment)
-}
-
-func (v *Viewport) GetVAdjustment() (*Adjustment, error) {
-	return wrapScrollable(v.Object).GetVAdjustment()
-}
-
 /*
  * GtkVolumeButton
  */
