@@ -191,6 +191,7 @@ func init() {
 		{glib.Type(C.gtk_tool_item_get_type()), marshalToolItem},
 		{glib.Type(C.gtk_tooltip_get_type()), marshalTooltip},
 		{glib.Type(C.gtk_tree_model_get_type()), marshalTreeModel},
+		{glib.Type(C.gtk_tree_sortable_get_type()), marshalTreeSortable},
 		{glib.Type(C.gtk_tree_selection_get_type()), marshalTreeSelection},
 		{glib.Type(C.gtk_tree_store_get_type()), marshalTreeStore},
 		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
@@ -5122,6 +5123,7 @@ type ListStore struct {
 
 	// Interfaces
 	TreeModel
+	TreeSortable
 }
 
 // native returns a pointer to the underlying GtkListStore.
@@ -5141,7 +5143,8 @@ func marshalListStore(p uintptr) (interface{}, error) {
 
 func wrapListStore(obj *glib.Object) *ListStore {
 	tm := wrapTreeModel(obj)
-	return &ListStore{obj, *tm}
+	ts := wrapTreeSortable(obj)
+	return &ListStore{obj, *tm, *ts}
 }
 
 func (v *ListStore) toTreeModel() *C.GtkTreeModel {
@@ -5230,17 +5233,6 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 // 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(model.toTreeModel()))}
 //	v.TreeModel = *wrapTreeModel(obj)
 //}
-
-// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
-func (v *ListStore) SetSortColumnId(column int, order SortType) {
-	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
-	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
-}
-
-// SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
-func (v *ListStore) SetSortFunc(sortColumn int, f TreeIterCompareFunc, data ...interface{}) error {
-	return v.toTreeSortable().setSortFunc(sortColumn, f, data)
-}
 
 func (v *ListStore) SetCols(iter *TreeIter, cols Cols) error {
 	for key, value := range cols {
@@ -9525,6 +9517,128 @@ func (v *TreeRowReference) Valid() bool {
 }
 
 /*
+ * GtkTreeSortable
+ */
+
+// TreeSortable is a representation of GTK's GtkTreeSortable
+type TreeSortable struct {
+	*glib.Object
+}
+
+// ITreeSortable is an interface type implemented by all structs
+// embedding a TreeSortable.  It is meant to be used as an argument type
+// for wrapper functions that wrap around a C GTK function taking a
+// GtkTreeSortable.
+type ITreeSortable interface {
+	toTreeSortable() *C.GtkTreeSortable
+}
+
+// native returns a pointer to the underlying GtkTreeSortable
+func (v *TreeSortable) native() *C.GtkTreeSortable {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkTreeSortable(p)
+}
+
+func (v *TreeSortable) toTreeSortable() *C.GtkTreeSortable {
+	if v == nil {
+		return nil
+	}
+	return v.native()
+}
+
+func marshalTreeSortable(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapTreeSortable(obj), nil
+}
+
+func wrapTreeSortable(obj *glib.Object) *TreeSortable {
+	return &TreeSortable{obj}
+}
+
+// TreeIterCompareFunc defines the function prototype for the sort function (f arg) for
+// (* TreeSortable).SetSortFunc
+type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData interface{}) int
+
+// GetSortColumnId() is a wrapper around gtk_tree_sortable_get_sort_column_id().
+func (v *TreeSortable) GetSortColumnId() (int, SortType, bool) {
+	sort := C.toGtkTreeSortable(unsafe.Pointer(v.native()))
+	var column C.gint
+	var order C.GtkSortType
+	ok := gobool(C.gtk_tree_sortable_get_sort_column_id(sort, &column, &order))
+	return int(column), SortType(order), ok
+}
+
+type treeStoreSortFuncData struct {
+	fn       TreeIterCompareFunc
+	userData interface{}
+}
+
+var (
+	treeStoreSortFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]treeStoreSortFuncData
+	}{
+		next: 1,
+		m:    make(map[int]treeStoreSortFuncData),
+	}
+)
+
+// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
+func (v *TreeSortable) SetSortColumnId(column int, order SortType) {
+	sort := C.toGtkTreeSortable(unsafe.Pointer(v.native()))
+	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
+}
+
+// SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
+func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc, userData ...interface{}) error {
+	if len(userData) > 1 {
+		return errors.New("userData len must be 0 or 1")
+	}
+
+	t := treeStoreSortFuncData{fn: f}
+	if len(userData) > 0 {
+		t.userData = userData[0]
+	}
+	treeStoreSortFuncRegistry.Lock()
+	id := treeStoreSortFuncRegistry.next
+	treeStoreSortFuncRegistry.next++
+	treeStoreSortFuncRegistry.m[id] = t
+	treeStoreSortFuncRegistry.Unlock()
+
+	C._gtk_tree_sortable_set_sort_func(v.native(), C.gint(sortColumn), C.gpointer(uintptr(id)))
+	return nil
+}
+
+// SetDefaultSortFunc() is a wrapper around gtk_tree_sortable_set_default_sort_func().
+func (v *TreeSortable) SetDefaultSortFunc(f TreeIterCompareFunc, userData ...interface{}) error {
+	if len(userData) > 1 {
+		return errors.New("userData len must be 0 or 1")
+	}
+
+	t := treeStoreSortFuncData{fn: f}
+	if len(userData) > 0 {
+		t.userData = userData[0]
+	}
+	treeStoreSortFuncRegistry.Lock()
+	id := treeStoreSortFuncRegistry.next
+	treeStoreSortFuncRegistry.next++
+	treeStoreSortFuncRegistry.m[id] = t
+	treeStoreSortFuncRegistry.Unlock()
+
+	C._gtk_tree_sortable_set_default_sort_func(v.native(), C.gpointer(uintptr(id)))
+	return nil
+}
+
+func (v *TreeSortable) HasDefaultSortFunc() bool {
+	return gobool(C.gtk_tree_sortable_has_default_sort_func(v.native()))
+}
+
+/*
  * GtkTreeModelSort
  */
 
@@ -9534,6 +9648,7 @@ type TreeModelSort struct {
 
 	// Interfaces
 	TreeModel
+	TreeSortable
 }
 
 // native returns a pointer to the underlying GtkTreeModelSort
@@ -9553,7 +9668,8 @@ func marshalTreeModelSort(p uintptr) (interface{}, error) {
 
 func wrapTreeModelSort(obj *glib.Object) *TreeModelSort {
 	tm := wrapTreeModel(obj)
-	return &TreeModelSort{obj, *tm}
+	ts := wrapTreeSortable(obj)
+	return &TreeModelSort{obj, *tm, *ts}
 }
 
 func (v *TreeModelSort) toTreeModel() *C.GtkTreeModel {
@@ -9648,17 +9764,6 @@ func (v *TreeModelSort) IterIsValid(iter *TreeIter) bool {
 	return gobool(C.gtk_tree_model_sort_iter_is_valid(v.native(), iter.native()))
 }
 
-// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
-func (v *TreeModelSort) SetSortColumnId(column int, order SortType) {
-	sort := C.toGtkTreeSortable(unsafe.Pointer(v.native()))
-	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
-}
-
-// SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
-func (v *TreeModelSort) SetSortFunc(sortColumn int, f TreeIterCompareFunc, data ...interface{}) error {
-	return v.toTreeSortable().setSortFunc(sortColumn, f, data)
-}
-
 /*
  * GtkTreeStore
  */
@@ -9669,6 +9774,7 @@ type TreeStore struct {
 
 	// Interfaces
 	TreeModel
+	TreeSortable
 }
 
 // native returns a pointer to the underlying GtkTreeStore.
@@ -9688,7 +9794,8 @@ func marshalTreeStore(p uintptr) (interface{}, error) {
 
 func wrapTreeStore(obj *glib.Object) *TreeStore {
 	tm := wrapTreeModel(obj)
-	return &TreeStore{obj, *tm}
+	ts := wrapTreeSortable(obj)
+	return &TreeStore{obj, *tm, *ts}
 }
 
 func (v *TreeStore) toTreeModel() *C.GtkTreeModel {
@@ -9696,6 +9803,13 @@ func (v *TreeStore) toTreeModel() *C.GtkTreeModel {
 		return nil
 	}
 	return C.toGtkTreeModel(unsafe.Pointer(v.GObject))
+}
+
+func (v *TreeStore) toTreeSortable() *C.GtkTreeSortable {
+	if v == nil {
+		return nil
+	}
+	return C.toGtkTreeSortable(unsafe.Pointer(v.GObject))
 }
 
 // TreeStoreNew is a wrapper around gtk_tree_store_newv().
@@ -9812,60 +9926,6 @@ func (v *TreeStore) InsertWithValues(iter, parent *TreeIter, position int, inCol
 
 	C.gtk_tree_store_insert_with_valuesv(v.native(), iter.native(), parent.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(length))
 
-	return nil
-}
-
-/*
- * TreeSortable
- */
-
-// TreeSortable is a representation of GTK's GtkTreeSortable Interface.
-type TreeSortable interface {
-	SetSortColumnId(column int, order SortType)
-}
-
-// SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
-func (v *TreeStore) SetSortColumnId(column int, order SortType) {
-	sort := C.toGtkTreeSortable(unsafe.Pointer(v.Native()))
-	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
-}
-
-// TreeIterCompareFunc defines the function prototype for the sort function (f arg) for
-// (* TreeSortable).SetSortFunc
-type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData interface{}) int
-
-type treeStoreSortFuncData struct {
-	fn       TreeIterCompareFunc
-	userData interface{}
-}
-
-var (
-	treeStoreSortFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]treeStoreSortFuncData
-	}{
-		next: 1,
-		m:    make(map[int]treeStoreSortFuncData),
-	}
-)
-
-func (v *C.GtkTreeSortable) setSortFunc(sortColumn int, f TreeIterCompareFunc, userData ...interface{}) error {
-	if len(userData) > 1 {
-		return errors.New("userData len must be 0 or 1")
-	}
-
-	t := treeStoreSortFuncData{fn: f}
-	if len(userData) > 0 {
-		t.userData = userData[0]
-	}
-	treeStoreSortFuncRegistry.Lock()
-	id := treeStoreSortFuncRegistry.next
-	treeStoreSortFuncRegistry.next++
-	treeStoreSortFuncRegistry.m[id] = t
-	treeStoreSortFuncRegistry.Unlock()
-
-	C._gtk_tree_sortable_set_sort_func(v, C.gint(sortColumn), C.gpointer(uintptr(id)))
 	return nil
 }
 
