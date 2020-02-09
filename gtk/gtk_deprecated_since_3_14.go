@@ -37,6 +37,18 @@ func init() {
  * deprecated since version 3.14 and should not be used in newly-written code
  */
 
+/*
+ * GtkTreeView
+ */
+
+// TODO:
+// gtk_tree_view_set_rules_hint().
+// gtk_tree_view_get_rules_hint().
+
+/*
+ * GtkWindow
+ */
+
 // SetHasResizeGrip is a wrapper around gtk_window_set_has_resize_grip().
 func (v *Window) SetHasResizeGrip(setting bool) {
 	C.gtk_window_set_has_resize_grip(v.native(), gbool(setting))

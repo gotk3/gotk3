@@ -10,6 +10,13 @@ import (
 )
 
 /*
+ * GtkToolbar
+ */
+
+// TODO:
+// GtkToolbarSpaceStyle
+
+/*
  * GtkFileChooserButton
  */
 

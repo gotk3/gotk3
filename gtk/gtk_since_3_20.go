@@ -207,6 +207,13 @@ func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
 }
 
 /*
+ * GtkTextView
+ */
+
+// TODO:
+// gtk_text_view_reset_cursor_blink().
+
+/*
  * GtkExpander
  */
 

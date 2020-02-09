@@ -16,6 +16,14 @@ import (
 )
 
 /*
+ * GtkStack
+ */
+
+// TODO:
+// gtk_stack_get_interpolate_size().
+// gtk_stack_set_interpolate_size().
+
+/*
  * GtkRadioMenuItem
  */
 

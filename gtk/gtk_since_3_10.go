@@ -130,6 +130,12 @@ func (v *Grid) RemoveColumn(position int) {
 	C.gtk_grid_remove_column(v.native(), C.gint(position))
 }
 
+// TODO:
+// gtk_grid_get_baseline_row().
+// gtk_grid_set_baseline_row().
+// gtk_grid_get_row_baseline_position().
+// gtk_grid_set_row_baseline_position().
+
 /*
  * GtkHeaderBar
  */

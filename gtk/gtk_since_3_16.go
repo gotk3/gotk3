@@ -57,6 +57,23 @@ func marshalButtonRole(p uintptr) (interface{}, error) {
 }
 
 /*
+ * GtkStack
+ */
+
+// TODO:
+// gtk_stack_set_hhomogeneous().
+// gtk_stack_get_hhomogeneous().
+// gtk_stack_set_vhomogeneous().
+// gtk_stack_get_vhomogeneous().
+
+/*
+ * GtkNotebook
+ */
+
+// TODO:
+// gtk_notebook_detach_tab().
+
+/*
  * GtkListBox
  */
 

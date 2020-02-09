@@ -11,6 +11,16 @@ import (
 )
 
 /*
+ * GtkStack
+ */
+
+// TODO:
+// GtkStackTransitionType
+// GTK_STACK_TRANSITION_TYPE_OVER_DOWN_UP
+// GTK_STACK_TRANSITION_TYPE_OVER_LEFT_RIGHT
+// GTK_STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT
+
+/*
  * GtkListBox
  */
 

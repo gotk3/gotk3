@@ -16,12 +16,13 @@ import (
 type TextWindowType int
 
 const (
-	TEXT_WINDOW_WIDGET TextWindowType = C.GTK_TEXT_WINDOW_WIDGET
-	TEXT_WINDOW_TEXT   TextWindowType = C.GTK_TEXT_WINDOW_TEXT
-	TEXT_WINDOW_LEFT   TextWindowType = C.GTK_TEXT_WINDOW_LEFT
-	TEXT_WINDOW_RIGHT  TextWindowType = C.GTK_TEXT_WINDOW_RIGHT
-	TEXT_WINDOW_TOP    TextWindowType = C.GTK_TEXT_WINDOW_TOP
-	TEXT_WINDOW_BOTTOM TextWindowType = C.GTK_TEXT_WINDOW_BOTTOM
+	TEXT_WINDOW_PRIVATE TextWindowType = C.GTK_TEXT_WINDOW_PRIVATE
+	TEXT_WINDOW_WIDGET  TextWindowType = C.GTK_TEXT_WINDOW_WIDGET
+	TEXT_WINDOW_TEXT    TextWindowType = C.GTK_TEXT_WINDOW_TEXT
+	TEXT_WINDOW_LEFT    TextWindowType = C.GTK_TEXT_WINDOW_LEFT
+	TEXT_WINDOW_RIGHT   TextWindowType = C.GTK_TEXT_WINDOW_RIGHT
+	TEXT_WINDOW_TOP     TextWindowType = C.GTK_TEXT_WINDOW_TOP
+	TEXT_WINDOW_BOTTOM  TextWindowType = C.GTK_TEXT_WINDOW_BOTTOM
 )
 
 /*
@@ -406,9 +407,7 @@ func (v *TextView) AddChildAtAnchor(child IWidget, anchor *TextChildAnchor) {
 	C.gtk_text_view_add_child_at_anchor(v.native(), child.toWidget(), anchor.native())
 }
 
-// GtkAdjustment * 	gtk_text_view_get_hadjustment ()  -- DEPRECATED
-// GtkAdjustment * 	gtk_text_view_get_vadjustment ()  -- DEPRECATED
-// void 	gtk_text_view_add_child_at_anchor ()
+// TODO:
 // GtkTextChildAnchor * 	gtk_text_child_anchor_new ()
 // GList * 	gtk_text_child_anchor_get_widgets ()
 // gboolean 	gtk_text_child_anchor_get_deleted ()
@@ -421,3 +420,5 @@ func (v *TextView) AddChildAtAnchor(child IWidget, anchor *TextChildAnchor) {
 // GtkTextAttributes * 	gtk_text_view_get_default_attributes () -- GtkTextAttributes
 // void 	gtk_text_view_set_monospace () -- SINCE 3.16
 // gboolean 	gtk_text_view_get_monospace () -- SINCE 3.16
+// GtkTextViewLayer
+// GtkTextExtendSelection

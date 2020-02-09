@@ -629,7 +629,7 @@ func marshalPolicyType(p uintptr) (interface{}, error) {
 	return PolicyType(c), nil
 }
 
-// TreeViewGridLine is a representation of GTK's GtkTreeViewGridLine.
+// TreeViewGridLine is a representation of GTK's GtkTreeViewGridLines.
 type TreeViewGridLines int
 
 const (
@@ -5068,6 +5068,9 @@ func (v *Layout) GetSize() (width, height uint) {
 	return uint(w), uint(h)
 }
 
+// TODO:
+// gtk_layout_get_bin_window().
+
 /*
  * GtkLinkButton
  */
@@ -8416,8 +8419,7 @@ func (v *Toolbar) GetDropIndex(x, y int) int {
 	return int(c)
 }
 
-// SetDropHighlightItem is a wrapper around
-// gtk_toolbar_set_drop_highlight_item().
+// SetDropHighlightItem is a wrapper around gtk_toolbar_set_drop_highlight_item().
 func (v *Toolbar) SetDropHighlightItem(toolItem IToolItem, index int) {
 	C.gtk_toolbar_set_drop_highlight_item(v.native(),
 		toolItem.toToolItem(), C.gint(index))
@@ -8825,6 +8827,56 @@ func (v *ToolItem) ToolbarReconfigured() {
 }
 
 // TODO: gtk_tool_item_get_text_size_group
+
+/*
+ * GtkToolItemGroup
+ */
+
+// TODO:
+// gtk_tool_item_group_get_collapsed().
+// gtk_tool_item_group_get_drop_item().
+// gtk_tool_item_group_get_ellipsize().
+// gtk_tool_item_group_get_item_position().
+// gtk_tool_item_group_get_n_items().
+// gtk_tool_item_group_get_label().
+// gtk_tool_item_group_get_label_widget().
+// gtk_tool_item_group_get_nth_item().
+// gtk_tool_item_group_get_header_relief().
+// gtk_tool_item_group_insert().
+// gtk_tool_item_group_new().
+// gtk_tool_item_group_set_collapsed().
+// gtk_tool_item_group_set_ellipsize().
+// gtk_tool_item_group_set_item_position().
+// gtk_tool_item_group_set_label().
+// gtk_tool_item_group_set_label_widget().
+// gtk_tool_item_group_set_header_relief().
+
+/*
+ * GtkToolPalette
+ */
+
+// TODO:
+// gtk_tool_palette_new().
+// gtk_tool_palette_get_exclusive().
+// gtk_tool_palette_set_exclusive().
+// gtk_tool_palette_get_expand().
+// gtk_tool_palette_set_expand().
+// gtk_tool_palette_get_group_position().
+// gtk_tool_palette_set_group_position().
+// gtk_tool_palette_get_icon_size().
+// gtk_tool_palette_set_icon_size().
+// gtk_tool_palette_unset_icon_size().
+// gtk_tool_palette_get_style().
+// gtk_tool_palette_set_style().
+// gtk_tool_palette_unset_style().
+// gtk_tool_palette_add_drag_dest().
+// gtk_tool_palette_get_drag_item().
+// gtk_tool_palette_get_drag_target_group().
+// gtk_tool_palette_get_drag_target_item().
+// gtk_tool_palette_get_drop_group().
+// gtk_tool_palette_get_drop_item().
+// gtk_tool_palette_set_drag_source().
+// GtkToolPaletteDragTargets
 
 /*
  * GtkTreeIter
