@@ -255,6 +255,20 @@ func goString(cstr *C.gchar) string {
 	return C.GoString((*C.char)(cstr))
 }
 
+// same implementation as package glib
+func toGoStringArray(c **C.gchar) []string {
+	var strs []string
+	originalc := c
+	defer C.g_strfreev(originalc)
+
+	for *c != nil {
+		strs = append(strs, C.GoString((*C.char)(*c)))
+		c = C.next_gcharptr(c)
+	}
+
+	return strs
+}
+
 // Wrapper function for TestBoolConvs since cgo can't be used with
 // testing package
 func testBoolConvs() error {
@@ -6841,7 +6855,7 @@ type ScaleButton struct {
 	Button
 }
 
-// native() returns a pointer to the underlying GtkScaleButton.
+// native returns a pointer to the underlying GtkScaleButton.
 func (v *ScaleButton) native() *C.GtkScaleButton {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -6861,7 +6875,7 @@ func wrapScaleButton(obj *glib.Object) *ScaleButton {
 	return &ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}
 }
 
-// ScaleButtonNew() is a wrapper around gtk_scale_button_new().
+// ScaleButtonNew is a wrapper around gtk_scale_button_new().
 func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*ScaleButton, error) {
 	cicons := make([]*C.gchar, len(icons))
 	for i, icon := range icons {
@@ -6881,14 +6895,7 @@ func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*Sca
 	return wrapScaleButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// GetAdjustment() is a wrapper around gtk_scale_button_get_adjustment().
-func (v *ScaleButton) GetAdjustment() *Adjustment {
-	c := C.gtk_scale_button_get_adjustment(v.native())
-	obj := glib.Take(unsafe.Pointer(c))
-	return &Adjustment{glib.InitiallyUnowned{obj}}
-}
-
-// GetPopup() is a wrapper around gtk_scale_button_get_popup().
+// GetPopup is a wrapper around gtk_scale_button_get_popup().
 func (v *ScaleButton) GetPopup() (*Widget, error) {
 	c := C.gtk_scale_button_get_popup(v.native())
 	if c == nil {
@@ -6897,19 +6904,53 @@ func (v *ScaleButton) GetPopup() (*Widget, error) {
 	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// GetValue() is a wrapper around gtk_scale_button_get_value().
+// GetValue is a wrapper around gtk_scale_button_get_value().
 func (v *ScaleButton) GetValue() float64 {
 	return float64(C.gtk_scale_button_get_value(v.native()))
 }
 
-// SetAdjustment() is a wrapper around gtk_scale_button_set_adjustment().
+// SetValue is a wrapper around gtk_scale_button_set_value().
+func (v *ScaleButton) SetValue(value float64) {
+	C.gtk_scale_button_set_value(v.native(), C.gdouble(value))
+}
+
+// SetIcons is a wrapper around gtk_scale_button_set_icons().
+func (v *ScaleButton) SetIcons() []string {
+	var iconNames *C.gchar = nil
+	C.gtk_scale_button_set_icons(v.native(), &iconNames)
+	return toGoStringArray(&iconNames)
+}
+
+// GetAdjustment is a wrapper around gtk_scale_button_get_adjustment().
+func (v *ScaleButton) GetAdjustment() *Adjustment {
+	c := C.gtk_scale_button_get_adjustment(v.native())
+	obj := glib.Take(unsafe.Pointer(c))
+	return &Adjustment{glib.InitiallyUnowned{obj}}
+}
+
+// SetAdjustment is a wrapper around gtk_scale_button_set_adjustment().
 func (v *ScaleButton) SetAdjustment(adjustment *Adjustment) {
 	C.gtk_scale_button_set_adjustment(v.native(), adjustment.native())
 }
 
-// SetValue() is a wrapper around gtk_scale_button_set_value().
-func (v *ScaleButton) SetValue(value float64) {
-	C.gtk_scale_button_set_value(v.native(), C.gdouble(value))
+// GetPlusButton is a wrapper around gtk_scale_button_get_plus_button().
+func (v *ScaleButton) GetPlusButton() *Widget {
+	c := C.gtk_scale_button_get_plus_button(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapWidget(obj)
+}
+
+// GetMinusButton is a wrapper around gtk_scale_button_get_minus_button().
+func (v *ScaleButton) GetMinusButton() *Widget {
+	c := C.gtk_scale_button_get_minus_button(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapWidget(obj)
 }
 
 /*
