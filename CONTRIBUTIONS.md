@@ -9,5 +9,5 @@
   - [raichu](https://github.com/raichu/gotk3)
   - [juniorz](https://github.com/juniorz)
   - [thanhps42](https://github.com/thanhps42)
-  - [MJacred](https://github.com/MJacred/gotk3)
+  - [cubiest](https://github.com/cubiest/gotk3) - [MJacred](https://github.com/MJacred) & [founderio](https://github.com/founderio)
   - you?

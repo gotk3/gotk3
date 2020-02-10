@@ -9921,39 +9921,79 @@ var WrapMap = map[string]WrapFn{
 	"GtkWindow":               wrapWindow,
 }
 
+// castInternal casts the given object to the appropriate Go struct, but returns it as interface for later type assertions.
+// The className is the results of C.object_get_class_name(c) called on the native object.
+// The obj is the result of glib.Take(unsafe.Pointer(c)), used as a parameter for the wrapper functions.
+func castInternal(className string, obj *glib.Object) (interface{}, error) {
+	fn, ok := WrapMap[className]
+	if !ok {
+		return nil, errors.New("unrecognized class name '" + className + "'")
+	}
+
+	// Check that the wrapper function is actually a function
+	rf := reflect.ValueOf(fn)
+	if rf.Type().Kind() != reflect.Func {
+		return nil, errors.New("wraper is not a function")
+	}
+
+	// Call the wraper function with the *glib.Object as first parameter
+	// e.g. "wrapWindow(obj)"
+	v := reflect.ValueOf(obj)
+	rv := rf.Call([]reflect.Value{v})
+
+	// At most/max 1 return value
+	if len(rv) != 1 {
+		return nil, errors.New("wrapper did not return")
+	}
+
+	// Needs to be a pointer of some sort
+	if k := rv[0].Kind(); k != reflect.Ptr {
+		return nil, fmt.Errorf("wrong return type %s", k)
+	}
+
+	// Only get an interface value, type check will be done in more specific functions
+	return rv[0].Interface(), nil
+}
+
 // cast takes a native GObject and casts it to the appropriate Go struct.
 //TODO change all wrapFns to return an IObject
+//^- not sure about this TODO. This may make some usages of the wrapper functions quite verbose, no?
 func cast(c *C.GObject) (glib.IObject, error) {
 	var (
 		className = goString(C.object_get_class_name(c))
 		obj       = glib.Take(unsafe.Pointer(c))
 	)
 
-	fn, ok := WrapMap[className]
-	if !ok {
-		return nil, errors.New("unrecognized class name '" + className + "'")
+	intf, err := castInternal(className, obj)
+	if err != nil {
+		return nil, err
 	}
 
-	rf := reflect.ValueOf(fn)
-	if rf.Type().Kind() != reflect.Func {
-		return nil, errors.New("wraper is not a function")
-	}
-
-	v := reflect.ValueOf(obj)
-	rv := rf.Call([]reflect.Value{v})
-
-	if len(rv) != 1 {
-		return nil, errors.New("wrapper did not return")
-	}
-
-	if k := rv[0].Kind(); k != reflect.Ptr {
-		return nil, fmt.Errorf("wrong return type %s", k)
-	}
-
-	ret, ok := rv[0].Interface().(glib.IObject)
+	ret, ok := intf.(glib.IObject)
 	if !ok {
 		return nil, errors.New("did not return an IObject")
 	}
 
 	return ret, nil
 }
+
+// cast takes a native GtkWidget and casts it to the appropriate Go struct.
+func castWidget(c *C.GtkWidget) (IWidget, error) {
+	var (
+		className = goString(C.object_get_class_name(C.toGObject(unsafe.Pointer(c))))
+		obj       = glib.Take(unsafe.Pointer(c))
+	)
+
+	intf, err := castInternal(className, obj)
+	if err != nil {
+		return nil, err
+	}
+
+	ret, ok := intf.(IWidget)
+	if !ok {
+		return nil, errors.New("did not return an IWidget")
+	}
+
+	return ret, nil
+}
+

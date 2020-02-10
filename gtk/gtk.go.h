@@ -766,6 +766,12 @@ toGdkPixbuf(void *p)
 	return (GDK_PIXBUF(p));
 }
 
+static GObject *
+toGObject(void *p)
+{
+	return (G_OBJECT(p));
+}
+
 static GType *
 alloc_types(int n) {
 	return ((GType *)g_new0(GType, n));
@@ -775,6 +781,13 @@ static void
 set_type(GType *types, int n, GType t)
 {
 	types[n] = t;
+}
+
+// _gtk_test_init is a wrapper to use gtk_test_init directly from go.
+// The variadic part on gtk_test_init is not used at the moment, according to the documentation.
+static void _gtk_test_init(int *argcp, char ***argvp)
+{
+	gtk_test_init(argcp, argvp);
 }
 
 static GtkTreeViewColumn *
