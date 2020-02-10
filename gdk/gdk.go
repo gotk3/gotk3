@@ -254,6 +254,20 @@ const (
 	SCROLL_SMOOTH ScrollDirection = C.GDK_SCROLL_SMOOTH
 )
 
+// WindowEdge is a representation of GDK's GdkWindowEdge
+type WindowEdge int
+
+const (
+	WINDOW_EDGE_NORTH_WEST WindowEdge = C.GDK_WINDOW_EDGE_NORTH_WEST
+	WINDOW_EDGE_NORTH      WindowEdge = C.GDK_WINDOW_EDGE_NORTH
+	WINDOW_EDGE_NORTH_EAST WindowEdge = C.GDK_WINDOW_EDGE_NORTH_EAST
+	WINDOW_EDGE_WEST       WindowEdge = C.GDK_WINDOW_EDGE_WEST
+	WINDOW_EDGE_EAST       WindowEdge = C.GDK_WINDOW_EDGE_EAST
+	WINDOW_EDGE_SOUTH_WEST WindowEdge = C.GDK_WINDOW_EDGE_SOUTH_WEST
+	WINDOW_EDGE_SOUTH      WindowEdge = C.GDK_WINDOW_EDGE_SOUTH
+	WINDOW_EDGE_SOUTH_EAST WindowEdge = C.GDK_WINDOW_EDGE_SOUTH_EAST
+)
+
 // WindowState is a representation of GDK's GdkWindowState
 type WindowState int
 
@@ -292,7 +306,7 @@ const (
 // WindowHints is a representation of GDK's GdkWindowHints
 type WindowHints int
 
-const(
+const (
 	HINT_POS         WindowHints = C.GDK_HINT_POS
 	HINT_MIN_SIZE    WindowHints = C.GDK_HINT_MIN_SIZE
 	HINT_MAX_SIZE    WindowHints = C.GDK_HINT_MAX_SIZE

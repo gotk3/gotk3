@@ -1,3 +1,5 @@
+// Same copyright and license as the rest of the files in this project
+
 // +build !gtk_3_6,!gtk_3_8,!gtk_3_10
 
 package gtk
