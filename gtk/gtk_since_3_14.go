@@ -1,12 +1,16 @@
+// Same copyright and license as the rest of the files in this project
 // +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12
 
 package gtk
 
 // #include <stdlib.h>
 // #include <gtk/gtk.h>
+// #include "gtk_since_3_14.go.h"
 import "C"
 import (
+	"sync"
 	"unsafe"
+
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -29,7 +33,38 @@ func (v *ListBox) UnselectAll() {
 	C.gtk_list_box_unselect_all(v.native())
 }
 
-// TODO: gtk_list_box_selected_foreach()
+type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow, userData uintptr) int
+
+type listBoxForeachFuncData struct {
+	fn       ListBoxForeachFunc
+	userData uintptr
+}
+
+var (
+	listBoxForeachFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]listBoxForeachFuncData
+	}{
+		next: 1,
+		m:    make(map[int]listBoxForeachFuncData),
+	}
+)
+
+// SelectedForeach is a wrapper around gtk_list_box_selected_foreach().
+func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc, userData uintptr) {
+	listBoxForeachFuncRegistry.Lock()
+	id := listBoxForeachFuncRegistry.next
+	listBoxForeachFuncRegistry.next++
+	listBoxForeachFuncRegistry.m[id] = listBoxForeachFuncData{fn: fn, userData: userData}
+	listBoxForeachFuncRegistry.Unlock()
+
+	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(uintptr(id)))
+
+	listBoxForeachFuncRegistry.Lock()
+	delete(listBoxForeachFuncRegistry.m, id)
+	listBoxForeachFuncRegistry.Unlock()
+}
 
 // GetSelectedRows is a wrapper around gtk_list_box_get_selected_rows().
 func (v *ListBox) GetSelectedRows() *glib.List {
