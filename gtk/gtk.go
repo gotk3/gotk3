@@ -9812,20 +9812,33 @@ func ViewportNew(hadjustment, vadjustment *Adjustment) (*Viewport, error) {
 	return wrapViewport(glib.Take(unsafe.Pointer(c))), nil
 }
 
-func (v *Viewport) SetHAdjustment(adjustment *Adjustment) {
-	wrapScrollable(v.Object).SetHAdjustment(adjustment)
+// SetShadowType is a wrapper around gtk_viewport_set_shadow_type().
+func (v *Viewport) SetShadowType(shadowType ShadowType) {
+	C.gtk_viewport_set_shadow_type(v.native(), C.GtkShadowType(shadowType))
 }
 
-func (v *Viewport) GetHAdjustment() (*Adjustment, error) {
-	return wrapScrollable(v.Object).GetHAdjustment()
+// GetShadowType is a wrapper around gtk_viewport_get_shadow_type().
+func (v *Viewport) GetShadowType() ShadowType {
+	c := C.gtk_viewport_get_shadow_type(v.native())
+	return ShadowType(c)
 }
 
-func (v *Viewport) SetVAdjustment(adjustment *Adjustment) {
-	wrapScrollable(v.Object).SetVAdjustment(adjustment)
+// GetBinWindow is a wrapper around gtk_viewport_get_bin_window().
+func (v *Viewport) GetBinWindow() *gdk.Window {
+	c := C.gtk_viewport_get_bin_window(v.native())
+	if c == nil {
+		return nil
+	}
+	return &gdk.Window{glib.Take(unsafe.Pointer(c))}
 }
 
-func (v *Viewport) GetVAdjustment() (*Adjustment, error) {
-	return wrapScrollable(v.Object).GetVAdjustment()
+// GetViewWindow is a wrapper around gtk_viewport_get_view_window().
+func (v *Viewport) GetViewWindow() *gdk.Window {
+	c := C.gtk_viewport_get_view_window(v.native())
+	if c == nil {
+		return nil
+	}
+	return &gdk.Window{glib.Take(unsafe.Pointer(c))}
 }
 
 /*
