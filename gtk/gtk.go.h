@@ -383,7 +383,7 @@ toGtkLayout(void *p)
 }
 
 static GtkTreeModelSort *
-toGtkTreeModelSort(void *p)
+toGtkTreeModelSortable(void *p)
 {
     return (GTK_TREE_MODEL_SORT(p));
 }
@@ -494,6 +494,12 @@ static GtkTreeSelection *
 toGtkTreeSelection(void *p)
 {
 	return (GTK_TREE_SELECTION(p));
+}
+
+static GtkTreeModelSort *
+toGtkTreeModelSort(void *p)
+{
+	return (GTK_TREE_MODEL_SORT(p));
 }
 
 static GtkTreeSortable *
@@ -983,6 +989,10 @@ extern gint goTreeSortableSortFuncs(GtkTreeModel *model, GtkTreeIter *a, GtkTree
 
 static inline void _gtk_tree_sortable_set_sort_func(GtkTreeSortable *sortable, gint sort_column_id, gpointer user_data) {
     gtk_tree_sortable_set_sort_func(sortable, sort_column_id, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data, NULL);
+}
+
+static inline void _gtk_tree_sortable_set_default_sort_func(GtkTreeSortable *sortable, gpointer user_data) {
+    gtk_tree_sortable_set_default_sort_func(sortable, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data, NULL);
 }
 
 static GtkWidget *
