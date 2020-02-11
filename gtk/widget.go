@@ -70,21 +70,92 @@ func wrapWidget(obj *glib.Object) *Widget {
 	return &Widget{glib.InitiallyUnowned{obj}}
 }
 
+// TODO:
+// GtkCallback().
+// gtk_widget_new().
+
 // Destroy is a wrapper around gtk_widget_destroy().
 func (v *Widget) Destroy() {
 	C.gtk_widget_destroy(v.native())
 }
 
+// HideOnDelete is a wrapper around gtk_widget_hide_on_delete().
+// Calling this func adds gtk_widget_hide_on_delete to the widget's "delete-event" signal.
 func (v *Widget) HideOnDelete() {
 	C._gtk_widget_hide_on_delete(v.native())
 }
 
+// TODO:
+// gtk_widget_set_direction().
+// gtk_widget_get_direction().
+// gtk_widget_set_default_direction().
+// gtk_widget_get_default_direction().
+// gtk_widget_input_shape_combine_region().
+// gtk_widget_create_pango_context().
+// gtk_widget_create_pango_context().
+// gtk_widget_get_pango_context().
+// gtk_widget_create_pango_layout().
+
+// QueueDrawArea is a wrapper aroung gtk_widget_queue_draw_area().
+func (v *Widget) QueueDrawArea(x, y, w, h int) {
+	C.gtk_widget_queue_draw_area(v.native(), C.gint(x), C.gint(y), C.gint(w), C.gint(h))
+}
+
+// TODO:
+// gtk_widget_queue_draw_region().
+// gtk_widget_set_redraw_on_allocate().
+// gtk_widget_mnemonic_activate().
+// gtk_widget_class_install_style_property().
+// gtk_widget_class_install_style_property_parser().
+// gtk_widget_class_find_style_property().
+// gtk_widget_class_list_style_properties().
+// gtk_widget_send_focus_change().
+// gtk_widget_style_get().
+// gtk_widget_style_get_property().
+// gtk_widget_style_get_valist().
+// gtk_widget_class_set_accessible_type().
+// gtk_widget_get_accessible().
+// gtk_widget_child_focus().
+// gtk_widget_child_notify().
+// gtk_widget_get_child_visible().
+// gtk_widget_get_settings().
+// gtk_widget_get_clipboard().
+// gtk_widget_get_display().
+
+// GetScreen is a wrapper around gtk_widget_get_screen().
+func (v *Widget) GetScreen() (*gdk.Screen, error) {
+	c := C.gtk_widget_get_screen(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	s := &gdk.Screen{glib.Take(unsafe.Pointer(c))}
+	return s, nil
+}
+
+// TODO:
+// gtk_widget_has_screen().
+// gtk_widget_get_size_request().
+// gtk_widget_set_child_visible().
+// gtk_widget_list_mnemonic_labels().
+// gtk_widget_add_mnemonic_label().
+// gtk_widget_remove_mnemonic_label().
+// gtk_widget_error_bell().
+// gtk_widget_keynav_failed().
+// gtk_widget_get_tooltip_window().
+// gtk_widget_get_has_tooltip().
+// gtk_widget_set_has_tooltip().
+// gtk_widget_trigger_tooltip_query().
+// gtk_cairo_should_draw_window().
+// gtk_cairo_transform_to_window().
+
+// DragDestSet is a wrapper around gtk_drag_dest_set().
 func (v *Widget) DragDestSet(flags DestDefaults, targets []TargetEntry, actions gdk.DragAction) {
 	C.gtk_drag_dest_set(v.native(), C.GtkDestDefaults(flags), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
 }
 
-func (v *Widget) DragSourceSet(start_button_mask gdk.ModifierType, targets []TargetEntry, actions gdk.DragAction) {
-	C.gtk_drag_source_set(v.native(), C.GdkModifierType(start_button_mask), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+// DragSourceSet is a wrapper around gtk_drag_source_set().
+func (v *Widget) DragSourceSet(startButtonMask gdk.ModifierType, targets []TargetEntry, actions gdk.DragAction) {
+	C.gtk_drag_source_set(v.native(), C.GdkModifierType(startButtonMask), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
 }
 
 // ResetStyle is a wrapper around gtk_widget_reset_style().
@@ -99,6 +170,7 @@ func (v *Widget) InDestruction() bool {
 
 // TODO(jrick) this may require some rethinking
 /*
+// Destroyed is a wrapper around gtk_widget_destroyed().
 func (v *Widget) Destroyed(widgetPointer **Widget) {
 }
 */
@@ -140,16 +212,125 @@ func (v *Widget) SetCanDefault(canDefault bool) {
 	C.gtk_widget_set_can_default(v.native(), gbool(canDefault))
 }
 
+// SetMapped is a wrapper around gtk_widget_set_mapped().
+func (v *Widget) SetMapped(mapped bool) {
+	C.gtk_widget_set_mapped(v.native(), gbool(mapped))
+}
+
 // GetMapped is a wrapper around gtk_widget_get_mapped().
 func (v *Widget) GetMapped() bool {
 	c := C.gtk_widget_get_mapped(v.native())
 	return gobool(c)
 }
 
-// SetMapped is a wrapper around gtk_widget_set_mapped().
-func (v *Widget) SetMapped(mapped bool) {
-	C.gtk_widget_set_can_focus(v.native(), gbool(mapped))
+// TODO:
+// gtk_widget_device_is_shadowed().
+// gtk_widget_get_modifier_mask().
+
+// InsertActionGroup is a wrapper around gtk_widget_insert_action_group().
+func (v *Widget) InsertActionGroup(name string, group glib.IActionGroup) {
+	C.gtk_widget_insert_action_group(v.native(), (*C.gchar)(C.CString(name)), C.toGActionGroup(unsafe.Pointer(group.Native())))
 }
+
+// TODO:
+// gtk_widget_get_path().
+
+// GetPreferredHeight is a wrapper around gtk_widget_get_preferred_height().
+func (v *Widget) GetPreferredHeight() (int, int) {
+	var minimum, natural C.gint
+	C.gtk_widget_get_preferred_height(v.native(), &minimum, &natural)
+	return int(minimum), int(natural)
+}
+
+// GetPreferredWidth is a wrapper around gtk_widget_get_preferred_width().
+func (v *Widget) GetPreferredWidth() (int, int) {
+	var minimum, natural C.gint
+	C.gtk_widget_get_preferred_width(v.native(), &minimum, &natural)
+	return int(minimum), int(natural)
+}
+
+// TODO:
+// gtk_widget_get_preferred_height_for_width().
+// gtk_widget_get_preferred_width_for_height().
+// gtk_widget_get_request_mode().
+// gtk_widget_get_preferred_size().
+// gtk_distribute_natural_allocation().
+
+// GetHAlign is a wrapper around gtk_widget_get_halign().
+func (v *Widget) GetHAlign() Align {
+	c := C.gtk_widget_get_halign(v.native())
+	return Align(c)
+}
+
+// SetHAlign is a wrapper around gtk_widget_set_halign().
+func (v *Widget) SetHAlign(align Align) {
+	C.gtk_widget_set_halign(v.native(), C.GtkAlign(align))
+}
+
+// GetVAlign is a wrapper around gtk_widget_get_valign().
+func (v *Widget) GetVAlign() Align {
+	c := C.gtk_widget_get_valign(v.native())
+	return Align(c)
+}
+
+// SetVAlign is a wrapper around gtk_widget_set_valign().
+func (v *Widget) SetVAlign(align Align) {
+	C.gtk_widget_set_valign(v.native(), C.GtkAlign(align))
+}
+
+// GetMarginTop is a wrapper around gtk_widget_get_margin_top().
+func (v *Widget) GetMarginTop() int {
+	c := C.gtk_widget_get_margin_top(v.native())
+	return int(c)
+}
+
+// SetMarginTop is a wrapper around gtk_widget_set_margin_top().
+func (v *Widget) SetMarginTop(margin int) {
+	C.gtk_widget_set_margin_top(v.native(), C.gint(margin))
+}
+
+// GetMarginBottom is a wrapper around gtk_widget_get_margin_bottom().
+func (v *Widget) GetMarginBottom() int {
+	c := C.gtk_widget_get_margin_bottom(v.native())
+	return int(c)
+}
+
+// SetMarginBottom is a wrapper around gtk_widget_set_margin_bottom().
+func (v *Widget) SetMarginBottom(margin int) {
+	C.gtk_widget_set_margin_bottom(v.native(), C.gint(margin))
+}
+
+// GetHExpand is a wrapper around gtk_widget_get_hexpand().
+func (v *Widget) GetHExpand() bool {
+	c := C.gtk_widget_get_hexpand(v.native())
+	return gobool(c)
+}
+
+// SetHExpand is a wrapper around gtk_widget_set_hexpand().
+func (v *Widget) SetHExpand(expand bool) {
+	C.gtk_widget_set_hexpand(v.native(), gbool(expand))
+}
+
+// TODO:
+// gtk_widget_get_hexpand_set().
+// gtk_widget_set_hexpand_set().
+
+// GetVExpand is a wrapper around gtk_widget_get_vexpand().
+func (v *Widget) GetVExpand() bool {
+	c := C.gtk_widget_get_vexpand(v.native())
+	return gobool(c)
+}
+
+// SetVExpand is a wrapper around gtk_widget_set_vexpand().
+func (v *Widget) SetVExpand(expand bool) {
+	C.gtk_widget_set_vexpand(v.native(), gbool(expand))
+}
+
+// TODO:
+// gtk_widget_get_vexpand_set().
+// gtk_widget_set_vexpand_set().
+// gtk_widget_queue_compute_expand().
+// gtk_widget_compute_expand().
 
 // GetRealized is a wrapper around gtk_widget_get_realized().
 func (v *Widget) GetRealized() bool {
@@ -204,48 +385,14 @@ func (v *Widget) Unmap() {
 	C.gtk_widget_unmap(v.native())
 }
 
-// QueueDrawArea is a wrapper aroung gtk_widget_queue_draw_area().
-func (v *Widget) QueueDrawArea(x, y, w, h int) {
-	C.gtk_widget_queue_draw_area(v.native(), C.gint(x), C.gint(y), C.gint(w), C.gint(h))
-}
-
+// TODO:
 //void gtk_widget_realize(GtkWidget *widget);
 //void gtk_widget_unrealize(GtkWidget *widget);
 //void gtk_widget_draw(GtkWidget *widget, cairo_t *cr);
 //void gtk_widget_queue_resize(GtkWidget *widget);
 //void gtk_widget_queue_resize_no_redraw(GtkWidget *widget);
-//GdkFrameClock *gtk_widget_get_frame_clock(GtkWidget *widget);
-//guint gtk_widget_add_tick_callback (GtkWidget *widget,
-//                                    GtkTickCallback callback,
-//                                    gpointer user_data,
-//                                    GDestroyNotify notify);
-//void gtk_widget_remove_tick_callback(GtkWidget *widget, guint id);
-
-// TODO(jrick) GtkAllocation
-/*
-func (v *Widget) SizeAllocate() {
-}
-*/
-
-// Allocation is a representation of GTK's GtkAllocation type.
-type Allocation struct {
-	gdk.Rectangle
-}
-
-// Native returns a pointer to the underlying GtkAllocation.
-func (v *Allocation) native() *C.GtkAllocation {
-	return (*C.GtkAllocation)(unsafe.Pointer(&v.GdkRectangle))
-}
-
-// GetAllocatedWidth() is a wrapper around gtk_widget_get_allocated_width().
-func (v *Widget) GetAllocatedWidth() int {
-	return int(C.gtk_widget_get_allocated_width(v.native()))
-}
-
-// GetAllocatedHeight() is a wrapper around gtk_widget_get_allocated_height().
-func (v *Widget) GetAllocatedHeight() int {
-	return int(C.gtk_widget_get_allocated_height(v.native()))
-}
+// gtk_widget_queue_allocate().
+// gtk_widget_get_scale_factor().
 
 // Event() is a wrapper around gtk_widget_event().
 func (v *Widget) Event(event *gdk.Event) bool {
@@ -386,6 +533,25 @@ func (v *Widget) AddEvents(events int) {
 	C.gtk_widget_add_events(v.native(), C.gint(events))
 }
 
+// TODO:
+/*
+// gtk_widget_set_device_events().
+func (v *Widget) SetDeviceEvents() {
+}
+*/
+
+/*
+// gtk_widget_get_device_events().
+func (v *Widget) GetDeviceEvents() {
+}
+*/
+
+/*
+// gtk_widget_add_device_events().
+func (v *Widget) AddDeviceEvents() {
+}
+*/
+
 // FreezeChildNotify is a wrapper around gtk_widget_freeze_child_notify().
 func (v *Widget) FreezeChildNotify() {
 	C.gtk_widget_freeze_child_notify(v.native())
@@ -432,23 +598,12 @@ func (v *Widget) IsToplevel() bool {
 	return gobool(c)
 }
 
-// TODO(jrick) GdkEventMask
-/*
-func (v *Widget) SetDeviceEvents() {
-}
-*/
-
-// TODO(jrick) GdkEventMask
-/*
-func (v *Widget) GetDeviceEvents() {
-}
-*/
-
-// TODO(jrick) GdkEventMask
-/*
-func (v *Widget) AddDeviceEvents() {
-}
-*/
+// FIXME:
+// gtk_widget_set_window().
+// gtk_widget_set_receives_default().
+// gtk_widget_get_receives_default().
+// gtk_widget_set_support_multidevice().
+// gtk_widget_get_support_multidevice().
 
 // SetDeviceEnabled is a wrapper around gtk_widget_set_device_enabled().
 func (v *Widget) SetDeviceEnabled(device *gdk.Device, enabled bool) {
@@ -471,6 +626,11 @@ func (v *Widget) GetToplevel() (*Widget, error) {
 	}
 	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
 }
+
+// TODO:
+// gtk_widget_get_ancestor().
+// gtk_widget_get_visual().
+// gtk_widget_is_ancestor().
 
 // GetTooltipMarkup is a wrapper around gtk_widget_get_tooltip_markup().
 // A non-nil error is returned in the case that gtk_widget_get_tooltip_markup
@@ -507,72 +667,6 @@ func (v *Widget) SetTooltipText(text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_widget_set_tooltip_text(v.native(), (*C.gchar)(cstr))
-}
-
-// GetHAlign is a wrapper around gtk_widget_get_halign().
-func (v *Widget) GetHAlign() Align {
-	c := C.gtk_widget_get_halign(v.native())
-	return Align(c)
-}
-
-// SetHAlign is a wrapper around gtk_widget_set_halign().
-func (v *Widget) SetHAlign(align Align) {
-	C.gtk_widget_set_halign(v.native(), C.GtkAlign(align))
-}
-
-// GetVAlign is a wrapper around gtk_widget_get_valign().
-func (v *Widget) GetVAlign() Align {
-	c := C.gtk_widget_get_valign(v.native())
-	return Align(c)
-}
-
-// SetVAlign is a wrapper around gtk_widget_set_valign().
-func (v *Widget) SetVAlign(align Align) {
-	C.gtk_widget_set_valign(v.native(), C.GtkAlign(align))
-}
-
-// GetMarginTop is a wrapper around gtk_widget_get_margin_top().
-func (v *Widget) GetMarginTop() int {
-	c := C.gtk_widget_get_margin_top(v.native())
-	return int(c)
-}
-
-// SetMarginTop is a wrapper around gtk_widget_set_margin_top().
-func (v *Widget) SetMarginTop(margin int) {
-	C.gtk_widget_set_margin_top(v.native(), C.gint(margin))
-}
-
-// GetMarginBottom is a wrapper around gtk_widget_get_margin_bottom().
-func (v *Widget) GetMarginBottom() int {
-	c := C.gtk_widget_get_margin_bottom(v.native())
-	return int(c)
-}
-
-// SetMarginBottom is a wrapper around gtk_widget_set_margin_bottom().
-func (v *Widget) SetMarginBottom(margin int) {
-	C.gtk_widget_set_margin_bottom(v.native(), C.gint(margin))
-}
-
-// GetHExpand is a wrapper around gtk_widget_get_hexpand().
-func (v *Widget) GetHExpand() bool {
-	c := C.gtk_widget_get_hexpand(v.native())
-	return gobool(c)
-}
-
-// SetHExpand is a wrapper around gtk_widget_set_hexpand().
-func (v *Widget) SetHExpand(expand bool) {
-	C.gtk_widget_set_hexpand(v.native(), gbool(expand))
-}
-
-// GetVExpand is a wrapper around gtk_widget_get_vexpand().
-func (v *Widget) GetVExpand() bool {
-	c := C.gtk_widget_get_vexpand(v.native())
-	return gobool(c)
-}
-
-// SetVExpand is a wrapper around gtk_widget_set_vexpand().
-func (v *Widget) SetVExpand(expand bool) {
-	C.gtk_widget_set_vexpand(v.native(), gbool(expand))
 }
 
 // TranslateCoordinates is a wrapper around gtk_widget_translate_coordinates().
@@ -626,10 +720,17 @@ func (v *Widget) SizeAllocate(allocation *Allocation) {
 	C.gtk_widget_size_allocate(v.native(), allocation.native())
 }
 
+// TODO:
+// gtk_widget_size_allocate_with_baseline().
+
 // SetStateFlags is a wrapper around gtk_widget_set_state_flags().
 func (v *Widget) SetStateFlags(stateFlags StateFlags, clear bool) {
 	C.gtk_widget_set_state_flags(v.native(), C.GtkStateFlags(stateFlags), gbool(clear))
 }
+
+// TODO:
+// gtk_widget_unset_state_flags().
+// gtk_widget_get_state_flags().
 
 // GetWindow is a wrapper around gtk_widget_get_window().
 func (v *Widget) GetWindow() (*gdk.Window, error) {
@@ -642,30 +743,39 @@ func (v *Widget) GetWindow() (*gdk.Window, error) {
 	return w, nil
 }
 
-// GetPreferredHeight is a wrapper around gtk_widget_get_preferred_height().
-func (v *Widget) GetPreferredHeight() (int, int) {
-	var minimum, natural C.gint
-	C.gtk_widget_get_preferred_height(v.native(), &minimum, &natural)
-	return int(minimum), int(natural)
+/*
+ * GtkRequisition
+ */
+
+// TODO:
+// gtk_requisition_new().
+// gtk_requisition_copy().
+// gtk_requisition_free().
+
+/*
+ * GtkAllocation
+ */
+
+// Allocation is a representation of GTK's GtkAllocation type.
+type Allocation struct {
+	gdk.Rectangle
 }
 
-// GetPreferredWidth is a wrapper around gtk_widget_get_preferred_width().
-func (v *Widget) GetPreferredWidth() (int, int) {
-	var minimum, natural C.gint
-	C.gtk_widget_get_preferred_width(v.native(), &minimum, &natural)
-	return int(minimum), int(natural)
+// Native returns a pointer to the underlying GtkAllocation.
+func (v *Allocation) native() *C.GtkAllocation {
+	return (*C.GtkAllocation)(unsafe.Pointer(&v.GdkRectangle))
 }
 
-func (v *Widget) InsertActionGroup(name string, group glib.IActionGroup) {
-	C.gtk_widget_insert_action_group(v.native(), (*C.gchar)(C.CString(name)), C.toGActionGroup(unsafe.Pointer(group.Native())))
+// GetAllocatedWidth() is a wrapper around gtk_widget_get_allocated_width().
+func (v *Widget) GetAllocatedWidth() int {
+	return int(C.gtk_widget_get_allocated_width(v.native()))
 }
 
-// GetScreen is a wrapper around gtk_widget_get_screen().
-func (v *Widget) GetScreen() (*gdk.Screen, error) {
-	c := C.gtk_widget_get_screen(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	s := &gdk.Screen{glib.Take(unsafe.Pointer(c))}
-	return s, nil
+// GetAllocatedHeight() is a wrapper around gtk_widget_get_allocated_height().
+func (v *Widget) GetAllocatedHeight() int {
+	return int(C.gtk_widget_get_allocated_height(v.native()))
 }
+
+// TODO:
+// gtk_widget_get_allocated_baseline().
+// gtk_widget_get_allocated_size().

@@ -5,6 +5,17 @@ package gdk
 // #include <gdk/gdk.h>
 import "C"
 
+/*
+ * Constants
+ */
+
+// TODO:
+// GdkByteOrder
+
+/*
+ * GdkScreen
+ */
+
 // GetActiveWindow is a wrapper around gdk_screen_get_active_window().
 func (v *Screen) GetActiveWindow() (*Window, error) {
 	return toWindow(C.gdk_screen_get_active_window(v.native()))
@@ -81,3 +92,22 @@ func (v *Screen) GetWidthMM() int {
 func (v *Screen) MakeDisplayName() (string, error) {
 	return toString(C.gdk_screen_make_display_name(v.native()))
 }
+
+/*
+ * GdkVisuals
+ */
+
+// TODO:
+// gdk_query_depths().
+// gdk_query_visual_types().
+// gdk_list_visuals().
+// gdk_visual_get_bits_per_rgb().
+// gdk_visual_get_byte_order().
+// gdk_visual_get_colormap_size().
+// gdk_visual_get_best_depth().
+// gdk_visual_get_best_type().
+// gdk_visual_get_system().
+// gdk_visual_get_best().
+// gdk_visual_get_best_with_depth().
+// gdk_visual_get_best_with_type().
+// gdk_visual_get_best_with_both().

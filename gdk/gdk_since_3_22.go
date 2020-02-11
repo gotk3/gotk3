@@ -29,6 +29,13 @@ import (
 )
 
 /*
+ * Constants
+ */
+
+// TODO:
+// GdkSeatCapabilities
+
+/*
  * GdkDisplay
  */
 
@@ -76,6 +83,20 @@ func (v *Display) GetMonitorAtPoint(x int, y int) (*Monitor, error) {
 }
 
 /*
+ * GdkSeat
+ */
+
+// TODO:
+// GdkSeatGrabPrepareFunc
+// gdk_seat_get_display().
+// gdk_seat_grab().
+// gdk_seat_ungrab().
+// gdk_seat_get_capabilities().
+// gdk_seat_get_pointer().
+// gdk_seat_get_keyboard().
+// gdk_seat_get_slaves().
+
+/*
  * GdkMonitor
  */
 
@@ -120,6 +141,19 @@ func (v *Monitor) GetGeometry() *Rectangle {
 
 	return WrapRectangle(uintptr(unsafe.Pointer(&rect)))
 }
+
+/*
+ * GdkDevice
+ */
+
+// TODO:
+// gdk_device_get_axes().
+// gdk_device_tool_get_serial().
+// gdk_device_tool_get_tool_type().
+
+/*
+ * GdkGLContext
+ */
 
 // GetUseES is a wrapper around gdk_gl_context_get_use_es().
 func (v *GLContext) GetUseES() bool {

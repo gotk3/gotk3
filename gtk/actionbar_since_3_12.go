@@ -44,7 +44,7 @@ func init() {
 	WrapMap["GtkActionBar"] = wrapActionBar
 }
 
-//GtkActionBar
+// ActionBar is a representation of GtkActionBar
 type ActionBar struct {
 	Bin
 }
@@ -67,7 +67,7 @@ func wrapActionBar(obj *glib.Object) *ActionBar {
 	return &ActionBar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
-//gtk_action_bar_new()
+// ActionBarNew is a wrapper around gtk_action_bar_new()
 func ActionBarNew() (*ActionBar, error) {
 	c := C.gtk_action_bar_new()
 	if c == nil {
@@ -76,17 +76,17 @@ func ActionBarNew() (*ActionBar, error) {
 	return wrapActionBar(glib.Take(unsafe.Pointer(c))), nil
 }
 
-//gtk_action_bar_pack_start(GtkActionBar *action_bar,GtkWidget *child)
+// PackStart is a wrapper around gtk_action_bar_pack_start().
 func (a *ActionBar) PackStart(child IWidget) {
 	C.gtk_action_bar_pack_start(a.native(), child.toWidget())
 }
 
-//gtk_action_bar_pack_end(GtkActionBar *action_bar,GtkWidget *child)
+// PackEnd is a wrapper around gtk_action_bar_pack_end().
 func (a *ActionBar) PackEnd(child IWidget) {
 	C.gtk_action_bar_pack_end(a.native(), child.toWidget())
 }
 
-//gtk_action_bar_set_center_widget(GtkActionBar *action_bar,GtkWidget *center_widget)
+// SetCenterWidget is a wrapper around gtk_action_bar_set_center_widget().
 func (a *ActionBar) SetCenterWidget(child IWidget) {
 	if child == nil {
 		C.gtk_action_bar_set_center_widget(a.native(), nil)
@@ -95,7 +95,7 @@ func (a *ActionBar) SetCenterWidget(child IWidget) {
 	}
 }
 
-//gtk_action_bar_get_center_widget(GtkActionBar *action_bar)
+// GetCenterWidget is a wrapper around gtk_action_bar_get_center_widget().
 func (a *ActionBar) GetCenterWidget() *Widget {
 	w := C.gtk_action_bar_get_center_widget(a.native())
 	if w == nil {

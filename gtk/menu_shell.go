@@ -90,7 +90,9 @@ func (v *MenuShell) SetTakeFocus(takeFocus bool) {
 	C.gtk_menu_shell_set_take_focus(v.native(), gbool(takeFocus))
 }
 
+// TODO:
 // gboolean 	gtk_menu_shell_get_take_focus ()
 // GtkWidget * 	gtk_menu_shell_get_selected_item ()
 // GtkWidget * 	gtk_menu_shell_get_parent_shell ()
 // void 	gtk_menu_shell_bind_model ()
+// GtkMenuDirectionType

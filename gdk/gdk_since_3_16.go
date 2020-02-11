@@ -41,6 +41,22 @@ func init() {
 }
 
 /*
+ * Constants
+ */
+
+const (
+	GRAB_FAILED GrabStatus = C.GDK_GRAB_FAILED
+)
+
+/*
+ * GdkDevice
+ */
+
+// TODO:
+// gdk_device_get_vendor_id().
+// gdk_device_get_product_id().
+
+/*
  * GdkGLContext
  */
 

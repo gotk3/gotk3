@@ -6,7 +6,27 @@ package gdk
 // #include <gdk/gdk.h>
 import "C"
 
+/*
+ * GdkGLContext
+ */
+
 // IsLegacy is a wrapper around gdk_gl_context_is_legacy().
 func (v *GLContext) IsLegacy() bool {
 	return gobool(C.gdk_gl_context_is_legacy(v.native()))
 }
+
+/*
+ * GdkDisplay
+ */
+
+// gdk_display_get_default_seat().
+// gdk_display_list_seats().
+
+
+/*
+ * GdkDevice
+ */
+
+// TODO:
+// gdk_device_get_axes().
+// gdk_device_get_seat().

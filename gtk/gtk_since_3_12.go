@@ -33,6 +33,15 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+/*
+ * Constants
+ */
+
+const (
+	STATE_FLAG_LINK    StateFlags = C.GTK_STATE_FLAG_LINK
+	STATE_FLAG_VISITED StateFlags = C.GTK_STATE_FLAG_VISITED
+)
+
 const (
 	BUTTONBOX_EXPAND ButtonBoxStyle = C.GTK_BUTTONBOX_EXPAND
 )
@@ -63,6 +72,22 @@ func GetLocaleDirection() TextDirection {
 }
 
 /*
+ * GtkStack
+ */
+
+// TODO:
+// GtkStackTransitionType
+// GTK_STACK_TRANSITION_TYPE_OVER_UP
+// GTK_STACK_TRANSITION_TYPE_OVER_DOWN
+// GTK_STACK_TRANSITION_TYPE_OVER_LEFT
+// GTK_STACK_TRANSITION_TYPE_OVER_RIGHT
+// GTK_STACK_TRANSITION_TYPE_UNDER_UP
+// GTK_STACK_TRANSITION_TYPE_UNDER_DOWN
+// GTK_STACK_TRANSITION_TYPE_UNDER_LEFT
+// GTK_STACK_TRANSITION_TYPE_UNDER_RIGHT
+// GTK_STACK_TRANSITION_TYPE_OVER_UP_DOWN
+
+/*
  * Dialog
  */
 
@@ -79,12 +104,12 @@ func (v *Dialog) GetHeaderBar() *Widget {
  * Entry
  */
 
-// SetMaxWidthChars() is a wrapper around gtk_entry_set_max_width_chars().
+// SetMaxWidthChars is a wrapper around gtk_entry_set_max_width_chars().
 func (v *Entry) SetMaxWidthChars(nChars int) {
 	C.gtk_entry_set_max_width_chars(v.native(), C.gint(nChars))
 }
 
-// GetMaxWidthChars() is a wrapper around gtk_entry_get_max_width_chars().
+// GetMaxWidthChars is a wrapper around gtk_entry_get_max_width_chars().
 func (v *Entry) GetMaxWidthChars() int {
 	c := C.gtk_entry_get_max_width_chars(v.native())
 	return int(c)
@@ -381,7 +406,15 @@ func (fbc *FlowBoxChild) Changed() {
 }
 
 /*
-* GtkPopover
+ * GtkPlacesSidebar
+ */
+
+// TODO:
+// gtk_places_sidebar_get_local_only().
+// gtk_places_sidebar_set_local_only().
+
+/*
+ * GtkPopover
  */
 
 // Popover is a representation of GTK's GtkPopover.
@@ -421,6 +454,8 @@ func PopoverNew(relative IWidget) (*Popover, error) {
 	}
 	return wrapPopover(glib.Take(unsafe.Pointer(c))), nil
 }
+
+// TODO: gtk_popover_new_from_model().
 
 // BindModel is a wrapper around gtk_popover_bind_model().
 func (v *Popover) BindModel(menuModel *glib.MenuModel, actionNamespace string) {
@@ -466,6 +501,10 @@ func (v *Popover) GetPosition() PositionType {
 	c := C.gtk_popover_get_position(v.native())
 	return PositionType(c)
 }
+
+// TODO:
+// gtk_popover_set_modal().
+// gtk_popover_get_modal().
 
 /*
  * TreePath

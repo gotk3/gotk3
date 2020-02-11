@@ -49,6 +49,9 @@ func IconViewNew() (*IconView, error) {
 	return wrapIconView(glib.Take(unsafe.Pointer(c))), nil
 }
 
+// TODO:
+// gtk_icon_view_new_with_area().
+
 // IconViewNewWithModel is a wrapper around gtk_icon_view_new_with_model().
 func IconViewNewWithModel(model ITreeModel) (*IconView, error) {
 	c := C.gtk_icon_view_new_with_model(model.toTreeModel())
@@ -157,7 +160,7 @@ func (v *IconView) ConvertWidgetToBinWindowCoords(x, y int) (int, int) {
 	return int(bx), int(by)
 }
 
-// SetCursor is a wrapper around gtk_icon_view_set_selection_mode().
+// SetCursor is a wrapper around gtk_icon_view_set_cursor().
 func (v *IconView) SetCursor(path *TreePath, cell *CellRenderer, startEditing bool) {
 	C.gtk_icon_view_set_cursor(v.native(), path.native(), cell.native(), gbool(startEditing))
 }
@@ -185,6 +188,8 @@ func (v *IconView) GetCursor() (*TreePath, *CellRenderer) {
 	return path, cell
 }
 
+// TODO:
+// gtk_icon_view_selected_foreach().
 // func (v *IconView) SelectedForeach() {}
 
 // SetSelectionMode is a wrapper around gtk_icon_view_set_selection_mode().
@@ -282,8 +287,8 @@ func (v *IconView) SetActivateOnSingleClick(single bool) {
 	C.gtk_icon_view_set_activate_on_single_click(v.native(), gbool(single))
 }
 
-// ActivateOnSingleClick is a wrapper around gtk_icon_view_get_activate_on_single_click().
-func (v *IconView) ActivateOnSingleClick() bool {
+// GetActivateOnSingleClick is a wrapper around gtk_icon_view_get_activate_on_single_click().
+func (v *IconView) GetActivateOnSingleClick() bool {
 	return gobool(C.gtk_icon_view_get_activate_on_single_click(v.native()))
 }
 
@@ -311,7 +316,7 @@ func (v *IconView) PathIsSelected(path *TreePath) bool {
 	return gobool(C.gtk_icon_view_path_is_selected(v.native(), path.native()))
 }
 
-// GetSelectedItems is a wrapper around gtk_icon_view_unselect_path().
+// GetSelectedItems is a wrapper around gtk_icon_view_get_selected_items().
 func (v *IconView) GetSelectedItems() *glib.List {
 	clist := C.gtk_icon_view_get_selected_items(v.native())
 	if clist == nil {
@@ -441,15 +446,16 @@ func (v *IconView) GetItemRow(path *TreePath) int {
 	return int(C.gtk_icon_view_get_item_row(v.native(), path.native()))
 }
 
-/*
-func (v *IconView) EnableModelDragSource() {}
-
-func (v *IconView) EnableModelDragDest() {}
-
-func (v *IconView) UnsetModelDragSource() {}
-
-func (v *IconView) UnsetModelDragDest() {}
-*/
+// TODO:
+// gtk_icon_view_get_item_column().
+// gtk_icon_view_enable_model_drag_source().
+// func (v *IconView) EnableModelDragSource() {}
+// gtk_icon_view_enable_model_drag_dest().
+// func (v *IconView) EnableModelDragDest() {}
+// gtk_icon_view_unset_model_drag_source().
+// func (v *IconView) UnsetModelDragSource() {}
+// gtk_icon_view_unset_model_drag_dest().
+// func (v *IconView) UnsetModelDragDest() {}
 
 // SetReorderable is a wrapper around gtk_icon_view_set_reorderable().
 func (v *IconView) SetReorderable(reorderable bool) {
@@ -461,12 +467,12 @@ func (v *IconView) GetReorderable() bool {
 	return gobool(C.gtk_icon_view_get_reorderable(v.native()))
 }
 
-/*
-func (v *IconView) SetDragDestItem() {}
-
-func (v *IconView) GetDragDestItem() {}
-
-func (v *IconView) GetDestItemAtPos() {}
-
-func (v *IconView) CreateDragIcon() {}
-*/
+// TODO:
+// gtk_icon_view_set_drag_dest_item().
+// func (v *IconView) SetDragDestItem() {}
+// gtk_icon_view_get_drag_dest_item().
+// func (v *IconView) GetDragDestItem() {}
+// gtk_icon_view_get_dest_item_at_pos().
+// func (v *IconView) GetDestItemAtPos() {}
+// gtk_icon_view_create_drag_icon().
+// func (v *IconView) CreateDragIcon() {}

@@ -146,3 +146,10 @@ func ColorChooserDialogNew(title string, parent IWindow) (*ColorChooserDialog, e
 	}
 	return wrapColorChooserDialog(glib.Take(unsafe.Pointer(c))), nil
 }
+
+/*
+ * GtkColorChooserWidget
+ */
+
+// TODO:
+// gtk_color_chooser_widget_new().

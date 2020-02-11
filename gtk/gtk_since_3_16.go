@@ -13,7 +13,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
-const(
+const (
 	POLICY_EXTERNAL  PolicyType = C.GTK_POLICY_EXTERNAL
 )
 
@@ -55,6 +55,31 @@ func marshalButtonRole(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return ButtonRole(c), nil
 }
+
+/*
+ * GtkStack
+ */
+
+// TODO:
+// gtk_stack_set_hhomogeneous().
+// gtk_stack_get_hhomogeneous().
+// gtk_stack_set_vhomogeneous().
+// gtk_stack_get_vhomogeneous().
+
+/*
+ * GtkNotebook
+ */
+
+// TODO:
+// gtk_notebook_detach_tab().
+
+/*
+ * GtkListBox
+ */
+
+// TODO:
+// GtkListBoxCreateWidgetFunc().
+// gtk_list_box_bind_model().
 
 /*
  * GtkScrolledWindow

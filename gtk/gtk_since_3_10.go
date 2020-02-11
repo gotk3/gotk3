@@ -93,6 +93,29 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
 }
 
 /*
+ * GtkWidget
+ */
+
+// TODO:
+// gtk_widget_get_composite_name().
+
+/*
+ * GtkImage
+ */
+
+// TODO:
+// gtk_image_new_from_surface().
+// gtk_image_set_from_surface().
+
+/*
+ * GtkEntry
+ */
+
+// TODO:
+// gtk_entry_get_tabs().
+// gtk_entry_set_tabs().
+
+/*
  * GtkButton
  */
 
@@ -109,6 +132,14 @@ func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
 }
 
 /*
+ * GtkBox
+ */
+
+// TODO:
+// gtk_box_get_baseline_position().
+// gtk_box_set_baseline_position().
+
+/*
  * GtkGrid
  */
 
@@ -121,6 +152,12 @@ func (v *Grid) RemoveRow(position int) {
 func (v *Grid) RemoveColumn(position int) {
 	C.gtk_grid_remove_column(v.native(), C.gint(position))
 }
+
+// TODO:
+// gtk_grid_get_baseline_row().
+// gtk_grid_set_baseline_row().
+// gtk_grid_get_row_baseline_position().
+// gtk_grid_set_row_baseline_position().
 
 /*
  * GtkHeaderBar
@@ -456,6 +493,9 @@ func (v *ListBox) DragHighlightRow(row *ListBoxRow) {
 	C.gtk_list_box_drag_highlight_row(v.native(), row.native())
 }
 
+// TODO:
+// gtk_list_box_drag_unhighlight_row().
+
 /*
  * GtkListBoxRow
  */
@@ -484,6 +524,7 @@ func wrapListBoxRow(obj *glib.Object) *ListBoxRow {
 	return &ListBoxRow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
+// ListBoxRowNew is a wrapper around gtk_list_box_row_new().
 func ListBoxRowNew() (*ListBoxRow, error) {
 	c := C.gtk_list_box_row_new()
 	if c == nil {
@@ -506,7 +547,7 @@ func (v *ListBoxRow) GetHeader() *Widget {
 	return wrapWidget(glib.Take(unsafe.Pointer(c)))
 }
 
-// SetHeader is a wrapper around gtk_list_box_row_get_header().
+// SetHeader is a wrapper around gtk_list_box_row_set_header().
 func (v *ListBoxRow) SetHeader(header IWidget) {
 	C.gtk_list_box_row_set_header(v.native(), header.toWidget())
 }
@@ -516,6 +557,24 @@ func (v *ListBoxRow) GetIndex() int {
 	c := C.gtk_list_box_row_get_index(v.native())
 	return int(c)
 }
+
+/*
+ * GtkPlacesSidebar
+ */
+
+// TODO:
+// gtk_places_sidebar_new().
+// gtk_places_sidebar_set_open_flags().
+// gtk_places_sidebar_get_open_flags().
+// gtk_places_sidebar_set_location().
+// gtk_places_sidebar_get_location().
+// gtk_places_sidebar_set_show_desktop().
+// gtk_places_sidebar_get_show_desktop().
+// gtk_places_sidebar_add_shortcut().
+// gtk_places_sidebar_remove_shortcut().
+// gtk_places_sidebar_list_shortcuts().
+// gtk_places_sidebar_get_nth_bookmark().
+// enum GtkPlacesOpenFlags
 
 /*
  * GtkRevealer

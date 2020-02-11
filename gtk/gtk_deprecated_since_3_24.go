@@ -24,6 +24,10 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	return widgets, gobool(c)
 }
 
+/*
+ * GtkContainer
+ */
+
 // SetFocusChain is a wrapper around gtk_container_set_focus_chain().
 func (v *Container) SetFocusChain(focusableWidgets []IWidget) {
 	var list *glib.List
@@ -34,6 +38,9 @@ func (v *Container) SetFocusChain(focusableWidgets []IWidget) {
 	glist := (*C.GList)(unsafe.Pointer(list))
 	C.gtk_container_set_focus_chain(v.native(), glist)
 }
+
+// TODO:
+// gtk_container_unset_focus_chain
 
 // CssProviderGetDefault is a wrapper around gtk_css_provider_get_default().
 func CssProviderGetDefault() (*CssProvider, error) {

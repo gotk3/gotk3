@@ -110,6 +110,7 @@ func (v *Context) PushGroupWithContent(content Content) {
 }
 
 // TODO(jrick) PopGroup (depends on Pattern)
+// cairo_pop_group
 
 // PopGroupToSource is a wrapper around cairo_pop_group_to_source().
 func (v *Context) PopGroupToSource() {
@@ -143,6 +144,7 @@ func (v *Context) SetSourceRGBA(red, green, blue, alpha float64) {
 }
 
 // TODO(jrick) SetSource (depends on Pattern)
+// cairo_set_source
 
 // SetSourceSurface is a wrapper around cairo_set_source_surface().
 func (v *Context) SetSourceSurface(surface *Surface, x, y float64) {
@@ -151,6 +153,7 @@ func (v *Context) SetSourceSurface(surface *Surface, x, y float64) {
 }
 
 // TODO(jrick) GetSource (depends on Pattern)
+// cairo_get_source
 
 // SetAntialias is a wrapper around cairo_set_antialias().
 func (v *Context) SetAntialias(antialias Antialias) {
@@ -325,7 +328,8 @@ func (v *Context) MoveTo(x, y float64) {
 	C.cairo_move_to(v.native(), C.double(x), C.double(y))
 }
 
-// TODO(jrick) CopyRectangleList (depends on RectangleList)
+// TODO(jrick) CopyClipRectangleList (depends on RectangleList)
+// cairo_copy_clip_rectangle_list
 
 // Fill is a wrapper around cairo_fill().
 func (v *Context) Fill() {
@@ -367,6 +371,7 @@ func (v *Context) InFill(x, y float64) bool {
 }
 
 // TODO(jrick) Mask (depends on Pattern)
+// cairo_mask_surface
 
 // MaskSurface is a wrapper around cairo_mask_surface().
 func (v *Context) MaskSurface(surface *Surface, surfaceX, surfaceY float64) {

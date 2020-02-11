@@ -15,3 +15,7 @@ func (v *Widget) GetFocusOnClick() bool {
 func (v *Widget) SetFocusOnClick(focusOnClick bool) {
 	C.gtk_widget_set_focus_on_click(v.native(), gbool(focusOnClick))
 }
+
+// TODO:
+// gtk_widget_class_get_css_name().
+// gtk_widget_class_set_css_name().

@@ -395,7 +395,7 @@ func (v *Window) GetModal() bool {
 }
 
 // GetPosition is a wrapper around gtk_window_get_position().
-func (v *Window) GetPosition() (root_x, root_y int) {
+func (v *Window) GetPosition() (int, int) {
 	var x, y C.gint
 	C.gtk_window_get_position(v.native(), &x, &y)
 	return int(x), int(y)

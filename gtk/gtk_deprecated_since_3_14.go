@@ -37,6 +37,18 @@ func init() {
  * deprecated since version 3.14 and should not be used in newly-written code
  */
 
+/*
+ * GtkTreeView
+ */
+
+// TODO:
+// gtk_tree_view_set_rules_hint().
+// gtk_tree_view_get_rules_hint().
+
+/*
+ * GtkWindow
+ */
+
 // SetHasResizeGrip is a wrapper around gtk_window_set_has_resize_grip().
 func (v *Window) SetHasResizeGrip(setting bool) {
 	C.gtk_window_set_has_resize_grip(v.native(), gbool(setting))
@@ -62,10 +74,28 @@ func (v *Window) GetResizeGripArea() (*gdk.Rectangle, bool) {
 	return rect, gobool(wasRetrieved)
 }
 
+/*
+ * GtkWidget
+ */
+
 // Reparent() is a wrapper around gtk_widget_reparent().
 func (v *Widget) Reparent(newParent IWidget) {
 	C.gtk_widget_reparent(v.native(), newParent.toWidget())
 }
+
+// SetDoubleBuffered is a wrapper around gtk_widget_set_double_buffered().
+func (v *Widget) SetDoubleBuffered(doubleBuffered bool) {
+	C.gtk_widget_set_double_buffered(v.native(), gbool(doubleBuffered))
+}
+
+// GetDoubleBuffered is a wrapper around gtk_widget_get_double_buffered().
+func (v *Widget) GetDoubleBuffered() bool {
+	c := C.gtk_widget_get_double_buffered(v.native())
+	return gobool(c)
+}
+
+// TODO:
+// gtk_widget_region_intersect().
 
 // GetPadding is a wrapper around gtk_alignment_get_padding().
 func (v *Alignment) GetPadding() (top, bottom, left, right uint) {
@@ -136,8 +166,7 @@ func (v *Button) GetAlignment() (xalign, yalign float32) {
 	return float32(x), float32(y)
 }
 
-// SetReallocateRedraws is a wrapper around
-// gtk_container_set_reallocate_redraws().
+// SetReallocateRedraws is a wrapper around gtk_container_set_reallocate_redraws().
 func (v *Container) SetReallocateRedraws(needsRedraws bool) {
 	C.gtk_container_set_reallocate_redraws(v.native(), gbool(needsRedraws))
 }
@@ -164,17 +193,6 @@ func (v *Misc) GetPadding() (xpad, ypad int) {
 // SetPadding is a wrapper around gtk_misc_set_padding().
 func (v *Misc) SetPadding(xPad, yPad int) {
 	C.gtk_misc_set_padding(v.native(), C.gint(xPad), C.gint(yPad))
-}
-
-// SetDoubleBuffered is a wrapper around gtk_widget_set_double_buffered().
-func (v *Widget) SetDoubleBuffered(doubleBuffered bool) {
-	C.gtk_widget_set_double_buffered(v.native(), gbool(doubleBuffered))
-}
-
-// GetDoubleBuffered is a wrapper around gtk_widget_get_double_buffered().
-func (v *Widget) GetDoubleBuffered() bool {
-	c := C.gtk_widget_get_double_buffered(v.native())
-	return gobool(c)
 }
 
 /*

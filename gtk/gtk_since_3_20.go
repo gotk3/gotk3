@@ -15,6 +15,14 @@ import (
 )
 
 /*
+ * Constants
+ */
+
+const (
+	STATE_FLAG_DROP_ACTIVE StateFlags = C.GTK_STATE_FLAG_DROP_ACTIVE
+)
+
+/*
  * GtkNativeDialog
  */
 
@@ -205,3 +213,27 @@ func (v *FileChooserNativeDialog) SetCancelLabel(cancel_label string) {
 func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
 	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_cancel_label(v.native())))
 }
+
+/*
+ * GtkTextView
+ */
+
+// TODO:
+// gtk_text_view_reset_cursor_blink().
+
+/*
+ * GtkExpander
+ */
+
+// TODO:
+// gtk_expander_set_spacing().
+// gtk_expander_get_spacing().
+
+/*
+ * GtkPopover
+ */
+
+// TODO:
+// GtkPopoverConstraint
+// gtk_popover_set_constrain_to().
+// gtk_popover_get_constrain_to().

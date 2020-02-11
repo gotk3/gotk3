@@ -15,6 +15,24 @@ import (
 )
 
 /*
+ * Constants
+ */
+
+const (
+	STATE_FLAG_CHECKED StateFlags = C.GTK_STATE_FLAG_CHECKED
+)
+
+/*
+ * GtkStack
+ */
+
+// TODO:
+// GtkStackTransitionType
+// GTK_STACK_TRANSITION_TYPE_OVER_DOWN_UP
+// GTK_STACK_TRANSITION_TYPE_OVER_LEFT_RIGHT
+// GTK_STACK_TRANSITION_TYPE_OVER_RIGHT_LEFT
+
+/*
  * GtkListBox
  */
 
@@ -112,3 +130,19 @@ func (v *ListBoxRow) GetSelectable() bool {
 	c := C.gtk_list_box_row_get_selectable(v.native())
 	return gobool(c)
 }
+
+/*
+ * GtkPlacesSidebar
+ */
+
+// TODO:
+// gtk_places_sidebar_get_show_enter_location().
+// gtk_places_sidebar_set_show_enter_location().
+
+/*
+ * GtkSwitch
+ */
+
+// TODO:
+// gtk_switch_set_state().
+// gtk_switch_get_state().
