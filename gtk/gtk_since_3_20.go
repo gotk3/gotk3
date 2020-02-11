@@ -14,9 +14,30 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+func init() {
+	tm := []glib.TypeMarshaler{
+		// Enums
+		{glib.Type(C.gtk_popover_constraint_get_type()), marshalPopoverConstraint},
+	}
+	glib.RegisterGValueMarshalers(tm)
+}
+
 /*
  * Constants
  */
+
+// PopoverConstraint is a representation of GTK's GtkPopoverConstraint.
+type PopoverConstraint int
+
+const (
+	POPOVER_CONSTRAINT_NONE   PopoverConstraint = C.GTK_POPOVER_CONSTRAINT_NONE
+	POPOVER_CONSTRAINT_WINDOW PopoverConstraint = C.GTK_POPOVER_CONSTRAINT_WINDOW
+)
+
+func marshalPopoverConstraint(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return PopoverConstraint(c), nil
+}
 
 const (
 	STATE_FLAG_DROP_ACTIVE StateFlags = C.GTK_STATE_FLAG_DROP_ACTIVE
@@ -233,7 +254,12 @@ func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
  * GtkPopover
  */
 
-// TODO:
-// GtkPopoverConstraint
-// gtk_popover_set_constrain_to().
-// gtk_popover_get_constrain_to().
+// SetConstrainTo is a wrapper gtk_popover_set_constrain_to().
+func (v *Popover) SetConstrainTo(constrain PopoverConstraint) {
+	C.gtk_popover_set_constrain_to(v.native(), C.GtkPopoverConstraint(constrain))
+}
+
+// GetConstrainTo is a wrapper gtk_popover_get_constrain_to().
+func (v *Popover) GetConstrainTo() PopoverConstraint {
+	return PopoverConstraint(C.gtk_popover_get_constrain_to(v.native()))
+}

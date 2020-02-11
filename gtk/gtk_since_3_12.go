@@ -455,7 +455,23 @@ func PopoverNew(relative IWidget) (*Popover, error) {
 	return wrapPopover(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// TODO: gtk_popover_new_from_model().
+// PopoverNewFromModel is a wrapper around gtk_popover_new_from_model().
+func PopoverNewFromModel(relative IWidget, model *glib.MenuModel) (*Popover, error) {
+	//Takes relative to widget
+	var c *C.struct__GtkWidget
+
+	mptr := C.toGMenuModel(unsafe.Pointer(model.Native()))
+
+	if relative == nil {
+		c = C.gtk_popover_new_from_model(nil, mptr)
+	} else {
+		c = C.gtk_popover_new_from_model(relative.toWidget(), mptr)
+	}
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapPopover(glib.Take(unsafe.Pointer(c))), nil
+}
 
 // BindModel is a wrapper around gtk_popover_bind_model().
 func (v *Popover) BindModel(menuModel *glib.MenuModel, actionNamespace string) {
@@ -502,9 +518,15 @@ func (v *Popover) GetPosition() PositionType {
 	return PositionType(c)
 }
 
-// TODO:
-// gtk_popover_set_modal().
-// gtk_popover_get_modal().
+// SetModal is a wrapper around gtk_popover_set_modal().
+func (v *Popover) SetModal(modal bool) {
+	C.gtk_popover_set_modal(v.native(), gbool(modal))
+}
+
+// GetModal is a wrapper around gtk_popover_get_modal().
+func (v *Popover) GetModal() bool {
+	return gobool(C.gtk_popover_get_modal(v.native()))
+}
 
 /*
  * TreePath

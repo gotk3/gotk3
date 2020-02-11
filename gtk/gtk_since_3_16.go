@@ -173,6 +173,23 @@ type ModelButton struct {
  }
 
 /*
+ * GtkPopover
+ */
+
+// FIXME: the following two funcs are deprecated since version 3.22.
+// But putting them there will break builds targettng GTK 3.14 and earlier.
+
+// SetTransitionsEnabled is a wrapper gtk_popover_set_transitions_enabled().
+func (v *Popover) SetTransitionsEnabled(transitionsEnabled bool) {
+	C.gtk_popover_set_transitions_enabled(v.native(), gbool(transitionsEnabled))
+}
+
+// GetTransitionsEnabled is a wrapper gtk_popover_get_transitions_enabled().
+func (v *Popover) GetTransitionsEnabled() bool {
+	return gobool(C.gtk_popover_get_transitions_enabled(v.native()))
+}
+
+/*
  * GtkPopoverMenu
  */
 
