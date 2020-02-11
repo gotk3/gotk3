@@ -15,6 +15,14 @@ import (
 )
 
 /*
+ * Constants
+ */
+
+const (
+	STATE_FLAG_DROP_ACTIVE StateFlags = C.GTK_STATE_FLAG_DROP_ACTIVE
+)
+
+/*
  * GtkNativeDialog
  */
 

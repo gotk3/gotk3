@@ -11,6 +11,14 @@ import (
 )
 
 /*
+ * Constants
+ */
+
+const (
+	STATE_FLAG_CHECKED StateFlags = C.GTK_STATE_FLAG_CHECKED
+)
+
+/*
  * GtkStack
  */
 

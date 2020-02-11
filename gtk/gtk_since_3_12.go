@@ -33,6 +33,15 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+/*
+ * Constants
+ */
+
+const (
+	STATE_FLAG_LINK    StateFlags = C.GTK_STATE_FLAG_LINK
+	STATE_FLAG_VISITED StateFlags = C.GTK_STATE_FLAG_VISITED
+)
+
 const (
 	BUTTONBOX_EXPAND ButtonBoxStyle = C.GTK_BUTTONBOX_EXPAND
 )
