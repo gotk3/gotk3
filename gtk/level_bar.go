@@ -35,7 +35,6 @@ const (
 const (
 	LEVEL_BAR_OFFSET_LOW  string = C.GTK_LEVEL_BAR_OFFSET_LOW
 	LEVEL_BAR_OFFSET_HIGH string = C.GTK_LEVEL_BAR_OFFSET_HIGH
-	LEVEL_BAR_OFFSET_FULL string = C.GTK_LEVEL_BAR_OFFSET_FULL
 )
 
 func marshalLevelBarMode(p uintptr) (interface{}, error) {
