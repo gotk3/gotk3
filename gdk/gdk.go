@@ -348,6 +348,9 @@ const (
 )
 
 // TODO:
+// GdkPixbufError
+// GdkColorspace
+// GdkVisualType
 // GdkTimeCoord
 
 // EventPropagation constants
@@ -1630,6 +1633,13 @@ func (v *Pixbuf) GetOption(key string) (value string, ok bool) {
 	return C.GoString((*C.char)(c)), true
 }
 
+// TODO:
+// gdk_pixbuf_set_option().
+// gdk_pixbuf_remove_option().
+// gdk_pixbuf_get_options().
+// gdk_pixbuf_copy_options().
+// gdk_pixbuf_read_pixels().
+
 // PixbufNew is a wrapper around gdk_pixbuf_new().
 func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, height int) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_new(C.GdkColorspace(colorspace), gbool(hasAlpha),
@@ -2060,6 +2070,10 @@ func (v *PixbufLoader) WriteAndReturnPixbufAnimation(data []byte) (*PixbufAnimat
 	return p, nil
 }
 
+/*
+ * GdkRGBA
+ */
+
 type RGBA struct {
 	rgba *C.GdkRGBA
 }
@@ -2107,32 +2121,34 @@ func (c *RGBA) SetColors(r, g, b, a float64) {
 	c.rgba.alpha = C.gdouble(a)
 }
 
-func (v *RGBA) Native() uintptr {
-	return uintptr(unsafe.Pointer(v.rgba))
+func (c *RGBA) Native() uintptr {
+	return uintptr(unsafe.Pointer(c.rgba))
 }
 
 // Parse is a representation of gdk_rgba_parse().
-func (v *RGBA) Parse(spec string) bool {
+func (c *RGBA) Parse(spec string) bool {
 	cstr := (*C.gchar)(C.CString(spec))
 	defer C.free(unsafe.Pointer(cstr))
 
-	return gobool(C.gdk_rgba_parse(v.rgba, cstr))
+	return gobool(C.gdk_rgba_parse(c.rgba, cstr))
 }
 
 // String is a representation of gdk_rgba_to_string().
-func (v *RGBA) String() string {
-	return C.GoString((*C.char)(C.gdk_rgba_to_string(v.rgba)))
+func (c *RGBA) String() string {
+	return C.GoString((*C.char)(C.gdk_rgba_to_string(c.rgba)))
 }
 
+// TODO:
 // GdkRGBA * 	gdk_rgba_copy ()
 // void 	gdk_rgba_free ()
 // gboolean 	gdk_rgba_equal ()
 // guint 	gdk_rgba_hash ()
 
-// PixbufGetType is a wrapper around gdk_pixbuf_get_type().
-func PixbufGetType() glib.Type {
-	return glib.Type(C.gdk_pixbuf_get_type())
-}
+/*
+ * GdkRGBA
+ */
+
+
 
 /*
  * GdkRectangle
@@ -2360,6 +2376,14 @@ func marshalVisual(p uintptr) (interface{}, error) {
 	return &Visual{obj}, nil
 }
 
+// TODO:
+// gdk_visual_get_blue_pixel_details().
+// gdk_visual_get_depth().
+// gdk_visual_get_green_pixel_details().
+// gdk_visual_get_red_pixel_details().
+// gdk_visual_get_visual_type().
+// gdk_visual_get_screen().
+
 /*
  * GdkWindow
  */
@@ -2411,6 +2435,9 @@ func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 	return p, nil
 }
+
+// TODO:
+// gdk_pixbuf_get_from_surface().
 
 func marshalWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
