@@ -10,3 +10,7 @@ import "C"
 func (v *GLContext) IsLegacy() bool {
 	return gobool(C.gdk_gl_context_is_legacy(v.native()))
 }
+
+// TODO:
+// gdk_display_get_default_seat().
+// gdk_display_list_seats().

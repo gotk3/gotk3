@@ -11,10 +11,6 @@ import (
 	"unsafe"
 )
 
-// TODO(jrick) SetUserData (depends on UserDataKey and DestroyFunc)
-
-// TODO(jrick) GetUserData (depends on UserDataKey)
-
 /*
  * cairo_surface_t
  */
@@ -173,10 +169,13 @@ func (v *Surface) Flush() {
 }
 
 // TODO(jrick) GetDevice (requires Device bindings)
+// cairo_surface_get_device
 
 // TODO(jrick) GetFontOptions (require FontOptions bindings)
+// cairo_surface_get_font_options
 
 // TODO(jrick) GetContent (requires Content bindings)
+// cairo_surface_get_content
 
 // MarkDirty is a wrapper around cairo_surface_mark_dirty().
 func (v *Surface) MarkDirty() {
@@ -208,8 +207,7 @@ func (v *Surface) SetFallbackResolution(xPPI, yPPI float64) {
 		C.double(yPPI))
 }
 
-// GetFallbackResolution is a wrapper around
-// cairo_surface_get_fallback_resolution().
+// GetFallbackResolution is a wrapper around cairo_surface_get_fallback_resolution().
 func (v *Surface) GetFallbackResolution() (xPPI, yPPI float64) {
 	var x, y C.double
 	C.cairo_surface_get_fallback_resolution(v.native(), &x, &y)
@@ -223,8 +221,10 @@ func (v *Surface) GetType() SurfaceType {
 }
 
 // TODO(jrick) SetUserData (depends on UserDataKey and DestroyFunc)
+// cairo_surface_set_user_data
 
 // TODO(jrick) GetUserData (depends on UserDataKey)
+// cairo_surface_get_user_data
 
 // CopyPage is a wrapper around cairo_surface_copy_page().
 func (v *Surface) CopyPage() {
@@ -243,6 +243,7 @@ func (v *Surface) HasShowTextGlyphs() bool {
 }
 
 // TODO(jrick) SetMimeData (depends on DestroyFunc)
+// cairo_surface_set_mime_data
 
 // GetMimeData is a wrapper around cairo_surface_get_mime_data().  The
 // returned mimetype data is returned as a Go byte slice.
@@ -271,10 +272,13 @@ func (v *Surface) WriteToPNG(fileName string) error {
 }
 
 // TODO(jrick) SupportsMimeType (since 1.12)
+// cairo_surface_supports_mime_type
 
 // TODO(jrick) MapToImage (since 1.12)
+// cairo_surface_map_to_image
 
 // TODO(jrick) UnmapImage (since 1.12)
+// cairo_surface_unmap_image
 
 // GetHeight is a wrapper around cairo_image_surface_get_height().
 func (v *Surface) GetHeight() int {

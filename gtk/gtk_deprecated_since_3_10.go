@@ -72,6 +72,26 @@ func (v *Entry) SetIconFromStock(iconPos EntryIconPosition, stockID string) {
 		C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
 }
 
+/*
+ * GtkImage
+ */
+
+// TODO:
+
+/*
+// gtk_image_get_icon_set().
+func (v *Image) GetIconSet() {
+}
+*/
+
+// gtk_image_get_stock().
+
+/*
+// gtk_image_new_from_icon_set().
+func ImageNewFromIconSet() {
+}
+*/
+
 // ImageNewFromStock is a wrapper around gtk_image_new_from_stock().
 func ImageNewFromStock(stock Stock, size IconSize) (*Image, error) {
 	cstr := C.CString(string(stock))
@@ -90,6 +110,13 @@ func (v *Image) SetFromStock(stock Stock, size IconSize) {
 	C.gtk_image_set_from_stock(v.native(), (*C.gchar)(cstr),
 		C.GtkIconSize(size))
 }
+
+// TODO:
+/*
+// gtk_image_set_from_icon_set().
+func (v *Image) SetFromIconSet() {
+}
+*/
 
 // StatusIconNewFromStock is a wrapper around gtk_status_icon_new_from_stock().
 // Deprecated since 3.10, use StatusIconNewFromIconName (gtk_status_icon_new_from_icon_name) instead.
@@ -285,3 +312,25 @@ func (v *Window) ReshowWithInitialSize() {
 // gtk_tool_button_new_from_stock().
 // gtk_tool_button_set_stock_id().
 // gtk_tool_button_get_stock_id().
+
+/*
+ * GtkDialog
+ */
+
+// TODO:
+
+/*
+// gtk_dialog_set_alternative_button_order().
+func SetAlternativeButtonOrder(ids ...ResponseType) {
+}
+*/
+
+/*
+// gtk_alternative_dialog_button_order().
+func (v *gdk.Screen) AlternativeDialogButtonOrder() bool {
+	c := C.gtk_alternative_dialog_button_order(v.native())
+	return gobool(c)
+}
+*/
+
+// gtk_dialog_set_alternative_button_order_from_array

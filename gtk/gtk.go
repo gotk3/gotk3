@@ -478,6 +478,8 @@ const (
 	IMAGE_GICON     ImageType = C.GTK_IMAGE_GICON
 )
 
+// TODO: add GTK_IMAGE_SURFACE for GTK 3.10
+
 func marshalImageType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return ImageType(c), nil
@@ -1838,6 +1840,9 @@ func wrapCalendar(obj *glib.Object) *Calendar {
 	return &Calendar{Widget{glib.InitiallyUnowned{obj}}}
 }
 
+// TODO:
+// GtkCalendarDetailFunc
+
 // CalendarNew is a wrapper around gtk_calendar_new().
 func CalendarNew() (*Calendar, error) {
 	c := C.gtk_calendar_new()
@@ -1898,7 +1903,8 @@ func (v *Calendar) GetDate() (year, month, day uint) {
 	return uint(cyear), uint(cmonth), uint(cday)
 }
 
-// TODO gtk_calendar_set_detail_func
+// TODO:
+// gtk_calendar_set_detail_func().
 
 // GetDetailWidthChars is a wrapper around gtk_calendar_get_detail_width_chars().
 func (v *Calendar) GetDetailWidthChars() int {
@@ -2888,6 +2894,9 @@ func (v *Dialog) AddButton(text string, id ResponseType) (*Button, error) {
 	return wrapButton(obj), nil
 }
 
+// TODO:
+// gtk_dialog_add_buttons().
+
 // AddActionWidget() is a wrapper around gtk_dialog_add_action_widget().
 func (v *Dialog) AddActionWidget(child IWidget, id ResponseType) {
 	C.gtk_dialog_add_action_widget(v.native(), child.toWidget(), C.gint(id))
@@ -2898,22 +2907,19 @@ func (v *Dialog) SetDefaultResponse(id ResponseType) {
 	C.gtk_dialog_set_default_response(v.native(), C.gint(id))
 }
 
-// SetResponseSensitive() is a wrapper around
-// gtk_dialog_set_response_sensitive().
+// SetResponseSensitive() is a wrapper around gtk_dialog_set_response_sensitive().
 func (v *Dialog) SetResponseSensitive(id ResponseType, setting bool) {
 	C.gtk_dialog_set_response_sensitive(v.native(), C.gint(id),
 		gbool(setting))
 }
 
-// GetResponseForWidget() is a wrapper around
-// gtk_dialog_get_response_for_widget().
+// GetResponseForWidget is a wrapper around gtk_dialog_get_response_for_widget().
 func (v *Dialog) GetResponseForWidget(widget IWidget) ResponseType {
 	c := C.gtk_dialog_get_response_for_widget(v.native(), widget.toWidget())
 	return ResponseType(c)
 }
 
-// GetWidgetForResponse() is a wrapper around
-// gtk_dialog_get_widget_for_response().
+// GetWidgetForResponse is a wrapper around gtk_dialog_get_widget_for_response().
 func (v *Dialog) GetWidgetForResponse(id ResponseType) (*Widget, error) {
 	c := C.gtk_dialog_get_widget_for_response(v.native(), C.gint(id))
 	if c == nil {
@@ -2962,20 +2968,6 @@ func DialogNewWithButtons(title string, parent IWindow, flags DialogFlags, butto
 	}
 	return
 }
-
-// TODO(jrick)
-/*
-func (v *gdk.Screen) AlternativeDialogButtonOrder() bool {
-	c := C.gtk_alternative_dialog_button_order(v.native())
-	return gobool(c)
-}
-*/
-
-// TODO(jrick)
-/*
-func SetAlternativeButtonOrder(ids ...ResponseType) {
-}
-*/
 
 /*
  * GtkDrawingArea
@@ -4852,18 +4844,6 @@ func ImageNewFromPixbuf(pixbuf *gdk.Pixbuf) (*Image, error) {
 	return wrapImage(obj), nil
 }
 
-// TODO(jrick) GtkIconSet
-/*
-func ImageNewFromIconSet() {
-}
-*/
-
-// TODO(jrick) GdkPixbufAnimation
-/*
-func ImageNewFromAnimation() {
-}
-*/
-
 // ImageNewFromIconName() is a wrapper around gtk_image_new_from_icon_name().
 func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
 	cstr := C.CString(iconName)
@@ -4879,6 +4859,7 @@ func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
 
 // TODO(jrick) GIcon
 /*
+// gtk_image_new_from_gicon().
 func ImageNewFromGIcon() {
 }
 */
@@ -4908,18 +4889,6 @@ func (v *Image) SetFromPixbuf(pixbuf *gdk.Pixbuf) {
 	C.gtk_image_set_from_pixbuf(v.native(), pbptr)
 }
 
-// TODO(jrick) GtkIconSet
-/*
-func (v *Image) SetFromIconSet() {
-}
-*/
-
-// TODO(jrick) GdkPixbufAnimation
-/*
-func (v *Image) SetFromAnimation() {
-}
-*/
-
 // SetFromIconName() is a wrapper around gtk_image_set_from_icon_name().
 func (v *Image) SetFromIconName(iconName string, size IconSize) {
 	cstr := C.CString(iconName)
@@ -4930,6 +4899,7 @@ func (v *Image) SetFromIconName(iconName string, size IconSize) {
 
 // TODO(jrick) GIcon
 /*
+// gtk_image_set_from_gicon().
 func (v *Image) SetFromGIcon() {
 }
 */
@@ -4955,12 +4925,6 @@ func (v *Image) GetPixbuf() *gdk.Pixbuf {
 	pb := &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}
 	return pb
 }
-
-// TODO(jrick) GtkIconSet
-/*
-func (v *Image) GetIconSet() {
-}
-*/
 
 // GetAnimation() is a wrapper around gtk_image_get_animation()
 func (v *Image) GetAnimation() *gdk.PixbufAnimation {
@@ -4997,6 +4961,7 @@ func (v *Image) GetIconName() (string, IconSize) {
 
 // TODO(jrick) GIcon
 /*
+// gtk_image_get_gicon().
 func (v *Image) GetGIcon() {
 }
 */

@@ -69,6 +69,20 @@ func AcceleratorSetDefaultModMask(mods gdk.ModifierType) {
 }
 
 /*
+ * GtkAccelLabel
+ */
+
+// TODO:
+// gtk_accel_label_new().
+// gtk_accel_label_set_accel_closure().
+// gtk_accel_label_get_accel_widget().
+// gtk_accel_label_set_accel_widget().
+// gtk_accel_label_get_accel_width().
+// gtk_accel_label_set_accel(). since GTK 3.6
+// gtk_accel_label_get_accel(). since GTK 3.12
+// gtk_accel_label_refetch().
+
+/*
  * GtkAccelGroup
  */
 

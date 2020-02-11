@@ -705,32 +705,30 @@ func (v *Display) GetDefaultGroup() (*Window, error) {
 	return &Window{glib.Take(unsafe.Pointer(c))}, nil
 }
 
-// SupportsSelectionNotification() is a wrapper around
-// gdk_display_supports_selection_notification().
+// SupportsSelectionNotification is a wrapper around gdk_display_supports_selection_notification().
 func (v *Display) SupportsSelectionNotification() bool {
 	c := C.gdk_display_supports_selection_notification(v.native())
 	return gobool(c)
 }
 
-// RequestSelectionNotification() is a wrapper around
-// gdk_display_request_selection_notification().
+// RequestSelectionNotification is a wrapper around gdk_display_request_selection_notification().
 func (v *Display) RequestSelectionNotification(selection Atom) bool {
 	c := C.gdk_display_request_selection_notification(v.native(),
 		selection.native())
 	return gobool(c)
 }
 
-// SupportsClipboardPersistence() is a wrapper around
-// gdk_display_supports_clipboard_persistence().
+// SupportsClipboardPersistence is a wrapper around gdk_display_supports_clipboard_persistence().
 func (v *Display) SupportsClipboardPersistence() bool {
 	c := C.gdk_display_supports_clipboard_persistence(v.native())
 	return gobool(c)
 }
 
-// TODO(jrick)
-func (v *Display) StoreClipboard(clipboardWindow *Window, time uint32, targets ...Atom) {
-	panic("Not implemented")
-}
+// TODO:
+// gdk_display_store_clipboard().
+// func (v *Display) StoreClipboard(clipboardWindow *Window, time uint32, targets ...Atom) {
+// 	panic("Not implemented")
+// }
 
 // SupportsShapes() is a wrapper around gdk_display_supports_shapes().
 func (v *Display) SupportsShapes() bool {
@@ -744,10 +742,11 @@ func (v *Display) SupportsInputShapes() bool {
 	return gobool(c)
 }
 
-// TODO(jrick) glib.AppLaunchContext GdkAppLaunchContext
-func (v *Display) GetAppLaunchContext() {
-	panic("Not implemented")
-}
+// TODO:
+// gdk_display_get_app_launch_context().
+// func (v *Display) GetAppLaunchContext() {
+// 	panic("Not implemented")
+// }
 
 // NotifyStartupComplete() is a wrapper around gdk_display_notify_startup_complete().
 func (v *Display) NotifyStartupComplete(startupID string) {

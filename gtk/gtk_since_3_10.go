@@ -100,6 +100,14 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
 // gtk_widget_get_composite_name().
 
 /*
+ * GtkImage
+ */
+
+// TODO:
+// gtk_image_new_from_surface().
+// gtk_image_set_from_surface().
+
+/*
  * GtkButton
  */
 
