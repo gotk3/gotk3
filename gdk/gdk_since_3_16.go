@@ -49,6 +49,14 @@ const (
 )
 
 /*
+ * GdkDevice
+ */
+
+// TODO:
+// gdk_device_get_vendor_id().
+// gdk_device_get_product_id().
+
+/*
  * GdkGLContext
  */
 
