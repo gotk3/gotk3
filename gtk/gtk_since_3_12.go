@@ -95,12 +95,12 @@ func (v *Dialog) GetHeaderBar() *Widget {
  * Entry
  */
 
-// SetMaxWidthChars() is a wrapper around gtk_entry_set_max_width_chars().
+// SetMaxWidthChars is a wrapper around gtk_entry_set_max_width_chars().
 func (v *Entry) SetMaxWidthChars(nChars int) {
 	C.gtk_entry_set_max_width_chars(v.native(), C.gint(nChars))
 }
 
-// GetMaxWidthChars() is a wrapper around gtk_entry_get_max_width_chars().
+// GetMaxWidthChars is a wrapper around gtk_entry_get_max_width_chars().
 func (v *Entry) GetMaxWidthChars() int {
 	c := C.gtk_entry_get_max_width_chars(v.native())
 	return int(c)

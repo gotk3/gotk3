@@ -107,6 +107,11 @@ func (v *GLArea) SetRequiredVersion(major, minor int) {
 	C.gtk_gl_area_set_required_version(v.native(), (C.gint)(major), (C.gint)(minor))
 }
 
+// TODO:
+// void gtk_gl_area_set_error (GtkGLArea *area, const GError *error);
+// gtk_gl_area_set_has_alpha().
+// gtk_gl_area_get_has_alpha().
+
 // HasDepthBuffer is a wrapper around gtk_gl_area_get_has_depth_buffer().
 func (v *GLArea) HasDepthBuffer() bool {
 	return gobool(C.gtk_gl_area_get_has_depth_buffer(v.native()))
@@ -132,7 +137,7 @@ func (v *GLArea) GetAutoRender() bool {
 	return gobool(C.gtk_gl_area_get_auto_render(v.native()))
 }
 
-// SetAutoRender is a wrapper around gtk_gl_area_set_has_stencil_buffer().
+// SetAutoRender is a wrapper around gtk_gl_area_set_auto_render().
 func (v *GLArea) SetAutoRender(autoRender bool) {
 	C.gtk_gl_area_set_auto_render(v.native(), gbool(autoRender))
 }
@@ -172,5 +177,3 @@ func (v *GLArea) GetError() error {
 	}
 	return nil
 }
-
-// void gtk_gl_area_set_error (GtkGLArea *area, const GError *error);

@@ -95,3 +95,11 @@ func (v *ListBoxRow) GetSelectable() bool {
 // TODO:
 // gtk_places_sidebar_get_show_enter_location().
 // gtk_places_sidebar_set_show_enter_location().
+
+/*
+ * GtkSwitch
+ */
+
+// TODO:
+// gtk_switch_set_state().
+// gtk_switch_get_state().

@@ -10,6 +10,14 @@ import (
 )
 
 /*
+ * GtkRange
+ */
+
+// TODO:
+// gtk_range_get_min_slider_size().
+// gtk_range_set_min_slider_size().
+
+/*
  * GtkToolbar
  */
 

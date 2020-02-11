@@ -108,6 +108,14 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
 // gtk_image_set_from_surface().
 
 /*
+ * GtkEntry
+ */
+
+// TODO:
+// gtk_entry_get_tabs().
+// gtk_entry_set_tabs().
+
+/*
  * GtkButton
  */
 
