@@ -317,9 +317,6 @@ const (
 	GRAB_ALREADY_GRABBED GrabStatus = C.GDK_GRAB_ALREADY_GRABBED
 	GRAB_INVALID_TIME    GrabStatus = C.GDK_GRAB_INVALID_TIME
 	GRAB_FROZEN          GrabStatus = C.GDK_GRAB_FROZEN
-	// Only exists since 3.16
-	// GRAB_FAILED GrabStatus = C.GDK_GRAB_FAILED
-	GRAB_FAILED GrabStatus = 5
 )
 
 // GrabOwnership is a representation of GdkGrabOwnership
@@ -377,6 +374,35 @@ const (
 	NOTIFY_NONLINEAR_VIRTUAL NotifyType = C.GDK_NOTIFY_NONLINEAR_VIRTUAL
 	NOTIFY_UNKNOWN           NotifyType = C.GDK_NOTIFY_UNKNOWN
 )
+
+/*
+ * General
+ */
+
+// TODO:
+// gdk_init().
+// gdk_init_check().
+// gdk_parse_args().
+// gdk_get_display_arg_name().
+// gdk_notify_startup_complete().
+// gdk_notify_startup_complete_with_id().
+// gdk_set_allowed_backends().
+// gdk_get_program_class().
+// gdk_set_program_class().
+// gdk_get_display(). deprecated since version 3.8
+// gdk_flush(). deprecated
+// gdk_screen_width(). deprecated since version 3.22
+// gdk_screen_height(). deprecated since version 3.22
+// gdk_screen_width_mm(). deprecated since version 3.22
+// gdk_screen_height_mm(). deprecated since version 3.22
+// gdk_set_double_click_time(). deprecated
+// gdk_beep(). deprecated
+// gdk_error_trap_push(). deprecated
+// gdk_error_trap_pop(). deprecated
+// gdk_error_trap_pop_ignored(). deprecated
+// ().
+// ().
+// ().
 
 /*
  * GdkAtom

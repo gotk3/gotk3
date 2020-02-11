@@ -41,6 +41,14 @@ func init() {
 }
 
 /*
+ * Constants
+ */
+
+const (
+	GRAB_FAILED GrabStatus = C.GDK_GRAB_FAILED
+)
+
+/*
  * GdkGLContext
  */
 

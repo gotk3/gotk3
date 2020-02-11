@@ -103,6 +103,7 @@ func (v *Screen) SetResolution(r float64) {
 	C.gdk_screen_set_resolution(v.native(), C.gdouble(r))
 }
 
+// TODO:
 // void 	gdk_screen_set_font_options ()
 // gboolean 	gdk_screen_get_setting ()
 // const cairo_font_options_t * 	gdk_screen_get_font_options ()
