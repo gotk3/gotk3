@@ -10,6 +10,14 @@ import (
 	"unsafe"
 )
 
+/*
+ * GtkWidget
+ */
+
+// TODO:
+// gtk_widget_send_expose().
+// gtk_widget_is_composited().
+
 // PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
 func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button int, activateTime uint32) {
 	wshell := nullableWidget(parentMenuShell)

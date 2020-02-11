@@ -463,4 +463,10 @@ func (v *Window) RemoveAccelGroup(accelGroup *AccelGroup) {
 // TODO: gtk_accel_map_foreach  - can't be done without a function type
 
 // TODO: gtk_accel_map_load_scanner
-// TODO: gtk_widget_list_accel_closures
+
+/*
+ * GtkWidget
+ */
+
+// TODO:
+// gtk_widget_list_accel_closures

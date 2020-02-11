@@ -93,6 +93,13 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
 }
 
 /*
+ * GtkWidget
+ */
+
+// TODO:
+// gtk_widget_get_composite_name().
+
+/*
  * GtkButton
  */
 

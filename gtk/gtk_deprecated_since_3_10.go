@@ -244,6 +244,16 @@ func (v *Window) ReshowWithInitialSize() {
 }
 
 /*
+ * GtkWidget
+ */
+
+// TODO:
+// gtk_widget_render_icon_pixbuf().
+// gtk_widget_pop_composite_child().
+// gtk_widget_push_composite_child().
+// gtk_widget_set_composite_name().
+
+/*
  * GtkContainer
  */
 
