@@ -534,6 +534,11 @@ func marshalInputPurpose(p uintptr) (interface{}, error) {
 	return InputPurpose(c), nil
 }
 
+// TODO:
+// GtkBaselinePosition
+// GtkDeleteType
+// GtkDirectionType
+
 // Justify is a representation of GTK's GtkJustification.
 type Justification int
 
@@ -584,6 +589,9 @@ func marshalMessageType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return MessageType(c), nil
 }
+
+// TODO:
+// GtkMovementStep
 
 // Orientation is a representation of GTK's GtkOrientation.
 type Orientation int
@@ -703,6 +711,10 @@ func marshalResponseType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return ResponseType(c), nil
 }
+
+// TODO:
+// GtkScrollStep
+// GtkScrollType
 
 // SelectionMode is a representation of GTK's GtkSelectionMode.
 type SelectionMode int
