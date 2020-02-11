@@ -9,6 +9,7 @@ import "C"
 
 import (
 	"fmt"
+	"runtime"
 	"unsafe"
 )
 
@@ -43,17 +44,6 @@ func (v *Variant) ToVariant() *Variant {
 	return v
 }
 
-// newVariant creates a new Variant from a GVariant pointer.
-func newVariant(p *C.GVariant) *Variant {
-	return &Variant{GVariant: p}
-}
-
-// VariantFromUnsafePointer returns a Variant from an unsafe pointer.
-// XXX: unnecessary footgun?
-//func VariantFromUnsafePointer(p unsafe.Pointer) *Variant {
-//	return &Variant{C.toGVariant(p)}
-//}
-
 // native returns a pointer to the underlying GVariant.
 func (v *Variant) native() *C.GVariant {
 	if v == nil || v.GVariant == nil {
@@ -67,6 +57,75 @@ func (v *Variant) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
+// newVariant wraps a native GVariant.
+// Does NOT handle reference counting! Use takeVariant() to take ownership of values.
+func newVariant(p *C.GVariant) *Variant {
+	if p == nil {
+		return nil
+	}
+	return &Variant{GVariant: p}
+}
+
+// TakeVariant wraps a unsafe.Pointer as a glib.Variant, taking ownership of it.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
+func TakeVariant(ptr unsafe.Pointer) *Variant {
+	return takeVariant(C.toGVariant(ptr))
+}
+
+// takeVariant wraps a native GVariant,
+// takes ownership and sets up a finalizer to free the instance during GC.
+func takeVariant(p *C.GVariant) *Variant {
+	if p == nil {
+		return nil
+	}
+	obj := &Variant{GVariant: p}
+
+	if obj.IsFloating() {
+		obj.RefSink()
+	} else {
+		obj.Ref()
+	}
+
+	runtime.SetFinalizer(obj, (*Variant).Unref)
+	return obj
+}
+
+// IsFloating returns true if the variant has a floating reference count.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not call this.
+func (v *Variant) IsFloating() bool {
+	return gobool(C.g_variant_is_floating(v.native()))
+}
+
+// Ref is a wrapper around g_variant_ref.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) Ref() {
+	C.g_variant_ref(v.native())
+}
+
+// RefSink is a wrapper around g_variant_ref_sink.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) RefSink() {
+	C.g_variant_ref_sink(v.native())
+}
+
+// TakeRef is a wrapper around g_variant_take_ref.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) TakeRef() {
+	C.g_variant_take_ref(v.native())
+}
+
+// Unref is a wrapper around g_variant_unref.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) Unref() {
+	C.g_variant_unref(v.native())
+}
+
 // TypeString returns the g variant type string for this variant.
 func (v *Variant) TypeString() string {
 	// the string returned from this belongs to GVariant and must not be freed.
@@ -77,13 +136,6 @@ func (v *Variant) TypeString() string {
 func (v *Variant) IsContainer() bool {
 	return gobool(C.g_variant_is_container(v.native()))
 }
-
-// IsFloating returns true if the variant has a floating reference count.
-// XXX: this isn't useful without ref_sink/take_ref, which are themselves
-// perhaps not useful for most Go code that may use variants.
-//func (v *Variant) IsFloating() bool {
-//	return gobool(C.g_variant_is_floating(v.native()))
-//}
 
 // GetBoolean returns the bool value of this variant.
 func (v *Variant) GetBoolean() bool {
@@ -144,6 +196,7 @@ func (v *Variant) GetInt() (int64, error) {
 
 // Type returns the VariantType for this variant.
 func (v *Variant) Type() *VariantType {
+	// The return value is valid for the lifetime of value and must not be freed.
 	return newVariantType(C.g_variant_get_type(v.native()))
 }
 
@@ -168,10 +221,7 @@ func (v *Variant) AnnotatedString() string {
 	return C.GoString((*C.char)(gc))
 }
 
-//void	g_variant_unref ()
-//GVariant *	g_variant_ref ()
-//GVariant *	g_variant_ref_sink ()
-//GVariant *	g_variant_take_ref ()
+// TODO:
 //gint	g_variant_compare ()
 //GVariantClass	g_variant_classify ()
 //gboolean	g_variant_check_format_string ()
