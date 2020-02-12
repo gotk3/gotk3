@@ -161,6 +161,20 @@ func VariantFromUint64(value uint64) *Variant {
 	return takeVariant(C.g_variant_new_uint64(C.guint64(value)))
 }
 
+// VariantFromBoolean is a wrapper around g_variant_new_boolean
+func VariantFromBoolean(value bool) *Variant {
+	return takeVariant(C.g_variant_new_boolean(gbool(value)))
+}
+
+// VariantFromString is a wrapper around g_variant_new_string/g_variant_new_take_string.
+// Uses g_variant_new_take_string to reduce memory allocations if possible.
+func VariantFromString(value string) *Variant {
+	cstr := (*C.gchar)(C.CString(value))
+	// g_variant_new_take_string takes owhership of the cstring and will call free() on it when done.
+	// Do NOT free this string in this function!
+	return takeVariant(C.g_variant_new_take_string(cstr))
+}
+
 // TypeString returns the g variant type string for this variant.
 func (v *Variant) TypeString() string {
 	// the string returned from this belongs to GVariant and must not be freed.
@@ -177,11 +191,18 @@ func (v *Variant) GetBoolean() bool {
 	return gobool(C.g_variant_get_boolean(v.native()))
 }
 
-// GetString returns the string value of the variant.
+// GetString is a wrapper around g_variant_get_string.
+// It returns the string value of the variant.
 func (v *Variant) GetString() string {
+
+	// The string value remains valid as long as the GVariant exists, do NOT free the cstring in this function.
 	var len C.gsize
 	gc := C.g_variant_get_string(v.native(), &len)
-	defer C.g_free(C.gpointer(gc))
+
+	// This is opposed to g_variant_dup_string, which copies the string.
+	// g_variant_dup_string is not implemented,
+	// as we copy the string value anyways when converting to a go string.
+
 	return C.GoStringN((*C.char)(gc), (C.int)(len))
 }
 
@@ -277,11 +298,8 @@ func (v *Variant) AnnotatedString() string {
 //void	g_variant_get_va ()
 //GVariant *	g_variant_new ()
 //GVariant *	g_variant_new_va ()
-//GVariant *	g_variant_new_boolean ()
 //GVariant *	g_variant_new_handle ()
 //GVariant *	g_variant_new_double ()
-//GVariant *	g_variant_new_string ()
-//GVariant *	g_variant_new_take_string ()
 //GVariant *	g_variant_new_printf ()
 //GVariant *	g_variant_new_object_path ()
 //gboolean	g_variant_is_object_path ()
@@ -301,8 +319,6 @@ func (v *Variant) AnnotatedString() string {
 //guint64	g_variant_get_uint64 ()
 //gint32	g_variant_get_handle ()
 //gdouble	g_variant_get_double ()
-//const gchar *	g_variant_get_string ()
-//gchar *	g_variant_dup_string ()
 //GVariant *	g_variant_get_variant ()
 //const gchar **	g_variant_get_strv ()
 //gchar **	g_variant_dup_strv ()

@@ -112,3 +112,65 @@ func TestVariantGetUint(t *testing.T) {
 		}
 	})
 }
+
+func TestVariantType(t *testing.T) {
+	variant := glib.VariantFromBoolean(true)
+	variantType := variant.Type()
+	if !glib.VariantTypeEqual(glib.VARIANT_TYPE_BOOLEAN, variantType) {
+		t.Error("Expected", glib.VARIANT_TYPE_BOOLEAN, "got", variantType)
+	}
+}
+
+func TestVariantBool(t *testing.T) {
+	testCases := []struct {
+		desc  string
+		value bool
+	}{
+		{
+			desc:  "true",
+			value: true,
+		},
+		{
+			desc:  "false",
+			value: false,
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			variant := glib.VariantFromBoolean(tC.value)
+			actual := variant.GetBoolean()
+			if tC.value != actual {
+				t.Error("Expected", tC.value, "got", actual)
+			}
+		})
+	}
+}
+
+func TestVariantString(t *testing.T) {
+	testCases := []struct {
+		desc  string
+		value string
+	}{
+		{
+			desc:  "Plain string",
+			value: "Simple Data",
+		},
+		{
+			desc:  "String with special characters",
+			value: "Üö@/Data",
+		},
+		{
+			desc:  "Empty String",
+			value: "",
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			variant := glib.VariantFromString(tC.value)
+			actual := variant.GetString()
+			if tC.value != actual {
+				t.Error("Expected", tC.value, "got", actual)
+			}
+		})
+	}
+}
