@@ -5,6 +5,7 @@
 
 package glib
 
+// #include <stdlib.h>
 // #include <glib.h>
 // #include "gvarianttype.go.h"
 import "C"
