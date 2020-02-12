@@ -225,6 +225,25 @@ func (v *Variant) GetStrv() []string {
 	return strs
 }
 
+// GetObjv returns a slice of object paths from this variant.  It wraps
+// g_variant_get_objv, but returns copies of the strings instead.
+func (v *Variant) GetObjv() []string {
+	gstrv := C.g_variant_get_objv(v.native(), nil)
+	// we do not own the memory for these strings, so we must not use strfreev
+	// but we must free the actual pointer we receive (transfer container).
+	// We don't implement g_variant_dup_objv which copies the strings,
+	// as we need to copy anyways when converting to go strings.
+	c := gstrv
+	defer C.g_free(C.gpointer(gstrv))
+	var strs []string
+
+	for *c != nil {
+		strs = append(strs, C.GoString((*C.char)(*c)))
+		c = C.next_gcharptr(c)
+	}
+	return strs
+}
+
 // GetInt returns the int64 value of the variant if it is an integer type, and
 // an error otherwise.  It wraps variouns `g_variant_get_*` functions dealing
 // with integers of different sizes.
@@ -322,8 +341,6 @@ func (v *Variant) AnnotatedString() string {
 //gint32	g_variant_get_handle ()
 //gdouble	g_variant_get_double ()
 //GVariant *	g_variant_get_variant ()
-//const gchar **	g_variant_get_objv ()
-//gchar **	g_variant_dup_objv ()
 //const gchar *	g_variant_get_bytestring ()
 //gchar *	g_variant_dup_bytestring ()
 //const gchar **	g_variant_get_bytestring_array ()
