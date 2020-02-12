@@ -211,7 +211,9 @@ func (v *Variant) GetString() string {
 func (v *Variant) GetStrv() []string {
 	gstrv := C.g_variant_get_strv(v.native(), nil)
 	// we do not own the memory for these strings, so we must not use strfreev
-	// but we must free the actual pointer we receive.
+	// but we must free the actual pointer we receive (transfer container).
+	// We don't implement g_variant_dup_strv which copies the strings,
+	// as we need to copy anyways when converting to go strings.
 	c := gstrv
 	defer C.g_free(C.gpointer(gstrv))
 	var strs []string
@@ -320,8 +322,6 @@ func (v *Variant) AnnotatedString() string {
 //gint32	g_variant_get_handle ()
 //gdouble	g_variant_get_double ()
 //GVariant *	g_variant_get_variant ()
-//const gchar **	g_variant_get_strv ()
-//gchar **	g_variant_dup_strv ()
 //const gchar **	g_variant_get_objv ()
 //gchar **	g_variant_dup_objv ()
 //const gchar *	g_variant_get_bytestring ()
