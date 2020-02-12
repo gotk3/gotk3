@@ -143,7 +143,7 @@ func VariantFromInt64(value int64) *Variant {
 
 // VariantFromByte is a wrapper around g_variant_new_byte
 func VariantFromByte(value uint8) *Variant {
-	return takeVariant(C.g_variant_new_byte(C.guint8(value)))
+	return takeVariant(C.g_variant_new_byte(C.guchar(value)))
 }
 
 // VariantFromUint16 is a wrapper around g_variant_new_uint16
