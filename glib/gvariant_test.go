@@ -174,3 +174,15 @@ func TestVariantString(t *testing.T) {
 		})
 	}
 }
+
+func TestVariantVariant(t *testing.T) {
+
+	boxed := glib.VariantFromString("I'm in a box")
+
+	variant := glib.VariantFromVariant(boxed)
+
+	actual := variant.GetVariant()
+	if boxed.Native() != actual.Native() {
+		t.Error("Expected", boxed.Native(), "got", actual.Native())
+	}
+}

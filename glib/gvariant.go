@@ -175,6 +175,11 @@ func VariantFromString(value string) *Variant {
 	return takeVariant(C.g_variant_new_take_string(cstr))
 }
 
+// VariantFromVariant is a wrapper around g_variant_new_variant.
+func VariantFromVariant(value *Variant) *Variant {
+	return takeVariant(C.g_variant_new_variant(value.native()))
+}
+
 // TypeString returns the g variant type string for this variant.
 func (v *Variant) TypeString() string {
 	// the string returned from this belongs to GVariant and must not be freed.
@@ -204,6 +209,20 @@ func (v *Variant) GetString() string {
 	// as we copy the string value anyways when converting to a go string.
 
 	return C.GoStringN((*C.char)(gc), (C.int)(len))
+}
+
+// GetVariant is a wrapper around g_variant_get_variant.
+// It unboxes a nested GVariant.
+func (v *Variant) GetVariant() *Variant {
+	c := C.g_variant_get_variant(v.native())
+	if c == nil {
+		return nil
+	}
+	// The returned value is returned with full ownership transfer,
+	// only Unref(), don't Ref().
+	obj := newVariant(c)
+	runtime.SetFinalizer(obj, (*Variant).Unref)
+	return obj
 }
 
 // GetStrv returns a slice of strings from this variant.  It wraps
@@ -326,7 +345,6 @@ func (v *Variant) AnnotatedString() string {
 //gboolean	g_variant_is_object_path ()
 //GVariant *	g_variant_new_signature ()
 //gboolean	g_variant_is_signature ()
-//GVariant *	g_variant_new_variant ()
 //GVariant *	g_variant_new_strv ()
 //GVariant *	g_variant_new_objv ()
 //GVariant *	g_variant_new_bytestring ()
@@ -340,7 +358,6 @@ func (v *Variant) AnnotatedString() string {
 //guint64	g_variant_get_uint64 ()
 //gint32	g_variant_get_handle ()
 //gdouble	g_variant_get_double ()
-//GVariant *	g_variant_get_variant ()
 //const gchar *	g_variant_get_bytestring ()
 //gchar *	g_variant_dup_bytestring ()
 //const gchar **	g_variant_get_bytestring_array ()
