@@ -249,8 +249,41 @@ func wrapMenuItem(obj *Object) *MenuItem {
 	return &MenuItem{obj}
 }
 
-// MenuItemNew is a wrapper around g_menu_item_new().
-func MenuItemNew(label, detailedAction string) *MenuItem {
+// MenuItemNew is a wrapper around g_menu_item_new(NULL, NULL).
+func MenuItemNew() *MenuItem {
+	c := C.g_menu_item_new(nil, nil)
+	if c == nil {
+		return nil
+	}
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+}
+
+// MenuItemNewWithLabel is a wrapper around g_menu_item_new(label, NULL).
+func MenuItemNewWithLabel(label string) *MenuItem {
+	cstr1 := (*C.gchar)(C.CString(label))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	c := C.g_menu_item_new(cstr1, nil)
+	if c == nil {
+		return nil
+	}
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+}
+
+// MenuItemNewWithAction is a wrapper around g_menu_item_new(NULL, detailedAction).
+func MenuItemNewWithAction(detailedAction string) *MenuItem {
+	cstr1 := (*C.gchar)(C.CString(detailedAction))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	c := C.g_menu_item_new(nil, cstr1)
+	if c == nil {
+		return nil
+	}
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+}
+
+// MenuItemNewWithLabelAndAction is a wrapper around g_menu_item_new(label, detailedAction).
+func MenuItemNewWithLabelAndAction(label, detailedAction string) *MenuItem {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
@@ -303,6 +336,11 @@ func (v *MenuItem) SetLabel(label string) {
 	defer C.free(unsafe.Pointer(cstr1))
 
 	C.g_menu_item_set_label(v.native(), cstr1)
+}
+
+// UnsetLabel is a wrapper around g_menu_item_set_label(NULL).
+func (v *MenuItem) UnsetLabel() {
+	C.g_menu_item_set_label(v.native(), nil)
 }
 
 // SetDetailedAction is a wrapper around g_menu_item_set_detailed_action().
