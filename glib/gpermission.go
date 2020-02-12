@@ -4,6 +4,7 @@ package glib
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
+// #include "gpermission.go.h"
 import "C"
 import (
 	"errors"

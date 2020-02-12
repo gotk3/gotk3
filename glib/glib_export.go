@@ -1,5 +1,7 @@
 package glib
 
+// #cgo pkg-config: gio-2.0
+// #include <gio/gio.h>
 import "C"
 import "unsafe"
 
