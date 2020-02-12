@@ -7,6 +7,21 @@ package glib
 import "C"
 import "unsafe"
 
+// Predefined attribute names for GMenu
+var (
+	MENU_ATTRIBUTE_ACTION           string = C.G_MENU_ATTRIBUTE_ACTION
+	MENU_ATTRIBUTE_ACTION_NAMESPACE string = C.G_MENU_ATTRIBUTE_ACTION_NAMESPACE
+	MENU_ATTRIBUTE_TARGET           string = C.G_MENU_ATTRIBUTE_TARGET
+	MENU_ATTRIBUTE_LABEL            string = C.G_MENU_ATTRIBUTE_LABEL
+	MENU_ATTRIBUTE_ICON             string = C.G_MENU_ATTRIBUTE_ICON
+)
+
+// Predefined link names for GMenu
+var (
+	MENU_LINK_SECTION string = C.G_MENU_LINK_SECTION
+	MENU_LINK_SUBMENU string = C.G_MENU_LINK_SUBMENU
+)
+
 // MenuModel is a representation of GMenuModel.
 type MenuModel struct {
 	*Object
@@ -381,9 +396,52 @@ func (v *MenuItem) SetLink(link string, model *MenuModel) {
 	C.g_menu_item_set_link(v.native(), cstr1, model.native())
 }
 
-// void 	g_menu_item_set_action_and_target_value ()
-// void 	g_menu_item_set_action_and_target ()
-// GVariant * 	g_menu_item_get_attribute_value ()
+// SetActionAndTargetValue is a wrapper around g_menu_item_set_action_and_target_value()
+func (v *MenuItem) SetActionAndTargetValue(action string, targetValue IVariant) {
+	cstr1 := (*C.gchar)(C.CString(action))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	var c *C.GVariant
+	if targetValue != nil {
+		c = targetValue.ToGVariant()
+	}
+
+	C.g_menu_item_set_action_and_target_value(v.native(), cstr1, c)
+}
+
+// UnsetAction is a wrapper around g_menu_item_set_action_and_target_value(NULL, NULL)
+// Unsets both action and target value. Unsetting the action also clears the target value.
+func (v *MenuItem) UnsetAction() {
+	C.g_menu_item_set_action_and_target_value(v.native(), nil, nil)
+}
+
+// SetAttributeValue is a wrapper around g_menu_item_set_attribute_value()
+func (v *MenuItem) SetAttributeValue(attribute string, value IVariant) {
+	var c *C.GVariant
+	if value != nil {
+		c = value.ToGVariant()
+	}
+
+	cstr1 := (*C.gchar)(C.CString(attribute))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	C.g_menu_item_set_attribute_value(v.native(), cstr1, c)
+}
+
+// GetAttributeValue is a wrapper around g_menu_item_get_attribute_value()
+func (v *MenuItem) GetAttributeValue(attribute string, expectedType *VariantType) *Variant {
+	cstr1 := (*C.gchar)(C.CString(attribute))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	c := C.g_menu_item_get_attribute_value(v.native(), cstr1, expectedType.native())
+	if c == nil {
+		return nil
+	}
+	return newVariant(c)
+}
+
+// TODO: These require positional parameters with *any* type, according to the format string passed.
+// This is likely not possible to represent 1:1 in go.
 // gboolean 	g_menu_item_get_attribute ()
-// void 	g_menu_item_set_attribute_value ()
 // void 	g_menu_item_set_attribute ()
+// void 	g_menu_item_set_action_and_target ()
