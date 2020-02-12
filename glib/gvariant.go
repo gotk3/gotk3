@@ -126,6 +126,41 @@ func (v *Variant) Unref() {
 	C.g_variant_unref(v.native())
 }
 
+// VariantFromInt16 is a wrapper around g_variant_new_int16
+func VariantFromInt16(value int16) *Variant {
+	return takeVariant(C.g_variant_new_int16(C.gint16(value)))
+}
+
+// VariantFromInt32 is a wrapper around g_variant_new_int32
+func VariantFromInt32(value int32) *Variant {
+	return takeVariant(C.g_variant_new_int32(C.gint32(value)))
+}
+
+// VariantFromInt64 is a wrapper around g_variant_new_int64
+func VariantFromInt64(value int64) *Variant {
+	return takeVariant(C.g_variant_new_int64(C.gint64(value)))
+}
+
+// VariantFromByte is a wrapper around g_variant_new_byte
+func VariantFromByte(value uint8) *Variant {
+	return takeVariant(C.g_variant_new_byte(C.guint8(value)))
+}
+
+// VariantFromUint16 is a wrapper around g_variant_new_uint16
+func VariantFromUint16(value uint16) *Variant {
+	return takeVariant(C.g_variant_new_uint16(C.guint16(value)))
+}
+
+// VariantFromUint32 is a wrapper around g_variant_new_uint32
+func VariantFromUint32(value uint32) *Variant {
+	return takeVariant(C.g_variant_new_uint32(C.guint32(value)))
+}
+
+// VariantFromUint64 is a wrapper around g_variant_new_uint64
+func VariantFromUint64(value uint64) *Variant {
+	return takeVariant(C.g_variant_new_uint64(C.guint64(value)))
+}
+
 // TypeString returns the g variant type string for this variant.
 func (v *Variant) TypeString() string {
 	// the string returned from this belongs to GVariant and must not be freed.
@@ -171,25 +206,38 @@ func (v *Variant) GetStrv() []string {
 // an error otherwise.  It wraps variouns `g_variant_get_*` functions dealing
 // with integers of different sizes.
 func (v *Variant) GetInt() (int64, error) {
-	t := v.Type().String()
+	t := v.TypeString()
 	var i int64
 	switch t {
-	case "y":
-		i = int64(C.g_variant_get_byte(v.native()))
 	case "n":
 		i = int64(C.g_variant_get_int16(v.native()))
-	case "q":
-		i = int64(C.g_variant_get_uint16(v.native()))
 	case "i":
 		i = int64(C.g_variant_get_int32(v.native()))
-	case "u":
-		i = int64(C.g_variant_get_uint32(v.native()))
 	case "x":
 		i = int64(C.g_variant_get_int64(v.native()))
-	case "t":
-		i = int64(C.g_variant_get_uint64(v.native()))
 	default:
-		return 0, fmt.Errorf("variant type %s not an integer type", t)
+		return 0, fmt.Errorf("variant type %s not a signed integer type", t)
+	}
+	return i, nil
+}
+
+// GetUint returns the uint64 value of the variant if it is an integer type, and
+// an error otherwise.  It wraps variouns `g_variant_get_*` functions dealing
+// with integers of different sizes.
+func (v *Variant) GetUint() (uint64, error) {
+	t := v.TypeString()
+	var i uint64
+	switch t {
+	case "y":
+		i = uint64(C.g_variant_get_byte(v.native()))
+	case "q":
+		i = uint64(C.g_variant_get_uint16(v.native()))
+	case "u":
+		i = uint64(C.g_variant_get_uint32(v.native()))
+	case "t":
+		i = uint64(C.g_variant_get_uint64(v.native()))
+	default:
+		return 0, fmt.Errorf("variant type %s not an unsigned integer type", t)
 	}
 	return i, nil
 }
@@ -230,13 +278,6 @@ func (v *Variant) AnnotatedString() string {
 //GVariant *	g_variant_new ()
 //GVariant *	g_variant_new_va ()
 //GVariant *	g_variant_new_boolean ()
-//GVariant *	g_variant_new_byte ()
-//GVariant *	g_variant_new_int16 ()
-//GVariant *	g_variant_new_uint16 ()
-//GVariant *	g_variant_new_int32 ()
-//GVariant *	g_variant_new_uint32 ()
-//GVariant *	g_variant_new_int64 ()
-//GVariant *	g_variant_new_uint64 ()
 //GVariant *	g_variant_new_handle ()
 //GVariant *	g_variant_new_double ()
 //GVariant *	g_variant_new_string ()
