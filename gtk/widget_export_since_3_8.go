@@ -13,15 +13,15 @@ import (
 )
 
 //export goTickCallbacks
-func goTickCallbacks (widget *C.GtkWidget, frameClock *C.GdkFrameClock, userData C.gpointer) C.gboolean {
+func goTickCallbacks(widget *C.GtkWidget, frameClock *C.GdkFrameClock, userData C.gpointer) C.gboolean {
 	id := int(uintptr(userData))
 
-	tickCallbackRegistry.Lock()
+	tickCallbackRegistry.RLock()
 	r := tickCallbackRegistry.m[id]
-	tickCallbackRegistry.Unlock()
+	tickCallbackRegistry.RUnlock()
 
 	return gbool(r.fn(
-		wrapWidget(glib.Take(unsafe.Pointer(widget))), 
+		wrapWidget(glib.Take(unsafe.Pointer(widget))),
 		gdk.WrapFrameClock(unsafe.Pointer(frameClock)),
 		r.userData,
 	))
