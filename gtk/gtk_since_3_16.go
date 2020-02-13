@@ -253,10 +253,12 @@ func StackSidebarNew() (*StackSidebar, error) {
 	return wrapStackSidebar(glib.Take(unsafe.Pointer(c))), nil
 }
 
+// SetStack is a wrapper around gtk_stack_sidebar_set_stack().
 func (v *StackSidebar) SetStack(stack *Stack) {
 	C.gtk_stack_sidebar_set_stack(v.native(), stack.native())
 }
 
+// GetStack is a wrapper around gtk_stack_sidebar_get_stack().
 func (v *StackSidebar) GetStack() *Stack {
 	c := C.gtk_stack_sidebar_get_stack(v.native())
 	if c == nil {
@@ -278,7 +280,7 @@ func (v *Entry) GrabFocusWithoutSelecting() {
  * GtkTextBuffer
  */
 
-// InsertMarkup() is a wrapper around  gtk_text_buffer_insert_markup()
+// InsertMarkup is a wrapper around  gtk_text_buffer_insert_markup()
 func (v *TextBuffer) InsertMarkup(start *TextIter, text string) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
