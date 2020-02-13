@@ -44,6 +44,7 @@ const (
  * GtkTickCallback
  */
 
+// TickCallback is a representation of GtkTickCallback
 type TickCallback func(widget *Widget, frameClock *gdk.FrameClock, userData ...interface{}) bool
 
 type tickCallbackData struct {

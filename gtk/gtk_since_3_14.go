@@ -51,6 +51,7 @@ func (v *ListBox) UnselectAll() {
 	C.gtk_list_box_unselect_all(v.native())
 }
 
+// ListBoxForeachFunc is a representation of GtkListBoxForeachFunc
 type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow, userData ...interface{}) int
 
 type listBoxForeachFuncData struct {

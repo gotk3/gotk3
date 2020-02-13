@@ -65,7 +65,7 @@ func init() {
 	}
 }
 
-// GetLocaleDirection() is a wrapper around gtk_get_locale_direction().
+// GetLocaleDirection is a wrapper around gtk_get_locale_direction().
 func GetLocaleDirection() TextDirection {
 	c := C.gtk_get_locale_direction()
 	return TextDirection(c)
@@ -175,6 +175,8 @@ func (v *MenuButton) SetUsePopover(setting bool) {
 /*
  * FlowBox
  */
+
+// FlowBox is a representation of GtkFlowBox
 type FlowBox struct {
 	Container
 }
@@ -357,6 +359,8 @@ func (fb *FlowBox) GetSelectionMode() SelectionMode {
 /*
  * FlowBoxChild
  */
+
+// FlowBoxChild is a representation of GtkFlowBoxChild
 type FlowBoxChild struct {
 	Bin
 }
@@ -532,7 +536,7 @@ func (v *Popover) GetModal() bool {
  * TreePath
  */
 
-// TreePathNewFromIndicesv() is a wrapper around gtk_tree_path_new_from_indicesv().
+// TreePathNewFromIndicesv is a wrapper around gtk_tree_path_new_from_indicesv().
 func TreePathNewFromIndicesv(indices []int) (*TreePath, error) {
 	if len(indices) == 0 {
 		return nil, errors.New("no indice")
