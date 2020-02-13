@@ -522,7 +522,7 @@ const (
 
 // TODO:
 // GTK_INPUT_HINT_VERTICAL_WRITING Since 3.18
-// GTK_INPUT_HINT_EMOJI Since 3.22.20	 
+// GTK_INPUT_HINT_EMOJI Since 3.22.20
 // GTK_INPUT_HINT_NO_EMOJI Since 3.22.20
 
 func marshalInputHints(p uintptr) (interface{}, error) {
@@ -9862,10 +9862,9 @@ type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData interfa
 
 // GetSortColumnId() is a wrapper around gtk_tree_sortable_get_sort_column_id().
 func (v *TreeSortable) GetSortColumnId() (int, SortType, bool) {
-	sort := C.toGtkTreeSortable(unsafe.Pointer(v.native()))
 	var column C.gint
 	var order C.GtkSortType
-	ok := gobool(C.gtk_tree_sortable_get_sort_column_id(sort, &column, &order))
+	ok := gobool(C.gtk_tree_sortable_get_sort_column_id(v.native(), &column, &order))
 	return int(column), SortType(order), ok
 }
 
@@ -9887,8 +9886,7 @@ var (
 
 // SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
 func (v *TreeSortable) SetSortColumnId(column int, order SortType) {
-	sort := C.toGtkTreeSortable(unsafe.Pointer(v.native()))
-	C.gtk_tree_sortable_set_sort_column_id(sort, C.gint(column), C.GtkSortType(order))
+	C.gtk_tree_sortable_set_sort_column_id(v.native(), C.gint(column), C.GtkSortType(order))
 }
 
 // SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
