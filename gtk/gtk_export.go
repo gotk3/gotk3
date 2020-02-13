@@ -96,8 +96,6 @@ func goPrintSettings(key *C.gchar,
 
 	printSettingsCallbackRegistry.RLock()
 	r := printSettingsCallbackRegistry.m[id]
-	// TODO: figure out a way to determine when we can clean up
-	//delete(printSettingsCallbackRegistry.m, id)
 	printSettingsCallbackRegistry.RUnlock()
 
 	r.fn(C.GoString((*C.char)(key)), C.GoString((*C.char)(value)), r.userData)

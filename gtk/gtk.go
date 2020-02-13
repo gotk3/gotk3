@@ -9300,6 +9300,11 @@ func (v *TreeModel) ForEach(f TreeModelForeachFunc, userData ...interface{}) {
 	treeModelForeachFuncRegistry.Unlock()
 
 	C._gtk_tree_model_foreach(v.toTreeModel(), C.gpointer(uintptr(id)))
+
+	// Clean up callback immediately as we only need it for the duration of this Foreach call
+	treeModelForeachFuncRegistry.Lock()
+	delete(treeModelForeachFuncRegistry.m, id)
+	treeModelForeachFuncRegistry.Unlock()
 }
 
 /*
@@ -9410,6 +9415,7 @@ var (
 
 // SetVisibleFunc is a wrapper around gtk_tree_model_filter_set_visible_func().
 func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	treeModelVisibleFilterFuncRegistry.Lock()
 	id := treeModelVisibleFilterFuncRegistry.next
 	treeModelVisibleFilterFuncRegistry.next++
@@ -9725,6 +9731,11 @@ func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc, userData ...
 	treeSelectionForeachFuncRegistry.Unlock()
 
 	C._gtk_tree_selection_selected_foreach(v.native(), C.gpointer(uintptr(id)))
+
+	// Clean up callback immediately as we only need it for the duration of this Foreach call
+	treeSelectionForeachFuncRegistry.Lock()
+	delete(treeSelectionForeachFuncRegistry.m, id)
+	treeSelectionForeachFuncRegistry.Unlock()
 }
 
 /*
@@ -9863,6 +9874,7 @@ func (v *TreeSortable) SetSortColumnId(column int, order SortType) {
 
 // SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
 func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	treeStoreSortFuncRegistry.Lock()
 	id := treeStoreSortFuncRegistry.next
 	treeStoreSortFuncRegistry.next++
@@ -9874,6 +9886,7 @@ func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc, userDa
 
 // SetDefaultSortFunc() is a wrapper around gtk_tree_sortable_set_default_sort_func().
 func (v *TreeSortable) SetDefaultSortFunc(f TreeIterCompareFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	treeStoreSortFuncRegistry.Lock()
 	id := treeStoreSortFuncRegistry.next
 	treeStoreSortFuncRegistry.next++

@@ -79,6 +79,7 @@ func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc, userData ...interface{}
 
 	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(uintptr(id)))
 
+	// Clean up callback immediately as we only need it for the duration of this Foreach call
 	listBoxForeachFuncRegistry.Lock()
 	delete(listBoxForeachFuncRegistry.m, id)
 	listBoxForeachFuncRegistry.Unlock()

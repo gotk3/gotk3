@@ -985,6 +985,8 @@ func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
 
 	C._gtk_print_run_page_setup_dialog_async(parent.toWindow(), setup.native(),
 		settings.native(), C.gpointer(uintptr(id)))
+
+	// This callback is cleaned up as soon as it has been called by GTK.
 }
 
 /*
@@ -1188,6 +1190,11 @@ func (ps *PrintSettings) ForEach(cb PrintSettingsCallback, userData ...interface
 	printSettingsCallbackRegistry.Unlock()
 
 	C._gtk_print_settings_foreach(ps.native(), C.gpointer(uintptr(id)))
+
+	// Clean up callback immediately as we only need it for the duration of this Foreach call
+	printSettingsCallbackRegistry.Lock()
+	delete(printSettingsCallbackRegistry.m, id)
+	printSettingsCallbackRegistry.Unlock()
 }
 
 // GetBool() is a wrapper around gtk_print_settings_get_bool().

@@ -10,8 +10,6 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
-// TODO: figure out a way to determine when we can clean up
-
 //export goListBoxFilterFuncs
 func goListBoxFilterFuncs(row *C.GtkListBoxRow, userData C.gpointer) C.gboolean {
 	id := int(uintptr(userData))

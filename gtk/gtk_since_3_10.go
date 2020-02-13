@@ -423,6 +423,7 @@ var (
 )
 
 func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	listBoxFilterFuncRegistry.Lock()
 	id := listBoxFilterFuncRegistry.next
 	listBoxFilterFuncRegistry.next++
@@ -451,6 +452,7 @@ var (
 )
 
 func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	listBoxHeaderFuncRegistry.Lock()
 	id := listBoxHeaderFuncRegistry.next
 	listBoxHeaderFuncRegistry.next++
@@ -479,6 +481,7 @@ var (
 )
 
 func (v *ListBox) SetSortFunc(fn ListBoxSortFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	listBoxSortFuncRegistry.Lock()
 	id := listBoxSortFuncRegistry.next
 	listBoxSortFuncRegistry.next++

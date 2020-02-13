@@ -69,12 +69,17 @@ func (v *Widget) AddTickCallback(fn TickCallback, userData ...interface{}) int {
 	tickCallbackRegistry.Unlock()
 
 	return int(C._gtk_widget_add_tick_callback(v.native(), C.gpointer(uintptr(id))))
+
+	// This callback is cleaned up when calling RemoveTickCallback()
 }
 
 // RemoveTickCallback is a wrapper around gtk_widget_remove_tick_callback().
 func (v *Widget) RemoveTickCallback(id int) {
-	// TODO: remove callback from tickCallbackRegistry
 	C.gtk_widget_remove_tick_callback(v.native(), C.guint(id))
+
+	tickCallbackRegistry.Lock()
+	delete(tickCallbackRegistry.m, id)
+	tickCallbackRegistry.Unlock()
 }
 
 // TODO:
