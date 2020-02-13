@@ -7294,7 +7294,6 @@ func (v *ScrolledWindow) SetVAdjustment(adjustment *Adjustment) {
 // gtk_scrolled_window_set_placement().
 // gtk_scrolled_window_unset_placement().
 
-
 // GetShadowType is a wrapper around gtk_scrolled_window_get_shadow_type().
 func (v *ScrolledWindow) GetShadowType() ShadowType {
 	c := C.gtk_scrolled_window_get_shadow_type(v.native())
@@ -9274,11 +9273,11 @@ func (v *TreeModel) FilterNew(root *TreePath) (*TreeModelFilter, error) {
 
 // TreeModelForeachFunc defines the function prototype for the foreach function (f arg) for
 // (* TreeModel).ForEach
-type TreeModelForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData interface{}) bool
+type TreeModelForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData ...interface{}) bool
 
 type treeModelForeachFuncData struct {
 	fn       TreeModelForeachFunc
-	userData interface{}
+	userData []interface{}
 }
 
 var (
@@ -9293,23 +9292,14 @@ var (
 )
 
 // ForEach() is a wrapper around gtk_tree_model_foreach ()
-func (v *TreeModel) ForEach(f TreeModelForeachFunc, userData ...interface{}) error {
-	if len(userData) > 1 {
-		return errors.New("userData len must be 0 or 1")
-	}
-
-	t := treeModelForeachFuncData{fn: f}
-	if len(userData) > 0 {
-		t.userData = userData[0]
-	}
+func (v *TreeModel) ForEach(f TreeModelForeachFunc, userData ...interface{}) {
 	treeModelForeachFuncRegistry.Lock()
 	id := treeModelForeachFuncRegistry.next
 	treeModelForeachFuncRegistry.next++
-	treeModelForeachFuncRegistry.m[id] = t
+	treeModelForeachFuncRegistry.m[id] = treeModelForeachFuncData{fn: f, userData: userData}
 	treeModelForeachFuncRegistry.Unlock()
 
 	C._gtk_tree_model_foreach(v.toTreeModel(), C.gpointer(uintptr(id)))
-	return nil
 }
 
 /*
@@ -9400,11 +9390,11 @@ func (v *TreeModelFilter) Refilter() {
 
 // TreeModelFilterVisibleFunc defines the function prototype for the filter visibility function (f arg)
 // to TreeModelFilter.SetVisibleFunc.
-type TreeModelFilterVisibleFunc func(model *TreeModelFilter, iter *TreeIter, userData interface{}) bool
+type TreeModelFilterVisibleFunc func(model *TreeModelFilter, iter *TreeIter, userData ...interface{}) bool
 
 type treeModelFilterVisibleFuncData struct {
 	fn       TreeModelFilterVisibleFunc
-	userData interface{}
+	userData []interface{}
 }
 
 var (
@@ -9419,23 +9409,14 @@ var (
 )
 
 // SetVisibleFunc is a wrapper around gtk_tree_model_filter_set_visible_func().
-func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc, userData ...interface{}) error {
-	if len(userData) > 1 {
-		return errors.New("userData len must be 0 or 1")
-	}
-
-	t := treeModelFilterVisibleFuncData{fn: f}
-	if len(userData) > 0 {
-		t.userData = userData[0]
-	}
+func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc, userData ...interface{}) {
 	treeModelVisibleFilterFuncRegistry.Lock()
 	id := treeModelVisibleFilterFuncRegistry.next
 	treeModelVisibleFilterFuncRegistry.next++
-	treeModelVisibleFilterFuncRegistry.m[id] = t
+	treeModelVisibleFilterFuncRegistry.m[id] = treeModelFilterVisibleFuncData{fn: f, userData: userData}
 	treeModelVisibleFilterFuncRegistry.Unlock()
 
 	C._gtk_tree_model_filter_set_visible_func(v.native(), C.gpointer(uintptr(id)))
-	return nil
 }
 
 // Down() is a wrapper around gtk_tree_path_down()
@@ -9717,11 +9698,11 @@ func (v *TreeSelection) PathIsSelected(path *TreePath) bool {
 
 // TreeSelectionForeachFunc defines the function prototype for the selected_foreach function (f arg) for
 // (* TreeSelection).SelectedForEach
-type TreeSelectionForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData interface{})
+type TreeSelectionForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData ...interface{})
 
 type treeSelectionForeachFuncData struct {
 	fn       TreeSelectionForeachFunc
-	userData interface{}
+	userData []interface{}
 }
 
 var (
@@ -9736,23 +9717,14 @@ var (
 )
 
 // SelectedForEach() is a wrapper around gtk_tree_selection_selected_foreach()
-func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc, userData ...interface{}) error {
-	if len(userData) > 1 {
-		return errors.New("userData len must be 0 or 1")
-	}
-
-	t := treeSelectionForeachFuncData{fn: f}
-	if len(userData) > 0 {
-		t.userData = userData[0]
-	}
+func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc, userData ...interface{}) {
 	treeSelectionForeachFuncRegistry.Lock()
 	id := treeSelectionForeachFuncRegistry.next
 	treeSelectionForeachFuncRegistry.next++
-	treeSelectionForeachFuncRegistry.m[id] = t
+	treeSelectionForeachFuncRegistry.m[id] = treeSelectionForeachFuncData{fn: f, userData: userData}
 	treeSelectionForeachFuncRegistry.Unlock()
 
 	C._gtk_tree_selection_selected_foreach(v.native(), C.gpointer(uintptr(id)))
-	return nil
 }
 
 /*
@@ -9858,7 +9830,7 @@ func wrapTreeSortable(obj *glib.Object) *TreeSortable {
 
 // TreeIterCompareFunc defines the function prototype for the sort function (f arg) for
 // (* TreeSortable).SetSortFunc
-type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData interface{}) int
+type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData ...interface{}) int
 
 // GetSortColumnId() is a wrapper around gtk_tree_sortable_get_sort_column_id().
 func (v *TreeSortable) GetSortColumnId() (int, SortType, bool) {
@@ -9870,7 +9842,7 @@ func (v *TreeSortable) GetSortColumnId() (int, SortType, bool) {
 
 type treeStoreSortFuncData struct {
 	fn       TreeIterCompareFunc
-	userData interface{}
+	userData []interface{}
 }
 
 var (
@@ -9890,43 +9862,25 @@ func (v *TreeSortable) SetSortColumnId(column int, order SortType) {
 }
 
 // SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
-func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc, userData ...interface{}) error {
-	if len(userData) > 1 {
-		return errors.New("userData len must be 0 or 1")
-	}
-
-	t := treeStoreSortFuncData{fn: f}
-	if len(userData) > 0 {
-		t.userData = userData[0]
-	}
+func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc, userData ...interface{}) {
 	treeStoreSortFuncRegistry.Lock()
 	id := treeStoreSortFuncRegistry.next
 	treeStoreSortFuncRegistry.next++
-	treeStoreSortFuncRegistry.m[id] = t
+	treeStoreSortFuncRegistry.m[id] = treeStoreSortFuncData{fn: f, userData: userData}
 	treeStoreSortFuncRegistry.Unlock()
 
 	C._gtk_tree_sortable_set_sort_func(v.native(), C.gint(sortColumn), C.gpointer(uintptr(id)))
-	return nil
 }
 
 // SetDefaultSortFunc() is a wrapper around gtk_tree_sortable_set_default_sort_func().
-func (v *TreeSortable) SetDefaultSortFunc(f TreeIterCompareFunc, userData ...interface{}) error {
-	if len(userData) > 1 {
-		return errors.New("userData len must be 0 or 1")
-	}
-
-	t := treeStoreSortFuncData{fn: f}
-	if len(userData) > 0 {
-		t.userData = userData[0]
-	}
+func (v *TreeSortable) SetDefaultSortFunc(f TreeIterCompareFunc, userData ...interface{}) {
 	treeStoreSortFuncRegistry.Lock()
 	id := treeStoreSortFuncRegistry.next
 	treeStoreSortFuncRegistry.next++
-	treeStoreSortFuncRegistry.m[id] = t
+	treeStoreSortFuncRegistry.m[id] = treeStoreSortFuncData{fn: f, userData: userData}
 	treeStoreSortFuncRegistry.Unlock()
 
 	C._gtk_tree_sortable_set_default_sort_func(v.native(), C.gpointer(uintptr(id)))
-	return nil
 }
 
 func (v *TreeSortable) HasDefaultSortFunc() bool {
@@ -10518,4 +10472,3 @@ func castWidget(c *C.GtkWidget) (IWidget, error) {
 
 	return ret, nil
 }
-

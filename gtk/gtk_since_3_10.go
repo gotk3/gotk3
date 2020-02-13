@@ -404,11 +404,11 @@ func (v *ListBox) InvalidateSort() {
 	C.gtk_list_box_invalidate_sort(v.native())
 }
 
-type ListBoxFilterFunc func(row *ListBoxRow, userData uintptr) bool
+type ListBoxFilterFunc func(row *ListBoxRow, userData ...interface{}) bool
 
 type listBoxFilterFuncData struct {
 	fn       ListBoxFilterFunc
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -422,7 +422,7 @@ var (
 	}
 )
 
-func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData uintptr) {
+func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData ...interface{}) {
 	listBoxFilterFuncRegistry.Lock()
 	id := listBoxFilterFuncRegistry.next
 	listBoxFilterFuncRegistry.next++
@@ -432,11 +432,11 @@ func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData uintptr) {
 	C._gtk_list_box_set_filter_func(v.native(), C.gpointer(uintptr(id)))
 }
 
-type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow, userData uintptr)
+type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow, userData ...interface{})
 
 type listBoxHeaderFuncData struct {
 	fn       ListBoxHeaderFunc
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -450,7 +450,7 @@ var (
 	}
 )
 
-func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData uintptr) {
+func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData ...interface{}) {
 	listBoxHeaderFuncRegistry.Lock()
 	id := listBoxHeaderFuncRegistry.next
 	listBoxHeaderFuncRegistry.next++
@@ -460,11 +460,11 @@ func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData uintptr) {
 	C._gtk_list_box_set_header_func(v.native(), C.gpointer(uintptr(id)))
 }
 
-type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow, userData uintptr) int
+type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow, userData ...interface{}) int
 
 type listBoxSortFuncData struct {
 	fn       ListBoxSortFunc
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -478,7 +478,7 @@ var (
 	}
 )
 
-func (v *ListBox) SetSortFunc(fn ListBoxSortFunc, userData uintptr) {
+func (v *ListBox) SetSortFunc(fn ListBoxSortFunc, userData ...interface{}) {
 	listBoxSortFuncRegistry.Lock()
 	id := listBoxSortFuncRegistry.next
 	listBoxSortFuncRegistry.next++

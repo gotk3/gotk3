@@ -27,7 +27,7 @@ package gtk
 // #include "widget_since_3_8.go.h"
 import "C"
 
-import ( 
+import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -61,7 +61,7 @@ func (v *Widget) GetFrameClock() *gdk.FrameClock {
 }
 
 // AddTickCallback is a wrapper around gtk_widget_add_tick_callback().
-func (v *Widget) AddTickCallback(fn TickCallback, userData uintptr) int {
+func (v *Widget) AddTickCallback(fn TickCallback, userData ...interface{}) int {
 	tickCallbackRegistry.Lock()
 	id := tickCallbackRegistry.next
 	tickCallbackRegistry.next++

@@ -954,11 +954,11 @@ func PrintRunPageSetupDialog(parent IWindow, pageSetup *PageSetup, settings *Pri
 	return wrapPageSetup(obj)
 }
 
-type PageSetupDoneCallback func(setup *PageSetup, userData uintptr)
+type PageSetupDoneCallback func(setup *PageSetup, userData ...interface{})
 
 type pageSetupDoneCallbackData struct {
 	fn   PageSetupDoneCallback
-	data uintptr
+	data []interface{}
 }
 
 var (
@@ -974,7 +974,7 @@ var (
 
 // PrintRunPageSetupDialogAsync() is a wrapper around gtk_print_run_page_setup_dialog_async().
 func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
-	settings *PrintSettings, cb PageSetupDoneCallback, data uintptr) {
+	settings *PrintSettings, cb PageSetupDoneCallback, data ...interface{}) {
 
 	pageSetupDoneCallbackRegistry.Lock()
 	id := pageSetupDoneCallbackRegistry.next
@@ -1160,11 +1160,11 @@ func (ps *PrintSettings) Unset(key string) {
 	C.gtk_print_settings_unset(ps.native(), (*C.gchar)(cstr))
 }
 
-type PrintSettingsCallback func(key, value string, userData uintptr)
+type PrintSettingsCallback func(key, value string, userData ...interface{})
 
 type printSettingsCallbackData struct {
 	fn       PrintSettingsCallback
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -1179,7 +1179,7 @@ var (
 )
 
 // Foreach() is a wrapper around gtk_print_settings_foreach().
-func (ps *PrintSettings) ForEach(cb PrintSettingsCallback, userData uintptr) {
+func (ps *PrintSettings) ForEach(cb PrintSettingsCallback, userData ...interface{}) {
 	printSettingsCallbackRegistry.Lock()
 	id := printSettingsCallbackRegistry.next
 	printSettingsCallbackRegistry.next++
