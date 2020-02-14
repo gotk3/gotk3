@@ -954,11 +954,11 @@ func PrintRunPageSetupDialog(parent IWindow, pageSetup *PageSetup, settings *Pri
 	return wrapPageSetup(obj)
 }
 
-type PageSetupDoneCallback func(setup *PageSetup, userData uintptr)
+type PageSetupDoneCallback func(setup *PageSetup, userData ...interface{})
 
 type pageSetupDoneCallbackData struct {
 	fn   PageSetupDoneCallback
-	data uintptr
+	data []interface{}
 }
 
 var (
@@ -974,7 +974,7 @@ var (
 
 // PrintRunPageSetupDialogAsync() is a wrapper around gtk_print_run_page_setup_dialog_async().
 func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
-	settings *PrintSettings, cb PageSetupDoneCallback, data uintptr) {
+	settings *PrintSettings, cb PageSetupDoneCallback, data ...interface{}) {
 
 	pageSetupDoneCallbackRegistry.Lock()
 	id := pageSetupDoneCallbackRegistry.next
@@ -985,6 +985,8 @@ func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
 
 	C._gtk_print_run_page_setup_dialog_async(parent.toWindow(), setup.native(),
 		settings.native(), C.gpointer(uintptr(id)))
+
+	// This callback is cleaned up as soon as it has been called by GTK.
 }
 
 /*
@@ -1160,11 +1162,11 @@ func (ps *PrintSettings) Unset(key string) {
 	C.gtk_print_settings_unset(ps.native(), (*C.gchar)(cstr))
 }
 
-type PrintSettingsCallback func(key, value string, userData uintptr)
+type PrintSettingsCallback func(key, value string, userData ...interface{})
 
 type printSettingsCallbackData struct {
 	fn       PrintSettingsCallback
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -1179,7 +1181,7 @@ var (
 )
 
 // Foreach() is a wrapper around gtk_print_settings_foreach().
-func (ps *PrintSettings) ForEach(cb PrintSettingsCallback, userData uintptr) {
+func (ps *PrintSettings) ForEach(cb PrintSettingsCallback, userData ...interface{}) {
 	printSettingsCallbackRegistry.Lock()
 	id := printSettingsCallbackRegistry.next
 	printSettingsCallbackRegistry.next++
@@ -1188,6 +1190,11 @@ func (ps *PrintSettings) ForEach(cb PrintSettingsCallback, userData uintptr) {
 	printSettingsCallbackRegistry.Unlock()
 
 	C._gtk_print_settings_foreach(ps.native(), C.gpointer(uintptr(id)))
+
+	// Clean up callback immediately as we only need it for the duration of this Foreach call
+	printSettingsCallbackRegistry.Lock()
+	delete(printSettingsCallbackRegistry.m, id)
+	printSettingsCallbackRegistry.Unlock()
 }
 
 // GetBool() is a wrapper around gtk_print_settings_get_bool().

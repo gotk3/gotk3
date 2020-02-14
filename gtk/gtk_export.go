@@ -78,6 +78,7 @@ func goPageSetupDone(setup *C.GtkPageSetup,
 
 	pageSetupDoneCallbackRegistry.Lock()
 	r := pageSetupDoneCallbackRegistry.m[id]
+	// This callback is only used once, so we can clean up immediately
 	delete(pageSetupDoneCallbackRegistry.m, id)
 	pageSetupDoneCallbackRegistry.Unlock()
 
@@ -93,11 +94,9 @@ func goPrintSettings(key *C.gchar,
 
 	id := int(uintptr(userData))
 
-	printSettingsCallbackRegistry.Lock()
+	printSettingsCallbackRegistry.RLock()
 	r := printSettingsCallbackRegistry.m[id]
-	// TODO: figure out a way to determine when we can clean up
-	//delete(printSettingsCallbackRegistry.m, id)
-	printSettingsCallbackRegistry.Unlock()
+	printSettingsCallbackRegistry.RUnlock()
 
 	r.fn(C.GoString((*C.char)(key)), C.GoString((*C.char)(value)), r.userData)
 
@@ -107,9 +106,9 @@ func goPrintSettings(key *C.gchar,
 func goTreeModelFilterFuncs(filter *C.GtkTreeModelFilter, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
 	id := int(uintptr(data))
 
-	treeModelVisibleFilterFuncRegistry.Lock()
+	treeModelVisibleFilterFuncRegistry.RLock()
 	r := treeModelVisibleFilterFuncRegistry.m[id]
-	treeModelVisibleFilterFuncRegistry.Unlock()
+	treeModelVisibleFilterFuncRegistry.RUnlock()
 
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
 	return gbool(r.fn(
@@ -122,9 +121,9 @@ func goTreeModelFilterFuncs(filter *C.GtkTreeModelFilter, iter *C.GtkTreeIter, d
 func goTreeSortableSortFuncs(model *C.GtkTreeModel, a, b *C.GtkTreeIter, data C.gpointer) C.gint {
 	id := int(uintptr(data))
 
-	treeStoreSortFuncRegistry.Lock()
+	treeStoreSortFuncRegistry.RLock()
 	r := treeStoreSortFuncRegistry.m[id]
-	treeStoreSortFuncRegistry.Unlock()
+	treeStoreSortFuncRegistry.RUnlock()
 
 	goIterA := &TreeIter{(C.GtkTreeIter)(*a)}
 	goIterB := &TreeIter{(C.GtkTreeIter)(*b)}
@@ -136,9 +135,9 @@ func goTreeSortableSortFuncs(model *C.GtkTreeModel, a, b *C.GtkTreeIter, data C.
 func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
 	id := int(uintptr(data))
 
-	treeModelForeachFuncRegistry.Lock()
+	treeModelForeachFuncRegistry.RLock()
 	r := treeModelForeachFuncRegistry.m[id]
-	treeModelForeachFuncRegistry.Unlock()
+	treeModelForeachFuncRegistry.RUnlock()
 
 	goPath := &TreePath{(*C.GtkTreePath)(path)}
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
@@ -153,9 +152,9 @@ func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.
 func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.gpointer) {
 	id := int(uintptr(data))
 
-	treeSelectionForeachFuncRegistry.Lock()
+	treeSelectionForeachFuncRegistry.RLock()
 	r := treeSelectionForeachFuncRegistry.m[id]
-	treeSelectionForeachFuncRegistry.Unlock()
+	treeSelectionForeachFuncRegistry.RUnlock()
 
 	goPath := &TreePath{(*C.GtkTreePath)(path)}
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}

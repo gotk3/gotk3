@@ -51,11 +51,12 @@ func (v *ListBox) UnselectAll() {
 	C.gtk_list_box_unselect_all(v.native())
 }
 
-type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow, userData uintptr) int
+// ListBoxForeachFunc is a representation of GtkListBoxForeachFunc
+type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow, userData ...interface{}) int
 
 type listBoxForeachFuncData struct {
 	fn       ListBoxForeachFunc
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -70,7 +71,7 @@ var (
 )
 
 // SelectedForeach is a wrapper around gtk_list_box_selected_foreach().
-func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc, userData uintptr) {
+func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc, userData ...interface{}) {
 	listBoxForeachFuncRegistry.Lock()
 	id := listBoxForeachFuncRegistry.next
 	listBoxForeachFuncRegistry.next++
@@ -79,6 +80,7 @@ func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc, userData uintptr) {
 
 	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(uintptr(id)))
 
+	// Clean up callback immediately as we only need it for the duration of this Foreach call
 	listBoxForeachFuncRegistry.Lock()
 	delete(listBoxForeachFuncRegistry.m, id)
 	listBoxForeachFuncRegistry.Unlock()

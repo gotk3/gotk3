@@ -81,7 +81,7 @@ func (v *NativeDialog) SetModal(modal bool) {
 	C.gtk_native_dialog_set_modal(v.native(), gbool(modal))
 }
 
-// GetModal() is a wrapper around gtk_native_dialog_get_modal().
+// GetModal is a wrapper around gtk_native_dialog_get_modal().
 func (v *NativeDialog) GetModal() bool {
 	c := C.gtk_native_dialog_get_modal(v.native())
 	return gobool(c)
@@ -94,12 +94,12 @@ func (v *NativeDialog) SetTitle(title string) {
 	C.gtk_native_dialog_set_title(v.native(), (*C.char)(cstr))
 }
 
-// GetTitle() is a wrapper around gtk_native_dialog_get_title().
+// GetTitle is a wrapper around gtk_native_dialog_get_title().
 func (v *NativeDialog) GetTitle() (string, error) {
 	return stringReturn((*C.gchar)(C.gtk_native_dialog_get_title(v.native())))
 }
 
-// SetTransientFor() is a wrapper around gtk_native_dialog_set_transient_for().
+// SetTransientFor is a wrapper around gtk_native_dialog_set_transient_for().
 func (v *NativeDialog) SetTransientFor(parent IWindow) {
 	var pw *C.GtkWindow = nil
 	if parent != nil {
@@ -108,7 +108,7 @@ func (v *NativeDialog) SetTransientFor(parent IWindow) {
 	C.gtk_native_dialog_set_transient_for(v.native(), pw)
 }
 
-// GetTransientFor() is a wrapper around gtk_native_dialog_get_transient_for().
+// GetTransientFor is a wrapper around gtk_native_dialog_get_transient_for().
 func (v *NativeDialog) GetTransientFor() (*Window, error) {
 	c := C.gtk_native_dialog_get_transient_for(v.native())
 	if c == nil {
@@ -218,7 +218,7 @@ func (v *FileChooserNativeDialog) SetAcceptLabel(accept_label string) {
 	C.gtk_file_chooser_native_set_accept_label(v.native(), (*C.char)(cstr))
 }
 
-// GetAcceptLabel() is a wrapper around gtk_file_chooser_native_get_accept_label().
+// GetAcceptLabel is a wrapper around gtk_file_chooser_native_get_accept_label().
 func (v *FileChooserNativeDialog) GetAcceptLabel() (string, error) {
 	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_accept_label(v.native())))
 }
@@ -230,7 +230,7 @@ func (v *FileChooserNativeDialog) SetCancelLabel(cancel_label string) {
 	C.gtk_file_chooser_native_set_cancel_label(v.native(), (*C.char)(cstr))
 }
 
-// GetCancelLabel() is a wrapper around gtk_file_chooser_native_get_cancel_label().
+// GetCancelLabel is a wrapper around gtk_file_chooser_native_get_cancel_label().
 func (v *FileChooserNativeDialog) GetCancelLabel() (string, error) {
 	return stringReturn((*C.gchar)(C.gtk_file_chooser_native_get_cancel_label(v.native())))
 }

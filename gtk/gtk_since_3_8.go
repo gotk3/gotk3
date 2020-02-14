@@ -30,6 +30,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 )
+
 /*
  * Constants
  */
@@ -43,11 +44,12 @@ const (
  * GtkTickCallback
  */
 
-type TickCallback func(widget *Widget, frameClock *gdk.FrameClock, userData uintptr) bool
+// TickCallback is a representation of GtkTickCallback
+type TickCallback func(widget *Widget, frameClock *gdk.FrameClock, userData ...interface{}) bool
 
 type tickCallbackData struct {
 	fn       TickCallback
-	userData uintptr
+	userData []interface{}
 }
 
 var (

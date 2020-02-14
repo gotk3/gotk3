@@ -11,15 +11,13 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
-// TODO: figure out a way to determine when we can clean up
-
 //export goListBoxForEachFuncs
 func goListBoxForEachFuncs(box *C.GtkListBox, row *C.GtkListBoxRow, userData C.gpointer) {
 	id := int(uintptr(userData))
 
-	listBoxForeachFuncRegistry.Lock()
+	listBoxForeachFuncRegistry.RLock()
 	r := listBoxForeachFuncRegistry.m[id]
-	listBoxForeachFuncRegistry.Unlock()
+	listBoxForeachFuncRegistry.RUnlock()
 
 	r.fn(wrapListBox(glib.Take(unsafe.Pointer(box))), wrapListBoxRow(glib.Take(unsafe.Pointer(row))), r.userData)
 }

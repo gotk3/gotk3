@@ -143,12 +143,12 @@ func ButtonNewFromIconName(iconName string, size IconSize) (*Button, error) {
  * GtkGrid
  */
 
-// RemoveRow() is a wrapper around gtk_grid_remove_row().
+// RemoveRow is a wrapper around gtk_grid_remove_row().
 func (v *Grid) RemoveRow(position int) {
 	C.gtk_grid_remove_row(v.native(), C.gint(position))
 }
 
-// RemoveColumn() is a wrapper around gtk_grid_remove_column().
+// RemoveColumn is a wrapper around gtk_grid_remove_column().
 func (v *Grid) RemoveColumn(position int) {
 	C.gtk_grid_remove_column(v.native(), C.gint(position))
 }
@@ -163,6 +163,7 @@ func (v *Grid) RemoveColumn(position int) {
  * GtkHeaderBar
  */
 
+ // HeaderBar is a representation of GtkHeaderBar
 type HeaderBar struct {
 	Container
 }
@@ -260,13 +261,13 @@ func (v *HeaderBar) GetShowCloseButton() bool {
  * GtkLabel
  */
 
-// GetLines() is a wrapper around gtk_label_get_lines().
+// GetLines is a wrapper around gtk_label_get_lines().
 func (v *Label) GetLines() int {
 	c := C.gtk_label_get_lines(v.native())
 	return int(c)
 }
 
-// SetLines() is a wrapper around gtk_label_set_lines().
+// SetLines is a wrapper around gtk_label_set_lines().
 func (v *Label) SetLines(lines int) {
 	C.gtk_label_set_lines(v.native(), C.gint(lines))
 }
@@ -404,11 +405,12 @@ func (v *ListBox) InvalidateSort() {
 	C.gtk_list_box_invalidate_sort(v.native())
 }
 
-type ListBoxFilterFunc func(row *ListBoxRow, userData uintptr) bool
+// ListBoxFilterFunc is a representation of GtkListBoxFilterFunc
+type ListBoxFilterFunc func(row *ListBoxRow, userData ...interface{}) bool
 
 type listBoxFilterFuncData struct {
 	fn       ListBoxFilterFunc
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -422,7 +424,9 @@ var (
 	}
 )
 
-func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData uintptr) {
+// SetFilterFunc is a wrapper around gtk_list_box_set_filter_func
+func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	listBoxFilterFuncRegistry.Lock()
 	id := listBoxFilterFuncRegistry.next
 	listBoxFilterFuncRegistry.next++
@@ -432,11 +436,12 @@ func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData uintptr) {
 	C._gtk_list_box_set_filter_func(v.native(), C.gpointer(uintptr(id)))
 }
 
-type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow, userData uintptr)
+// ListBoxHeaderFunc is a representation of GtkListBoxUpdateHeaderFunc
+type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow, userData ...interface{})
 
 type listBoxHeaderFuncData struct {
 	fn       ListBoxHeaderFunc
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -450,7 +455,9 @@ var (
 	}
 )
 
-func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData uintptr) {
+// SetHeaderFunc is a wrapper around gtk_list_box_set_header_func
+func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	listBoxHeaderFuncRegistry.Lock()
 	id := listBoxHeaderFuncRegistry.next
 	listBoxHeaderFuncRegistry.next++
@@ -460,11 +467,12 @@ func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData uintptr) {
 	C._gtk_list_box_set_header_func(v.native(), C.gpointer(uintptr(id)))
 }
 
-type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow, userData uintptr) int
+// ListBoxSortFunc is a representation of GtkListBoxSortFunc
+type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow, userData ...interface{}) int
 
 type listBoxSortFuncData struct {
 	fn       ListBoxSortFunc
-	userData uintptr
+	userData []interface{}
 }
 
 var (
@@ -478,7 +486,9 @@ var (
 	}
 )
 
-func (v *ListBox) SetSortFunc(fn ListBoxSortFunc, userData uintptr) {
+// SetSortFunc is a wrapper around gtk_list_box_set_sort_func
+func (v *ListBox) SetSortFunc(fn ListBoxSortFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
 	listBoxSortFuncRegistry.Lock()
 	id := listBoxSortFuncRegistry.next
 	listBoxSortFuncRegistry.next++
