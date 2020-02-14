@@ -7,12 +7,27 @@ package glib
 import "C"
 import "unsafe"
 
+// Predefined attribute names for GMenu
+var (
+	MENU_ATTRIBUTE_ACTION           string = C.G_MENU_ATTRIBUTE_ACTION
+	MENU_ATTRIBUTE_ACTION_NAMESPACE string = C.G_MENU_ATTRIBUTE_ACTION_NAMESPACE
+	MENU_ATTRIBUTE_TARGET           string = C.G_MENU_ATTRIBUTE_TARGET
+	MENU_ATTRIBUTE_LABEL            string = C.G_MENU_ATTRIBUTE_LABEL
+	MENU_ATTRIBUTE_ICON             string = C.G_MENU_ATTRIBUTE_ICON
+)
+
+// Predefined link names for GMenu
+var (
+	MENU_LINK_SECTION string = C.G_MENU_LINK_SECTION
+	MENU_LINK_SUBMENU string = C.G_MENU_LINK_SUBMENU
+)
+
 // MenuModel is a representation of GMenuModel.
 type MenuModel struct {
 	*Object
 }
 
-// native() returns a pointer to the underlying GMenuModel.
+// native returns a pointer to the underlying GMenuModel.
 func (v *MenuModel) native() *C.GMenuModel {
 	if v == nil || v.GObject == nil {
 		return nil
@@ -20,6 +35,7 @@ func (v *MenuModel) native() *C.GMenuModel {
 	return C.toGMenuModel(unsafe.Pointer(v.GObject))
 }
 
+// Native returns a pointer to the underlying GMenuModel.
 func (v *MenuModel) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
@@ -70,11 +86,11 @@ type Menu struct {
 }
 
 // native() returns a pointer to the underlying GMenu.
-func (m *Menu) native() *C.GMenu {
-	if m == nil || m.GObject == nil {
+func (v *Menu) native() *C.GMenu {
+	if v == nil || v.GObject == nil {
 		return nil
 	}
-	p := unsafe.Pointer(m.GObject)
+	p := unsafe.Pointer(v.GObject)
 	return C.toGMenu(p)
 }
 
@@ -102,33 +118,33 @@ func (v *Menu) Freeze() {
 }
 
 // Insert is a wrapper around g_menu_insert().
-func (v *Menu) Insert(position int, label, detailed_action string) {
+func (v *Menu) Insert(position int, label, detailedAction string) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	cstr2 := (*C.gchar)(C.CString(detailed_action))
+	cstr2 := (*C.gchar)(C.CString(detailedAction))
 	defer C.free(unsafe.Pointer(cstr2))
 
 	C.g_menu_insert(v.native(), C.gint(position), cstr1, cstr2)
 }
 
 // Prepend is a wrapper around g_menu_prepend().
-func (v *Menu) Prepend(label, detailed_action string) {
+func (v *Menu) Prepend(label, detailedAction string) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	cstr2 := (*C.gchar)(C.CString(detailed_action))
+	cstr2 := (*C.gchar)(C.CString(detailedAction))
 	defer C.free(unsafe.Pointer(cstr2))
 
 	C.g_menu_prepend(v.native(), cstr1, cstr2)
 }
 
 // Append is a wrapper around g_menu_append().
-func (v *Menu) Append(label, detailed_action string) {
+func (v *Menu) Append(label, detailedAction string) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	cstr2 := (*C.gchar)(C.CString(detailed_action))
+	cstr2 := (*C.gchar)(C.CString(detailedAction))
 	defer C.free(unsafe.Pointer(cstr2))
 
 	C.g_menu_append(v.native(), cstr1, cstr2)
@@ -231,11 +247,11 @@ type MenuItem struct {
 }
 
 // native() returns a pointer to the underlying GMenuItem.
-func (m *MenuItem) native() *C.GMenuItem {
-	if m == nil || m.GObject == nil {
+func (v *MenuItem) native() *C.GMenuItem {
+	if v == nil || v.GObject == nil {
 		return nil
 	}
-	p := unsafe.Pointer(m.GObject)
+	p := unsafe.Pointer(v.GObject)
 	return C.toGMenuItem(p)
 }
 
@@ -248,12 +264,45 @@ func wrapMenuItem(obj *Object) *MenuItem {
 	return &MenuItem{obj}
 }
 
-// MenuItemNew is a wrapper around g_menu_item_new().
-func MenuItemNew(label, detailed_action string) *MenuItem {
+// MenuItemNew is a wrapper around g_menu_item_new(NULL, NULL).
+func MenuItemNew() *MenuItem {
+	c := C.g_menu_item_new(nil, nil)
+	if c == nil {
+		return nil
+	}
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+}
+
+// MenuItemNewWithLabel is a wrapper around g_menu_item_new(label, NULL).
+func MenuItemNewWithLabel(label string) *MenuItem {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	cstr2 := (*C.gchar)(C.CString(detailed_action))
+	c := C.g_menu_item_new(cstr1, nil)
+	if c == nil {
+		return nil
+	}
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+}
+
+// MenuItemNewWithAction is a wrapper around g_menu_item_new(NULL, detailedAction).
+func MenuItemNewWithAction(detailedAction string) *MenuItem {
+	cstr1 := (*C.gchar)(C.CString(detailedAction))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	c := C.g_menu_item_new(nil, cstr1)
+	if c == nil {
+		return nil
+	}
+	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+}
+
+// MenuItemNewWithLabelAndAction is a wrapper around g_menu_item_new(label, detailedAction).
+func MenuItemNewWithLabelAndAction(label, detailedAction string) *MenuItem {
+	cstr1 := (*C.gchar)(C.CString(label))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	cstr2 := (*C.gchar)(C.CString(detailedAction))
 	defer C.free(unsafe.Pointer(cstr2))
 
 	c := C.g_menu_item_new(cstr1, cstr2)
@@ -296,7 +345,7 @@ func MenuItemNewFromModel(model *MenuModel, index int) *MenuItem {
 	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
 }
 
-//SetLabel is a wrapper around g_menu_item_set_label().
+// SetLabel is a wrapper around g_menu_item_set_label().
 func (v *MenuItem) SetLabel(label string) {
 	cstr1 := (*C.gchar)(C.CString(label))
 	defer C.free(unsafe.Pointer(cstr1))
@@ -304,7 +353,12 @@ func (v *MenuItem) SetLabel(label string) {
 	C.g_menu_item_set_label(v.native(), cstr1)
 }
 
-//SetDetailedAction is a wrapper around g_menu_item_set_detailed_action().
+// UnsetLabel is a wrapper around g_menu_item_set_label(NULL).
+func (v *MenuItem) UnsetLabel() {
+	C.g_menu_item_set_label(v.native(), nil)
+}
+
+// SetDetailedAction is a wrapper around g_menu_item_set_detailed_action().
 func (v *MenuItem) SetDetailedAction(act string) {
 	cstr1 := (*C.gchar)(C.CString(act))
 	defer C.free(unsafe.Pointer(cstr1))
@@ -312,17 +366,17 @@ func (v *MenuItem) SetDetailedAction(act string) {
 	C.g_menu_item_set_detailed_action(v.native(), cstr1)
 }
 
-//SetSection is a wrapper around g_menu_item_set_section().
+// SetSection is a wrapper around g_menu_item_set_section().
 func (v *MenuItem) SetSection(section *MenuModel) {
 	C.g_menu_item_set_section(v.native(), section.native())
 }
 
-//SetSubmenu is a wrapper around g_menu_item_set_submenu().
+// SetSubmenu is a wrapper around g_menu_item_set_submenu().
 func (v *MenuItem) SetSubmenu(submenu *MenuModel) {
 	C.g_menu_item_set_submenu(v.native(), submenu.native())
 }
 
-//GetLink is a wrapper around g_menu_item_get_link().
+// GetLink is a wrapper around g_menu_item_get_link().
 func (v *MenuItem) GetLink(link string) *MenuModel {
 	cstr1 := (*C.gchar)(C.CString(link))
 	defer C.free(unsafe.Pointer(cstr1))
@@ -334,7 +388,7 @@ func (v *MenuItem) GetLink(link string) *MenuModel {
 	return wrapMenuModel(wrapObject(unsafe.Pointer(c)))
 }
 
-//SetLink is a wrapper around g_menu_item_Set_link().
+// SetLink is a wrapper around g_menu_item_Set_link().
 func (v *MenuItem) SetLink(link string, model *MenuModel) {
 	cstr1 := (*C.gchar)(C.CString(link))
 	defer C.free(unsafe.Pointer(cstr1))
@@ -342,9 +396,52 @@ func (v *MenuItem) SetLink(link string, model *MenuModel) {
 	C.g_menu_item_set_link(v.native(), cstr1, model.native())
 }
 
-// void 	g_menu_item_set_action_and_target_value ()
-// void 	g_menu_item_set_action_and_target ()
-// GVariant * 	g_menu_item_get_attribute_value ()
+// SetActionAndTargetValue is a wrapper around g_menu_item_set_action_and_target_value()
+func (v *MenuItem) SetActionAndTargetValue(action string, targetValue IVariant) {
+	cstr1 := (*C.gchar)(C.CString(action))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	var c *C.GVariant
+	if targetValue != nil {
+		c = targetValue.ToGVariant()
+	}
+
+	C.g_menu_item_set_action_and_target_value(v.native(), cstr1, c)
+}
+
+// UnsetAction is a wrapper around g_menu_item_set_action_and_target_value(NULL, NULL)
+// Unsets both action and target value. Unsetting the action also clears the target value.
+func (v *MenuItem) UnsetAction() {
+	C.g_menu_item_set_action_and_target_value(v.native(), nil, nil)
+}
+
+// SetAttributeValue is a wrapper around g_menu_item_set_attribute_value()
+func (v *MenuItem) SetAttributeValue(attribute string, value IVariant) {
+	var c *C.GVariant
+	if value != nil {
+		c = value.ToGVariant()
+	}
+
+	cstr1 := (*C.gchar)(C.CString(attribute))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	C.g_menu_item_set_attribute_value(v.native(), cstr1, c)
+}
+
+// GetAttributeValue is a wrapper around g_menu_item_get_attribute_value()
+func (v *MenuItem) GetAttributeValue(attribute string, expectedType *VariantType) *Variant {
+	cstr1 := (*C.gchar)(C.CString(attribute))
+	defer C.free(unsafe.Pointer(cstr1))
+
+	c := C.g_menu_item_get_attribute_value(v.native(), cstr1, expectedType.native())
+	if c == nil {
+		return nil
+	}
+	return newVariant(c)
+}
+
+// TODO: These require positional parameters with *any* type, according to the format string passed.
+// This is likely not possible to represent 1:1 in go.
 // gboolean 	g_menu_item_get_attribute ()
-// void 	g_menu_item_set_attribute_value ()
 // void 	g_menu_item_set_attribute ()
+// void 	g_menu_item_set_action_and_target ()

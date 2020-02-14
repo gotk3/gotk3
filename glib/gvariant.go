@@ -9,6 +9,7 @@ import "C"
 
 import (
 	"fmt"
+	"runtime"
 	"unsafe"
 )
 
@@ -43,17 +44,6 @@ func (v *Variant) ToVariant() *Variant {
 	return v
 }
 
-// newVariant creates a new Variant from a GVariant pointer.
-func newVariant(p *C.GVariant) *Variant {
-	return &Variant{GVariant: p}
-}
-
-// VariantFromUnsafePointer returns a Variant from an unsafe pointer.
-// XXX: unnecessary footgun?
-//func VariantFromUnsafePointer(p unsafe.Pointer) *Variant {
-//	return &Variant{C.toGVariant(p)}
-//}
-
 // native returns a pointer to the underlying GVariant.
 func (v *Variant) native() *C.GVariant {
 	if v == nil || v.GVariant == nil {
@@ -67,6 +57,129 @@ func (v *Variant) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
+// newVariant wraps a native GVariant.
+// Does NOT handle reference counting! Use takeVariant() to take ownership of values.
+func newVariant(p *C.GVariant) *Variant {
+	if p == nil {
+		return nil
+	}
+	return &Variant{GVariant: p}
+}
+
+// TakeVariant wraps a unsafe.Pointer as a glib.Variant, taking ownership of it.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
+func TakeVariant(ptr unsafe.Pointer) *Variant {
+	return takeVariant(C.toGVariant(ptr))
+}
+
+// takeVariant wraps a native GVariant,
+// takes ownership and sets up a finalizer to free the instance during GC.
+func takeVariant(p *C.GVariant) *Variant {
+	if p == nil {
+		return nil
+	}
+	obj := &Variant{GVariant: p}
+
+	if obj.IsFloating() {
+		obj.RefSink()
+	} else {
+		obj.Ref()
+	}
+
+	runtime.SetFinalizer(obj, (*Variant).Unref)
+	return obj
+}
+
+// IsFloating returns true if the variant has a floating reference count.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not call this.
+func (v *Variant) IsFloating() bool {
+	return gobool(C.g_variant_is_floating(v.native()))
+}
+
+// Ref is a wrapper around g_variant_ref.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) Ref() {
+	C.g_variant_ref(v.native())
+}
+
+// RefSink is a wrapper around g_variant_ref_sink.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) RefSink() {
+	C.g_variant_ref_sink(v.native())
+}
+
+// TakeRef is a wrapper around g_variant_take_ref.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) TakeRef() {
+	C.g_variant_take_ref(v.native())
+}
+
+// Unref is a wrapper around g_variant_unref.
+// Reference counting is usually handled in the gotk layer,
+// most applications should not need to call this.
+func (v *Variant) Unref() {
+	C.g_variant_unref(v.native())
+}
+
+// VariantFromInt16 is a wrapper around g_variant_new_int16
+func VariantFromInt16(value int16) *Variant {
+	return takeVariant(C.g_variant_new_int16(C.gint16(value)))
+}
+
+// VariantFromInt32 is a wrapper around g_variant_new_int32
+func VariantFromInt32(value int32) *Variant {
+	return takeVariant(C.g_variant_new_int32(C.gint32(value)))
+}
+
+// VariantFromInt64 is a wrapper around g_variant_new_int64
+func VariantFromInt64(value int64) *Variant {
+	return takeVariant(C.g_variant_new_int64(C.gint64(value)))
+}
+
+// VariantFromByte is a wrapper around g_variant_new_byte
+func VariantFromByte(value uint8) *Variant {
+	return takeVariant(C.g_variant_new_byte(C.guchar(value)))
+}
+
+// VariantFromUint16 is a wrapper around g_variant_new_uint16
+func VariantFromUint16(value uint16) *Variant {
+	return takeVariant(C.g_variant_new_uint16(C.guint16(value)))
+}
+
+// VariantFromUint32 is a wrapper around g_variant_new_uint32
+func VariantFromUint32(value uint32) *Variant {
+	return takeVariant(C.g_variant_new_uint32(C.guint32(value)))
+}
+
+// VariantFromUint64 is a wrapper around g_variant_new_uint64
+func VariantFromUint64(value uint64) *Variant {
+	return takeVariant(C.g_variant_new_uint64(C.guint64(value)))
+}
+
+// VariantFromBoolean is a wrapper around g_variant_new_boolean
+func VariantFromBoolean(value bool) *Variant {
+	return takeVariant(C.g_variant_new_boolean(gbool(value)))
+}
+
+// VariantFromString is a wrapper around g_variant_new_string/g_variant_new_take_string.
+// Uses g_variant_new_take_string to reduce memory allocations if possible.
+func VariantFromString(value string) *Variant {
+	cstr := (*C.gchar)(C.CString(value))
+	// g_variant_new_take_string takes owhership of the cstring and will call free() on it when done.
+	// Do NOT free this string in this function!
+	return takeVariant(C.g_variant_new_take_string(cstr))
+}
+
+// VariantFromVariant is a wrapper around g_variant_new_variant.
+func VariantFromVariant(value *Variant) *Variant {
+	return takeVariant(C.g_variant_new_variant(value.native()))
+}
+
 // TypeString returns the g variant type string for this variant.
 func (v *Variant) TypeString() string {
 	// the string returned from this belongs to GVariant and must not be freed.
@@ -78,24 +191,38 @@ func (v *Variant) IsContainer() bool {
 	return gobool(C.g_variant_is_container(v.native()))
 }
 
-// IsFloating returns true if the variant has a floating reference count.
-// XXX: this isn't useful without ref_sink/take_ref, which are themselves
-// perhaps not useful for most Go code that may use variants.
-//func (v *Variant) IsFloating() bool {
-//	return gobool(C.g_variant_is_floating(v.native()))
-//}
-
 // GetBoolean returns the bool value of this variant.
 func (v *Variant) GetBoolean() bool {
 	return gobool(C.g_variant_get_boolean(v.native()))
 }
 
-// GetString returns the string value of the variant.
+// GetString is a wrapper around g_variant_get_string.
+// It returns the string value of the variant.
 func (v *Variant) GetString() string {
+
+	// The string value remains valid as long as the GVariant exists, do NOT free the cstring in this function.
 	var len C.gsize
 	gc := C.g_variant_get_string(v.native(), &len)
-	defer C.g_free(C.gpointer(gc))
+
+	// This is opposed to g_variant_dup_string, which copies the string.
+	// g_variant_dup_string is not implemented,
+	// as we copy the string value anyways when converting to a go string.
+
 	return C.GoStringN((*C.char)(gc), (C.int)(len))
+}
+
+// GetVariant is a wrapper around g_variant_get_variant.
+// It unboxes a nested GVariant.
+func (v *Variant) GetVariant() *Variant {
+	c := C.g_variant_get_variant(v.native())
+	if c == nil {
+		return nil
+	}
+	// The returned value is returned with full ownership transfer,
+	// only Unref(), don't Ref().
+	obj := newVariant(c)
+	runtime.SetFinalizer(obj, (*Variant).Unref)
+	return obj
 }
 
 // GetStrv returns a slice of strings from this variant.  It wraps
@@ -103,7 +230,28 @@ func (v *Variant) GetString() string {
 func (v *Variant) GetStrv() []string {
 	gstrv := C.g_variant_get_strv(v.native(), nil)
 	// we do not own the memory for these strings, so we must not use strfreev
-	// but we must free the actual pointer we receive.
+	// but we must free the actual pointer we receive (transfer container).
+	// We don't implement g_variant_dup_strv which copies the strings,
+	// as we need to copy anyways when converting to go strings.
+	c := gstrv
+	defer C.g_free(C.gpointer(gstrv))
+	var strs []string
+
+	for *c != nil {
+		strs = append(strs, C.GoString((*C.char)(*c)))
+		c = C.next_gcharptr(c)
+	}
+	return strs
+}
+
+// GetObjv returns a slice of object paths from this variant.  It wraps
+// g_variant_get_objv, but returns copies of the strings instead.
+func (v *Variant) GetObjv() []string {
+	gstrv := C.g_variant_get_objv(v.native(), nil)
+	// we do not own the memory for these strings, so we must not use strfreev
+	// but we must free the actual pointer we receive (transfer container).
+	// We don't implement g_variant_dup_objv which copies the strings,
+	// as we need to copy anyways when converting to go strings.
 	c := gstrv
 	defer C.g_free(C.gpointer(gstrv))
 	var strs []string
@@ -119,31 +267,45 @@ func (v *Variant) GetStrv() []string {
 // an error otherwise.  It wraps variouns `g_variant_get_*` functions dealing
 // with integers of different sizes.
 func (v *Variant) GetInt() (int64, error) {
-	t := v.Type().String()
+	t := v.TypeString()
 	var i int64
 	switch t {
-	case "y":
-		i = int64(C.g_variant_get_byte(v.native()))
 	case "n":
 		i = int64(C.g_variant_get_int16(v.native()))
-	case "q":
-		i = int64(C.g_variant_get_uint16(v.native()))
 	case "i":
 		i = int64(C.g_variant_get_int32(v.native()))
-	case "u":
-		i = int64(C.g_variant_get_uint32(v.native()))
 	case "x":
 		i = int64(C.g_variant_get_int64(v.native()))
-	case "t":
-		i = int64(C.g_variant_get_uint64(v.native()))
 	default:
-		return 0, fmt.Errorf("variant type %s not an integer type", t)
+		return 0, fmt.Errorf("variant type %s not a signed integer type", t)
+	}
+	return i, nil
+}
+
+// GetUint returns the uint64 value of the variant if it is an integer type, and
+// an error otherwise.  It wraps variouns `g_variant_get_*` functions dealing
+// with integers of different sizes.
+func (v *Variant) GetUint() (uint64, error) {
+	t := v.TypeString()
+	var i uint64
+	switch t {
+	case "y":
+		i = uint64(C.g_variant_get_byte(v.native()))
+	case "q":
+		i = uint64(C.g_variant_get_uint16(v.native()))
+	case "u":
+		i = uint64(C.g_variant_get_uint32(v.native()))
+	case "t":
+		i = uint64(C.g_variant_get_uint64(v.native()))
+	default:
+		return 0, fmt.Errorf("variant type %s not an unsigned integer type", t)
 	}
 	return i, nil
 }
 
 // Type returns the VariantType for this variant.
 func (v *Variant) Type() *VariantType {
+	// The return value is valid for the lifetime of value and must not be freed.
 	return newVariantType(C.g_variant_get_type(v.native()))
 }
 
@@ -168,10 +330,7 @@ func (v *Variant) AnnotatedString() string {
 	return C.GoString((*C.char)(gc))
 }
 
-//void	g_variant_unref ()
-//GVariant *	g_variant_ref ()
-//GVariant *	g_variant_ref_sink ()
-//GVariant *	g_variant_take_ref ()
+// TODO:
 //gint	g_variant_compare ()
 //GVariantClass	g_variant_classify ()
 //gboolean	g_variant_check_format_string ()
@@ -179,24 +338,13 @@ func (v *Variant) AnnotatedString() string {
 //void	g_variant_get_va ()
 //GVariant *	g_variant_new ()
 //GVariant *	g_variant_new_va ()
-//GVariant *	g_variant_new_boolean ()
-//GVariant *	g_variant_new_byte ()
-//GVariant *	g_variant_new_int16 ()
-//GVariant *	g_variant_new_uint16 ()
-//GVariant *	g_variant_new_int32 ()
-//GVariant *	g_variant_new_uint32 ()
-//GVariant *	g_variant_new_int64 ()
-//GVariant *	g_variant_new_uint64 ()
 //GVariant *	g_variant_new_handle ()
 //GVariant *	g_variant_new_double ()
-//GVariant *	g_variant_new_string ()
-//GVariant *	g_variant_new_take_string ()
 //GVariant *	g_variant_new_printf ()
 //GVariant *	g_variant_new_object_path ()
 //gboolean	g_variant_is_object_path ()
 //GVariant *	g_variant_new_signature ()
 //gboolean	g_variant_is_signature ()
-//GVariant *	g_variant_new_variant ()
 //GVariant *	g_variant_new_strv ()
 //GVariant *	g_variant_new_objv ()
 //GVariant *	g_variant_new_bytestring ()
@@ -210,13 +358,6 @@ func (v *Variant) AnnotatedString() string {
 //guint64	g_variant_get_uint64 ()
 //gint32	g_variant_get_handle ()
 //gdouble	g_variant_get_double ()
-//const gchar *	g_variant_get_string ()
-//gchar *	g_variant_dup_string ()
-//GVariant *	g_variant_get_variant ()
-//const gchar **	g_variant_get_strv ()
-//gchar **	g_variant_dup_strv ()
-//const gchar **	g_variant_get_objv ()
-//gchar **	g_variant_dup_objv ()
 //const gchar *	g_variant_get_bytestring ()
 //gchar *	g_variant_dup_bytestring ()
 //const gchar **	g_variant_get_bytestring_array ()
