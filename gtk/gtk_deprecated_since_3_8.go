@@ -19,7 +19,7 @@
 // 3.6 or earlier.  To target an earlier build build, use the build tag
 // gtk_MAJOR_MINOR.  For example, to target GTK 3.6, run
 // 'go build -tags gtk_3_6'.
-// +build gtk_3_6
+// +build gtk_3_6 gtk_deprecated
 
 package gtk
 

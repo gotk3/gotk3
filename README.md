@@ -189,10 +189,21 @@ http://localhost:6060/pkg/github.com/gotk3/gotk3
 
 ## Installation
 
-gotk3 currently requires GTK 3.6-3.22, GLib 2.36-2.40, and
+gotk3 currently requires GTK 3.6-3.24, GLib 2.36-2.40, and
 Cairo 1.10 or 1.12.  A recent Go (1.8 or newer) is also required.
 
 For detailed instructions see the wiki pages: [installation](https://github.com/gotk3/gotk3/wiki#installation)
+
+## Using deprecated features
+
+By default, deprecated GTK features are not included in the build.
+
+By specifying the e.g. build tag `gtk_3_20`, any feature deprecated in GTK 3.20 or earlier will NOT be available.
+To enable deprecated features in the build, add the tag `gtk_deprecated`.
+Example:
+```shell
+$ go build -tags "gtk_3_10 gtk_deprecated" example.go
+```
 
 ## TODO
 
