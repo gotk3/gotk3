@@ -376,6 +376,12 @@ toGtkLinkButton(void *p)
 	return (GTK_LINK_BUTTON(p));
 }
 
+static GtkLockButton *
+toGtkLockButton(void *p)
+{
+	return (GTK_LOCK_BUTTON(p));
+}
+
 static GtkLayout *
 toGtkLayout(void *p)
 {

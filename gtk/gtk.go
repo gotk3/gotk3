@@ -45,6 +45,7 @@
 package gtk
 
 // #cgo pkg-config: gdk-3.0 gio-2.0 glib-2.0 gobject-2.0 gtk+-3.0
+// #include <gio/gio.h>
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
@@ -149,6 +150,7 @@ func init() {
 		{glib.Type(C.gtk_image_get_type()), marshalImage},
 		{glib.Type(C.gtk_label_get_type()), marshalLabel},
 		{glib.Type(C.gtk_link_button_get_type()), marshalLinkButton},
+		{glib.Type(C.gtk_lock_button_get_type()), marshalLockButton},
 		{glib.Type(C.gtk_layout_get_type()), marshalLayout},
 		{glib.Type(C.gtk_tree_model_sort_get_type()), marshalTreeModelSort},
 		{glib.Type(C.gtk_list_store_get_type()), marshalListStore},
@@ -5225,6 +5227,56 @@ func (v *LinkButton) GetVisited() bool {
 // SetVisited is a wrapper around gtk_link_button_set_visited().
 func (v *LinkButton) SetVisited(visited bool) {
 	C.gtk_link_button_set_visited(v.native(), gbool(visited))
+}
+
+/*
+ * GtkLockButton
+ */
+
+// LockButton is a representation of GTK's GtkLockButton.
+type LockButton struct {
+	Button
+}
+
+// native returns a pointer to the underlying GtkLockButton.
+func (v *LockButton) native() *C.GtkLockButton {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkLockButton(p)
+}
+
+func marshalLockButton(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapLockButton(obj), nil
+}
+
+func wrapLockButton(obj *glib.Object) *LockButton {
+	actionable := wrapActionable(obj)
+	return &LockButton{Button{Bin{Container{Widget{
+		glib.InitiallyUnowned{obj}}}}, actionable}}
+}
+
+// LockButtonNew is a wrapper around gtk_lock_button_new().
+func LockButtonNew(permission *glib.Permission) (*LockButton, error) {
+	c := C.gtk_lock_button_new(nativeGPermission(permission))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapLockButton(glib.Take(unsafe.Pointer(c))), nil
+}
+
+// GetPermission is a wrapper around gtk_lock_button_get_permission().
+func (v *LockButton) GetPermission() *glib.Permission {
+	c := C.gtk_lock_button_get_permission(v.native())
+	return glib.WrapPermission(unsafe.Pointer(c))
+}
+
+// SetPermission is a wrapper around gtk_lock_button_set_permission().
+func (v *LockButton) SetPermission(permission *glib.Permission) {
+	C.gtk_lock_button_set_permission(v.native(), nativeGPermission(permission))
 }
 
 /*

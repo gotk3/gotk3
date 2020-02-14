@@ -16,6 +16,11 @@ func (v *Source) native() *C.GSource {
 	return (*C.GSource)(v)
 }
 
+func wrapSource(sourcePtr *C.GSource) *Source {
+	source := Source(*sourcePtr)
+	return &source
+}
+
 // MainCurrentSource is a wrapper around g_main_current_source().
 func MainCurrentSource() *Source {
 	c := C.g_main_current_source()

@@ -56,6 +56,12 @@ toGActionMap(void *p)
 	return (G_ACTION_MAP(p));
 }
 
+static GAsyncResult *
+toGAsyncResult(void *p)
+{
+	return (G_ASYNC_RESULT(p));
+}
+
 static GSimpleAction *
 toGSimpleAction(void *p)
 {
@@ -96,6 +102,18 @@ static GNotification *
 toGNotification(void *p)
 {
 	return (G_NOTIFICATION(p));
+}
+
+static GPermission *
+toGPermission(void *p)
+{
+	return (G_PERMISSION(p));
+}
+
+static GCancellable *
+toCancellable(void *p)
+{
+	return (G_CANCELLABLE(p));
 }
 
 static GIcon *
