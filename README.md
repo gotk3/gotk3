@@ -1,4 +1,4 @@
-gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3)
+gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3) 
 =====
 
 [![Build Status](https://travis-ci.org/gotk3/gotk3.svg?branch=master)](https://travis-ci.org/gotk3/gotk3)
@@ -16,6 +16,9 @@ following libraries is currently implemented:
 Care has been taken for memory management to work seamlessly with Go's
 garbage collector without the need to use or understand GObject's
 floating references.
+
+for better understanding see 
+[package reference documation](https://pkg.go.dev/github.com/gotk3/gotk3/gtk?tab=doc)
 
 ## Sample Use
 
