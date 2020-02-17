@@ -28,20 +28,43 @@ import (
  * GtkFileChooserButton
  */
 
-// TODO:
-// gtk_file_chooser_button_get_focus_on_click().
-// gtk_file_chooser_button_set_focus_on_click().
+// GetFocusOnClick is a wrapper around gtk_file_chooser_button_get_focus_on_click().
+func (v *FileChooserButton) GetFocusOnClick() bool {
+	return gobool(C.gtk_file_chooser_button_get_focus_on_click(v.native()))
+}
 
-// GetFocusOnClick() is a wrapper around gtk_button_get_focus_on_click().
+// SetFocusOnClick is a wrapper around gtk_file_chooser_button_set_focus_on_click().
+func (v *FileChooserButton) SetFocusOnClick(grabFocus bool) {
+	C.gtk_file_chooser_button_set_focus_on_click(v.native(), gbool(grabFocus))
+}
+
+/*
+ * GtkButton
+ */
+
+// GetFocusOnClick is a wrapper around gtk_button_get_focus_on_click().
 func (v *Button) GetFocusOnClick() bool {
 	c := C.gtk_button_get_focus_on_click(v.native())
 	return gobool(c)
 }
 
+// SetFocusOnClick is a wrapper around gtk_button_set_focus_on_click().
+func (v *Button) SetFocusOnClick(focusOnClick bool) {
+	C.gtk_button_set_focus_on_click(v.native(), gbool(focusOnClick))
+}
+
+/*
+ * GtkTextIter
+ */
+
 // BeginsTag is a wrapper around gtk_text_iter_begins_tag().
 func (v *TextIter) BeginsTag(v1 *TextTag) bool {
 	return gobool(C.gtk_text_iter_begins_tag(v.native(), v1.native()))
 }
+
+/*
+ * GtkWindow
+ */
 
 // ParseGeometry is a wrapper around gtk_window_parse_geometry().
 func (v *Window) ParseGeometry(geometry string) bool {
@@ -60,9 +83,4 @@ func (v *Window) ResizeToGeometry(width, height int) {
 func (v *Window) SetDefaultGeometry(width, height int) {
 	C.gtk_window_set_default_geometry(v.native(), C.gint(width),
 		C.gint(height))
-}
-
-// SetFocusOnClick() is a wrapper around gtk_button_set_focus_on_click().
-func (v *Button) SetFocusOnClick(focusOnClick bool) {
-	C.gtk_button_set_focus_on_click(v.native(), gbool(focusOnClick))
 }
