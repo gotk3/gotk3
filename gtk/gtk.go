@@ -4370,12 +4370,37 @@ func FileChooserButtonNew(title string, action FileChooserAction) (*FileChooserB
 	return wrapFileChooserButton(obj), nil
 }
 
-// TODO:
-// gtk_file_chooser_button_new_with_dialog().
-// gtk_file_chooser_button_get_title().
-// gtk_file_chooser_button_set_title().
-// gtk_file_chooser_button_get_width_chars().
-// gtk_file_chooser_button_set_width_chars().
+// FileChooserButtonNewWithDialog is a wrapper around gtk_file_chooser_button_new_with_dialog().
+func FileChooserButtonNewWithDialog(dialog IWidget) (*FileChooserButton, error) {
+	c := C.gtk_file_chooser_button_new_with_dialog(dialog.toWidget())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapFileChooserButton(glib.Take(unsafe.Pointer(c))), nil
+}
+
+// GetTitle is a wrapper around gtk_file_chooser_button_get_title().
+func (v *FileChooserButton) GetTitle() string {
+	// docs say: The returned value should not be modified or freed.
+	return goString(C.gtk_file_chooser_button_get_title(v.native()))
+}
+
+// SetTitle is a wrapper around gtk_file_chooser_button_set_title().
+func (v *FileChooserButton) SetTitle(title string) {
+	cstr := C.CString(title)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gtk_file_chooser_button_set_title(v.native(), (*C.gchar)(cstr))
+}
+
+// GetWidthChars is a wrapper around gtk_file_chooser_button_get_width_chars().
+func (v *FileChooserButton) GetWidthChars() int {
+	return int(C.gtk_file_chooser_button_get_width_chars(v.native()))
+}
+
+// SetWidthChars is a wrapper around gtk_file_chooser_button_set_width_chars().
+func (v *FileChooserButton) SetWidthChars(width int) {
+	C.gtk_file_chooser_button_set_width_chars(v.native(), C.gint(width))
+}
 
 /*
  * GtkFileChooserDialog
