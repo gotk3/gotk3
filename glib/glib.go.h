@@ -98,6 +98,12 @@ toGMenuItem(void *p)
 	return (G_MENU_ITEM(p));
 }
 
+static GListModel *
+toGListModel(void *p)
+{
+	return (G_LIST_MODEL(p));
+}
+
 static GNotification *
 toGNotification(void *p)
 {
