@@ -16,7 +16,7 @@ import (
 type IAsyncResult interface {
 	GetUserData() uintptr
 	GetSourceObject() *Object
-	IsTagged() bool
+	IsTagged(sourceTag uintptr) bool
 	LegacyPropagateError() error
 }
 
