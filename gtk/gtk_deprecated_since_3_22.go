@@ -8,6 +8,8 @@ import "C"
 
 import (
 	"unsafe"
+
+	"github.com/gotk3/gotk3/gdk"
 )
 
 /*
@@ -19,7 +21,7 @@ import (
 // gtk_widget_is_composited().
 
 // PopupAtMouse() is a wrapper for gtk_menu_popup(), without the option for a custom positioning function.
-func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button int, activateTime uint32) {
+func (v *Menu) PopupAtMouseCursor(parentMenuShell IMenu, parentMenuItem IMenuItem, button gdk.Button, activateTime uint32) {
 	wshell := nullableWidget(parentMenuShell)
 	witem := nullableWidget(parentMenuItem)
 

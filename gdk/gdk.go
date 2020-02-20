@@ -374,6 +374,15 @@ const (
 	GDK_EVENT_STOP      bool = C.GDK_EVENT_STOP != 0
 )
 
+// Button constants
+type Button uint
+
+const (
+	BUTTON_PRIMARY   Button = C.GDK_BUTTON_PRIMARY
+	BUTTON_MIDDLE    Button = C.GDK_BUTTON_MIDDLE
+	BUTTON_SECONDARY Button = C.GDK_BUTTON_SECONDARY
+)
+
 // CrossingMode is a representation of GDK's GdkCrossingMode.
 
 type CrossingMode int
@@ -1066,9 +1075,9 @@ func (v *EventButton) YRoot() float64 {
 	return float64(c)
 }
 
-func (v *EventButton) Button() uint {
+func (v *EventButton) Button() Button {
 	c := v.native().button
-	return uint(c)
+	return Button(c)
 }
 
 func (v *EventButton) State() uint {
@@ -1097,11 +1106,6 @@ func (v *EventButton) MotionValRoot() (float64, float64) {
 	x := v.native().x_root
 	y := v.native().y_root
 	return float64(x), float64(y)
-}
-
-func (v *EventButton) ButtonVal() uint {
-	c := v.native().button
-	return uint(c)
 }
 
 /*
