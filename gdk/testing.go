@@ -19,7 +19,7 @@ func TestRenderSync(window *Window) {
 // buttonPressRelease: either GDK_BUTTON_PRESS or GDK_BUTTON_RELEASE
 //
 // This is a wrapper around gdk_test_simulate_button().
-func TestSimulateButton(window *Window, x, y int, button uint, modifiers ModifierType, buttonPressRelease EventType) bool {
+func TestSimulateButton(window *Window, x, y int, button Button, modifiers ModifierType, buttonPressRelease EventType) bool {
 	return gobool(C.gdk_test_simulate_button(window.native(), C.gint(x), C.gint(y), C.guint(button), C.GdkModifierType(modifiers), C.GdkEventType(buttonPressRelease)))
 }
 

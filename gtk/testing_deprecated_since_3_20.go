@@ -57,6 +57,6 @@ gtk_test_text_set (GtkWidget *widget,
 // modifiers: Keyboard modifiers the event is setup with.
 //
 // returns: whether all actions neccessary for the button click simulation were carried out successfully.
-func TestWidgetClick(widget IWidget, button uint, modifiers gdk.ModifierType) bool {
+func TestWidgetClick(widget IWidget, button gdk.Button, modifiers gdk.ModifierType) bool {
 	return gobool(C.gtk_test_widget_click(widget.toWidget(), C.guint(button), C.GdkModifierType(modifiers)))
 }

@@ -695,12 +695,12 @@ func (v *Window) SetIconList(list *glib.List) {
 }
 
 // BeginResizeDrag is a wrapper around gtk_window_begin_resize_drag().
-func (v *Window) BeginResizeDrag(edge gdk.WindowEdge, button, rootX, rootY int, timestamp uint32) {
+func (v *Window) BeginResizeDrag(edge gdk.WindowEdge, button gdk.Button, rootX, rootY int, timestamp uint32) {
 	C.gtk_window_begin_resize_drag(v.native(), C.GdkWindowEdge(edge), C.gint(button), C.gint(rootX), C.gint(rootY), C.guint32(timestamp))
 }
 
 // BeginMoveDrag is a wrapper around gtk_window_begin_move_drag().
-func (v *Window) BeginMoveDrag(button, rootX, rootY int, timestamp uint32) {
+func (v *Window) BeginMoveDrag(button gdk.Button, rootX, rootY int, timestamp uint32) {
 	C.gtk_window_begin_move_drag(v.native(), C.gint(button), C.gint(rootX), C.gint(rootY), C.guint32(timestamp))
 }
 
