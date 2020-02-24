@@ -14,11 +14,7 @@ import "unsafe"
 // IListModel is an interface representation of ListModel,
 // used to avoid duplication when embedding the type in a wrapper of another GObject-based type.
 type IListModel interface {
-	GetItemType() Type
-	GetNItems() uint
-	GetItem(position uint) uintptr
-	GetObject(position uint) *Object
-	ItemsChanged(position, removed, added uint)
+	toGListModel() *C.GListModel
 }
 
 // ListModel is a representation of GIO's GListModel.
@@ -32,6 +28,13 @@ func (v *ListModel) native() *C.GListModel {
 		return nil
 	}
 	return C.toGListModel(unsafe.Pointer(v.GObject))
+}
+
+func (v *ListModel) toGListModel() *C.GListModel {
+	if v == nil {
+		return nil
+	}
+	return v.native()
 }
 
 // Native returns a pointer to the underlying GListModel.
