@@ -104,6 +104,12 @@ toGListModel(void *p)
 	return (G_LIST_MODEL(p));
 }
 
+static GListStore *
+toGListStore(void *p)
+{
+	return (G_LIST_STORE(p));
+}
+
 static GNotification *
 toGNotification(void *p)
 {
