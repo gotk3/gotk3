@@ -2492,6 +2492,18 @@ func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
 	return p, nil
 }
 
+// GetDevicePosition is a wrapper around gdk_window_get_device_position()
+func (v *Window) GetDevicePosition(d *Device) (*Window, int, int, ModifierType) {
+	var x C.gint
+	var y C.gint
+	var mt C.GdkModifierType
+	underneathWindow := C.gdk_window_get_device_position(v.native(), d.native(), &x, &y, &mt)
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(underneathWindow))}
+	rw := &Window{obj}
+	runtime.SetFinalizer(rw, func(_ interface{}) { obj.Unref() })
+	return rw, int(x), int(y), ModifierType(mt)
+}
+
 // TODO:
 // gdk_pixbuf_get_from_surface().
 
