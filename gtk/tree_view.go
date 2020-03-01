@@ -226,7 +226,7 @@ func (v *TreeView) GetColumns() *glib.List {
 	if clist == nil {
 		return nil
 	}
-	
+
 	list := glib.WrapList(uintptr(unsafe.Pointer(clist)))
 	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapTreeViewColumn(glib.Take(unsafe.Pointer(ptr)))
@@ -234,7 +234,7 @@ func (v *TreeView) GetColumns() *glib.List {
 	runtime.SetFinalizer(list, func(glist *glib.List) {
 		glist.Free()
 	})
-	
+
 	return list
 }
 
@@ -364,6 +364,15 @@ func (v *TreeView) ConvertBinWindowToWidgetCoords(bx, by int, wx, wy *int) {
 		(C.gint)(by),
 		(*C.gint)(unsafe.Pointer(wx)),
 		(*C.gint)(unsafe.Pointer(wy)))
+}
+
+// ConvertBinWindowToTreeCoords is a wrapper around gtk_tree_view_convert_bin_window_to_tree_coords().
+func (v *TreeView) ConvertBinWindowToTreeCoords(bx, by int, tx, ty *int) {
+	C.gtk_tree_view_convert_bin_window_to_tree_coords(v.native(),
+		(C.gint)(bx),
+		(C.gint)(by),
+		(*C.gint)(unsafe.Pointer(tx)),
+		(*C.gint)(unsafe.Pointer(ty)))
 }
 
 // SetEnableSearch is a wrapper around gtk_tree_view_set_enable_search().
@@ -555,7 +564,6 @@ func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
 // void 	gtk_tree_view_get_background_area ()
 // void 	gtk_tree_view_get_visible_rect ()
 // gboolean 	gtk_tree_view_get_visible_range ()
-// void 	gtk_tree_view_convert_bin_window_to_tree_coords ()
 // void 	gtk_tree_view_convert_tree_to_bin_window_coords ()
 // void 	gtk_tree_view_convert_tree_to_widget_coords ()
 // void 	gtk_tree_view_convert_widget_to_tree_coords ()

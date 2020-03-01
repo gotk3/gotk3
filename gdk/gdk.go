@@ -548,6 +548,47 @@ func marshalDevice(p uintptr) (interface{}, error) {
 	return &Device{obj}, nil
 }
 
+func toDevice(d *C.GdkDevice) (*Device, error) {
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(d))}
+	return &Device{obj}, nil
+}
+
+func (v *Device) GetPosition(screen **Screen, x, y *int) error {
+	cs := (**C.GdkScreen)(unsafe.Pointer(uintptr(0)))
+	if screen != nil {
+		var cval *C.GdkScreen
+		cs = &cval
+	}
+
+	cx := (*C.gint)(unsafe.Pointer(uintptr(0)))
+	if x != nil {
+		var cval C.gint
+		cx = &cval
+	}
+
+	cy := (*C.gint)(unsafe.Pointer(uintptr(0)))
+	if y != nil {
+		var cval C.gint
+		cy = &cval
+	}
+	C.gdk_device_get_position(v.native(), cs, cx, cy)
+
+	if cs != (**C.GdkScreen)(unsafe.Pointer(uintptr(0))) {
+		ms, err := toScreen(*cs)
+		if err != nil {
+			return err
+		}
+		*screen = ms
+	}
+	if cx != (*C.gint)(unsafe.Pointer(uintptr(0))) {
+		*x = int(*cx)
+	}
+	if cy != (*C.gint)(unsafe.Pointer(uintptr(0))) {
+		*y = int(*cy)
+	}
+	return nil
+}
+
 // TODO:
 // gdk_device_get_name().
 // gdk_device_get_source().
@@ -566,7 +607,6 @@ func marshalDevice(p uintptr) (interface{}, error) {
 // gdk_device_get_n_keys().
 // gdk_device_warp().
 // gdk_device_get_state().
-// gdk_device_get_position().
 // gdk_device_get_window_at_position().
 // gdk_device_get_window_at_position_double().
 // gdk_device_get_history().
@@ -2166,8 +2206,6 @@ func (c *RGBA) String() string {
  * GdkRGBA
  */
 
-
-
 /*
  * GdkRectangle
  */
@@ -2452,6 +2490,18 @@ func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 	return p, nil
+}
+
+// GetDevicePosition is a wrapper around gdk_window_get_device_position()
+func (v *Window) GetDevicePosition(d *Device) (*Window, int, int, ModifierType) {
+	var x C.gint
+	var y C.gint
+	var mt C.GdkModifierType
+	underneathWindow := C.gdk_window_get_device_position(v.native(), d.native(), &x, &y, &mt)
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(underneathWindow))}
+	rw := &Window{obj}
+	runtime.SetFinalizer(rw, func(_ interface{}) { obj.Unref() })
+	return rw, int(x), int(y), ModifierType(mt)
 }
 
 // TODO:
