@@ -1579,6 +1579,11 @@ func marshalGravity(p uintptr) (interface{}, error) {
  * GdkPixbuf
  */
 
+// PixbufGetType is a wrapper around gdk_pixbuf_get_type().
+func PixbufGetType() glib.Type {
+	return glib.Type(C.gdk_pixbuf_get_type())
+}
+
 // Pixbuf is a representation of GDK's GdkPixbuf.
 type Pixbuf struct {
 	*glib.Object
