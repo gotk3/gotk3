@@ -1,5 +1,5 @@
 // Same copyright and license as the rest of the files in this project
-// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12!gtk_3_14
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12!,gtk_3_14
 
 package glib
 
@@ -62,7 +62,7 @@ func (v *ListModel) GetItemType() Type {
 
 // GetNItems is a wrapper around g_list_model_get_n_items().
 func (v *ListModel) GetNItems() uint {
-	return int(C.g_list_model_get_n_items(v.native()))
+	return uint(C.g_list_model_get_n_items(v.native()))
 }
 
 // GetItem is a wrapper around g_list_model_get_item().
@@ -78,8 +78,8 @@ func (v *ListModel) GetObject(position uint) *Object {
 }
 
 // ItemsChanged is a wrapper around g_list_model_items_changed().
-func (v *ListModel) ItemsChanged(position, removed, added int) {
-	C.g_list_model_items_changed(v.native(), uint(position), uint(removed), uint(added))
+func (v *ListModel) ItemsChanged(position, removed, added uint) {
+	C.g_list_model_items_changed(v.native(), C.guint(position), C.guint(removed), C.guint(added))
 }
 
 /*
@@ -149,7 +149,9 @@ func (v *ListStore) Splice(position uint, removalLength uint, additions []interf
 	}
 	gAdditions = append(gAdditions, nil)
 
-	C.g_list_store_splice(v.native(), C.guint(position), C.guint(removalLength), &additions[0], C.guint(additionsLength))
+	additionsPtr := C.gpointer(gAdditions[0])
+
+	C.g_list_store_splice(v.native(), C.guint(position), C.guint(removalLength), &additionsPtr, C.guint(additionsLength))
 }
 
 // Sort is a wrapper around g_list_store_sort().

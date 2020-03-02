@@ -20,6 +20,12 @@
 
 #include <stdlib.h>
 
+static GListModel *
+toGListModel(void *p)
+{
+	return (G_LIST_MODEL(p));
+}
+
 static GtkModelButton *
 toGtkModelButton(void *mb)
 {
