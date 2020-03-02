@@ -1,7 +1,7 @@
 // Same copyright and license as the rest of the files in this project
 // TODO: glib build tags for since GLib 2.44
 
-// package glib
+package glib
 
 // // #include <gio/gio.h>
 // // #include <glib.h>

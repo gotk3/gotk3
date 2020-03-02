@@ -16,3 +16,7 @@ toGListStore(void *p)
 {
 	return (G_LIST_STORE(p));
 }
+
+static inline void _g_list_store_insert_sorted(GListStore *model, gpointer item, gpointer user_data) {
+	g_list_store_insert_sorted(model, item, (GCompareDataFunc)(goCompareDataFuncs), user_data);
+}

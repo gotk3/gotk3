@@ -1,7 +1,7 @@
 // Same copyright and license as the rest of the files in this project
 // TODO: glib build tags for since GLib 2.44
 
-// package glib
+package glib
 
 // // #include <gio/gio.h>
 // // #include <glib.h>
@@ -121,17 +121,29 @@
 // }
 
 // // Insert is a wrapper around g_list_store_insert().
-// func (v *ListStore) Insert(position uint, item uintptr) {
-// 	C.g_list_store_insert(v.native(), C.guint(position), C.gpointer(item))
+// func (v *ListStore) Insert(position uint, item interface{}) {
+// 	gItem := ToGObject(unsafe.Pointer(&item))
+// 	C.g_list_store_insert(v.native(), C.guint(position), C.gpointer(gItem))
 // }
 
 // // InsertSorted is a wrapper around g_list_store_insert_sorted().
-// // func (v *ListStore) InsertSorted(item uintptr, compareFunc CompareDataFunc, userData ...interface{}) {
-// // }
+// func (v *ListStore) InsertSorted(item interface{}, compareFunc CompareDataFunc, userData ...interface{}) {
+// 	// TODO: figure out a way to determine when we can clean up
+// 	compareDataFuncRegistry.Lock()
+// 	id := compareDataFuncRegistry.next
+// 	compareDataFuncRegistry.next++
+// 	compareDataFuncRegistry.m[id] = compareDataFuncData{fn: compareFunc, userData: userData}
+// 	compareDataFuncRegistry.Unlock()
+
+// 	gItem := ToGObject(unsafe.Pointer(&item))
+
+// 	C._g_list_store_insert_sorted(v.native(), C.gpointer(gItem), C.gpointer(uintptr(id)))
+// }
 
 // // Append is a wrapper around g_list_store_append().
-// func (v *ListStore) Append(item uintptr) {
-// 	C.g_list_store_append(v.native(), C.gpointer(item))
+// func (v *ListStore) Append(item interface{}) {
+//  	gItem := ToGObject(unsafe.Pointer(&item))
+// 	C.g_list_store_append(v.native(), C.gpointer(gItem))
 // }
 
 // // Remove is a wrapper around g_list_store_remove().

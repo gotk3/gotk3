@@ -4,7 +4,10 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"sync"
+	"unsafe"
+)
 
 /*
  * Linked Lists
@@ -153,3 +156,22 @@ func (v *List) FreeFull(fn func(item interface{})) {
 	v.Foreach(fn)
 	v.Free()
 }
+
+// CompareDataFunc is a representation of GCompareDataFunc
+type CompareDataFunc func(a, b interface{}, userData ...interface{}) bool
+
+type compareDataFuncData struct {
+	fn       CompareDataFunc
+	userData []interface{}
+}
+
+var (
+	compareDataFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]compareDataFuncData
+	}{
+		next: 1,
+		m:    make(map[int]compareDataFuncData),
+	}
+)
