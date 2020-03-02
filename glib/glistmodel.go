@@ -1,9 +1,13 @@
+// Same copyright and license as the rest of the files in this project
+// +build !gtk_3_6,!gtk_3_8,!gtk_3_10,!gtk_3_12!gtk_3_14
+
 package glib
 
 // #include <gio/gio.h>
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
+// #include "glib_since_3_16.go.h"
 import "C"
 import "unsafe"
 
