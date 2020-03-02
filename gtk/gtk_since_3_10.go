@@ -503,8 +503,10 @@ func (v *ListBox) DragHighlightRow(row *ListBoxRow) {
 	C.gtk_list_box_drag_highlight_row(v.native(), row.native())
 }
 
-// TODO:
-// gtk_list_box_drag_unhighlight_row().
+// DragUnhighlightRow is a wrapper around gtk_list_box_drag_unhighlight_row().
+func (v *ListBox) DragUnhighlightRow() {
+	C.gtk_list_box_drag_unhighlight_row(v.native())
+}
 
 /*
  * GtkListBoxRow

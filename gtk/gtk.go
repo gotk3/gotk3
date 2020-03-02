@@ -9891,8 +9891,8 @@ func wrapTreeSortable(obj *glib.Object) *TreeSortable {
 	return &TreeSortable{obj}
 }
 
-// TreeIterCompareFunc defines the function prototype for the sort function (f arg) for
-// (* TreeSortable).SetSortFunc
+// TreeIterCompareFunc is a representation of GtkTreeIterCompareFunc.
+// It defines the function prototype for the sort function (f arg) for (* TreeSortable).SetSortFunc
 type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData ...interface{}) int
 
 // GetSortColumnId() is a wrapper around gtk_tree_sortable_get_sort_column_id().
