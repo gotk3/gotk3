@@ -291,4 +291,8 @@ static inline void set_string(char** strings, int n, char* str) {
 
 static inline gchar** next_gcharptr(gchar** s) { return (s+1); }
 
+extern void goCompareDataFuncs (gconstpointer a,
+								gconstpointer b,
+								gpointer user_data);
+
 #endif

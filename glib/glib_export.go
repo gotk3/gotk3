@@ -21,3 +21,14 @@ func goAsyncReadyCallbacks(sourceObject *C.GObject, res *C.GAsyncResult, userDat
 
 	r.fn(source, wrapAsyncResult(wrapObject(unsafe.Pointer(res))), r.userData)
 }
+
+//export goCompareDataFuncs
+func goCompareDataFuncs(a, b C.gconstpointer, userData C.gpointer) {
+	id := int(uintptr(userData))
+
+	compareDataFuncRegistry.RLock()
+	r := compareDataFuncRegistry.m[id]
+	compareDataFuncRegistry.RUnlock()
+
+	r.fn(uintptr(a), uintptr(b), r.userData)
+}
