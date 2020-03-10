@@ -60,6 +60,7 @@ import (
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/pango"
 )
 
 func init() {
@@ -3423,12 +3424,11 @@ func (v *Entry) GetOverwriteMode() bool {
 	return gobool(c)
 }
 
-// TODO(jrick) Pangolayout
-/*
-// gtk_entry_get_layout().
-func (v *Entry) GetLayout() {
+// GetLayout is a wrapper around gtk_entry_get_layout().
+func (v *Entry) GetLayout() *pango.Layout {
+	c := C.gtk_entry_get_layout(v.native())
+	return pango.WrapLayout(uintptr(unsafe.Pointer(c)))
 }
-*/
 
 // GetLayoutOffsets is a wrapper around gtk_entry_get_layout_offsets().
 func (v *Entry) GetLayoutOffsets() (x, y int) {
@@ -3451,19 +3451,21 @@ func (v *Entry) TextIndexToLayoutIndex(textIndex int) int {
 	return int(c)
 }
 
-// TODO(jrick) PandoAttrList
-/*
-// gtk_entry_set_attributes().
-func (v *Entry) SetAttributes() {
-}
-*/
+// TODO: depends on PandoAttrList
+// SetAttributes is a wrapper around gtk_entry_set_attributes().
+// func (v *Entry) SetAttributes(attrList *pango.AttrList) {
+// 	C.gtk_entry_set_attributes(v.native(), (*C.PangoAttrList)(unsafe.Pointer(attrList.Native())))
+// }
 
-// TODO(jrick) PandoAttrList
-/*
-// gtk_entry_get_attributes().
-func (v *Entry) GetAttributes() {
-}
-*/
+// TODO: depends on PandoAttrList
+// GetAttributes is a wrapper around gtk_entry_get_attributes().
+// func (v *Entry) GetAttributes() (*pango.AttrList, error) {
+// 	c := C.gtk_entry_get_attributes(v.native())
+// 	if c == nil {
+// 		return nil, nilPtrErr
+// 	}
+// 	return &pango.AttrList{unsafe.Pointer(c)}, nil
+// }
 
 // GetMaxLength is a wrapper around gtk_entry_get_max_length().
 func (v *Entry) GetMaxLength() int {
@@ -3524,7 +3526,7 @@ func (v *Entry) SetProgressPulseStep(fraction float64) {
 	C.gtk_entry_set_progress_pulse_step(v.native(), C.gdouble(fraction))
 }
 
-// GetProgressPulseSte) is a wrapper around gtk_entry_get_progress_pulse_step().
+// GetProgressPulseStep is a wrapper around gtk_entry_get_progress_pulse_step().
 func (v *Entry) GetProgressPulseStep() float64 {
 	c := C.gtk_entry_get_progress_pulse_step(v.native())
 	return float64(c)
@@ -3535,12 +3537,12 @@ func (v *Entry) ProgressPulse() {
 	C.gtk_entry_progress_pulse(v.native())
 }
 
-// TODO(jrick) GdkEventKey
-/*
-// gtk_entry_im_context_filter_keypress
-func (v *Entry) IMContextFilterKeypress() {
+// IMContextFilterKeypress is a wrapper around gtk_entry_im_context_filter_keypress().
+func (v *Entry) IMContextFilterKeypress(eventKey *gdk.EventKey) bool {
+	key := (*C.GdkEventKey)(unsafe.Pointer(eventKey.Native()))
+	c := C.gtk_entry_im_context_filter_keypress(v.native(), key)
+	return gobool(c)
 }
-*/
 
 // ResetIMContext is a wrapper around gtk_entry_reset_im_context().
 func (v *Entry) ResetIMContext() {
@@ -3549,8 +3551,7 @@ func (v *Entry) ResetIMContext() {
 
 // SetIconFromPixbuf is a wrapper around gtk_entry_set_icon_from_pixbuf().
 func (v *Entry) SetIconFromPixbuf(iconPos EntryIconPosition, pixbuf *gdk.Pixbuf) {
-	C.gtk_entry_set_icon_from_pixbuf(v.native(),
-		C.GtkEntryIconPosition(iconPos),
+	C.gtk_entry_set_icon_from_pixbuf(v.native(), C.GtkEntryIconPosition(iconPos),
 		(*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native())))
 }
 
@@ -3558,77 +3559,74 @@ func (v *Entry) SetIconFromPixbuf(iconPos EntryIconPosition, pixbuf *gdk.Pixbuf)
 func (v *Entry) SetIconFromIconName(iconPos EntryIconPosition, name string) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_entry_set_icon_from_icon_name(v.native(),
-		C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
+	C.gtk_entry_set_icon_from_icon_name(v.native(), C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
 }
 
 // RemoveIcon is a convenience func to set a nil pointer to the icon name.
 func (v *Entry) RemoveIcon(iconPos EntryIconPosition) {
-	C.gtk_entry_set_icon_from_icon_name(v.native(),
-		C.GtkEntryIconPosition(iconPos), nil)
+	C.gtk_entry_set_icon_from_icon_name(v.native(), C.GtkEntryIconPosition(iconPos), nil)
 }
 
-// TODO(jrick) GIcon
-/*
-// gtk_entry_set_icon_from_gicon().
-func (v *Entry) SetIconFromGIcon() {
-}
-*/
+// TODO: Needs gio/GIcon implemented first
+// SetIconFromGIcon is a wrapper around gtk_entry_set_icon_from_gicon().
+// func (v *Entry) SetIconFromGIcon(iconPos EntryIconPosition, icon *glib.Icon) {
+// 	C.gtk_entry_set_icon_from_gicon(v.native(),
+//		(*C.GIcon)(unsafe.Pointer(icon.Native())))
+// }
 
 // GetIconStorageType is a wrapper around gtk_entry_get_icon_storage_type().
 func (v *Entry) GetIconStorageType(iconPos EntryIconPosition) ImageType {
-	c := C.gtk_entry_get_icon_storage_type(v.native(),
-		C.GtkEntryIconPosition(iconPos))
+	c := C.gtk_entry_get_icon_storage_type(v.native(), C.GtkEntryIconPosition(iconPos))
 	return ImageType(c)
 }
 
-// TODO(jrick) GdkPixbuf
-/*
-// gtk_entry_get_icon_pixbuf().
-func (v *Entry) GetIconPixbuf() {
+// GetIconPixbuf is a wrapper around gtk_entry_get_icon_pixbuf().
+func (v *Entry) GetIconPixbuf(iconPos EntryIconPosition) (*gdk.Pixbuf, error) {
+	c := C.gtk_entry_get_icon_pixbuf(v.native(), C.GtkEntryIconPosition(iconPos))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
 }
-*/
 
 // GetIconName is a wrapper around gtk_entry_get_icon_name().
 func (v *Entry) GetIconName(iconPos EntryIconPosition) (string, error) {
-	c := C.gtk_entry_get_icon_name(v.native(),
-		C.GtkEntryIconPosition(iconPos))
+	c := C.gtk_entry_get_icon_name(v.native(), C.GtkEntryIconPosition(iconPos))
 	if c == nil {
 		return "", nilPtrErr
 	}
 	return goString(c), nil
 }
 
-// TODO(jrick) GIcon
-/*
-// gtk_entry_get_icon_gicon().
-func (v *Entry) GetIconGIcon() {
-}
-*/
+// TODO
+// GetIconGIcon is a wrapper aroudn gtk_entry_get_icon_gicon().
+// func (v *Entry) GetIconGIcon(iconPos EntryIconPosition) (*glib.Icon, error) {
+// 	c := C.gtk_entry_get_icon_gicon(v.native(), C.GtkEntryIconPosition(iconPos))
+// 	if c == nil {
+// 		return nil, nilPtrErr
+// 	}
+// 	return &glib.Icon{unsafe.Pointer(c)}, nil
+// }
 
 // SetIconActivatable is a wrapper around gtk_entry_set_icon_activatable().
 func (v *Entry) SetIconActivatable(iconPos EntryIconPosition, activatable bool) {
-	C.gtk_entry_set_icon_activatable(v.native(),
-		C.GtkEntryIconPosition(iconPos), gbool(activatable))
+	C.gtk_entry_set_icon_activatable(v.native(), C.GtkEntryIconPosition(iconPos), gbool(activatable))
 }
 
 // GetIconActivatable is a wrapper around gtk_entry_get_icon_activatable().
 func (v *Entry) GetIconActivatable(iconPos EntryIconPosition) bool {
-	c := C.gtk_entry_get_icon_activatable(v.native(),
-		C.GtkEntryIconPosition(iconPos))
+	c := C.gtk_entry_get_icon_activatable(v.native(), C.GtkEntryIconPosition(iconPos))
 	return gobool(c)
 }
 
 // SetIconSensitive is a wrapper around gtk_entry_set_icon_sensitive().
 func (v *Entry) SetIconSensitive(iconPos EntryIconPosition, sensitive bool) {
-	C.gtk_entry_set_icon_sensitive(v.native(),
-		C.GtkEntryIconPosition(iconPos), gbool(sensitive))
+	C.gtk_entry_set_icon_sensitive(v.native(), C.GtkEntryIconPosition(iconPos), gbool(sensitive))
 }
 
 // GetIconSensitive is a wrapper around gtk_entry_get_icon_sensitive().
 func (v *Entry) GetIconSensitive(iconPos EntryIconPosition) bool {
-	c := C.gtk_entry_get_icon_sensitive(v.native(),
-		C.GtkEntryIconPosition(iconPos))
+	c := C.gtk_entry_get_icon_sensitive(v.native(), C.GtkEntryIconPosition(iconPos))
 	return gobool(c)
 }
 
@@ -3642,8 +3640,7 @@ func (v *Entry) GetIconAtPos(x, y int) int {
 func (v *Entry) SetIconTooltipText(iconPos EntryIconPosition, tooltip string) {
 	cstr := C.CString(tooltip)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_entry_set_icon_tooltip_text(v.native(),
-		C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
+	C.gtk_entry_set_icon_tooltip_text(v.native(), C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
 }
 
 // GetIconTooltipText is a wrapper around gtk_entry_get_icon_tooltip_text().
@@ -3674,12 +3671,12 @@ func (v *Entry) GetIconTooltipMarkup(iconPos EntryIconPosition) (string, error) 
 	return goString(c), nil
 }
 
-// TODO(jrick) GdkDragAction
-/*
-// gtk_entry_set_icon_drag_source().
-func (v *Entry) SetIconDragSource() {
-}
-*/
+// TODO: depends on GtkTargetList
+// SetIconDragSource is a wrapper around gtk_entry_set_icon_drag_source().
+// func (v *Entry) SetIconDragSource(iconPos EntryIconPosition, targetList *TargetList, action gdk.DragAction) {
+// 	C.gtk_entry_set_icon_drag_source(v.native(), C.GtkEntryIconPosition(iconPos),
+// 		targetList.native(), C.GdkDragAction(action))
+// }
 
 // GetCurrentIconDragSource is a wrapper around gtk_entry_get_current_icon_drag_source().
 func (v *Entry) GetCurrentIconDragSource() int {
