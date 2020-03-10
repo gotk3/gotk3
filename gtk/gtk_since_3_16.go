@@ -11,6 +11,7 @@ import (
 	"sync"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -303,6 +304,16 @@ func (v *StackSidebar) GetStack() *Stack {
 // GrabFocusWithoutSelecting is a wrapper for gtk_entry_grab_focus_without_selecting()
 func (v *Entry) GrabFocusWithoutSelecting() {
 	C.gtk_entry_grab_focus_without_selecting(v.native())
+}
+
+/*
+ * GtkSearchEntry
+ */
+
+// HandleEvent is a wrapper around gtk_search_entry_handle_event().
+func (v *SearchEntry) HandleEvent(event *gdk.Event) {
+	e := (*C.GdkEvent)(unsafe.Pointer(event.Native()))
+	C.gtk_search_entry_handle_event(v.native(), e)
 }
 
 /*
