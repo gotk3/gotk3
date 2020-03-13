@@ -200,6 +200,8 @@ func init() {
 		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
 		{glib.Type(C.gtk_tree_view_column_get_type()), marshalTreeViewColumn},
 		{glib.Type(C.gtk_cell_area_get_type()), marshalCellArea},
+		{glib.Type(C.gtk_cell_area_context_get_type()), marshalCellAreaContext},
+		{glib.Type(C.gtk_cell_area_box_get_type()), marshalCellAreaBox},
 		{glib.Type(C.gtk_volume_button_get_type()), marshalVolumeButton},
 		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
 		{glib.Type(C.gtk_window_get_type()), marshalWindow},
