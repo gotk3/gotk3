@@ -84,6 +84,7 @@ func init() {
 		{glib.Type(C.gtk_image_type_get_type()), marshalImageType},
 		{glib.Type(C.gtk_input_hints_get_type()), marshalInputHints},
 		{glib.Type(C.gtk_input_purpose_get_type()), marshalInputPurpose},
+		{glib.Type(C.gtk_direction_type_get_type()), marshalDirectionType},
 		{glib.Type(C.gtk_justification_get_type()), marshalJustification},
 		{glib.Type(C.gtk_license_get_type()), marshalLicense},
 		{glib.Type(C.gtk_message_type_get_type()), marshalMessageType},
@@ -198,6 +199,7 @@ func init() {
 		{glib.Type(C.gtk_tree_store_get_type()), marshalTreeStore},
 		{glib.Type(C.gtk_tree_view_get_type()), marshalTreeView},
 		{glib.Type(C.gtk_tree_view_column_get_type()), marshalTreeViewColumn},
+		{glib.Type(C.gtk_cell_area_get_type()), marshalCellArea},
 		{glib.Type(C.gtk_volume_button_get_type()), marshalVolumeButton},
 		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
 		{glib.Type(C.gtk_window_get_type()), marshalWindow},
@@ -556,9 +558,25 @@ func marshalInputPurpose(p uintptr) (interface{}, error) {
 // TODO:
 // GtkBaselinePosition
 // GtkDeleteType
-// GtkDirectionType
 
-// Justify is a representation of GTK's GtkJustification.
+// DirectionType is a representation of GTK's GtkDirectionType.
+type DirectionType int
+
+const (
+	DIR_TAB_FORWARD  DirectionType = C.GTK_DIR_TAB_FORWARD
+	DIR_TAB_BACKWARD DirectionType = C.GTK_DIR_TAB_BACKWARD
+	DIR_UP           DirectionType = C.GTK_DIR_UP
+	DIR_DOWN         DirectionType = C.GTK_DIR_DOWN
+	DIR_LEFT         DirectionType = C.GTK_DIR_LEFT
+	DIR_RIGHT        DirectionType = C.GTK_DIR_RIGHT
+)
+
+func marshalDirectionType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return DirectionType(c), nil
+}
+
+// Justification is a representation of GTK's GtkJustification.
 type Justification int
 
 const (
@@ -678,6 +696,17 @@ const (
 	TREE_VIEW_GRID_LINES_HORIZONTAL TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_HORIZONTAL
 	TREE_VIEW_GRID_LINES_VERTICAL   TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_VERTICAL
 	TREE_VIEW_GRID_LINES_BOTH       TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_BOTH
+)
+
+// CellRendererState is a representation of GTK's GtkCellRendererState
+type CellRendererState int
+
+const (
+	CELL_RENDERER_SELECTED    CellRendererState = C.GTK_CELL_RENDERER_SELECTED
+	CELL_RENDERER_PRELIT      CellRendererState = C.GTK_CELL_RENDERER_PRELIT
+	CELL_RENDERER_INSENSITIVE CellRendererState = C.GTK_CELL_RENDERER_INSENSITIVE
+	CELL_RENDERER_SORTED      CellRendererState = C.GTK_CELL_RENDERER_SORTED
+	CELL_RENDERER_FOCUSED     CellRendererState = C.GTK_CELL_RENDERER_FOCUSED
 )
 
 // PositionType is a representation of GTK's GtkPositionType.
