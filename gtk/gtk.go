@@ -2697,6 +2697,10 @@ func (v *Container) CheckResize() {
 // GetChildren is a wrapper around gtk_container_get_children().
 func (v *Container) GetChildren() *glib.List {
 	clist := C.gtk_container_get_children(v.native())
+	if clist == nil {
+		return nil
+	}
+
 	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
 	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapWidget(glib.Take(ptr))
