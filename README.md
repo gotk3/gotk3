@@ -192,7 +192,7 @@ http://localhost:6060/pkg/github.com/gotk3/gotk3
 
 ## Installation
 
-gotk3 currently requires GTK 3.6-3.24, GLib 2.36-2.40, and
+gotk3 currently requires GTK 3.6-3.24, GLib 2.36-2.46, and
 Cairo 1.10 or 1.12.  A recent Go (1.8 or newer) is also required.
 
 For detailed instructions see the wiki pages: [installation](https://github.com/gotk3/gotk3/wiki#installation)

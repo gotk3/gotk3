@@ -174,12 +174,6 @@ func (v *SimpleAction) SetState(value *Variant) {
 	C.g_simple_action_set_state(v.native(), value.native())
 }
 
-// SetStateHint is a wrapper around g_simple_action_set_state_hint
-// GLib 2.44 only (currently no build tags, so commented out)
-/*func (v *SimpleAction) SetStateHint(stateHint *Variant) {
-	C.g_simple_action_set_state_hint(v.native(), stateHint.native())
-}*/
-
 // PropertyAction is a representation of GPropertyAction
 type PropertyAction struct {
 	Action
