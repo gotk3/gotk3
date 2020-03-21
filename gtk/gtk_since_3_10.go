@@ -111,9 +111,21 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
  * GtkEntry
  */
 
-// TODO:
-// gtk_entry_get_tabs().
-// gtk_entry_set_tabs().
+// TODO: depends on PangoTabArray
+// GetTabs is a wrapper around gtk_entry_get_tabs().
+// func (v *Entry) GetTabs() (*pango.TabArray, error) {
+// 	c := C.gtk_entry_get_tabs(v.native())
+// 	if c == nil {
+// 		return nil, nilPtrErr
+// 	}
+// 	return &pango.TabArray{unsafe.Pointer(c)}, nil
+// }
+
+// TODO: depends on PangoTabArray
+// SetTabs is a wrapper around gtk_entry_set_tabs().
+// func (v *Entry) SetTabs(tabs *pango.TabArray) {
+// 	C.gtk_entry_set_tabs(v.native(), (*C.PangoTabArray)(unsafe.Pointer(tabs.Native())))
+// }
 
 /*
  * GtkButton
