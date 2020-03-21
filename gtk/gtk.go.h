@@ -472,6 +472,24 @@ toGtkCellLayout(void *p)
 	return (GTK_CELL_LAYOUT(p));
 }
 
+static GtkCellArea *
+toGtkCellArea(void *p)
+{
+	return (GTK_CELL_AREA(p));
+}
+
+static GtkCellAreaContext *
+toGtkCellAreaContext(void *p)
+{
+	return (GTK_CELL_AREA_CONTEXT(p));
+}
+
+static GtkCellAreaBox *
+toGtkCellAreaBox(void *p)
+{
+	return (GTK_CELL_AREA_BOX(p));
+}
+
 static GtkOrientable *
 toGtkOrientable(void *p)
 {
