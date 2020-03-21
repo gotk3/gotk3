@@ -7430,9 +7430,6 @@ func SearchEntryNew() (*SearchEntry, error) {
 	return wrapSearchEntry(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// TODO:
-// gtk_search_entry_handle_event().
-
 /*
 * GtkSelectionData
  */
