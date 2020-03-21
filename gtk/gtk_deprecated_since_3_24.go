@@ -16,6 +16,10 @@ func (v *Container) GetFocusChain() ([]*Widget, bool) {
 	var cwlist *C.GList
 	c := C.gtk_container_get_focus_chain(v.native(), &cwlist)
 
+	if cwlist == nil {
+		return nil, gobool(c)
+	}
+
 	var widgets []*Widget
 	wlist := glib.WrapList(uintptr(unsafe.Pointer(cwlist)))
 	for ; wlist.Data() != nil; wlist = wlist.Next() {

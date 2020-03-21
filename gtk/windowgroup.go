@@ -71,15 +71,18 @@ func (v *WindowGroup) RemoveWindow(window IWindow) {
 // Returned list is wrapped to return *gtk.Window elements.
 // TODO: Use IWindow and wrap to correct type
 func (v *WindowGroup) ListWindows() *glib.List {
-	glist := C.gtk_window_group_list_windows(v.native())
-	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
-	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+	clist := C.gtk_window_group_list_windows(v.native())
+	if clist == nil {
+		return nil
+	}
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapWindow(glib.Take(ptr))
 	})
-	runtime.SetFinalizer(list, func(l *glib.List) {
+	runtime.SetFinalizer(glist, func(l *glib.List) {
 		l.Free()
 	})
-	return list
+	return glist
 }
 
 // GetCurrentGrab is a wrapper around gtk_window_group_get_current_grab().

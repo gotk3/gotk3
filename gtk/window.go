@@ -648,43 +648,52 @@ func (v *Window) PropagateKeyEvent(event *gdk.EventKey) bool {
 // Returned list is wrapped to return *gtk.Window elements.
 // TODO: Use IWindow and wrap to correct type
 func WindowListToplevels() *glib.List {
-	glist := C.gtk_window_list_toplevels()
-	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
-	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+	clist := C.gtk_window_list_toplevels()
+	if clist == nil {
+		return nil
+	}
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapWindow(glib.Take(ptr))
 	})
-	runtime.SetFinalizer(list, func(l *glib.List) {
+	runtime.SetFinalizer(glist, func(l *glib.List) {
 		l.Free()
 	})
-	return list
+	return glist
 }
 
 // WindowGetDefaultIconList is a wrapper around gtk_window_get_default_icon_list().
 // Returned list is wrapped to return *gdk.Pixbuf elements.
 func WindowGetDefaultIconList() *glib.List {
-	glist := C.gtk_window_get_default_icon_list()
-	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
-	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+	clist := C.gtk_window_get_default_icon_list()
+	if clist == nil {
+		return nil
+	}
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return &gdk.Pixbuf{glib.Take(ptr)}
 	})
-	runtime.SetFinalizer(list, func(l *glib.List) {
+	runtime.SetFinalizer(glist, func(l *glib.List) {
 		l.Free()
 	})
-	return list
+	return glist
 }
 
 // GetIconList is a wrapper around gtk_window_get_icon_list().
 // Returned list is wrapped to return *gdk.Pixbuf elements.
 func (v *Window) GetIconList() *glib.List {
-	glist := C.gtk_window_get_icon_list(v.native())
-	list := glib.WrapList(uintptr(unsafe.Pointer(glist)))
-	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+	clist := C.gtk_window_get_icon_list(v.native())
+	if clist == nil {
+		return nil
+	}
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return &gdk.Pixbuf{glib.Take(ptr)}
 	})
-	runtime.SetFinalizer(list, func(l *glib.List) {
+	runtime.SetFinalizer(glist, func(l *glib.List) {
 		l.Free()
 	})
-	return list
+	return glist
 }
 
 // WindowSetDefaultIconList is a wrapper around gtk_window_set_default_icon_list().
