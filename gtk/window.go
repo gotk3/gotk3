@@ -30,6 +30,7 @@ type Window struct {
 // functions that wrap around a C GTK function taking a GtkWindow.
 type IWindow interface {
 	toWindow() *C.GtkWindow
+	ToWindow() *Window
 }
 
 // native returns a pointer to the underlying GtkWindow.
@@ -46,6 +47,12 @@ func (v *Window) toWindow() *C.GtkWindow {
 		return nil
 	}
 	return v.native()
+}
+
+// ToWindow is a helper getter, in case you use the interface gtk.IWindow in your program.
+// It returns e.g. *gtk.ApplicationWindow as a *gtk.Window.
+func (v *Window) ToWindow() *Window {
+	return v
 }
 
 func marshalWindow(p uintptr) (interface{}, error) {

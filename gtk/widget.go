@@ -29,6 +29,7 @@ type Widget struct {
 // GtkWidget.
 type IWidget interface {
 	toWidget() *C.GtkWidget
+	ToWidget() *Widget
 	Set(string, interface{}) error
 }
 
@@ -58,6 +59,12 @@ func (v *Widget) toWidget() *C.GtkWidget {
 		return nil
 	}
 	return v.native()
+}
+
+// ToWidget is a helper getter, in case you use the interface gtk.IWidget in your program.
+// It returns e.g. *gtk.Label as a *gtk.Widget.
+func (v *Widget) ToWidget() *Widget {
+	return v
 }
 
 func marshalWidget(p uintptr) (interface{}, error) {
