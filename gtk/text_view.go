@@ -6,10 +6,12 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/pango"
 )
 
 // TextWindowType is a representation of GTK's GtkTextWindowType.
@@ -214,6 +216,22 @@ func (v *TextView) GetIndent() int {
 	return int(c)
 }
 
+// SetTabs is a wrapper around gtk_text_view_set_tabs().
+func (v *TextView) SetTabs(tabs *pango.TabArray) {
+	C.gtk_text_view_set_tabs(v.native(), (*C.PangoTabArray)(unsafe.Pointer(tabs.Native())))
+}
+
+// GetTabs is a wrapper around gtk_text_view_get_tabs().
+func (v *TextView) GetTabs() (*pango.TabArray, error) {
+	c := C.gtk_text_view_get_tabs(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	ta := pango.WrapTabArray(uintptr(unsafe.Pointer(c)))
+	runtime.SetFinalizer(ta, (*pango.TabArray).Free)
+	return ta, nil
+}
+
 // SetInputHints is a wrapper around gtk_text_view_set_input_hints().
 func (v *TextView) SetInputHints(hints InputHints) {
 	C.gtk_text_view_set_input_hints(v.native(), C.GtkInputHints(hints))
@@ -415,8 +433,6 @@ func (v *TextView) AddChildAtAnchor(child IWidget, anchor *TextChildAnchor) {
 // gint 	gtk_text_view_get_top_margin () -- SINCE 3.18
 // void 	gtk_text_view_set_bottom_margin ()  -- SINCE 3.18
 // gint 	gtk_text_view_get_bottom_margin ()  -- SINCE 3.18
-// void 	gtk_text_view_set_tabs () -- PangoTabArray
-// PangoTabArray * 	gtk_text_view_get_tabs () -- PangoTabArray
 // GtkTextAttributes * 	gtk_text_view_get_default_attributes () -- GtkTextAttributes
 // void 	gtk_text_view_set_monospace () -- SINCE 3.16
 // gboolean 	gtk_text_view_get_monospace () -- SINCE 3.16
