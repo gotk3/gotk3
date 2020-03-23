@@ -22,6 +22,7 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -33,6 +34,7 @@ func init() {
 		{glib.Type(C.pango_alignment_get_type()), marshalAlignment},
 		{glib.Type(C.pango_ellipsize_mode_get_type()), marshalEllipsizeMode},
 		{glib.Type(C.pango_wrap_mode_get_type()), marshalWrapMode},
+		{glib.Type(C.pango_tab_align_get_type()), marshalTabAlign},
 
 		// Objects/Interfaces
 		//		{glib.Type(C.pango_layout_get_type()), marshalLayout},
@@ -51,6 +53,9 @@ func (v *Layout) Native() uintptr {
 }
 
 func (v *Layout) native() *C.PangoLayout {
+	if v == nil {
+		return nil
+	}
 	return (*C.PangoLayout)(unsafe.Pointer(v.pangoLayout))
 }
 
@@ -71,6 +76,9 @@ func (v *LayoutLine) Native() uintptr {
 }
 
 func (v *LayoutLine) native() *C.PangoLayoutLine {
+	if v == nil {
+		return nil
+	}
 	return (*C.PangoLayoutLine)(unsafe.Pointer(v.pangoLayoutLine))
 }
 
@@ -121,6 +129,17 @@ func marshalEllipsizeMode(p uintptr) (interface{}, error) {
 	return EllipsizeMode(c), nil
 }
 
+type TabAlign int
+
+const (
+	TAB_LEFT TabAlign = C.PANGO_TAB_LEFT
+)
+
+func marshalTabAlign(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TabAlign(c), nil
+}
+
 /*
 func marshalLayout(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
@@ -133,7 +152,7 @@ func wrapLayout(obj *glib.Object) *Layout {
 }
 */
 
-//PangoLayout *pango_layout_new            (PangoContext   *context);
+// LayoutNew is a wrapper around pango_layout_new().
 func LayoutNew(context *Context) *Layout {
 	c := C.pango_layout_new(context.native())
 
@@ -142,7 +161,7 @@ func LayoutNew(context *Context) *Layout {
 	return layout
 }
 
-//PangoLayout *pango_layout_copy           (PangoLayout    *src);
+// Copy is a wrapper around pango_layout_copy().
 func (v *Layout) Copy() *Layout {
 	c := C.pango_layout_copy(v.native())
 
@@ -151,7 +170,7 @@ func (v *Layout) Copy() *Layout {
 	return layout
 }
 
-//PangoContext  *pango_layout_get_context    (PangoLayout    *layout);
+// GetContext is a wrapper around pango_layout_get_context().
 func (v *Layout) GetContext() *Context {
 	c := C.pango_layout_get_context(v.native())
 
@@ -161,13 +180,12 @@ func (v *Layout) GetContext() *Context {
 	return context
 }
 
-//void           pango_layout_set_attributes (PangoLayout    *layout,
-//					    PangoAttrList  *attrs);
+// SetAttributes is a wrapper around pango_layout_set_attributes().
 func (v *Layout) SetAttributes(attrs *AttrList) {
 	C.pango_layout_set_attributes(v.native(), attrs.native())
 }
 
-//PangoAttrList *pango_layout_get_attributes (PangoLayout    *layout);
+// GetAttributes is a wrapper around pango_layout_get_attributes().
 func (v *Layout) GetAttributes() *AttrList {
 	c := C.pango_layout_get_attributes(v.native())
 
@@ -177,30 +195,26 @@ func (v *Layout) GetAttributes() *AttrList {
 	return attrList
 }
 
-//void           pango_layout_set_text       (PangoLayout    *layout,
-//					    const char     *text,
-//					    int             length);
+// SetText is a wrapper around pango_layout_set_text().
 func (v *Layout) SetText(text string, length int) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.pango_layout_set_text(v.native(), (*C.char)(cstr), (C.int)(length))
 }
 
-//const char    *pango_layout_get_text       (PangoLayout    *layout);
+// GetText is a wrapper around pango_layout_get_text().
 func (v *Layout) GetText() string {
 	c := C.pango_layout_get_text(v.native())
 	return C.GoString((*C.char)(c))
 }
 
-//gint           pango_layout_get_character_count (PangoLayout *layout);
+// GetCharacterCount is a wrapper around pango_layout_get_character_count().
 func (v *Layout) GetCharacterCount() int {
 	c := C.pango_layout_get_character_count(v.native())
 	return int(c)
 }
 
-//void           pango_layout_set_markup     (PangoLayout    *layout,
-//					    const char     *markup,
-//					    int             length);
+// SetMarkup is a wrapper around pango_layout_set_markup().
 func (v *Layout) SetMarkup(text string, length int) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
@@ -214,22 +228,19 @@ func (v *Layout) SetMarkup(text string, length int) {
 //						   gunichar       *accel_char);
 
 /*
-func (v *Layout)SetMarkupWithAccel (text string, length int, accel_marker, accel_char rune){
+func (v *Layout) SetMarkupWithAccel (text string, length int, accel_marker, accel_char rune){
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	C.pango_layout_set_markup_with_accel (v.native(),  (*C.char)(cstr), (C.int)(length), (C.gunichar)(accel_marker), (C.gunichar)(accel_char) )
 }
 */
 
-//void           pango_layout_set_font_description (PangoLayout                *layout,
-//						  const PangoFontDescription *desc);
-
+// SetFontDescription is a wrapper around pango_layout_set_font_description().
 func (v *Layout) SetFontDescription(desc *FontDescription) {
 	C.pango_layout_set_font_description(v.native(), desc.native())
 }
 
-//const PangoFontDescription *pango_layout_get_font_description (PangoLayout *layout);
-
+// GetFontDescription is a wrapper around pango_layout_get_font_description().
 func (v *Layout) GetFontDescription() *FontDescription {
 	c := C.pango_layout_get_font_description(v.native())
 
@@ -239,67 +250,215 @@ func (v *Layout) GetFontDescription() *FontDescription {
 	return desc
 }
 
-//void           pango_layout_set_width            (PangoLayout                *layout,
-//						  int                         width);
-
+// SetWidth is a wrapper around pango_layout_set_width().
 func (v *Layout) SetWidth(width int) {
 	C.pango_layout_set_width(v.native(), C.int(width))
 }
 
-//int            pango_layout_get_width            (PangoLayout                *layout);
-
+// GetWidth is a wrapper around pango_layout_get_width().
 func (v *Layout) GetWidth() int {
 	c := C.pango_layout_get_width(v.native())
 	return int(c)
 }
 
-//void           pango_layout_set_height           (PangoLayout                *layout,
-//						  int                         height);
-
+// SetHeight is a wrapper around pango_layout_set_height().
 func (v *Layout) SetHeight(width int) {
 	C.pango_layout_set_height(v.native(), C.int(width))
 }
 
-//int            pango_layout_get_height           (PangoLayout                *layout);
-
+// GetHeight is a wrapper around pango_layout_get_height().
 func (v *Layout) GetHeight() int {
 	c := C.pango_layout_get_height(v.native())
 	return int(c)
 }
 
-//void           pango_layout_set_wrap             (PangoLayout                *layout,
-//						  PangoWrapMode               wrap);
-
+// SetWrap is a wrapper around pango_layout_set_wrap().
 func (v *Layout) SetWrap(wrap WrapMode) {
 	C.pango_layout_set_wrap(v.native(), C.PangoWrapMode(wrap))
 }
 
-//PangoWrapMode  pango_layout_get_wrap             (PangoLayout                *layout);
-
+// WrapMode is a wrapper around pango_layout_get_wrap().
 func (v *Layout) GetWrap() WrapMode {
 	c := C.pango_layout_get_wrap(v.native())
 	return WrapMode(c)
 }
 
-//gboolean       pango_layout_is_wrapped           (PangoLayout                *layout);
-
+// IsWrapped is a wrapper around pango_layout_is_wrapped().
 func (v *Layout) IsWrapped() bool {
 	c := C.pango_layout_is_wrapped(v.native())
 	return gobool(c)
 }
 
-//void           pango_layout_set_indent           (PangoLayout                *layout,
-//						  int                         indent);
-
+// SetIndent is a wrapper around pango_layout_set_indent().
 func (v *Layout) SetIndent(indent int) {
 	C.pango_layout_set_indent(v.native(), C.int(indent))
 }
 
-//int            pango_layout_get_indent           (PangoLayout                *layout);
-
+// GetIndent is a wrapper around pango_layout_get_indent().
 func (v *Layout) GetIndent() int {
 	c := C.pango_layout_get_indent(v.native())
 	return int(c)
+}
+
+// SetTabs is a wrapper around pango_layout_set_tabs().
+func (v *Layout) SetTabs(tabs *TabArray) {
+	C.pango_layout_set_tabs(v.native(), tabs.native())
+}
+
+// GetTabs is a wrapper around pango_layout_get_tabs().
+func (v *Layout) GetTabs() (*TabArray, error) {
+	c := C.pango_layout_get_tabs(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	ta := wrapTabArray(c)
+	runtime.SetFinalizer(ta, (*TabArray).free)
+	return ta, nil
+}
+
+// GetSize is a wrapper around pango_layout_get_size().
+func (v *Layout) GetSize() (int, int) {
+	var w, h C.int
+	C.pango_layout_get_size(v.native(), &w, &h)
+	return int(w), int(h)
+}
+
+/*
+ * TabArray
+ */
+
+// TabArray is a representation of PangoTabArray.
+type TabArray struct {
+	pangoTabArray *C.PangoTabArray
+}
+
+// Native returns a pointer to the underlying PangoTabArray.
+func (v *TabArray) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *TabArray) native() *C.PangoTabArray {
+	if v == nil {
+		return nil
+	}
+	return (*C.PangoTabArray)(unsafe.Pointer(v.pangoTabArray))
+}
+
+func wrapTabArray(tabArray *C.PangoTabArray) *TabArray {
+	return &TabArray{tabArray}
+}
+
+func WrapTabArray(p uintptr) *TabArray {
+	tabArray := new(TabArray)
+	tabArray.pangoTabArray = (*C.PangoTabArray)(unsafe.Pointer(p))
+	return tabArray
+}
+
+// TabArrayNew is a wrapper around pango_tab_array_new().
+func TabArrayNew(initialSize int, positionsInPixels bool) *TabArray {
+	c := C.pango_tab_array_new(C.gint(initialSize), gbool(positionsInPixels))
+
+	tabArray := new(TabArray)
+	runtime.SetFinalizer(tabArray, (*TabArray).free)
+	tabArray.pangoTabArray = (*C.PangoTabArray)(c)
+	return tabArray
+}
+
+// TabArrayNewWithPositions is a wrapper around pango_tab_array_new_with_positions().
+// func TabArrayNewWithPositions(size int, positionsInPixels bool, ...) *TabArray {
+// 	c := C.pango_tab_array_new_with_positions(C.gint(size), gbool(positionsInPixels), ...)
+
+// 	tabArray := new(TabArray)
+//	runtime.SetFinalizer(e, (*TabArray).free)
+// 	tabArray.pangoTabArray = (*C.PangoTabArray)(c)
+// 	return tabArray
+// }
+
+// Copy is a wrapper around pango_tab_array_copy().
+func (v *TabArray) Copy() (*TabArray, error) {
+	c := C.pango_tab_array_copy(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	ta := wrapTabArray(c)
+	runtime.SetFinalizer(ta, (*TabArray).free)
+	return ta, nil
+}
+
+// free is a wrapper around pango_tab_array_free().
+func (v *TabArray) free() {
+	C.pango_tab_array_free(v.native())
+}
+
+// free is a wrapper around pango_tab_array_free().
+// This is only to enable other packages within gotk. Should not be used outside the gotk library.
+func (v *TabArray) Free() {
+	C.pango_tab_array_free(v.native())
+}
+
+// GetSize is a wrapper around pango_tab_array_get_size().
+func (v *TabArray) GetSize() int {
+	return int(C.pango_tab_array_get_size(v.native()))
+}
+
+// Resize is a wrapper around pango_tab_array_resize().
+func (v *TabArray) Resize(newSize int) {
+	C.pango_tab_array_resize(v.native(), C.gint(newSize))
+}
+
+// SetTab is a wrapper around pango_tab_array_set_tab().
+func (v *TabArray) SetTab(tabIndex int, alignment TabAlign, location int) {
+	C.pango_tab_array_set_tab(v.native(), C.gint(tabIndex), C.PangoTabAlign(alignment), C.gint(location))
+}
+
+// GetTab is a wrapper around pango_tab_array_get_tab().
+func (v *TabArray) GetTab(tabIndex int) (TabAlign, int) {
+	var alignment C.PangoTabAlign
+	var location C.gint
+	C.pango_tab_array_get_tab(v.native(), C.gint(tabIndex), &alignment, &location)
+	return TabAlign(alignment), int(location)
+}
+
+// GetTabs is a wrapper around pango_tab_array_get_tabs().
+// func (v *TabArray) GetTabs() ([]TabAlign, []int) {
+// 	var alignment *C.PangoTabAlign
+// 	var location *C.gint
+
+// 	C.pango_tab_array_get_tabs(v.native(), &alignment, &location)
+
+// 	size := v.GetSize()
+
+// 	var goAlignments []TabAlign
+// 	var goLocations []int
+
+// 	if &alignment != nil {
+// 		var ginthelp C.gint
+// 		sizeOf := unsafe.Sizeof(ginthelp)
+// 		for i := 0; i < int(size); i++ {
+// 			goAlignmentElement := TabAlign(*((*C.gint)(unsafe.Pointer(location))))
+// 			goAlignments = append(goAlignments, goAlignmentElement)
+// 			location += sizeOf
+// 		}
+// 	}
+
+// 	if &location != nil {
+// 		var ginthelp C.gint
+// 		sizeOf := unsafe.Sizeof(ginthelp)
+// 		for i := 0; i < int(size); i++ {
+// 			goLocationElement := int(*((*C.gint)(unsafe.Pointer(location))))
+// 			goLocations = append(goLocations, goLocationElement)
+// 			location += sizeOf
+// 		}
+
+// 		// TODO: free locations
+// 	}
+
+// 	return goAlignments, goLocations
+// }
+
+// GetPositionsInPixels is a wrapper around pango_tab_array_get_positions_in_pixels().
+func (v *TabArray) GetPositionsInPixels() bool {
+	return gobool(C.pango_tab_array_get_positions_in_pixels(v.native()))
 }
 
 //void           pango_layout_set_spacing          (PangoLayout                *layout,
@@ -314,11 +473,6 @@ func (v *Layout) GetIndent() int {
 //void           pango_layout_set_alignment        (PangoLayout                *layout,
 //						  PangoAlignment              alignment);
 //PangoAlignment pango_layout_get_alignment        (PangoLayout                *layout);
-//
-//void           pango_layout_set_tabs             (PangoLayout                *layout,
-//						  PangoTabArray              *tabs);
-//
-//PangoTabArray* pango_layout_get_tabs             (PangoLayout                *layout);
 //
 //void           pango_layout_set_single_paragraph_mode (PangoLayout                *layout,
 //						       gboolean                    setting);
@@ -371,16 +525,6 @@ func (v *Layout) GetIndent() int {
 //void     pango_layout_get_pixel_extents    (PangoLayout    *layout,
 //					    PangoRectangle *ink_rect,
 //					    PangoRectangle *logical_rect);
-
-//void     pango_layout_get_size             (PangoLayout    *layout,
-//					    int            *width,
-//					    int            *height);
-func (v *Layout) GetSize() (int, int) {
-	var w, h C.int
-	C.pango_layout_get_size(v.native(), &w, &h)
-	return int(w), int(h)
-}
-
 //void     pango_layout_get_pixel_size       (PangoLayout    *layout,
 //					    int            *width,
 //					    int            *height);
