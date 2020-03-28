@@ -21,6 +21,7 @@ package pango
 // #include <pango/pango.h>
 // #include "pango.go.h"
 import "C"
+import "errors"
 
 //	"github.com/andre-hub/gotk3/glib"
 //	"unsafe"
@@ -45,6 +46,12 @@ func gobool(b C.gboolean) bool {
 	}
 	return false
 }
+
+/*
+ * Unexported vars
+ */
+
+var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 
 /*
  * Constantes
