@@ -28,12 +28,38 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+func init() {
+
+	tm := []glib.TypeMarshaler{
+		{glib.Type(C.gdk_subpixel_layout_get_type()), marshalSubpixelLayout},
+	}
+
+	glib.RegisterGValueMarshalers(tm)
+}
+
 /*
  * Constants
  */
 
 // TODO:
 // GdkSeatCapabilities
+
+// SubpixelLayout is a representation of GDK's GdkSubpixelLayout.
+type SubpixelLayout int
+
+const (
+	SUBPIXEL_LAYOUT_UNKNOWN        SubpixelLayout = C.GDK_SUBPIXEL_LAYOUT_UNKNOWN
+	SUBPIXEL_LAYOUT_NONE           SubpixelLayout = C.GDK_SUBPIXEL_LAYOUT_NONE
+	SUBPIXEL_LAYOUT_HORIZONTAL_RGB SubpixelLayout = C.GDK_SUBPIXEL_LAYOUT_HORIZONTAL_RGB
+	SUBPIXEL_LAYOUT_HORIZONTAL_BGR SubpixelLayout = C.GDK_SUBPIXEL_LAYOUT_HORIZONTAL_BGR
+	SUBPIXEL_LAYOUT_VERTICAL_RGB   SubpixelLayout = C.GDK_SUBPIXEL_LAYOUT_VERTICAL_RGB
+	SUBPIXEL_LAYOUT_VERTICAL_BGR   SubpixelLayout = C.GDK_SUBPIXEL_LAYOUT_VERTICAL_BGR
+)
+
+func marshalSubpixelLayout(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SubpixelLayout(c), nil
+}
 
 /*
  * GdkDisplay
@@ -133,13 +159,69 @@ func toMonitor(s *C.GdkMonitor) (*Monitor, error) {
 	return &Monitor{obj}, nil
 }
 
+// GetDisplay is a wrapper around gdk_monitor_get_display().
+func (v *Monitor) GetDisplay() (*Display, error) {
+	return toDisplay(C.gdk_monitor_get_display(v.native()))
+}
+
 // GetGeometry is a wrapper around gdk_monitor_get_geometry().
 func (v *Monitor) GetGeometry() *Rectangle {
 	var rect C.GdkRectangle
 
 	C.gdk_monitor_get_geometry(v.native(), &rect)
 
-	return WrapRectangle(uintptr(unsafe.Pointer(&rect)))
+	return wrapRectangle(&rect)
+}
+
+// GetWorkarea is a wrapper around gdk_monitor_get_workarea().
+func (v *Monitor) GetWorkarea() *Rectangle {
+	var rect C.GdkRectangle
+
+	C.gdk_monitor_get_workarea(v.native(), &rect)
+
+	return wrapRectangle(&rect)
+}
+
+// GetWidthMM is a wrapper around gdk_monitor_get_width_mm().
+func (v *Monitor) GetWidthMM() int {
+	return int(C.gdk_monitor_get_width_mm(v.native()))
+}
+
+// GetHeightMM is a wrapper around gdk_monitor_get_height_mm().
+func (v *Monitor) GetHeightMM() int {
+	return int(C.gdk_monitor_get_height_mm(v.native()))
+}
+
+// GetManufacturer is a wrapper around gdk_monitor_get_manufacturer().
+func (v *Monitor) GetManufacturer() string {
+	// transfer none: don't free data after the code is done.
+	return  C.GoString(C.gdk_monitor_get_manufacturer(v.native()))
+}
+
+// GetModel is a wrapper around gdk_monitor_get_model().
+func (v *Monitor) GetModel() string {
+	// transfer none: don't free data after the code is done.
+	return C.GoString(C.gdk_monitor_get_model(v.native()))
+}
+
+// GetScaleFactor is a wrapper around gdk_monitor_get_scale_factor().
+func (v *Monitor) GetScaleFactor() int {
+	return int(C.gdk_monitor_get_scale_factor(v.native()))
+}
+
+// GetRefreshRate is a wrapper around gdk_monitor_get_refresh_rate().
+func (v *Monitor) GetRefreshRate() int {
+	return int(C.gdk_monitor_get_refresh_rate(v.native()))
+}
+
+// GetSubpixelLayout is a wrapper around gdk_monitor_get_subpixel_layout().
+func (v *Monitor) GetSubpixelLayout() SubpixelLayout {
+	return SubpixelLayout(C.gdk_monitor_get_subpixel_layout(v.native()))
+}
+
+// IsPrimary is a wrapper around gdk_monitor_is_primary().
+func (v *Monitor) IsPrimary() bool {
+	return gobool(C.gdk_monitor_is_primary(v.native()))
 }
 
 /*
