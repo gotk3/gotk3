@@ -213,6 +213,9 @@ Example:
 $ go build -tags "gtk_3_10 gtk_deprecated" example.go
 ```
 
+The same goes for
+* gdk-pixbuf: gdk_pixbuf_deprecated
+
 ## TODO
 
 - Add bindings for all of GTK+
