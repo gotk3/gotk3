@@ -1721,6 +1721,84 @@ func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, heigh
 	return p, nil
 }
 
+// PixbufNewFromBytes is a wrapper around gdk_pixbuf_new_from_bytes().
+// Introduced in gdk 2.32
+// see go package "encoding/base64"
+func PixbufNewFromBytes(pixbufData []byte, cs Colorspace, hasAlpha bool, bitsPerSample, width, height, rowStride int) (*Pixbuf, error) {
+	arrayPtr := (*C.GBytes)(unsafe.Pointer(&pixbufData[0]))
+
+	c := C.gdk_pixbuf_new_from_bytes(
+		arrayPtr,
+		C.GdkColorspace(cs),
+		gbool(hasAlpha),
+		C.int(bitsPerSample),
+		C.int(width),
+		C.int(height),
+		C.int(rowStride),
+	)
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
+	return p, nil
+}
+
+// PixbufNewFromBytesOnly is a convenient alternative to PixbufNewFromBytes() and also a wrapper around gdk_pixbuf_new_from_bytes().
+// Introduced in Gdk 2.32
+// see go package "encoding/base64"
+func PixbufNewFromBytesOnly(pixbufData []byte) (*Pixbuf, error) {
+	pixbufLoader, err := PixbufLoaderNew()
+	if err == nil {
+		return nil, err
+	}
+	return pixbufLoader.WriteAndReturnPixbuf(pixbufData)
+}
+
+// PixbufNewFromData is a wrapper around gdk_pixbuf_new_from_data().
+// Introduced in Gdk 2.32
+func PixbufNewFromData(pixbufData []byte, cs Colorspace, hasAlpha bool, bitsPerSample, width, height, rowStride int) (*Pixbuf, error) {
+	arrayPtr := (*C.guchar)(unsafe.Pointer(&pixbufData[0]))
+
+	c := C.gdk_pixbuf_new_from_data(
+		arrayPtr,
+		C.GdkColorspace(cs),
+		gbool(hasAlpha),
+		C.int(bitsPerSample),
+		C.int(width),
+		C.int(height),
+		C.int(rowStride),
+		nil, // TODO: missing support for GdkPixbufDestroyNotify
+		nil,
+	)
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
+	return p, nil
+}
+
+// PixbufNewFromDataOnly is a convenient alternative to PixbufNewFromData() and also a wrapper around gdk_pixbuf_new_from_data().
+// Introduced in gdk 2.32
+func PixbufNewFromDataOnly(pixbufData []byte) (*Pixbuf, error) {
+	pixbufLoader, err := PixbufLoaderNew()
+	if err == nil {
+		return nil, err
+	}
+	return pixbufLoader.WriteAndReturnPixbuf(pixbufData)
+}
+
 // PixbufCopy is a wrapper around gdk_pixbuf_copy().
 func PixbufCopy(v *Pixbuf) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_copy(v.native())
