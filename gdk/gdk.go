@@ -1972,14 +1972,16 @@ func (v *Pixbuf) SavePNG(path string, compression int) error {
 }
 
 // PixbufGetFileInfo is a wrapper around gdk_pixbuf_get_file_info().
-// TODO: need to wrap the returned format to GdkPixbufFormat.
-func PixbufGetFileInfo(filename string) (format interface{}, width, height int) {
+func PixbufGetFileInfo(filename string) (*PixbufFormat, int, int, error) {
 	cstr := C.CString(filename)
 	defer C.free(unsafe.Pointer(cstr))
 	var cw, ch C.gint
-	format = C.gdk_pixbuf_get_file_info((*C.gchar)(cstr), &cw, &ch)
-	// TODO: need to wrap the returned format to GdkPixbufFormat.
-	return format, int(cw), int(ch)
+	format := C.gdk_pixbuf_get_file_info((*C.gchar)(cstr), &cw, &ch)
+	if format == nil {
+		return nil, -1, -1, nilPtrErr
+	}
+	// The returned PixbufFormat value is owned by Pixbuf and should not be freed.
+	return wrapPixbufFormat(format), int(cw), int(ch), nil
 }
 
 /*

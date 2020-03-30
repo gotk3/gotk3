@@ -22,6 +22,10 @@ func (v *PixbufFormat) native() *C.GdkPixbufFormat {
 	return v.format
 }
 
+func wrapPixbufFormat(obj *C.GdkPixbufFormat) *PixbufFormat {
+	return &PixbufFormat{obj}
+}
+
 // Native returns a pointer to the underlying GdkPixbuf.
 func (v *PixbufFormat) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
