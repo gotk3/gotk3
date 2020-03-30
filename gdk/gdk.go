@@ -1620,92 +1620,6 @@ func marshalPixbuf(p uintptr) (interface{}, error) {
 	return &Pixbuf{obj}, nil
 }
 
-// GetColorspace is a wrapper around gdk_pixbuf_get_colorspace().
-func (v *Pixbuf) GetColorspace() Colorspace {
-	c := C.gdk_pixbuf_get_colorspace(v.native())
-	return Colorspace(c)
-}
-
-// GetNChannels is a wrapper around gdk_pixbuf_get_n_channels().
-func (v *Pixbuf) GetNChannels() int {
-	c := C.gdk_pixbuf_get_n_channels(v.native())
-	return int(c)
-}
-
-// GetHasAlpha is a wrapper around gdk_pixbuf_get_has_alpha().
-func (v *Pixbuf) GetHasAlpha() bool {
-	c := C.gdk_pixbuf_get_has_alpha(v.native())
-	return gobool(c)
-}
-
-// GetBitsPerSample is a wrapper around gdk_pixbuf_get_bits_per_sample().
-func (v *Pixbuf) GetBitsPerSample() int {
-	c := C.gdk_pixbuf_get_bits_per_sample(v.native())
-	return int(c)
-}
-
-// GetPixels is a wrapper around gdk_pixbuf_get_pixels_with_length().
-// A Go slice is used to represent the underlying Pixbuf data array, one
-// byte per channel.
-func (v *Pixbuf) GetPixels() (channels []byte) {
-	var length C.guint
-	c := C.gdk_pixbuf_get_pixels_with_length(v.native(), &length)
-	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&channels))
-	sliceHeader.Data = uintptr(unsafe.Pointer(c))
-	sliceHeader.Len = int(length)
-	sliceHeader.Cap = int(length)
-
-	// To make sure the slice doesn't outlive the Pixbuf, add a reference
-	v.Ref()
-	runtime.SetFinalizer(&channels, func(_ *[]byte) {
-		v.Unref()
-	})
-	return
-}
-
-// GetWidth is a wrapper around gdk_pixbuf_get_width().
-func (v *Pixbuf) GetWidth() int {
-	c := C.gdk_pixbuf_get_width(v.native())
-	return int(c)
-}
-
-// GetHeight is a wrapper around gdk_pixbuf_get_height().
-func (v *Pixbuf) GetHeight() int {
-	c := C.gdk_pixbuf_get_height(v.native())
-	return int(c)
-}
-
-// GetRowstride is a wrapper around gdk_pixbuf_get_rowstride().
-func (v *Pixbuf) GetRowstride() int {
-	c := C.gdk_pixbuf_get_rowstride(v.native())
-	return int(c)
-}
-
-// GetByteLength is a wrapper around gdk_pixbuf_get_byte_length().
-func (v *Pixbuf) GetByteLength() int {
-	c := C.gdk_pixbuf_get_byte_length(v.native())
-	return int(c)
-}
-
-// GetOption is a wrapper around gdk_pixbuf_get_option().  ok is true if
-// the key has an associated value.
-func (v *Pixbuf) GetOption(key string) (value string, ok bool) {
-	cstr := C.CString(key)
-	defer C.free(unsafe.Pointer(cstr))
-	c := C.gdk_pixbuf_get_option(v.native(), (*C.gchar)(cstr))
-	if c == nil {
-		return "", false
-	}
-	return C.GoString((*C.char)(c)), true
-}
-
-// TODO:
-// gdk_pixbuf_set_option().
-// gdk_pixbuf_remove_option().
-// gdk_pixbuf_get_options().
-// gdk_pixbuf_copy_options().
-// gdk_pixbuf_read_pixels().
-
 // PixbufNew is a wrapper around gdk_pixbuf_new().
 func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, height int) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_new(C.GdkColorspace(colorspace), gbool(hasAlpha),
@@ -1720,6 +1634,100 @@ func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, heigh
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 	return p, nil
 }
+
+// File Loading
+
+// PixbufNewFromFile is a wrapper around gdk_pixbuf_new_from_file().
+func PixbufNewFromFile(filename string) (*Pixbuf, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+
+	var err *C.GError
+	c := C.gdk_pixbuf_new_from_file((*C.char)(cstr), &err)
+	if c == nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
+
+// PixbufNewFromFileAtSize is a wrapper around gdk_pixbuf_new_from_file_at_size().
+func PixbufNewFromFileAtSize(filename string, width, height int) (*Pixbuf, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+
+	var err *C.GError = nil
+	c := C.gdk_pixbuf_new_from_file_at_size(cstr, C.int(width), C.int(height), &err)
+	if err != nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
+
+// PixbufNewFromFileAtScale is a wrapper around gdk_pixbuf_new_from_file_at_scale().
+func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspectRatio bool) (*Pixbuf, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+
+	var err *C.GError = nil
+	c := C.gdk_pixbuf_new_from_file_at_scale(cstr, C.int(width), C.int(height),
+		gbool(preserveAspectRatio), &err)
+	if err != nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
+
+// PixbufGetFileInfo is a wrapper around gdk_pixbuf_get_file_info().
+func PixbufGetFileInfo(filename string) (*PixbufFormat, int, int, error) {
+	cstr := C.CString(filename)
+	defer C.free(unsafe.Pointer(cstr))
+	var cw, ch C.gint
+	format := C.gdk_pixbuf_get_file_info((*C.gchar)(cstr), &cw, &ch)
+	if format == nil {
+		return nil, -1, -1, nilPtrErr
+	}
+	// The returned PixbufFormat value is owned by Pixbuf and should not be freed.
+	return wrapPixbufFormat(format), int(cw), int(ch), nil
+}
+
+// TODO:
+// gdk_pixbuf_get_file_info_async(). Since: 2.32
+// gdk_pixbuf_get_file_info_finish(). Since: 2.32
+// gdk_pixbuf_new_from_resource(). Since: 2.26
+// gdk_pixbuf_new_from_resource_at_scale(). Since: 2.26
+// gdk_pixbuf_new_from_stream(). Since: 2.14
+// gdk_pixbuf_new_from_stream_async(). Since: 2.14
+// gdk_pixbuf_new_from_stream_finish(). Since: 2.24
+// gdk_pixbuf_new_from_stream_at_scale(). Since: 2.14
+// gdk_pixbuf_new_from_stream_at_scale_async(). Since: 2.24
+
+// Image Data in Memory
 
 // PixbufNewFromBytes is a wrapper around gdk_pixbuf_new_from_bytes().
 // Introduced in gdk 2.32
@@ -1799,6 +1807,11 @@ func PixbufNewFromDataOnly(pixbufData []byte) (*Pixbuf, error) {
 	return pixbufLoader.WriteAndReturnPixbuf(pixbufData)
 }
 
+// TODO:
+// gdk_pixbuf_new_from_xpm_data().
+// gdk_pixbuf_new_from_inline(). deprecated since version 2.32
+// gdk_pixbuf_new_subpixbuf()
+
 // PixbufCopy is a wrapper around gdk_pixbuf_copy().
 func PixbufCopy(v *Pixbuf) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_copy(v.native())
@@ -1813,71 +1826,98 @@ func PixbufCopy(v *Pixbuf) (*Pixbuf, error) {
 	return p, nil
 }
 
-// PixbufNewFromFile is a wrapper around gdk_pixbuf_new_from_file().
-func PixbufNewFromFile(filename string) (*Pixbuf, error) {
-	cstr := C.CString(filename)
-	defer C.free(unsafe.Pointer(cstr))
+// The GdkPixbuf Structure
 
-	var err *C.GError
-	c := C.gdk_pixbuf_new_from_file((*C.char)(cstr), &err)
-	if c == nil {
-		defer C.g_error_free(err)
-		return nil, errors.New(C.GoString((*C.char)(err.message)))
-	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &Pixbuf{obj}
-	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-	return p, nil
+// GetColorspace is a wrapper around gdk_pixbuf_get_colorspace().
+func (v *Pixbuf) GetColorspace() Colorspace {
+	c := C.gdk_pixbuf_get_colorspace(v.native())
+	return Colorspace(c)
 }
 
-// PixbufNewFromFileAtSize is a wrapper around gdk_pixbuf_new_from_file_at_size().
-func PixbufNewFromFileAtSize(filename string, width, height int) (*Pixbuf, error) {
-	cstr := C.CString(filename)
-	defer C.free(unsafe.Pointer(cstr))
-
-	var err *C.GError = nil
-	c := C.gdk_pixbuf_new_from_file_at_size(cstr, C.int(width), C.int(height), &err)
-	if err != nil {
-		defer C.g_error_free(err)
-		return nil, errors.New(C.GoString((*C.char)(err.message)))
-	}
-
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &Pixbuf{obj}
-	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-	return p, nil
+// GetNChannels is a wrapper around gdk_pixbuf_get_n_channels().
+func (v *Pixbuf) GetNChannels() int {
+	c := C.gdk_pixbuf_get_n_channels(v.native())
+	return int(c)
 }
 
-// PixbufNewFromFileAtScale is a wrapper around gdk_pixbuf_new_from_file_at_scale().
-func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspectRatio bool) (*Pixbuf, error) {
-	cstr := C.CString(filename)
-	defer C.free(unsafe.Pointer(cstr))
-
-	var err *C.GError = nil
-	c := C.gdk_pixbuf_new_from_file_at_scale(cstr, C.int(width), C.int(height),
-		gbool(preserveAspectRatio), &err)
-	if err != nil {
-		defer C.g_error_free(err)
-		return nil, errors.New(C.GoString((*C.char)(err.message)))
-	}
-
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &Pixbuf{obj}
-	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-	return p, nil
+// GetHasAlpha is a wrapper around gdk_pixbuf_get_has_alpha().
+func (v *Pixbuf) GetHasAlpha() bool {
+	c := C.gdk_pixbuf_get_has_alpha(v.native())
+	return gobool(c)
 }
+
+// GetBitsPerSample is a wrapper around gdk_pixbuf_get_bits_per_sample().
+func (v *Pixbuf) GetBitsPerSample() int {
+	c := C.gdk_pixbuf_get_bits_per_sample(v.native())
+	return int(c)
+}
+
+// TODO:
+// gdk_pixbuf_get_pixels().
+
+// GetPixels is a wrapper around gdk_pixbuf_get_pixels_with_length().
+// A Go slice is used to represent the underlying Pixbuf data array, one
+// byte per channel.
+func (v *Pixbuf) GetPixels() (channels []byte) {
+	var length C.guint
+	c := C.gdk_pixbuf_get_pixels_with_length(v.native(), &length)
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&channels))
+	sliceHeader.Data = uintptr(unsafe.Pointer(c))
+	sliceHeader.Len = int(length)
+	sliceHeader.Cap = int(length)
+
+	// To make sure the slice doesn't outlive the Pixbuf, add a reference
+	v.Ref()
+	runtime.SetFinalizer(&channels, func(_ *[]byte) {
+		v.Unref()
+	})
+	return
+}
+
+// GetWidth is a wrapper around gdk_pixbuf_get_width().
+func (v *Pixbuf) GetWidth() int {
+	c := C.gdk_pixbuf_get_width(v.native())
+	return int(c)
+}
+
+// GetHeight is a wrapper around gdk_pixbuf_get_height().
+func (v *Pixbuf) GetHeight() int {
+	c := C.gdk_pixbuf_get_height(v.native())
+	return int(c)
+}
+
+// GetRowstride is a wrapper around gdk_pixbuf_get_rowstride().
+func (v *Pixbuf) GetRowstride() int {
+	c := C.gdk_pixbuf_get_rowstride(v.native())
+	return int(c)
+}
+
+// GetByteLength is a wrapper around gdk_pixbuf_get_byte_length().
+func (v *Pixbuf) GetByteLength() int {
+	c := C.gdk_pixbuf_get_byte_length(v.native())
+	return int(c)
+}
+
+// GetOption is a wrapper around gdk_pixbuf_get_option().  ok is true if
+// the key has an associated value.
+func (v *Pixbuf) GetOption(key string) (value string, ok bool) {
+	cstr := C.CString(key)
+	defer C.free(unsafe.Pointer(cstr))
+	c := C.gdk_pixbuf_get_option(v.native(), (*C.gchar)(cstr))
+	if c == nil {
+		return "", false
+	}
+	return C.GoString((*C.char)(c)), true
+}
+
+// TODO:
+// gdk_pixbuf_set_option().
+// gdk_pixbuf_remove_option().
+// gdk_pixbuf_get_options().
+// gdk_pixbuf_copy_options().
+// gdk_pixbuf_read_pixels().
+
+// Scaling
 
 // ScaleSimple is a wrapper around gdk_pixbuf_scale_simple().
 func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (*Pixbuf, error) {
@@ -1894,23 +1934,15 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 	return p, nil
 }
 
+// TODO:
+// gdk_pixbuf_scale().
+// gdk_pixbuf_composite_color_simple().
+// gdk_pixbuf_composite().
+// gdk_pixbuf_composite_color().
+
 // RotateSimple is a wrapper around gdk_pixbuf_rotate_simple().
 func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_rotate_simple(v.native(), C.GdkPixbufRotation(angle))
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &Pixbuf{obj}
-	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-	return p, nil
-}
-
-// ApplyEmbeddedOrientation is a wrapper around gdk_pixbuf_apply_embedded_orientation().
-func (v *Pixbuf) ApplyEmbeddedOrientation() (*Pixbuf, error) {
-	c := C.gdk_pixbuf_apply_embedded_orientation(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -1936,7 +1968,48 @@ func (v *Pixbuf) Flip(horizontal bool) (*Pixbuf, error) {
 	return p, nil
 }
 
-// SaveJPEG is a wrapper around gdk_pixbuf_save().
+// Utilities
+
+// TODO:
+// gdk_pixbuf_add_alpha().
+// gdk_pixbuf_copy_area().
+// gdk_pixbuf_saturate_and_pixelate().
+
+// ApplyEmbeddedOrientation is a wrapper around gdk_pixbuf_apply_embedded_orientation().
+// Since: 2.12
+func (v *Pixbuf) ApplyEmbeddedOrientation() (*Pixbuf, error) {
+	c := C.gdk_pixbuf_apply_embedded_orientation(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
+
+// TODO:
+// gdk_pixbuf_fill().
+
+// File saving
+
+// TODO:
+// gdk_pixbuf_savev(). 
+// gdk_pixbuf_save(). 
+// GdkPixbufSaveFunc Since: 2.4
+// gdk_pixbuf_save_to_callback(). Since: 2.4
+// gdk_pixbuf_save_to_callbackv(). Since: 2.4
+// gdk_pixbuf_save_to_buffer(). Since: 2.4
+// gdk_pixbuf_save_to_bufferv(). Since: 2.4
+// gdk_pixbuf_save_to_stream(). Since: 2.14
+// gdk_pixbuf_save_to_streamv(). Since: 2.36
+// gdk_pixbuf_save_to_stream_async(). Since: 2.24
+// gdk_pixbuf_save_to_streamv_async(). Since: 2.36
+// gdk_pixbuf_save_to_stream_finish(). Since: 2.24
+
+// SaveJPEG is a convenience wrapper around gdk_pixbuf_save() for saving image as jpeg file.
 // Quality is a number between 0...100
 func (v *Pixbuf) SaveJPEG(path string, quality int) error {
 	cpath := C.CString(path)
@@ -1954,7 +2027,8 @@ func (v *Pixbuf) SaveJPEG(path string, quality int) error {
 	return nil
 }
 
-// SavePNG is a wrapper around gdk_pixbuf_save().
+
+// SavePNG is a convenience wrapper around gdk_pixbuf_save() for saving image as png file.
 // Compression is a number between 0...9
 func (v *Pixbuf) SavePNG(path string, compression int) error {
 	cpath := C.CString(path)
@@ -1969,19 +2043,6 @@ func (v *Pixbuf) SavePNG(path string, compression int) error {
 		return errors.New(C.GoString((*C.char)(err.message)))
 	}
 	return nil
-}
-
-// PixbufGetFileInfo is a wrapper around gdk_pixbuf_get_file_info().
-func PixbufGetFileInfo(filename string) (*PixbufFormat, int, int, error) {
-	cstr := C.CString(filename)
-	defer C.free(unsafe.Pointer(cstr))
-	var cw, ch C.gint
-	format := C.gdk_pixbuf_get_file_info((*C.gchar)(cstr), &cw, &ch)
-	if format == nil {
-		return nil, -1, -1, nilPtrErr
-	}
-	// The returned PixbufFormat value is owned by Pixbuf and should not be freed.
-	return wrapPixbufFormat(format), int(cw), int(ch), nil
 }
 
 /*
