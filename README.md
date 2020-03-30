@@ -20,6 +20,11 @@ floating references.
 for better understanding see 
 [package reference documation](https://pkg.go.dev/github.com/gotk3/gotk3/gtk?tab=doc)
 
+See which version your distrobution has [here](https://pkgs.org) with the search terms:
+* libgtk-3
+* libglib2
+* gdk-pixbuf
+
 ## Sample Use
 
 The following example can be found in [Examples](https://github.com/gotk3/gotk3-examples/).
@@ -207,6 +212,9 @@ Example:
 ```shell
 $ go build -tags "gtk_3_10 gtk_deprecated" example.go
 ```
+
+The same goes for
+* gdk-pixbuf: gdk_pixbuf_deprecated
 
 ## TODO
 
