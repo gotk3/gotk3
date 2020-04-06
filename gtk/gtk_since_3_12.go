@@ -92,12 +92,12 @@ func GetLocaleDirection() TextDirection {
  */
 
 // GetHeaderBar is a wrapper around gtk_dialog_get_header_bar().
-func (v *Dialog) GetHeaderBar() *Widget {
+func (v *Dialog) GetHeaderBar() (IWidget, error) {
 	c := C.gtk_dialog_get_header_bar(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 /*
@@ -490,12 +490,12 @@ func (v *Popover) SetRelativeTo(relative IWidget) {
 }
 
 // GetRelativeTo is a wrapper around gtk_popover_get_relative_to().
-func (v *Popover) GetRelativeTo() *Widget {
+func (v *Popover) GetRelativeTo() (IWidget, error) {
 	c := C.gtk_popover_get_relative_to(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 // SetPointingTo is a wrapper around gtk_popover_set_pointing_to().

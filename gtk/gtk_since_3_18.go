@@ -9,11 +9,6 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
-import (
-	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
-)
 
 /*
  * GtkStack
@@ -73,10 +68,10 @@ func (p *Popover) SetDefaultWidget(widget IWidget) {
 }
 
 // GetDefaultWidget is a wrapper around gtk_popover_get_default_widget().
-func (p *Popover) GetDefaultWidget() *Widget {
+func (p *Popover) GetDefaultWidget() (IWidget, error) {
 	w := C.gtk_popover_get_default_widget(p.native())
 	if w == nil {
-		return nil
+		return nil, nil
 	}
-	return &Widget{glib.InitiallyUnowned{glib.Take(unsafe.Pointer(w))}}
+	return castWidget(w)
 }

@@ -96,10 +96,10 @@ func (a *ActionBar) SetCenterWidget(child IWidget) {
 }
 
 // GetCenterWidget is a wrapper around gtk_action_bar_get_center_widget().
-func (a *ActionBar) GetCenterWidget() *Widget {
+func (a *ActionBar) GetCenterWidget() (IWidget, error) {
 	w := C.gtk_action_bar_get_center_widget(a.native())
 	if w == nil {
-		return nil
+		return nil, nil
 	}
-	return &Widget{glib.InitiallyUnowned{glib.Take(unsafe.Pointer(w))}}
+	return castWidget(w)
 }

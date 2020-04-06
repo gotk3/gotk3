@@ -1269,14 +1269,12 @@ func (v *Assistant) GetNPages() int {
 }
 
 // GetNthPage is a wrapper around gtk_assistant_get_nth_page().
-func (v *Assistant) GetNthPage(pageNum int) (*Widget, error) {
+func (v *Assistant) GetNthPage(pageNum int) (IWidget, error) {
 	c := C.gtk_assistant_get_nth_page(v.native(), C.gint(pageNum))
 	if c == nil {
 		return nil, fmt.Errorf("page %d is out of bounds", pageNum)
 	}
-
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return castWidget(c)
 }
 
 // PrependPage is a wrapper around gtk_assistant_prepend_page().
@@ -1401,13 +1399,12 @@ func wrapBin(obj *glib.Object) *Bin {
 }
 
 // GetChild is a wrapper around gtk_bin_get_child().
-func (v *Bin) GetChild() (*Widget, error) {
+func (v *Bin) GetChild() (IWidget, error) {
 	c := C.gtk_bin_get_child(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return castWidget(c)
 }
 
 /*
@@ -1691,13 +1688,12 @@ func (v *Button) SetImage(image IWidget) {
 }
 
 // GetImage() is a wrapper around gtk_button_get_image().
-func (v *Button) GetImage() (*Widget, error) {
+func (v *Button) GetImage() (IWidget, error) {
 	c := C.gtk_button_get_image(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return castWidget(c)
 }
 
 // SetImagePosition() is a wrapper around gtk_button_set_image_position().
@@ -2744,13 +2740,12 @@ func (v *Container) GetChildren() *glib.List {
 // TODO: gtk_container_get_path_for_child
 
 // GetFocusChild is a wrapper around gtk_container_get_focus_child().
-func (v *Container) GetFocusChild() *Widget {
+func (v *Container) GetFocusChild() (IWidget, error) {
 	c := C.gtk_container_get_focus_child(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return castWidget(c)
 }
 
 // SetFocusChild is a wrapper around gtk_container_set_focus_child().
@@ -3047,13 +3042,12 @@ func (v *Dialog) GetResponseForWidget(widget IWidget) ResponseType {
 }
 
 // GetWidgetForResponse is a wrapper around gtk_dialog_get_widget_for_response().
-func (v *Dialog) GetWidgetForResponse(id ResponseType) (*Widget, error) {
+func (v *Dialog) GetWidgetForResponse(id ResponseType) (IWidget, error) {
 	c := C.gtk_dialog_get_widget_for_response(v.native(), C.gint(id))
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return castWidget(c)
 }
 
 // GetContentArea() is a wrapper around gtk_dialog_get_content_area().
@@ -4711,13 +4705,12 @@ func (v *Frame) GetLabelAlign() (xAlign, yAlign float32) {
 }
 
 // GetLabelWidget is a wrapper around gtk_frame_get_label_widget().
-func (v *Frame) GetLabelWidget() (*Widget, error) {
+func (v *Frame) GetLabelWidget() (IWidget, error) {
 	c := C.gtk_frame_get_label_widget(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return castWidget(c)
 }
 
 // GetShadowType is a wrapper around gtk_frame_get_shadow_type().
@@ -4835,13 +4828,12 @@ func (v *Grid) AttachNextTo(child, sibling IWidget, side PositionType, width, he
 }
 
 // GetChildAt() is a wrapper around gtk_grid_get_child_at().
-func (v *Grid) GetChildAt(left, top int) (*Widget, error) {
+func (v *Grid) GetChildAt(left, top int) (IWidget, error) {
 	c := C.gtk_grid_get_child_at(v.native(), C.gint(left), C.gint(top))
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj), nil
+	return castWidget(c)
 }
 
 // InsertRow() is a wrapper around gtk_grid_insert_row().
@@ -5685,12 +5677,12 @@ func (v *MenuButton) SetAlignWidget(alignWidget IWidget) {
 }
 
 // GetAlignWidget is a wrapper around gtk_menu_button_get_align_widget().
-func (v *MenuButton) GetAlignWidget() *Widget {
+func (v *MenuButton) GetAlignWidget() (IWidget, error) {
 	c := C.gtk_menu_button_get_align_widget(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 /*
@@ -6050,21 +6042,21 @@ func (v *Notebook) GetCurrentPage() int {
 }
 
 // GetMenuLabel() is a wrapper around gtk_notebook_get_menu_label().
-func (v *Notebook) GetMenuLabel(child IWidget) (*Widget, error) {
+func (v *Notebook) GetMenuLabel(child IWidget) (IWidget, error) {
 	c := C.gtk_notebook_get_menu_label(v.native(), child.toWidget())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // GetNthPage() is a wrapper around gtk_notebook_get_nth_page().
-func (v *Notebook) GetNthPage(pageNum int) (*Widget, error) {
+func (v *Notebook) GetNthPage(pageNum int) (IWidget, error) {
 	c := C.gtk_notebook_get_nth_page(v.native(), C.gint(pageNum))
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, fmt.Errorf("page %d is out of bounds", pageNum)
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // GetNPages() is a wrapper around gtk_notebook_get_n_pages().
@@ -6074,12 +6066,12 @@ func (v *Notebook) GetNPages() int {
 }
 
 // GetTabLabel() is a wrapper around gtk_notebook_get_tab_label().
-func (v *Notebook) GetTabLabel(child IWidget) (*Widget, error) {
+func (v *Notebook) GetTabLabel(child IWidget) (IWidget, error) {
 	c := C.gtk_notebook_get_tab_label(v.native(), child.toWidget())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // SetMenuLabel() is a wrapper around gtk_notebook_set_menu_label().
@@ -6204,13 +6196,12 @@ func (v *Notebook) SetActionWidget(widget IWidget, packType PackType) {
 }
 
 // GetActionWidget() is a wrapper around gtk_notebook_get_action_widget().
-func (v *Notebook) GetActionWidget(packType PackType) (*Widget, error) {
-	c := C.gtk_notebook_get_action_widget(v.native(),
-		C.GtkPackType(packType))
+func (v *Notebook) GetActionWidget(packType PackType) (IWidget, error) {
+	c := C.gtk_notebook_get_action_widget(v.native(), C.GtkPackType(packType))
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 /*
@@ -6429,21 +6420,21 @@ func (v *Paned) SetPosition(position int) {
 }
 
 // GetChild1() is a wrapper around gtk_paned_get_child1().
-func (v *Paned) GetChild1() (*Widget, error) {
+func (v *Paned) GetChild1() (IWidget, error) {
 	c := C.gtk_paned_get_child1(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // GetChild2() is a wrapper around gtk_paned_get_child2().
-func (v *Paned) GetChild2() (*Widget, error) {
+func (v *Paned) GetChild2() (IWidget, error) {
 	c := C.gtk_paned_get_child2(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // GetHandleWindow() is a wrapper around gtk_paned_get_handle_window().
@@ -7163,12 +7154,12 @@ func ScaleButtonNew(size IconSize, min, max, step float64, icons []string) (*Sca
 }
 
 // GetPopup is a wrapper around gtk_scale_button_get_popup().
-func (v *ScaleButton) GetPopup() (*Widget, error) {
+func (v *ScaleButton) GetPopup() (IWidget, error) {
 	c := C.gtk_scale_button_get_popup(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // GetValue is a wrapper around gtk_scale_button_get_value().
@@ -7201,23 +7192,21 @@ func (v *ScaleButton) SetAdjustment(adjustment *Adjustment) {
 }
 
 // GetPlusButton is a wrapper around gtk_scale_button_get_plus_button().
-func (v *ScaleButton) GetPlusButton() *Widget {
+func (v *ScaleButton) GetPlusButton() (IWidget, error) {
 	c := C.gtk_scale_button_get_plus_button(v.native())
 	if c == nil {
-		return nil
+		return nil, nilPtrErr
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return castWidget(c)
 }
 
 // GetMinusButton is a wrapper around gtk_scale_button_get_minus_button().
-func (v *ScaleButton) GetMinusButton() *Widget {
+func (v *ScaleButton) GetMinusButton() (IWidget, error) {
 	c := C.gtk_scale_button_get_minus_button(v.native())
 	if c == nil {
-		return nil
+		return nil, nilPtrErr
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return castWidget(c)
 }
 
 /*
@@ -8836,12 +8825,12 @@ func (v *ToolButton) SetIconWidget(iconWidget IWidget) {
 }
 
 // GetIconWidget is a wrapper around gtk_tool_button_get_icon_widget().
-func (v *ToolButton) GetIconWidget() *Widget {
+func (v *ToolButton) GetIconWidget() (IWidget, error) {
 	c := C.gtk_tool_button_get_icon_widget(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 // SetLabelWidget is a wrapper around gtk_tool_button_set_label_widget().
@@ -8850,12 +8839,12 @@ func (v *ToolButton) SetLabelWidget(labelWidget IWidget) {
 }
 
 // GetLabelWidget is a wrapper around gtk_tool_button_get_label_widget().
-func (v *ToolButton) GetLabelWidget() *Widget {
+func (v *ToolButton) GetLabelWidget() (IWidget, error) {
 	c := C.gtk_tool_button_get_label_widget(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 /*

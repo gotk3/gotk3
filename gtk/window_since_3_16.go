@@ -6,19 +6,12 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
-import (
-	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
-)
 
 // GetTitlebar is a wrapper around gtk_window_get_titlebar().
-// TODO: Use IWidget here
-func (v *Window) GetTitlebar() *Widget {
+func (v *Window) GetTitlebar() (IWidget, error) {
 	c := C.gtk_window_get_titlebar(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return castWidget(c)
 }

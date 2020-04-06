@@ -488,12 +488,12 @@ func (v *Widget) SetParent(parent IWidget) {
 }
 
 // GetParent is a wrapper around gtk_widget_get_parent().
-func (v *Widget) GetParent() (*Widget, error) {
+func (v *Widget) GetParent() (IWidget, error) {
 	c := C.gtk_widget_get_parent(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // SetSizeRequest is a wrapper around gtk_widget_set_size_request().
@@ -626,12 +626,12 @@ func (v *Widget) GetDeviceEnabled(device *gdk.Device) bool {
 }
 
 // GetToplevel is a wrapper around gtk_widget_get_toplevel().
-func (v *Widget) GetToplevel() (*Widget, error) {
+func (v *Widget) GetToplevel() (IWidget, error) {
 	c := C.gtk_widget_get_toplevel(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // TODO:
