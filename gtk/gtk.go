@@ -10575,7 +10575,7 @@ func castWidget(c *C.GtkWidget) (IWidget, error) {
 
 	ret, ok := intf.(IWidget)
 	if !ok {
-		return nil, errors.New("did not return an IWidget")
+		return nil, fmt.Errorf("expected value of type IWidget, got %T", intf)
 	}
 
 	return ret, nil
