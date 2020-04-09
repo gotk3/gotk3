@@ -6378,9 +6378,8 @@ func (v *Overlay) GetOverlayPassThrough(widget IWidget) bool {
 }
 
 // SetOverlayPassThrough() is a wrapper around gtk_overlay_set_overlay_pass_through().
-func (v *Overlay) SetOverlayPassThrough(widget IWidget, passThrough bool) bool {
-	c := C.gtk_overlay_set_overlay_pass_through(v.native(), widget.toWidget(), gbool(passThrough))
-	return gobool(c)
+func (v *Overlay) SetOverlayPassThrough(widget IWidget, passThrough bool) {
+	C.gtk_overlay_set_overlay_pass_through(v.native(), widget.toWidget(), gbool(passThrough))
 }
 
 /*
