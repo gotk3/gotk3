@@ -6366,6 +6366,23 @@ func (v *Overlay) AddOverlay(widget IWidget) {
 	C.gtk_overlay_add_overlay(v.native(), widget.toWidget())
 }
 
+// ReorderOverlay() is a wrapper around gtk_overlay_reorder_overlay().
+func (v *Overlay) ReorderOverlay(widget IWidget, index int) {
+	C.gtk_overlay_reorder_overlay(v.native(), widget.toWidget(), C.int(index))
+}
+
+// GetOverlayPassThrough() is a wrapper around gtk_overlay_get_overlay_pass_through().
+func (v *Overlay) GetOverlayPassThrough(widget IWidget) bool {
+	c := C.gtk_overlay_get_overlay_pass_through(v.native(), widget.toWidget())
+	return gobool(c)
+}
+
+// SetOverlayPassThrough() is a wrapper around gtk_overlay_set_overlay_pass_through().
+func (v *Overlay) SetOverlayPassThrough(widget IWidget, passThrough bool) bool {
+	c := C.gtk_overlay_set_overlay_pass_through(v.native(), widget.toWidget(), gbool(passThrough))
+	return gobool(c)
+}
+
 /*
  * GtkPaned
  */
