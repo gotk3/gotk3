@@ -957,7 +957,8 @@ func (v *Display) GetKeymap() (*Keymap, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapKeymap(wrapObject(unsafe.Pointer(c))), nil
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Keymap{obj}, nil
 }
 
 // TranslateKeyboardState is a wrapper around gdk_keymap_translate_keyboard_state().
