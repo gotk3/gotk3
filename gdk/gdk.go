@@ -1006,13 +1006,25 @@ func (v *Keymap) TranslateKeyboardState(hardwareKeycode uint, state ModifierType
 }
 
 
-// gdk_keymap_have_bidi_layouts().
+// HaveBidiLayouts is a wrapper around gdk_keymap_have_bidi_layouts().
+func (v *Keymap) HaveBidiLayouts() bool {
+	return gobool(C.gdk_keymap_have_bidi_layouts(v.native()))
+}
 
-// gdk_keymap_get_caps_lock_state().
+// GetCapsLockState is a wrapper around gdk_keymap_get_caps_lock_state().
+func (v *Keymap) GetCapsLockState() bool {
+	return gobool(C.gdk_keymap_get_caps_lock_state(v.native()))
+}
 
-// gdk_keymap_get_num_lock_state().
+// GetNumLockState is a wrapper around gdk_keymap_get_num_lock_state().
+func (v *Keymap) GetNumLockState() bool {
+	return gobool(C.gdk_keymap_get_num_lock_state(v.native()))
+}
 
-// gdk_keymap_get_modifier_state().
+// GetModifierState is a wrapper around gdk_keymap_get_modifier_state().
+func (v *Keymap) GetModifierState() uint {
+	return uint(C.gdk_keymap_get_modifier_state(v.native()))
+}
 
 // TODO:
 // gdk_keymap_get_default(). deprecated since 3.22
