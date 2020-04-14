@@ -963,6 +963,109 @@ func UnicodeToKeyval(v rune) uint {
 }
 
 /*
+ * GdkKeymap
+ */
+
+type Keymap struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GdkKeymap.
+func (v *Keymap) native() *C.GdkKeymap {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkKeymap(p)
+}
+
+// Native returns a pointer to the underlying GdkKeymap.
+func (v *Keymap) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalKeymap(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Keymap{obj}, nil
+}
+
+// TranslateKeyboardState is a wrapper around gdk_keymap_translate_keyboard_state().
+func TranslateKeyboardState(keymap *Keymap, hardwareKeycode uint, state ModifierType, group int) (bool, *uint, *int, *int, *ModifierType) {
+
+	var cKeyval C.guint
+	var keyval *uint
+	var cEffectiveGroup, cLevel C.gint
+	var effectiveGroup, level *int
+	var cConsumedModifiers C.GdkModifierType
+	var consumedModifiers *ModifierType
+
+	c := C.gdk_keymap_translate_keyboard_state(
+		keymap.native(),
+		C.guint(hardwareKeycode),
+		C.GdkModifierType(state),
+		C.gint(group),
+		&cKeyval,
+		&cEffectiveGroup,
+		&cLevel,
+		&cConsumedModifiers,
+	)
+
+	if &cKeyval == nil {
+		keyval = nil
+	} else {
+		*keyval = uint(cKeyval)
+	}
+	if &cEffectiveGroup == nil {
+		effectiveGroup = nil
+	} else {
+		*effectiveGroup = int(cEffectiveGroup)
+	}
+	if &cLevel == nil {
+		level = nil
+	} else {
+		*level = int(cLevel)
+	}
+	if &cConsumedModifiers == nil {
+		consumedModifiers = nil
+	} else {
+		*consumedModifiers = ModifierType(cConsumedModifiers)
+	}
+
+	return gobool(c), keyval, effectiveGroup, level, consumedModifiers
+}
+
+// TODO:
+// gdk_keymap_get_default(). deprecated since 3.22
+// gdk_keymap_get_for_display().
+// gdk_keymap_lookup_key().
+// gdk_keymap_get_entries_for_keyval().
+// gdk_keymap_get_entries_for_keycode().
+// gdk_keymap_get_direction().
+// gdk_keymap_have_bidi_layouts().
+// gdk_keymap_get_caps_lock_state().
+// gdk_keymap_get_num_lock_state().
+// gdk_keymap_get_modifier_state().
+// gdk_keymap_add_virtual_modifiers().
+// gdk_keymap_map_virtual_modifiers().
+// gdk_keymap_get_modifier_mask().
+// gdk_keyval_name().
+// gdk_keyval_from_name().
+// gdk_keyval_convert_case().
+// gdk_keyval_to_upper().
+// gdk_keyval_to_lower().
+// gdk_keyval_is_upper().
+// gdk_keyval_is_lower().
+// gdk_keyval_to_unicode().
+// gdk_unicode_to_keyval().
+
+/*
+ * GdkKeymapKey
+ */
+
+
+
+/*
  * GdkDragContext
  */
 

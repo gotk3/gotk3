@@ -49,6 +49,12 @@ toGdkDisplay(void *p)
 	return (GDK_DISPLAY(p));
 }
 
+static GdkKeymap *
+toGdkKeymap(void *p)
+{
+	return (GDK_KEYMAP(p));
+}
+
 static GdkDragContext *
 toGdkDragContext(void *p)
 {

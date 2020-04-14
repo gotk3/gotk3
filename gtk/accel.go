@@ -436,37 +436,6 @@ func (v *Window) RemoveAccelGroup(accelGroup *AccelGroup) {
 	C.gtk_window_remove_accel_group(v.native(), accelGroup.native())
 }
 
-/*
- * GdkKeymap
- */
-
-// TODO:
-// GdkKeymapKey
-// gdk_keymap_get_default(). deprecated since 3.22
-// gdk_keymap_get_for_display().
-// gdk_keymap_lookup_key().
-// gdk_keymap_translate_keyboard_state().
-// gdk_keymap_get_entries_for_keyval().
-// gdk_keymap_get_entries_for_keycode().
-// gdk_keymap_get_direction().
-// gdk_keymap_have_bidi_layouts().
-// gdk_keymap_get_caps_lock_state().
-// gdk_keymap_get_num_lock_state().
-// gdk_keymap_get_scroll_lock_state(). since 3.18
-// gdk_keymap_get_modifier_state().
-// gdk_keymap_add_virtual_modifiers().
-// gdk_keymap_map_virtual_modifiers().
-// gdk_keymap_get_modifier_mask().
-// gdk_keyval_name().
-// gdk_keyval_from_name().
-// gdk_keyval_convert_case().
-// gdk_keyval_to_upper().
-// gdk_keyval_to_lower().
-// gdk_keyval_is_upper().
-// gdk_keyval_is_lower().
-// gdk_keyval_to_unicode().
-// gdk_unicode_to_keyval().
-
 // These three functions are for system level access - thus not as high priority to implement
 // TODO: void 	gtk_accelerator_parse_with_keycode ()
 // TODO: gchar * 	gtk_accelerator_name_with_keycode ()
