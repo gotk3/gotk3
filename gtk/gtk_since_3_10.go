@@ -867,3 +867,56 @@ func (v *Stack) GetTransitionType() StackTransitionType {
 	c := C.gtk_stack_get_transition_type(v.native())
 	return StackTransitionType(c)
 }
+
+/*
+ * GtkBuilder
+ */
+
+// BuilderNewFromFile is a wrapper around gtk_builder_new_from_file().
+func BuilderNewFromFile(filePath string) (*Builder, error) {
+	cstr := C.CString(filePath)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gtk_builder_new_from_file((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := glib.Take(unsafe.Pointer(c))
+	return &Builder{obj}, nil
+}
+
+// BuilderNewFromResource is a wrapper around gtk_builder_new_from_resource().
+func BuilderNewFromResource(resourcePath string) (*Builder, error) {
+	cstr := C.CString(resourcePath)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gtk_builder_new_from_resource((*C.gchar)(cstr))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := glib.Take(unsafe.Pointer(c))
+	return &Builder{obj}, nil
+}
+
+// BuilderNewFromString is a wrapper around gtk_builder_new_from_string().
+func BuilderNewFromString(resource string) (*Builder, error) {
+	cstr := C.CString(resource)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gtk_builder_new_from_string((*C.gchar)(cstr), C.gssize(len(resource)))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := glib.Take(unsafe.Pointer(c))
+	return &Builder{obj}, nil
+}
+
+// TODO:
+// gtk_builder_add_callback_symbol
+// gtk_builder_add_callback_symbols
+// gtk_builder_lookup_callback_symbol
+// gtk_builder_set_application
+// gtk_builder_get_application
