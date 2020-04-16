@@ -920,8 +920,135 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 // gdk_display_manager_open_display().
 
 /*
+ * GdkKeymap
+ */
+
+type Keymap struct {
+	*glib.Object
+}
+
+// native returns a pointer to the underlying GdkKeymap.
+func (v *Keymap) native() *C.GdkKeymap {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkKeymap(p)
+}
+
+// Native returns a pointer to the underlying GdkKeymap.
+func (v *Keymap) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalKeymap(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Keymap{obj}, nil
+}
+
+func wrapKeymap(obj *glib.Object) *Keymap {
+	return &Keymap{obj}
+}
+
+// GetKeymap is a wrapper around gdk_keymap_get_for_display().
+func (v *Display) GetKeymap() (*Keymap, error) {
+	c := C.gdk_keymap_get_for_display(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Keymap{obj}, nil
+}
+
+// TranslateKeyboardState is a wrapper around gdk_keymap_translate_keyboard_state().
+func (v *Keymap) TranslateKeyboardState(hardwareKeycode uint, state ModifierType, group int) (bool, *uint, *int, *int, *ModifierType) {
+
+	var cKeyval C.guint
+	var keyval *uint
+	var cEffectiveGroup, cLevel C.gint
+	var effectiveGroup, level *int
+	var cConsumedModifiers C.GdkModifierType
+	var consumedModifiers *ModifierType
+
+	c := C.gdk_keymap_translate_keyboard_state(
+		v.native(),
+		C.guint(hardwareKeycode),
+		C.GdkModifierType(state),
+		C.gint(group),
+		&cKeyval,
+		&cEffectiveGroup,
+		&cLevel,
+		&cConsumedModifiers,
+	)
+
+	if &cKeyval == nil {
+		keyval = nil
+	} else {
+		*keyval = uint(cKeyval)
+	}
+	if &cEffectiveGroup == nil {
+		effectiveGroup = nil
+	} else {
+		*effectiveGroup = int(cEffectiveGroup)
+	}
+	if &cLevel == nil {
+		level = nil
+	} else {
+		*level = int(cLevel)
+	}
+	if &cConsumedModifiers == nil {
+		consumedModifiers = nil
+	} else {
+		*consumedModifiers = ModifierType(cConsumedModifiers)
+	}
+
+	return gobool(c), keyval, effectiveGroup, level, consumedModifiers
+}
+
+
+// HaveBidiLayouts is a wrapper around gdk_keymap_have_bidi_layouts().
+func (v *Keymap) HaveBidiLayouts() bool {
+	return gobool(C.gdk_keymap_have_bidi_layouts(v.native()))
+}
+
+// GetCapsLockState is a wrapper around gdk_keymap_get_caps_lock_state().
+func (v *Keymap) GetCapsLockState() bool {
+	return gobool(C.gdk_keymap_get_caps_lock_state(v.native()))
+}
+
+// GetNumLockState is a wrapper around gdk_keymap_get_num_lock_state().
+func (v *Keymap) GetNumLockState() bool {
+	return gobool(C.gdk_keymap_get_num_lock_state(v.native()))
+}
+
+// GetModifierState is a wrapper around gdk_keymap_get_modifier_state().
+func (v *Keymap) GetModifierState() uint {
+	return uint(C.gdk_keymap_get_modifier_state(v.native()))
+}
+
+// TODO:
+// gdk_keymap_get_default(). deprecated since 3.22
+// gdk_keymap_get_direction().
+// gdk_keymap_add_virtual_modifiers().
+// gdk_keymap_map_virtual_modifiers().
+// gdk_keymap_get_modifier_mask().
+
+/*
+ * GdkKeymapKey
+ */
+
+// TODO:
+// gdk_keymap_lookup_key().
+// gdk_keymap_get_entries_for_keyval().
+// gdk_keymap_get_entries_for_keycode().
+
+/*
  * GDK Keyval
  */
+
+// TODO:
+// gdk_keyval_name().
 
 // KeyvalFromName() is a wrapper around gdk_keyval_from_name().
 func KeyvalFromName(keyvalName string) uint {
@@ -930,6 +1057,7 @@ func KeyvalFromName(keyvalName string) uint {
 	return uint(C.gdk_keyval_from_name(str))
 }
 
+// KeyvalConvertCase is a wrapper around gdk_keyval_convert_case().
 func KeyvalConvertCase(v uint) (lower, upper uint) {
 	var l, u C.guint
 	l = 0
@@ -938,26 +1066,32 @@ func KeyvalConvertCase(v uint) (lower, upper uint) {
 	return uint(l), uint(u)
 }
 
+// KeyvalIsLower is a wrapper around gdk_keyval_is_lower().
 func KeyvalIsLower(v uint) bool {
 	return gobool(C.gdk_keyval_is_lower(C.guint(v)))
 }
 
+// KeyvalIsUpper is a wrapper around gdk_keyval_is_upper().
 func KeyvalIsUpper(v uint) bool {
 	return gobool(C.gdk_keyval_is_upper(C.guint(v)))
 }
 
+// KeyvalToLower is a wrapper around gdk_keyval_to_lower().
 func KeyvalToLower(v uint) uint {
 	return uint(C.gdk_keyval_to_lower(C.guint(v)))
 }
 
+// KeyvalToUpper is a wrapper around gdk_keyval_to_upper().
 func KeyvalToUpper(v uint) uint {
 	return uint(C.gdk_keyval_to_upper(C.guint(v)))
 }
 
+// KeyvalToUnicode is a wrapper around gdk_keyval_to_unicode().
 func KeyvalToUnicode(v uint) rune {
 	return rune(C.gdk_keyval_to_unicode(C.guint(v)))
 }
 
+// UnicodeToKeyval is a wrapper around gdk_unicode_to_keyval().
 func UnicodeToKeyval(v rune) uint {
 	return uint(C.gdk_unicode_to_keyval(C.guint32(v)))
 }
