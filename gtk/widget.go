@@ -67,6 +67,21 @@ func (v *Widget) ToWidget() *Widget {
 	return v
 }
 
+// Cast changes the widget to an object of interface type IWidget.
+// This is only useful if you don't already have an object of type IWidget at hand (see example below).
+// This func is similar to gtk.Builder.GetObject():
+// The returned value needs to be type-asserted, before it can be used.
+//
+// Example:
+//   // you know that the parent is an object of type *gtk.ApplicationWindow,
+//   // or you want to check just in case
+//   parentWindow, _ := myWindow.GetTransientFor()
+//   intermediate, _ := parentWindow.Cast()
+//   appWindow, typeAssertSuccessful := intermediate.(*gtk.ApplicationWindow)
+func (v *Widget) Cast() (IWidget, error) {
+	return castWidget(v.native())
+}
+
 func marshalWidget(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := glib.Take(unsafe.Pointer(c))
@@ -488,12 +503,12 @@ func (v *Widget) SetParent(parent IWidget) {
 }
 
 // GetParent is a wrapper around gtk_widget_get_parent().
-func (v *Widget) GetParent() (*Widget, error) {
+func (v *Widget) GetParent() (IWidget, error) {
 	c := C.gtk_widget_get_parent(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // SetSizeRequest is a wrapper around gtk_widget_set_size_request().
@@ -626,12 +641,12 @@ func (v *Widget) GetDeviceEnabled(device *gdk.Device) bool {
 }
 
 // GetToplevel is a wrapper around gtk_widget_get_toplevel().
-func (v *Widget) GetToplevel() (*Widget, error) {
+func (v *Widget) GetToplevel() (IWidget, error) {
 	c := C.gtk_widget_get_toplevel(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // TODO:

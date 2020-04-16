@@ -112,10 +112,11 @@ func TestWindowGetSetAttachedTo(t *testing.T) {
 	expected := createTestWindow(t)
 	win.SetAttachedTo(expected)
 
-	actual, err := win.GetAttachedTo()
+	a, err := win.GetAttachedTo()
 	if err != nil {
 		t.Error("unexpected error:", err.Error())
 	}
+	actual := a.ToWidget()
 	if expected.Native() != actual.Native() {
 		t.Errorf("Expected '0x%x'; Got '0x%x'", expected.Native(), actual.Native())
 	}
@@ -159,7 +160,11 @@ func TestWindowGetSetDefaultWidget(t *testing.T) {
 
 	win.SetDefault(expected)
 
-	actual := win.GetDefaultWidget()
+	a, err := win.GetDefaultWidget()
+	if err != nil {
+		t.Error("unexpected error:", err.Error())
+	}
+	actual := a.ToWidget()
 	if expected.Native() != actual.Native() {
 		t.Errorf("Expected '0x%x'; Got '0x%x'", expected.Native(), actual.Native())
 	}

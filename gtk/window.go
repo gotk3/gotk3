@@ -195,13 +195,12 @@ func (v *Window) HasToplevelFocus() bool {
 }
 
 // GetFocus is a wrapper around gtk_window_get_focus().
-// TODO: Use IWidget here
-func (v *Window) GetFocus() (*Widget, error) {
+func (v *Window) GetFocus() (IWidget, error) {
 	c := C.gtk_window_get_focus(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // SetFocus is a wrapper around gtk_window_set_focus().
@@ -211,14 +210,12 @@ func (v *Window) SetFocus(w *Widget) {
 
 // GetDefaultWidget is a wrapper around gtk_window_get_default_widget().
 // See SetDefault() for the setter.
-// TODO: Use IWidget here
-func (v *Window) GetDefaultWidget() *Widget {
+func (v *Window) GetDefaultWidget() (IWidget, error) {
 	c := C.gtk_window_get_default_widget(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapWidget(obj)
+	return castWidget(c)
 }
 
 // SetDefault is a wrapper around gtk_window_set_default().
@@ -383,11 +380,9 @@ func (v *Window) GetHideTitlebarWhenMaximized() bool {
 func (v *Window) GetIcon() (*gdk.Pixbuf, error) {
 	c := C.gtk_window_get_icon(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-
-	p := &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}
-	return p, nil
+	return &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
 }
 
 // GetIconName is a wrapper around gtk_window_get_icon_name().
@@ -436,19 +431,18 @@ func (v *Window) GetTitle() (string, error) {
 func (v *Window) GetTransientFor() (*Window, error) {
 	c := C.gtk_window_get_transient_for(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
 	return wrapWindow(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetAttachedTo is a wrapper around gtk_window_get_attached_to().
-// TODO: Use IWidget here
-func (v *Window) GetAttachedTo() (*Widget, error) {
+func (v *Window) GetAttachedTo() (IWidget, error) {
 	c := C.gtk_window_get_attached_to(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // GetTypeHint is a wrapper around gtk_window_get_type_hint().
@@ -583,9 +577,8 @@ func (v *Window) SetFocusVisible(setting bool) {
 func (v *Window) GetApplication() (*Application, error) {
 	c := C.gtk_window_get_application(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-
 	return wrapApplication(glib.Take(unsafe.Pointer(c))), nil
 }
 

@@ -25,23 +25,18 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
-import (
-	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
-)
 
 /*
  * GtkDialog
  */
 
 // GetActionArea() is a wrapper around gtk_dialog_get_action_area().
-func (v *Dialog) GetActionArea() (*Widget, error) {
+func (v *Dialog) GetActionArea() (IWidget, error) {
 	c := C.gtk_dialog_get_action_area(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 /*
@@ -49,12 +44,12 @@ func (v *Dialog) GetActionArea() (*Widget, error) {
  */
 
 // GetImage is a wrapper around gtk_message_dialog_get_image().
-func (v *MessageDialog) GetImage() (*Widget, error) {
+func (v *MessageDialog) GetImage() (IWidget, error) {
 	c := C.gtk_message_dialog_get_image(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // SetImage is a wrapper around gtk_message_dialog_set_image().

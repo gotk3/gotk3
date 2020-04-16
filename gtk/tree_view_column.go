@@ -275,23 +275,21 @@ func (v *TreeViewColumn) SetWidget(widget IWidget) {
 }
 
 // GetButton() is a wrapper around gtk_tree_view_column_get_button().
-func (v *TreeViewColumn) GetButton() (*Widget, error) {
+func (v *TreeViewColumn) GetButton() (IWidget, error) {
 	widget := C.gtk_tree_view_column_get_button(v.native())
 	if widget == nil {
 		return nil, nilPtrErr
 	}
-	obj := glib.Take(unsafe.Pointer(widget))
-	return wrapWidget(obj), nil
+	return castWidget(widget)
 }
 
 // GetWidget() is a wrapper around gtk_tree_view_column_get_widget().
-func (v *TreeViewColumn) GetWidget() (*Widget, error) {
+func (v *TreeViewColumn) GetWidget() (IWidget, error) {
 	widget := C.gtk_tree_view_column_get_widget(v.native())
 	if widget == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	obj := glib.Take(unsafe.Pointer(widget))
-	return wrapWidget(obj), nil
+	return castWidget(widget)
 }
 
 // void 	gtk_tree_view_column_set_alignment ()

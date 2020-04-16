@@ -239,12 +239,12 @@ func (v *HeaderBar) SetCustomTitle(titleWidget IWidget) {
 }
 
 // GetCustomTitle is a wrapper around gtk_header_bar_get_custom_title().
-func (v *HeaderBar) GetCustomTitle() (*Widget, error) {
+func (v *HeaderBar) GetCustomTitle() (IWidget, error) {
 	c := C.gtk_header_bar_get_custom_title(v.native())
 	if c == nil {
-		return nil, nilPtrErr
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c))), nil
+	return castWidget(c)
 }
 
 // PackStart is a wrapper around gtk_header_bar_pack_start().
@@ -562,12 +562,12 @@ func (v *ListBoxRow) Changed() {
 }
 
 // GetHeader is a wrapper around gtk_list_box_row_get_header().
-func (v *ListBoxRow) GetHeader() *Widget {
+func (v *ListBoxRow) GetHeader() (IWidget, error) {
 	c := C.gtk_list_box_row_get_header(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 // SetHeader is a wrapper around gtk_list_box_row_set_header().
@@ -806,12 +806,12 @@ func (v *Stack) SetVisibleChild(child IWidget) {
 }
 
 // GetVisibleChild is a wrapper around gtk_stack_get_visible_child().
-func (v *Stack) GetVisibleChild() *Widget {
+func (v *Stack) GetVisibleChild() (IWidget, error) {
 	c := C.gtk_stack_get_visible_child(v.native())
 	if c == nil {
-		return nil
+		return nil, nil
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 // SetVisibleChildName is a wrapper around gtk_stack_set_visible_child_name().

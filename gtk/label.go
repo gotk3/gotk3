@@ -42,7 +42,8 @@ func wrapLabel(obj *glib.Object) *Label {
 	return &Label{Widget{glib.InitiallyUnowned{obj}}}
 }
 
-func WidgetToLabel(widget *Widget) (interface{}, error) {
+// WidgetToLabel is a convience func that casts the given *Widget into a *Label.
+func WidgetToLabel(widget *Widget) (*Label, error) {
 	obj := glib.Take(unsafe.Pointer(widget.GObject))
 	return wrapLabel(obj), nil
 }

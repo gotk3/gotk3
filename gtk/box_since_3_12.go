@@ -28,11 +28,6 @@ package gtk
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
 import "C"
-import (
-	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
-)
 
 // SetCenterWidget is a wrapper around gtk_box_set_center_widget().
 func (a *Box) SetCenterWidget(child IWidget) {
@@ -44,10 +39,10 @@ func (a *Box) SetCenterWidget(child IWidget) {
 }
 
 // GetCenterWidget is a wrapper around gtk_box_get_center_widget().
-func (a *Box) GetCenterWidget() *Widget {
+func (a *Box) GetCenterWidget() (IWidget, error) {
 	w := C.gtk_box_get_center_widget(a.native())
 	if w == nil {
-		return nil
+		return nil, nil
 	}
-	return &Widget{glib.InitiallyUnowned{glib.Take(unsafe.Pointer(w))}}
+	return castWidget(w)
 }

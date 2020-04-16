@@ -5,6 +5,7 @@ package gtk
 import "C"
 import (
 	"errors"
+	"fmt"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -268,8 +269,11 @@ func (v *ComboBox) GetEntry() (*Entry, error) {
 	if err != nil {
 		return nil, err
 	}
-	obj := glib.Take(unsafe.Pointer(widget.GObject))
-	return wrapEntry(obj), nil
+	entry, ok := widget.(*Entry)
+	if !ok {
+		return nil, fmt.Errorf("expected child to be of type *gtk.Entry, got %T", widget)
+	}
+	return entry, nil
 }
 
 /*

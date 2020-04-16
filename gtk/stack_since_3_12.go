@@ -12,19 +12,17 @@ package gtk
 import "C"
 import (
 	"unsafe"
-
-	"github.com/gotk3/gotk3/glib"
 )
 
 // GetChildByName is a wrapper around gtk_stack_get_child_by_name().
-func (v *Stack) GetChildByName(name string) *Widget {
+func (v *Stack) GetChildByName(name string) (IWidget, error) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
 	c := C.gtk_stack_get_child_by_name(v.native(), (*C.gchar)(cstr))
 	if c == nil {
-		return nil
+		return nil, nilPtrErr
 	}
-	return wrapWidget(glib.Take(unsafe.Pointer(c)))
+	return castWidget(c)
 }
 
 // GetTransitionRunning is a wrapper around gtk_stack_get_transition_running().

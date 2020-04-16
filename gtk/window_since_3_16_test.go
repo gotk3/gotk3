@@ -23,7 +23,11 @@ func TestWindowGetSetTitlebar(t *testing.T) {
 	}
 	win.SetTitlebar(expected)
 
-	actual := win.GetTitlebar()
+	a, err := win.GetTitlebar()
+	if err != nil {
+		t.Error("unexpected cast failure:", err.Error())
+	}
+	actual := a.ToWidget()
 	if expected.Native() != actual.Native() {
 		t.Errorf("Expected '0x%x'; Got '0x%x'", expected.Native(), actual.Native())
 	}
