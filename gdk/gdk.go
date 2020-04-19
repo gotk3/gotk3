@@ -1298,6 +1298,11 @@ func (v *EventKey) KeyVal() uint {
 	return uint(c)
 }
 
+func (v *EventKey) HardwareKeyCode() uint16 {
+	c := v.native().hardware_keycode
+	return uint16(c)
+}
+
 func (v *EventKey) Type() EventType {
 	c := v.native()._type
 	return EventType(c)
