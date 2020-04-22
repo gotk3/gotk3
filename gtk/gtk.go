@@ -4188,21 +4188,48 @@ func (v *FileChooser) UnselectAll() {
 }
 
 // GetFilenames is a wrapper around gtk_file_chooser_get_filenames().
-func (v *FileChooser) GetFilenames() (*glib.SList, error) {
-	c := C.gtk_file_chooser_get_filenames(v.native())
-	if c == nil {
+func (v *FileChooser) GetFilenames() ([]string, error) {
+	clist := C.gtk_file_chooser_get_filenames(v.native())
+	if clist == nil {
 		return nil, nilPtrErr
 	}
-	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
+
+	slist := glib.WrapSList(uintptr(unsafe.Pointer(clist)))
+
+	var filenames []string
+	for ; slist.DataRaw() != nil; slist = slist.Next() {
+		w := (*C.char)(slist.DataRaw())
+		filename := C.GoString(w)
+		defer C.free(unsafe.Pointer(w))
+		filenames = append(filenames, filename)
+	}
+
+	defer slist.Free()
+
+	return filenames, nil
 }
 
 // GetURIs is a wrapper around gtk_file_chooser_get_uris().
-func (v FileChooser) GetURIs() (*glib.SList, error) {
-	c := C.gtk_file_chooser_get_uris(v.native())
-	if c == nil {
+func (v FileChooser) GetURIs() ([]string, error) {
+	// TODO: do the same as in (v *FileChooser) GetFilenames()
+	clist := C.gtk_file_chooser_get_uris(v.native())
+	if clist == nil {
 		return nil, nilPtrErr
 	}
-	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
+
+	slist := glib.WrapSList(uintptr(unsafe.Pointer(clist)))
+
+	var uris []string
+	for ; slist.DataRaw() != nil; slist = slist.Next() {
+		w := (*C.char)(slist.DataRaw())
+		uri := C.GoString(w)
+		defer C.free(unsafe.Pointer(w))
+		uris = append(uris, uri)
+	}
+
+	defer slist.Free()
+
+	return uris, nil
 }
 
 // SetDoOverwriteConfirmation is a wrapper around gtk_file_chooser_set_do_overwrite_confirmation().
@@ -6646,6 +6673,9 @@ func (v *RadioButton) GetGroup() (*glib.SList, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
+
+	// TODO: call DataWrapper on SList and wrap them to gtk.RadioButton
+
 	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
 }
 
@@ -6762,6 +6792,9 @@ func (v *RadioMenuItem) GetGroup() (*glib.SList, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
+
+	// TODO: call DataWrapper on SList and wrap them to gtk.RadioMenuItem
+
 	return glib.WrapSList(uintptr(unsafe.Pointer(c))), nil
 }
 
@@ -7676,6 +7709,10 @@ func (v *SizeGroup) GetWidgets() *glib.SList {
 	if c == nil {
 		return nil
 	}
+
+	// TODO: call DataWrapper on SList and wrap them to gtk.IWidget
+	// see (v *Container) GetFocusChain()
+
 	return glib.WrapSList(uintptr(unsafe.Pointer(c)))
 }
 
