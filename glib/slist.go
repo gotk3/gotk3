@@ -10,6 +10,10 @@ import "unsafe"
 // by either calling Free() or FreeFull()
 type SList struct {
 	list *C.struct__GSList
+	// If set, dataWrap is called every time Data()
+	// is called to wrap raw underlying
+	// value into appropriate type.
+	dataWrap func(unsafe.Pointer) interface{}
 }
 
 func WrapSList(obj uintptr) *SList {
@@ -24,7 +28,17 @@ func wrapSList(obj *C.struct__GSList) *SList {
 	//NOTE a list should be freed by calling either
 	//g_slist_free() or g_slist_free_full(). However, it's not possible to use a
 	//finalizer for this.
-	return &SList{obj}
+	return &SList{list: obj}
+}
+
+func (v *SList) wrapNewHead(obj *C.struct__GSList) *SList {
+	if obj == nil {
+		return nil
+	}
+	return &SList{
+		list:     obj,
+		dataWrap: v.dataWrap,
+	}
 }
 
 func (v *SList) Native() uintptr {
@@ -36,6 +50,16 @@ func (v *SList) native() *C.struct__GSList {
 		return nil
 	}
 	return v.list
+}
+
+// DataWapper sets wrap functions, which is called during NthData()
+// and Data(). It's used to cast raw C data into appropriate
+// Go structures and types every time that data is retreived.
+func (v *SList) DataWrapper(fn func(unsafe.Pointer) interface{}) {
+	if v == nil {
+		return
+	}
+	v.dataWrap = fn
 }
 
 func (v *SList) Append(data uintptr) *SList {
@@ -62,25 +86,51 @@ func (v *SList) Next() *SList {
 	return wrapSList(n.next)
 }
 
+// dataRaw is a wrapper around the data struct field
+func (v *SList) dataRaw() unsafe.Pointer {
+	n := v.native()
+	if n == nil {
+		return nil
+	}
+	return unsafe.Pointer(n.data)
+}
+
+// DataRaw is a wrapper around the data struct field
+func (v *SList) DataRaw() unsafe.Pointer {
+	n := v.native()
+	if n == nil {
+		return nil
+	}
+	return unsafe.Pointer(n.data)
+}
+
+// Data acts the same as data struct field, but it returns raw unsafe.Pointer as interface.
+// TODO: Align with List struct and add member + logic for `dataWrap func(unsafe.Pointer) interface{}`?
+func (v *SList) Data() interface{} {
+	ptr := v.dataRaw()
+	if v.dataWrap != nil {
+		return v.dataWrap(ptr)
+	}
+	return ptr
+}
+
 // Foreach acts the same as g_slist_foreach().
 // No user_data argument is implemented because of Go clojure capabilities.
-func (v *SList) Foreach(fn func(ptr unsafe.Pointer)) {
+func (v *SList) Foreach(fn func(item interface{})) {
 	for l := v; l != nil; l = l.Next() {
-		fn(unsafe.Pointer(l.native().data))
+		fn(l.Data())
 	}
 }
 
 // Free is a wrapper around g_slist_free().
 func (v *SList) Free() {
 	C.g_slist_free(v.native())
-	v.list = nil
 }
 
 // FreeFull is a wrapper around g_slist_free_full().
 func (v *SList) FreeFull() {
 	//TODO implement GDestroyNotify callback
 	C.g_slist_free_full(v.native(), nil)
-	v.list = nil
 }
 
 // GSList * 	g_slist_alloc ()
