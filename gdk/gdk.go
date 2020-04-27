@@ -467,7 +467,7 @@ const (
 func SetAllowedBackends(backends string) {
 	cstr := C.CString(backends)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gdk_set_allowed_backends(cstr)
+	C.gdk_set_allowed_backends((*C.gchar)(cstr))
 }
 
 /*
