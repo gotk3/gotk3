@@ -7,43 +7,39 @@ env:
 
 jobs:
   include:
-      # Testing on trusty, gtk 3.10.8 (gdk has same version), glib 2.40.0, gdk-pixbuf 2.30.7
-    - os: linux
-      dist: trusty
-      go: "1.13"
-
-      # Testing on xenial, gtk 3.18.9 (gdk has same version), glib 2.48.0, gdk-pixbuf 2.32.2
+      # Testing on xenial, gtk 3.18.9 (gdk has same version), glib 2.48.0 (gio has same version), gdk-pixbuf 2.32.2
     - os: linux
       dist: xenial
       go: "1.13"
 
-      # Testing on bionic, gtk 3.22.30 (gdk has same version), glib 2.56.1, gdk-pixbuf 2.36.11
+      # Testing on bionic, gtk 3.22.30 (gdk has same version), glib 2.56.1 (gio has same version), gdk-pixbuf 2.36.11
+    - os: linux
+      dist: bionic
+      go: "1.14"
+
+      # Testing on focal, gtk 3.24.14 (gdk has same version), glib 2.64.1 (gio has same version), gdk-pixbuf 2.40.0
       # Majority of the go versions here for compatibility checking
     - os: linux
-      dist: bionic
-      go: "1.8"
-    - os: linux
-      dist: bionic
+      dist: focal
       go: "1.9"
     - os: linux
-      dist: bionic
+      dist: focal
       go: "1.10"
     - os: linux
-      dist: bionic
+      dist: focal
       go: "1.11"
     - os: linux
-      dist: bionic
+      dist: focal
       go: "1.12"
     - os: linux
-      dist: bionic
+      dist: focal
       go: "1.13"
     - os: linux
-      dist: bionic
+      dist: focal
+      go: "1.14"
+    - os: linux
+      dist: focal
       go: tip
-
-      # Testing on eoan, gtk 3.24.12 (gdk has same version), glib 2.62.1, gdk-pixbuf 2.40.0
-
-      # Testing on focal, gtk 3.24.14 (gdk has same version), glib 2.64.1, gdk-pixbuf 2.40.0
 
 addons:
   apt:
@@ -57,11 +53,10 @@ before_install:
   - sudo /usr/bin/Xvfb $DISPLAY 2>1 > /dev/null &
   - "export GTK_VERSION=$(pkg-config --modversion gtk+-3.0 | tr . _| cut -d '_' -f 1-2)"
   - "export Glib_VERSION=$(pkg-config --modversion glib-2.0 | tr . _| cut -d '_' -f 1-2)"
-  - "export GDK_VERSION=$(pkg-config --modversion gdk-3.0)"
   - "export GDK_Pixbuf_VERSION=$(pkg-config --modversion gdk-pixbuf-2.0 | tr . _| cut -d '_' -f 1-2)"
   - "export Cairo_VERSION=$(pkg-config --modversion cairo)"
   - "export Pango_VERSION=$(pkg-config --modversion pango)"
-  - echo "GTK version ${GTK_VERSION} Glib version ${Glib_VERSION} Gdk-Pixbuf version ${GDK_Pixbuf_VERSION} (Gdk ${GDK_VERSION}, Cairo ${Cairo_VERSION}, Pango ${Pango_VERSION})"
+  - echo "GTK/GDK version ${GTK_VERSION} Glib/Gio version ${Glib_VERSION} Gdk-Pixbuf version ${GDK_Pixbuf_VERSION} (Cairo ${Cairo_VERSION}, Pango ${Pango_VERSION})"
 
 install:
   - go get -t -tags "gtk_${GTK_VERSION} glib_${Glib_VERSION} gdk_pixbuf_${GDK_Pixbuf_VERSION}" ./...
