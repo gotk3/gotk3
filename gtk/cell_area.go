@@ -493,6 +493,9 @@ func (v *CellAreaContext) PushPreferredHeight(minHeight, naturalHeight int) {
 // CellAreaBox is a representation of GTK's GtkCellAreaBox.
 type CellAreaBox struct {
 	CellArea
+
+	// Interfaces
+	Orientable
 }
 
 // native returns a pointer to the underlying GtkCellAreaBox.
@@ -504,6 +507,13 @@ func (v *CellAreaBox) native() *C.GtkCellAreaBox {
 	return C.toGtkCellAreaBox(p)
 }
 
+func (v *CellArea) toOrientable() *C.GtkOrientable {
+	if v == nil {
+		return nil
+	}
+	return C.toGtkOrientable(unsafe.Pointer(v.GObject))
+}
+
 func marshalCellAreaBox(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := glib.Take(unsafe.Pointer(c))
@@ -511,7 +521,9 @@ func marshalCellAreaBox(p uintptr) (interface{}, error) {
 }
 
 func wrapCellAreaBox(obj *glib.Object) *CellAreaBox {
-	return &CellAreaBox{CellArea{glib.InitiallyUnowned{obj}}}
+	cellArea := wrapCellArea(obj)
+	o := wrapOrientable(obj)
+	return &CellAreaBox{*cellArea, *o}
 }
 
 // CellAreaBoxNew is a wrapper around gtk_cell_area_box_new().
