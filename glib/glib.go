@@ -106,6 +106,11 @@ const (
 	TYPE_VARIANT   Type = C.G_TYPE_VARIANT
 )
 
+// IsValue checks whether the passed in type can be used for g_value_init().
+func (t Type) IsValue() bool {
+	return gobool(C._g_type_is_value(C.GType(t)))
+}
+
 // Name is a wrapper around g_type_name().
 func (t Type) Name() string {
 	return C.GoString((*C.char)(C.g_type_name(C.GType(t))))
@@ -915,6 +920,16 @@ func (v *Value) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
+// IsValue checks if value is a valid and initialized GValue structure.
+func (v *Value) IsValue() bool {
+	return gobool(C._g_is_value(v.native()))
+}
+
+// TypeName gets the type name of value.
+func (v *Value) TypeName() string {
+	return C.GoString((*C.char)(C._g_value_type_name(v.native())))
+}
+
 // ValueAlloc allocates a Value and sets a runtime finalizer to call
 // g_value_unset() on the underlying GValue after leaving scope.
 // ValueAlloc() returns a non-nil error if the allocation failed.
@@ -930,7 +945,8 @@ func ValueAlloc() (*Value, error) {
 	//We need to double check before unsetting, to prevent:
 	//`g_value_unset: assertion 'G_IS_VALUE (value)' failed`
 	runtime.SetFinalizer(v, func(f *Value) {
-		if t, _, err := f.Type(); err != nil || t == TYPE_INVALID || t == TYPE_NONE {
+
+		if !f.IsValue() {
 			C.g_free(C.gpointer(f.native()))
 			return
 		}
@@ -971,7 +987,7 @@ func (v *Value) unset() {
 // the g_value_get_gtype() function.  GetType() returns TYPE_INVALID if v
 // does not hold a Type, or otherwise returns the Type of v.
 func (v *Value) Type() (actual Type, fundamental Type, err error) {
-	if !gobool(C._g_is_value(v.native())) {
+	if !v.IsValue() {
 		return actual, fundamental, errors.New("invalid GValue")
 	}
 	cActual := C._g_value_type(v.native())
