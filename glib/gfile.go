@@ -12,7 +12,7 @@ type File struct {
 }
 
 // Native() returns a pointer to the underlying GFile.
-func (v *File ) Native() *C.GFile  {
+func (v *File ) native() *C.GFile  {
 	if v == nil || v.GObject == nil {
 		return nil
 	}

@@ -911,8 +911,8 @@ func (v *Value) native() *C.GValue {
 }
 
 // Native returns a pointer to the underlying GValue.
-func (v *Value) Native() unsafe.Pointer {
-	return unsafe.Pointer(v.native())
+func (v *Value) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
 }
 
 // ValueAlloc allocates a Value and sets a runtime finalizer to call
