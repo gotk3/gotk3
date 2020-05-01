@@ -449,7 +449,6 @@ const (
 // gdk_get_display_arg_name().
 // gdk_notify_startup_complete().
 // gdk_notify_startup_complete_with_id().
-// gdk_set_allowed_backends().
 // gdk_get_program_class().
 // gdk_set_program_class().
 // gdk_get_display(). deprecated since version 3.8
@@ -463,6 +462,13 @@ const (
 // gdk_error_trap_push(). deprecated
 // gdk_error_trap_pop(). deprecated
 // gdk_error_trap_pop_ignored(). deprecated
+
+// SetAllowedBackends is a wrapper around gdk_set_allowed_backends
+func SetAllowedBackends(backends string) {
+	cstr := C.CString(backends)
+	defer C.free(unsafe.Pointer(cstr))
+	C.gdk_set_allowed_backends((*C.gchar)(cstr))
+}
 
 /*
  * GdkAtom
@@ -1005,7 +1011,6 @@ func (v *Keymap) TranslateKeyboardState(hardwareKeycode uint, state ModifierType
 
 	return gobool(c), keyval, effectiveGroup, level, consumedModifiers
 }
-
 
 // HaveBidiLayouts is a wrapper around gdk_keymap_have_bidi_layouts().
 func (v *Keymap) HaveBidiLayouts() bool {
