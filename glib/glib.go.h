@@ -205,6 +205,12 @@ _g_value_init(GType g_type)
 }
 
 static gboolean
+_g_type_is_value(GType g_type)
+{
+	return (G_TYPE_IS_VALUE(g_type));
+}
+
+static gboolean
 _g_is_value(GValue *val)
 {
 	return (G_IS_VALUE(val));
@@ -214,6 +220,12 @@ static GType
 _g_value_type(GValue *val)
 {
 	return (G_VALUE_TYPE(val));
+}
+
+static const gchar *
+_g_value_type_name(GValue *val)
+{
+	return (G_VALUE_TYPE_NAME(val));
 }
 
 static GType

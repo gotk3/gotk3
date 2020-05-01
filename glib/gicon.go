@@ -12,7 +12,7 @@ type FileIcon struct {
 }
 
 // native() returns a pointer to the underlying GFileIcon.
-func (v *FileIcon) Native() *C.GFileIcon {
+func (v *FileIcon) native() *C.GFileIcon {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
@@ -23,7 +23,7 @@ func (v *FileIcon) Native() *C.GFileIcon {
 func FileIconNew(path string) *FileIcon {
   file := FileNew(path)
 
-	c := C.g_file_icon_new(file.Native())
+	c := C.g_file_icon_new(file.native())
 	if c == nil {
 		return nil
 	}

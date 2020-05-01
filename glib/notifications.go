@@ -84,7 +84,7 @@ func (v *Notification) AddButton(label, detailedAction string) {
 func (v *Notification) SetIcon(iconPath string) {
 	fileIcon := FileIconNew(iconPath)
 
-	C.g_notification_set_icon(v.native(), (*C.GIcon)(fileIcon.Native()))
+	C.g_notification_set_icon(v.native(), (*C.GIcon)(fileIcon.native()))
 }
 
 // void 	g_notification_set_default_action_and_target () // requires varargs

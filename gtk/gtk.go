@@ -5478,7 +5478,7 @@ func (v *ListStore) InsertWithValues(iter *TreeIter, position int, inColumns []i
 			return err
 		}
 
-		var cvp *C.GValue = (*C.GValue)(gv.Native())
+		var cvp *C.GValue = (*C.GValue)(unsafe.Pointer(gv.Native()))
 		cValues = append(cValues, *cvp)
 	}
 	var cColumnsPointer *C.gint = &cColumns[0]
@@ -9307,7 +9307,7 @@ func (v *TreeModel) GetValue(iter *TreeIter, column int) (*glib.Value, error) {
 		return nil, err
 	}
 	C.gtk_tree_model_get_value(
-		(*C.GtkTreeModel)(unsafe.Pointer(v.native())),
+		v.native(),
 		iter.native(),
 		C.gint(column),
 		(*C.GValue)(unsafe.Pointer(val.Native())))
@@ -10284,7 +10284,7 @@ func (v *TreeStore) InsertWithValues(iter, parent *TreeIter, position int, inCol
 			return err
 		}
 
-		var cvp *C.GValue = (*C.GValue)(gv.Native())
+		var cvp *C.GValue = (*C.GValue)(unsafe.Pointer(gv.Native()))
 		cValues = append(cValues, *cvp)
 	}
 	var cColumnsPointer *C.gint = &cColumns[0]
