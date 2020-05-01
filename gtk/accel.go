@@ -205,6 +205,9 @@ func AccelGroupsFromObject(obj *glib.Object) *glib.SList {
 	if res == nil {
 		return nil
 	}
+
+	// TODO: call DataWrapper on SList and wrap them to gtk.AccelGroup
+
 	return (*glib.SList)(unsafe.Pointer(res))
 }
 
