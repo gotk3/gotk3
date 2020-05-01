@@ -31,7 +31,7 @@ import "C"
 
 // ReorderOverlay() is a wrapper around gtk_overlay_reorder_overlay().
 func (v *Overlay) ReorderOverlay(child IWidget, position int) {
-	C.gtk_overlay_reorder_overlay(v.native(), child.toWidget(), C.gint(position))
+	C.gtk_overlay_reorder_overlay(v.native(), child.toWidget(), C.int(position))
 }
 
 // GetOverlayPassThrough() is a wrapper around gtk_overlay_get_overlay_pass_through().
