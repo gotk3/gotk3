@@ -2909,7 +2909,7 @@ func (v *CssProvider) ToString() (string, error) {
 	return C.GoString(c), nil
 }
 
-// GetNamed is a wrapper around gtk_css_provider_get_named().
+// CssProviderGetNamed is a wrapper around gtk_css_provider_get_named().
 func CssProviderGetNamed(name string, variant string) (*CssProvider, error) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))

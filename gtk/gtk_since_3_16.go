@@ -313,3 +313,16 @@ func (v *TextBuffer) InsertMarkup(start *TextIter, text string) {
 	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_text_buffer_insert_markup(v.native(), (*C.GtkTextIter)(start), (*C.gchar)(cstr), C.gint(len(text)))
 }
+
+/*
+ * CssProvider
+ */
+
+// LoadFromResource is a wrapper around gtk_css_provider_load_from_resource().
+//
+// See: https://developer.gnome.org/gtk3/stable/GtkCssProvider.html#gtk-css-provider-load-from-resource
+func (v *CssProvider) LoadFromResource(path string) {
+	cpath := C.CString(path)
+	defer C.free(unsafe.Pointer(cpath))
+	C.gtk_css_provider_load_from_resource(v.native(), (*C.gchar)(cpath))
+}
