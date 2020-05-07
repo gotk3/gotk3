@@ -67,18 +67,18 @@ func wrapCellArea(obj *glib.Object) *CellArea {
 }
 
 // Add is a wrapper around gtk_cell_area_add().
-func (v *CellArea) Add(renderer *CellRenderer) {
-	C.gtk_cell_area_add(v.native(), renderer.native())
+func (v *CellArea) Add(renderer ICellRenderer) {
+	C.gtk_cell_area_add(v.native(), renderer.toCellRenderer())
 }
 
 // Remove is a wrapper around gtk_cell_area_remove().
-func (v *CellArea) Remove(renderer *CellRenderer) {
-	C.gtk_cell_area_remove(v.native(), renderer.native())
+func (v *CellArea) Remove(renderer ICellRenderer) {
+	C.gtk_cell_area_remove(v.native(), renderer.toCellRenderer())
 }
 
 // HasRenderer is a wrapper around gtk_cell_area_has_renderer().
-func (v *CellArea) HasRenderer(renderer *CellRenderer) bool {
-	return gobool(C.gtk_cell_area_has_renderer(v.native(), renderer.native()))
+func (v *CellArea) HasRenderer(renderer ICellRenderer) bool {
+	return gobool(C.gtk_cell_area_has_renderer(v.native(), renderer.toCellRenderer()))
 }
 
 // TODO:
@@ -117,11 +117,11 @@ func (v *CellArea) Render(context *CellAreaContext, widget IWidget, cr *cairo.Co
 
 // GetCellAllocation is a wrapper around gtk_cell_area_get_cell_allocation().
 func (v *CellArea) GetCellAllocation(context *CellAreaContext, widget IWidget,
-	renderer *CellRenderer, cellArea *gdk.Rectangle) *gdk.Rectangle {
+	renderer ICellRenderer, cellArea *gdk.Rectangle) *gdk.Rectangle {
 
 	var cRect *C.GdkRectangle
-	C.gtk_cell_area_get_cell_allocation(v.native(), context.native(), widget.toWidget(), renderer.native(),
-		nativeGdkRectangle(*cellArea), cRect)
+	C.gtk_cell_area_get_cell_allocation(v.native(), context.native(), widget.toWidget(),
+		renderer.toCellRenderer(), nativeGdkRectangle(*cellArea), cRect)
 	allocation := gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
 	return allocation
 
@@ -129,7 +129,7 @@ func (v *CellArea) GetCellAllocation(context *CellAreaContext, widget IWidget,
 
 // GetCellAtPosition is a wrapper around gtk_cell_area_get_cell_at_position().
 func (v *CellArea) GetCellAtPosition(context *CellAreaContext, widget IWidget,
-	cellArea *gdk.Rectangle, x, y int) (*CellRenderer, *gdk.Rectangle) {
+	cellArea *gdk.Rectangle, x, y int) (ICellRenderer, *gdk.Rectangle, error) {
 
 	var cRect *C.GdkRectangle
 
@@ -142,11 +142,13 @@ func (v *CellArea) GetCellAtPosition(context *CellAreaContext, widget IWidget,
 		allocation = gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
 	}
 
-	return wrapCellRenderer(glib.Take(unsafe.Pointer(renderer))), allocation
+	r, err := castCellRenderer(renderer)
+
+	return r, allocation, err
 }
 
 // CreateContext is a wrapper around gtk_cell_area_create_context().
-func (v *CellArea) CreateContext(renderer *CellRenderer) (*CellAreaContext, error) {
+func (v *CellArea) CreateContext() (*CellAreaContext, error) {
 	c := C.gtk_cell_area_create_context(v.native())
 	if c == nil {
 		return nil, nilPtrErr
@@ -221,17 +223,17 @@ func (v *CellArea) ApplyAttributes(model ITreeModel, iter *TreeIter, isExpander,
 }
 
 // AttributeConnect is a wrapper around gtk_cell_area_attribute_connect().
-func (v *CellArea) AttributeConnect(renderer *CellRenderer, attribute string, column int) {
+func (v *CellArea) AttributeConnect(renderer ICellRenderer, attribute string, column int) {
 	cstr := C.CString(attribute)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_cell_area_attribute_connect(v.native(), renderer.native(), (*C.gchar)(cstr), C.gint(column))
+	C.gtk_cell_area_attribute_connect(v.native(), renderer.toCellRenderer(), (*C.gchar)(cstr), C.gint(column))
 }
 
 // AttributeDisconnect is a wrapper around gtk_cell_area_attribute_disconnect().
-func (v *CellArea) AttributeDisconnect(renderer *CellRenderer, attribute string) {
+func (v *CellArea) AttributeDisconnect(renderer ICellRenderer, attribute string) {
 	cstr := C.CString(attribute)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_cell_area_attribute_disconnect(v.native(), renderer.native(), (*C.gchar)(cstr))
+	C.gtk_cell_area_attribute_disconnect(v.native(), renderer.toCellRenderer(), (*C.gchar)(cstr))
 }
 
 // TODO:
@@ -245,25 +247,25 @@ func (v *CellArea) AttributeDisconnect(renderer *CellRenderer, attribute string)
 // gtk_cell_area_cell_get_valist
 
 // CellSetProperty is a wrapper around gtk_cell_area_cell_set_property().
-func (v *CellArea) CellSetProperty(renderer *CellRenderer, propertyName string, value interface{}) error {
+func (v *CellArea) CellSetProperty(renderer ICellRenderer, propertyName string, value interface{}) error {
 	gval, err := glib.GValue(value)
 	if err != nil {
 		return err
 	}
 	cstr := C.CString(propertyName)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_cell_area_cell_set_property(v.native(), renderer.native(), (*C.gchar)(cstr),
+	C.gtk_cell_area_cell_set_property(v.native(), renderer.toCellRenderer(), (*C.gchar)(cstr),
 		(*C.GValue)(unsafe.Pointer(gval.Native())))
 	return nil
 }
 
 // CellGetProperty is a wrapper around gtk_cell_area_cell_get_property().
-func (v *CellArea) CellGetProperty(renderer *CellRenderer, propertyName string) (interface{}, error) {
+func (v *CellArea) CellGetProperty(renderer ICellRenderer, propertyName string) (interface{}, error) {
 	cstr := C.CString(propertyName)
 	defer C.free(unsafe.Pointer(cstr))
 
 	var gval C.GValue
-	C.gtk_cell_area_cell_get_property(v.native(), renderer.native(), (*C.gchar)(cstr), &gval)
+	C.gtk_cell_area_cell_get_property(v.native(), renderer.toCellRenderer(), (*C.gchar)(cstr), &gval)
 	value := glib.ValueFromNative(unsafe.Pointer(&gval))
 	return value.GoValue()
 }
@@ -287,71 +289,77 @@ func (v *CellArea) Focus(direction DirectionType) bool {
 }
 
 // SetFocusCell is a wrapper around gtk_cell_area_set_focus_cell().
-func (v *CellArea) SetFocusCell(renderer *CellRenderer) {
-	C.gtk_cell_area_set_focus_cell(v.native(), renderer.native())
+func (v *CellArea) SetFocusCell(renderer ICellRenderer) {
+	C.gtk_cell_area_set_focus_cell(v.native(), renderer.toCellRenderer())
 }
 
 // GetFocusCell is a wrapper around gtk_cell_area_get_focus_cell().
-func (v *CellArea) GetFocusCell() *CellRenderer {
+func (v *CellArea) GetFocusCell() (ICellRenderer, error) {
 	c := C.gtk_cell_area_get_focus_cell(v.native())
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapCellRenderer(obj)
+	return castCellRenderer(c)
 }
 
 // AddFocusSibling is a wrapper around gtk_cell_area_add_focus_sibling().
-func (v *CellArea) AddFocusSibling(renderer, sibling *CellRenderer) {
-	C.gtk_cell_area_add_focus_sibling(v.native(), renderer.native(), sibling.native())
+func (v *CellArea) AddFocusSibling(renderer, sibling ICellRenderer) {
+	C.gtk_cell_area_add_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.native())
 }
 
 // RemoveFocusSibling is a wrapper around gtk_cell_area_remove_focus_sibling().
-func (v *CellArea) RemoveFocusSibling(renderer, sibling *CellRenderer) {
-	C.gtk_cell_area_remove_focus_sibling(v.native(), renderer.native(), sibling.native())
+func (v *CellArea) RemoveFocusSibling(renderer, sibling ICellRenderer) {
+	C.gtk_cell_area_remove_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.native())
 }
 
 // IsFocusSibling is a wrapper around gtk_cell_area_is_focus_sibling().
-func (v *CellArea) IsFocusSibling(renderer, sibling *CellRenderer) bool {
-	return gobool(C.gtk_cell_area_is_focus_sibling(v.native(), renderer.native(), sibling.native()))
+func (v *CellArea) IsFocusSibling(renderer, sibling ICellRenderer) bool {
+	return gobool(C.gtk_cell_area_is_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.native()))
 }
 
 // GetFocusSiblings is a wrapper around gtk_cell_area_get_focus_siblings().
-func (v *CellArea) GetFocusSiblings(renderer *CellRenderer) *glib.List {
-	clist := C.gtk_cell_area_get_focus_siblings(v.native(), renderer.native())
+func (v *CellArea) GetFocusSiblings(renderer ICellRenderer) ([]ICellRenderer, error) {
+	clist := C.gtk_cell_area_get_focus_siblings(v.native(), renderer.toCellRenderer())
 	if clist == nil {
 		return nil
 	}
 
 	// The returned list is internal and should not be freed.
-	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
-	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
-		return wrapCellRenderer(glib.Take(ptr))
-	})
+	var cellRendererList []ICellRenderer
+	wlist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	for ; wlist.Data() != nil; wlist = wlist.Next() {
+		w, ok := wlist.Data().(*CellRenderer)
+		if !ok {
+			return nil, fmt.Errorf("element is not of type *CellRenderer, got %T", w)
+		}
+		cRenderer, err := castCellRenderer(w.toCellRenderer())
+		if err != nil {
+			return nil, err
+		}
+		cellRendererList = append(cellRendererList, cRenderer)
+	}
 
-	return glist
+	return cellRendererList, nil
 }
 
 // GetFocusFromSibling is a wrapper around gtk_cell_area_get_focus_from_sibling().
-func (v *CellArea) GetFocusFromSibling(renderer *CellRenderer) *CellRenderer {
-	c := C.gtk_cell_area_get_focus_from_sibling(v.native(), renderer.native())
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapCellRenderer(obj)
+func (v *CellArea) GetFocusFromSibling(renderer ICellRenderer) (ICellRenderer, error) {
+	c := C.gtk_cell_area_get_focus_from_sibling(v.native(), renderer.toCellRenderer())
+	return castCellRenderer(c)
 }
 
 // GetEditedCell is a wrapper around gtk_cell_area_get_edited_cell().
-func (v *CellArea) GetEditedCell() *CellRenderer {
+func (v *CellArea) GetEditedCell() (ICellRenderer, error) {
 	c := C.gtk_cell_area_get_edited_cell(v.native())
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapCellRenderer(obj)
+	return castCellRenderer(c)
 }
 
 // TODO:
 // gtk_cell_area_get_edit_widget // depends on GtkCellEditable
 
 // ActivateCell is a wrapper around gtk_cell_area_activate_cell().
-func (v *CellArea) ActivateCell(widget IWidget, renderer *CellRenderer,
+func (v *CellArea) ActivateCell(widget IWidget, renderer ICellRenderer,
 	event *gdk.Event, cellArea *gdk.Rectangle, flags CellRendererState) bool {
 
 	e := (*C.GdkEvent)(unsafe.Pointer(event.Native()))
-	c := C.gtk_cell_area_activate_cell(v.native(), widget.toWidget(), renderer.native(),
+	c := C.gtk_cell_area_activate_cell(v.native(), widget.toWidget(), renderer.toCellRenderer(),
 		e, nativeGdkRectangle(*cellArea), C.GtkCellRendererState(flags))
 
 	return gobool(c)
@@ -371,13 +379,13 @@ func (v *CellArea) InnerCellArea(widget IWidget, cellArea *gdk.Rectangle) *gdk.R
 }
 
 // RequestRenderer is a wrapper around gtk_cell_area_request_renderer().
-func (v *CellArea) RequestRenderer(renderer *CellRenderer, orientation Orientation,
+func (v *CellArea) RequestRenderer(renderer ICellRenderer, orientation Orientation,
 	widget IWidget, forSize int) (int, int) {
 
 	var minSize C.gint
 	var naturalSize C.gint
 
-	C.gtk_cell_area_request_renderer(v.native(), renderer.native(), C.GtkOrientation(orientation),
+	C.gtk_cell_area_request_renderer(v.native(), renderer.toCellRenderer(), C.GtkOrientation(orientation),
 		widget.toWidget(), C.gint(forSize), &minSize, &naturalSize)
 
 	return int(minSize), int(naturalSize)
@@ -536,21 +544,21 @@ func CellAreaBoxNew() (*CellAreaBox, error) {
 }
 
 // PackStart is a wrapper around gtk_cell_area_box_pack_start().
-func (v *CellAreaBox) PackStart(renderer *CellRenderer, expand, align, fixed bool) {
-	C.gtk_cell_area_box_pack_start(v.native(), renderer.native(), gbool(expand), gbool(align), gbool(fixed))
+func (v *CellAreaBox) PackStart(renderer ICellRenderer, expand, align, fixed bool) {
+	C.gtk_cell_area_box_pack_start(v.native(), renderer.toCellRenderer(), gbool(expand), gbool(align), gbool(fixed))
 }
 
 // PackEnd is a wrapper around gtk_cell_area_box_pack_end().
-func (v *CellAreaBox) PackEnd(renderer *CellRenderer, expand, align, fixed bool) {
-	C.gtk_cell_area_box_pack_end(v.native(), renderer.native(), gbool(expand), gbool(align), gbool(fixed))
+func (v *CellAreaBox) PackEnd(renderer ICellRenderer, expand, align, fixed bool) {
+	C.gtk_cell_area_box_pack_end(v.native(), renderer.toCellRenderer(), gbool(expand), gbool(align), gbool(fixed))
 }
 
 // GetSpacing is a wrapper around gtk_cell_area_box_get_spacing().
-func (v *CellAreaBox) GetSpacing(renderer *CellRenderer) int {
+func (v *CellAreaBox) GetSpacing() int {
 	return int(C.gtk_cell_area_box_get_spacing(v.native()))
 }
 
 // SetSpacing is a wrapper around gtk_cell_area_box_set_spacing().
-func (v *CellAreaBox) SetSpacing(renderer *CellRenderer, spacing int) {
+func (v *CellAreaBox) SetSpacing(spacing int) {
 	C.gtk_cell_area_box_set_spacing(v.native(), C.gint(spacing))
 }

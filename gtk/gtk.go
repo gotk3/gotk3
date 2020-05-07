@@ -10552,9 +10552,10 @@ func castInternal(className string, obj *glib.Object) (interface{}, error) {
 //TODO change all wrapFns to return an IObject
 //^- not sure about this TODO. This may make some usages of the wrapper functions quite verbose, no?
 func cast(c *C.GObject) (glib.IObject, error) {
+	ptr := unsafe.Pointer(c)
 	var (
-		className = goString(C.object_get_class_name(c))
-		obj       = glib.Take(unsafe.Pointer(c))
+		className = goString(C.object_get_class_name(ptr))
+		obj       = glib.Take(ptr)
 	)
 
 	intf, err := castInternal(className, obj)
@@ -10570,11 +10571,12 @@ func cast(c *C.GObject) (glib.IObject, error) {
 	return ret, nil
 }
 
-// cast takes a native GtkWidget and casts it to the appropriate Go struct.
+// castWidget takes a native GtkWidget and casts it to the appropriate Go struct.
 func castWidget(c *C.GtkWidget) (IWidget, error) {
+	ptr := unsafe.Pointer(c)
 	var (
-		className = goString(C.object_get_class_name(C.toGObject(unsafe.Pointer(c))))
-		obj       = glib.Take(unsafe.Pointer(c))
+		className = goString(C.object_get_class_name(C.toGObject(ptr)))
+		obj       = glib.Take(ptr)
 	)
 
 	intf, err := castInternal(className, obj)
@@ -10585,6 +10587,27 @@ func castWidget(c *C.GtkWidget) (IWidget, error) {
 	ret, ok := intf.(IWidget)
 	if !ok {
 		return nil, fmt.Errorf("expected value of type IWidget, got %T", intf)
+	}
+
+	return ret, nil
+}
+
+// castCellRenderer takes a native GtkCellRenderer and casts it to the appropriate Go struct.
+func castCellRenderer(c *C.GtkCellRenderer) (ICellRenderer, error) {
+	ptr := unsafe.Pointer(c)
+	var (
+		className = goString(C.object_get_class_name(C.toGObject(ptr)))
+		obj       = glib.Take(ptr)
+	)
+
+	intf, err := castInternal(className, obj)
+	if err != nil {
+		return nil, err
+	}
+
+	ret, ok := intf.(ICellRenderer)
+	if !ok {
+		return nil, fmt.Errorf("expected value of type ICellRenderer, got %T", intf)
 	}
 
 	return ret, nil
