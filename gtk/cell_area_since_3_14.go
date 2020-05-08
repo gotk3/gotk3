@@ -15,9 +15,9 @@ import "unsafe"
  */
 
 // AttributeGetColumn is a wrapper around gtk_cell_area_attribute_get_column().
-func (v *CellArea) AttributeGetColumn(renderer *CellRenderer, attribute string) int {
+func (v *CellArea) AttributeGetColumn(renderer ICellRenderer, attribute string) int {
 	cstr := C.CString(attribute)
 	defer C.free(unsafe.Pointer(cstr))
-	column := C.gtk_cell_area_attribute_get_column(v.native(), renderer.native(), (*C.gchar)(cstr))
+	column := C.gtk_cell_area_attribute_get_column(v.native(), renderer.toCellRenderer(), (*C.gchar)(cstr))
 	return int(column)
 }
