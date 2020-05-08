@@ -6,6 +6,7 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
+	"fmt"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/cairo"
@@ -301,24 +302,24 @@ func (v *CellArea) GetFocusCell() (ICellRenderer, error) {
 
 // AddFocusSibling is a wrapper around gtk_cell_area_add_focus_sibling().
 func (v *CellArea) AddFocusSibling(renderer, sibling ICellRenderer) {
-	C.gtk_cell_area_add_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.native())
+	C.gtk_cell_area_add_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.toCellRenderer())
 }
 
 // RemoveFocusSibling is a wrapper around gtk_cell_area_remove_focus_sibling().
 func (v *CellArea) RemoveFocusSibling(renderer, sibling ICellRenderer) {
-	C.gtk_cell_area_remove_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.native())
+	C.gtk_cell_area_remove_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.toCellRenderer())
 }
 
 // IsFocusSibling is a wrapper around gtk_cell_area_is_focus_sibling().
 func (v *CellArea) IsFocusSibling(renderer, sibling ICellRenderer) bool {
-	return gobool(C.gtk_cell_area_is_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.native()))
+	return gobool(C.gtk_cell_area_is_focus_sibling(v.native(), renderer.toCellRenderer(), sibling.toCellRenderer()))
 }
 
 // GetFocusSiblings is a wrapper around gtk_cell_area_get_focus_siblings().
 func (v *CellArea) GetFocusSiblings(renderer ICellRenderer) ([]ICellRenderer, error) {
 	clist := C.gtk_cell_area_get_focus_siblings(v.native(), renderer.toCellRenderer())
 	if clist == nil {
-		return nil
+		return nil, nilPtrErr
 	}
 
 	// The returned list is internal and should not be freed.

@@ -10554,7 +10554,7 @@ func castInternal(className string, obj *glib.Object) (interface{}, error) {
 func cast(c *C.GObject) (glib.IObject, error) {
 	ptr := unsafe.Pointer(c)
 	var (
-		className = goString(C.object_get_class_name(ptr))
+		className = goString(C.object_get_class_name(C.toGObject(ptr)))
 		obj       = glib.Take(ptr)
 	)
 
