@@ -49,8 +49,8 @@ func (v *Window) toWindow() *C.GtkWindow {
 	return v.native()
 }
 
-// ToWindow is a helper getter, in case you use the interface gtk.IWindow in your program.
-// It returns e.g. *gtk.ApplicationWindow as a *gtk.Window.
+// ToWindow is a helper getter, e.g.: it returns *gtk.ApplicationWindow as a *gtk.Window.
+// In other cases, where you have a gtk.IWindow, use the type assertion.
 func (v *Window) ToWindow() *Window {
 	return v
 }

@@ -9205,6 +9205,7 @@ type TreeModel struct {
 // GtkTreeModel.
 type ITreeModel interface {
 	toTreeModel() *C.GtkTreeModel
+	ToTreeModel() *TreeModel
 }
 
 // native returns a pointer to the underlying GObject as a GtkTreeModel.
@@ -9231,6 +9232,12 @@ func marshalTreeModel(p uintptr) (interface{}, error) {
 
 func wrapTreeModel(obj *glib.Object) *TreeModel {
 	return &TreeModel{obj}
+}
+
+// ToTreeModel is a helper getter, e.g.: it returns *gtk.TreeStore/ListStore as a *gtk.TreeModel.
+// In other cases, where you have a gtk.ITreeModel, use the type assertion.
+func (v *TreeModel) ToTreeModel() *TreeModel {
+	return v
 }
 
 // GetFlags() is a wrapper around gtk_tree_model_get_flags().

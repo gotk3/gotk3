@@ -61,8 +61,8 @@ func (v *Widget) toWidget() *C.GtkWidget {
 	return v.native()
 }
 
-// ToWidget is a helper getter, in case you use the interface gtk.IWidget in your program.
-// It returns e.g. *gtk.Label as a *gtk.Widget.
+// ToWidget is a helper getter, e.g.: it returns *gtk.Label as a *gtk.Widget.
+// In other cases, where you have a gtk.IWidget, use the type assertion.
 func (v *Widget) ToWidget() *Widget {
 	return v
 }
