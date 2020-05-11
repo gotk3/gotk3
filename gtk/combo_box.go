@@ -192,13 +192,12 @@ func (v *ComboBox) SetActiveID(id string) bool {
 }
 
 // GetModel is a wrapper around gtk_combo_box_get_model().
-func (v *ComboBox) GetModel() (*TreeModel, error) {
+func (v *ComboBox) GetModel() (ITreeModel, error) {
 	c := C.gtk_combo_box_get_model(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapTreeModel(obj), nil
+	return castTreeModel(obj)
 }
 
 // SetModel is a wrapper around gtk_combo_box_set_model().

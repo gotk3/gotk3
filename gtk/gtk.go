@@ -3883,13 +3883,12 @@ func (v *EntryCompletion) SetModel(model ITreeModel) {
 }
 
 // GetModel is a wrapper around gtk_entry_completion_get_model
-func (v *EntryCompletion) GetModel() (*TreeModel, error) {
+func (v *EntryCompletion) GetModel() (ITreeModel, error) {
 	c := C.gtk_entry_completion_get_model(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := glib.Take(unsafe.Pointer(c))
-	return wrapTreeModel(obj), nil
+	return castTreeModel(obj), nil
 }
 
 // TODO:
@@ -9885,13 +9884,12 @@ func (v *TreeRowReference) GetPath() *TreePath {
 }
 
 // GetModel is a wrapper around gtk_tree_row_reference_get_path.
-func (v *TreeRowReference) GetModel() ITreeModel {
+func (v *TreeRowReference) GetModel() (ITreeModel, error) {
 	c := C.gtk_tree_row_reference_get_model(v.native())
 	if c == nil {
-		return nil
+		return nil, nilPtrErr
 	}
-	m := wrapTreeModel(glib.Take(unsafe.Pointer(c)))
-	return m
+	return castTreeModel(c)
 }
 
 // Valid is a wrapper around gtk_tree_row_reference_valid.
@@ -10068,13 +10066,12 @@ func TreeModelSortNew(model ITreeModel) (*TreeModelSort, error) {
 }
 
 // GetModel is a wrapper around gtk_tree_model_sort_get_model()
-func (v *TreeModelSort) GetModel() ITreeModel {
+func (v *TreeModelSort) GetModel() (ITreeModel, error) {
 	c := C.gtk_tree_model_sort_get_model(v.native())
 	if c == nil {
-		return nil
+		return nil, nilPtrErr
 	}
-	m := wrapTreeModel(glib.Take(unsafe.Pointer(c)))
-	return m
+	return castTreeModel(c)
 }
 
 // ConvertChildPathToPath is a wrapper around gtk_tree_model_sort_convert_child_path_to_path().
@@ -10608,6 +10605,27 @@ func castCellRenderer(c *C.GtkCellRenderer) (ICellRenderer, error) {
 	ret, ok := intf.(ICellRenderer)
 	if !ok {
 		return nil, fmt.Errorf("expected value of type ICellRenderer, got %T", intf)
+	}
+
+	return ret, nil
+}
+
+// castTreeModel takes a native GtkCellTreeModel and casts it to the appropriate Go struct.
+func castTreeModel(c *C.GtkTreeModel) (ITreeModel, error) {
+	ptr := unsafe.Pointer(c)
+	var (
+		className = goString(C.object_get_class_name(C.toGObject(ptr)))
+		obj       = glib.Take(ptr)
+	)
+
+	intf, err := castInternal(className, obj)
+	if err != nil {
+		return nil, err
+	}
+
+	ret, ok := intf.(ITreeModel)
+	if !ok {
+		return nil, fmt.Errorf("expected value of type ITreeModel, got %T", intf)
 	}
 
 	return ret, nil
