@@ -3888,7 +3888,7 @@ func (v *EntryCompletion) GetModel() (ITreeModel, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return castTreeModel(obj), nil
+	return castTreeModel(c)
 }
 
 // TODO:

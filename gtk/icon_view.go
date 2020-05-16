@@ -77,7 +77,7 @@ func (v *IconView) GetModel() (ITreeModel, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return castTreeModel(obj)
+	return castTreeModel(c)
 }
 
 // SetTextColumn is a wrapper around gtk_icon_view_set_text_column().

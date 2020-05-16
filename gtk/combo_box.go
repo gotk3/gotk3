@@ -197,7 +197,7 @@ func (v *ComboBox) GetModel() (ITreeModel, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return castTreeModel(obj)
+	return castTreeModel(c)
 }
 
 // SetModel is a wrapper around gtk_combo_box_set_model().
