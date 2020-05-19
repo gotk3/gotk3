@@ -49,7 +49,7 @@ func (v *Action) Native() uintptr {
 
 func marshalAction(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapAction(wrapObject(unsafe.Pointer(c))), nil
+	return wrapAction(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapAction(obj *Object) *Action {
@@ -136,7 +136,7 @@ func (v *SimpleAction) Native() uintptr {
 
 func marshalSimpleAction(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapSimpleAction(wrapObject(unsafe.Pointer(c))), nil
+	return wrapSimpleAction(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapSimpleAction(obj *Object) *SimpleAction {
@@ -149,7 +149,7 @@ func SimpleActionNew(name string, parameterType *VariantType) *SimpleAction {
 	if c == nil {
 		return nil
 	}
-	return wrapSimpleAction(wrapObject(unsafe.Pointer(c)))
+	return wrapSimpleAction(Take(unsafe.Pointer(c)))
 }
 
 // SimpleActionNewStateful is a wrapper around g_simple_action_new_stateful
@@ -158,7 +158,7 @@ func SimpleActionNewStateful(name string, parameterType *VariantType, state *Var
 	if c == nil {
 		return nil
 	}
-	return wrapSimpleAction(wrapObject(unsafe.Pointer(c)))
+	return wrapSimpleAction(Take(unsafe.Pointer(c)))
 }
 
 // SetEnabled is a wrapper around g_simple_action_set_enabled
@@ -192,7 +192,7 @@ func (v *PropertyAction) Native() uintptr {
 
 func marshalPropertyAction(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapPropertyAction(wrapObject(unsafe.Pointer(c))), nil
+	return wrapPropertyAction(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapPropertyAction(obj *Object) *PropertyAction {
@@ -205,5 +205,5 @@ func PropertyActionNew(name string, object *Object, propertyName string) *Proper
 	if c == nil {
 		return nil
 	}
-	return wrapPropertyAction(wrapObject(unsafe.Pointer(c)))
+	return wrapPropertyAction(Take(unsafe.Pointer(c)))
 }

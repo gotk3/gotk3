@@ -26,7 +26,7 @@ func (v *Settings) Native() uintptr {
 
 func marshalSettings(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapSettings(wrapObject(unsafe.Pointer(c))), nil
+	return wrapSettings(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapSettings(obj *Object) *Settings {
@@ -37,7 +37,7 @@ func wrapFullSettings(obj *C.GSettings) *Settings {
 	if obj == nil {
 		return nil
 	}
-	return wrapSettings(wrapObject(unsafe.Pointer(obj)))
+	return wrapSettings(Take(unsafe.Pointer(obj)))
 }
 
 // SettingsNew is a wrapper around g_settings_new().

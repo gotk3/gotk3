@@ -30,7 +30,7 @@ func (v *Application) Native() uintptr {
 
 func marshalApplication(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapApplication(wrapObject(unsafe.Pointer(c))), nil
+	return wrapApplication(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapApplication(obj *Object) *Application {
@@ -56,7 +56,7 @@ func ApplicationNew(appID string, flags ApplicationFlags) *Application {
 	if c == nil {
 		return nil
 	}
-	return wrapApplication(wrapObject(unsafe.Pointer(c)))
+	return wrapApplication(Take(unsafe.Pointer(c)))
 }
 
 // GetApplicationID is a wrapper around g_application_get_application_id().
@@ -158,7 +158,7 @@ func ApplicationGetDefault() *Application {
 	if c == nil {
 		return nil
 	}
-	return wrapApplication(wrapObject(unsafe.Pointer(c)))
+	return wrapApplication(Take(unsafe.Pointer(c)))
 }
 
 // MarkBusy is a wrapper around g_application_mark_busy().

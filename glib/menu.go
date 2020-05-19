@@ -42,7 +42,7 @@ func (v *MenuModel) Native() uintptr {
 
 func marshalMenuModel(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapMenuModel(wrapObject(unsafe.Pointer(c))), nil
+	return wrapMenuModel(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapMenuModel(obj *Object) *MenuModel {
@@ -67,7 +67,7 @@ func (v *MenuModel) GetItemLink(index int, link string) *MenuModel {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuModel(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuModel(Take(unsafe.Pointer(c)))
 }
 
 // ItemsChanged is a wrapper around g_menu_model_items_changed().
@@ -96,7 +96,7 @@ func (v *Menu) native() *C.GMenu {
 
 func marshalMenu(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapMenu(wrapObject(unsafe.Pointer(c))), nil
+	return wrapMenu(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapMenu(obj *Object) *Menu {
@@ -109,7 +109,7 @@ func MenuNew() *Menu {
 	if c == nil {
 		return nil
 	}
-	return wrapMenu(wrapObject(unsafe.Pointer(c)))
+	return wrapMenu(Take(unsafe.Pointer(c)))
 }
 
 // Freeze is a wrapper around g_menu_freeze().
@@ -257,7 +257,7 @@ func (v *MenuItem) native() *C.GMenuItem {
 
 func marshalMenuItem(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c))), nil
+	return wrapMenuItem(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapMenuItem(obj *Object) *MenuItem {
@@ -270,7 +270,7 @@ func MenuItemNew() *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuItem(Take(unsafe.Pointer(c)))
 }
 
 // MenuItemNewWithLabel is a wrapper around g_menu_item_new(label, NULL).
@@ -282,7 +282,7 @@ func MenuItemNewWithLabel(label string) *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuItem(Take(unsafe.Pointer(c)))
 }
 
 // MenuItemNewWithAction is a wrapper around g_menu_item_new(NULL, detailedAction).
@@ -294,7 +294,7 @@ func MenuItemNewWithAction(detailedAction string) *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuItem(Take(unsafe.Pointer(c)))
 }
 
 // MenuItemNewWithLabelAndAction is a wrapper around g_menu_item_new(label, detailedAction).
@@ -309,7 +309,7 @@ func MenuItemNewWithLabelAndAction(label, detailedAction string) *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuItem(Take(unsafe.Pointer(c)))
 }
 
 // MenuItemNewSection is a wrapper around g_menu_item_new_section().
@@ -321,7 +321,7 @@ func MenuItemNewSection(label string, section *MenuModel) *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuItem(Take(unsafe.Pointer(c)))
 }
 
 // MenuItemNewSubmenu is a wrapper around g_menu_item_new_submenu().
@@ -333,7 +333,7 @@ func MenuItemNewSubmenu(label string, submenu *MenuModel) *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuItem(Take(unsafe.Pointer(c)))
 }
 
 // MenuItemNewFromModel is a wrapper around g_menu_item_new_from_model().
@@ -342,7 +342,7 @@ func MenuItemNewFromModel(model *MenuModel, index int) *MenuItem {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuItem(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuItem(Take(unsafe.Pointer(c)))
 }
 
 // SetLabel is a wrapper around g_menu_item_set_label().
@@ -385,7 +385,7 @@ func (v *MenuItem) GetLink(link string) *MenuModel {
 	if c == nil {
 		return nil
 	}
-	return wrapMenuModel(wrapObject(unsafe.Pointer(c)))
+	return wrapMenuModel(Take(unsafe.Pointer(c)))
 }
 
 // SetLink is a wrapper around g_menu_item_Set_link().

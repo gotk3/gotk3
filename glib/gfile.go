@@ -28,7 +28,7 @@ func FileNew(title string) *File {
 	if c == nil {
 		return nil
 	}
-	return wrapFile(wrapObject(unsafe.Pointer(c)))
+	return wrapFile(Take(unsafe.Pointer(c)))
 }
 
 func wrapFile(obj *Object) *File {

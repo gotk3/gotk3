@@ -863,20 +863,6 @@ func (v *Object) HandlerDisconnect(handle SignalHandle) {
 	delete(signals, handle)
 }
 
-// Wrapper function for new objects with reference management.
-func wrapObject(ptr unsafe.Pointer) *Object {
-	obj := NewObject(ToGObject(ptr))
-
-	if obj.IsFloating() {
-		obj.RefSink()
-	} else {
-		obj.Ref()
-	}
-
-	runtime.SetFinalizer(obj, (*Object).Unref)
-	return obj
-}
-
 /*
  * GInitiallyUnowned
  */

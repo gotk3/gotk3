@@ -57,7 +57,7 @@ func (v *Context) native() *C.PangoContext {
 /*
 func marshalContext(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := Take(unsafe.Pointer(c))
 	return wrapContext(obj), nil
 }
 
