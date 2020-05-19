@@ -1697,6 +1697,7 @@ func (v *Button) GetEventWindow() (*gdk.Window, error) {
 		return nil, nilPtrErr
 	}
 
+	// transfer none
 	w := &gdk.Window{glib.Take(unsafe.Pointer(c))}
 	return w, nil
 }
