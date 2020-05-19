@@ -147,7 +147,7 @@ func (v *Monitor) Native() uintptr {
 
 func marshalMonitor(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	return &Monitor{obj}, nil
 }
 
@@ -155,7 +155,7 @@ func toMonitor(s *C.GdkMonitor) (*Monitor, error) {
 	if s == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(s)))
 	return &Monitor{obj}, nil
 }
 

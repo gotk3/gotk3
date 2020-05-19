@@ -63,7 +63,7 @@ func (v *Seat) Native() uintptr {
 
 func marshalSeat(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	return &Seat{obj}, nil
 }
 
@@ -71,7 +71,7 @@ func toSeat(s *C.GdkSeat) (*Seat, error) {
 	if s == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(s)))
 	return &Seat{obj}, nil
 }
 

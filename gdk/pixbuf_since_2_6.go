@@ -36,7 +36,7 @@ func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspect
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -52,7 +52,7 @@ func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -67,7 +67,7 @@ func (v *Pixbuf) Flip(horizontal bool) (*Pixbuf, error) {
 	}
 
 	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 

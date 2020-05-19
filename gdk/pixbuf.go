@@ -97,7 +97,7 @@ func (v *Pixbuf) NativePrivate() *C.GdkPixbuf {
 
 func marshalPixbuf(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	return &Pixbuf{obj}, nil
 }
 
@@ -109,7 +109,7 @@ func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, heigh
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -130,7 +130,7 @@ func PixbufNewFromFile(filename string) (*Pixbuf, error) {
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -159,7 +159,7 @@ func PixbufNewFromData(pixbufData []byte, cs Colorspace, hasAlpha bool, bitsPerS
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -187,7 +187,7 @@ func PixbufCopy(v *Pixbuf) (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -282,7 +282,7 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -398,7 +398,7 @@ func (v *PixbufAnimation) NativePrivate() *C.GdkPixbufAnimation {
 
 func marshalPixbufAnimation(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	return &PixbufAnimation{obj}, nil
 }
 
@@ -415,7 +415,7 @@ func PixbufAnimationNewFromFile(filename string) (*PixbufAnimation, error) {
 	}
 
 	// "A newly-created animation with a reference count of 1, or NULL" -> no Ref() needed, but ensure Unref()
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &PixbufAnimation{obj}
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 
@@ -451,7 +451,7 @@ func PixbufLoaderNew() (*PixbufLoader, error) {
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &PixbufLoader{obj}
 	obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
@@ -526,7 +526,7 @@ func (v *PixbufLoader) WriteAndReturnPixbuf(data []byte) (*Pixbuf, error) {
 	}
 
 	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c2))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c2)))
 	p := &Pixbuf{obj}
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 
@@ -554,7 +554,7 @@ func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
 	}
 
 	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 
@@ -569,7 +569,7 @@ func (v *PixbufLoader) GetAnimation() (*PixbufAnimation, error) {
 	}
 
 	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &PixbufAnimation{obj}
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 	return p, nil
@@ -599,7 +599,7 @@ func (v *PixbufLoader) WriteAndReturnPixbufAnimation(data []byte) (*PixbufAnimat
 	}
 
 	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c2))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c2)))
 	p := &PixbufAnimation{obj}
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 

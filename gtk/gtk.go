@@ -5444,7 +5444,7 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 }
 
 // func (v *ListStore) Model(model ITreeModel) {
-// 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(model.toTreeModel()))}
+// 	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(model.toTreeModel())))
 //	v.TreeModel = *wrapTreeModel(obj)
 //}
 

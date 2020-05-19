@@ -92,7 +92,7 @@ func marshalFrameClock(p uintptr) (interface{}, error) {
 }
 
 func WrapFrameClock(ptr unsafe.Pointer) *FrameClock {
-	obj := &glib.Object{glib.ToGObject(ptr)}
+	obj := glib.NewObject(glib.ToGObject(ptr))
 	return &FrameClock{obj}
 }
 
@@ -179,7 +179,7 @@ func (v *FrameTimings) Native() uintptr {
 }
 
 func wrapFrameTimings(ptr unsafe.Pointer) (*FrameTimings) {
-	obj := &glib.Object{glib.ToGObject(ptr)}
+	obj := glib.NewObject(glib.ToGObject(ptr))
 	return &FrameTimings{obj}
 }
 

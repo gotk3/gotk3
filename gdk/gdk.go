@@ -527,7 +527,7 @@ func marshalDevice(p uintptr) (interface{}, error) {
 }
 
 func toDevice(d *C.GdkDevice) (*Device, error) {
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(d))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(d)))
 	return &Device{obj}, nil
 }
 
@@ -706,7 +706,7 @@ func toDisplay(s *C.GdkDisplay) (*Display, error) {
 	if s == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(s)))
 	return &Display{obj}, nil
 }
 
@@ -961,7 +961,7 @@ func (v *Display) GetKeymap() (*Keymap, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	return &Keymap{obj}, nil
 }
 
@@ -2055,7 +2055,7 @@ func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
 	}
 
 	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
 
@@ -2087,7 +2087,7 @@ func toWindowWithFinalizer(s *C.GdkWindow) (*Window, error) {
 	if s == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(s)))
 	rw := &Window{obj}
 	runtime.SetFinalizer(rw, func(_ interface{}) { obj.Unref() })
 	return rw, nil
@@ -2099,7 +2099,7 @@ func toWindow(s *C.GdkWindow) (*Window, error) {
 	if s == nil {
 		return nil, nilPtrErr
 	}
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(s)))
 	rw := &Window{obj}
 	return rw, nil
 }
