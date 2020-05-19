@@ -78,6 +78,7 @@ func (v *Screen) IsComposited() bool {
 
 // GetRootWindow is a wrapper around gdk_screen_get_root_window().
 func (v *Screen) GetRootWindow() (*Window, error) {
+	// transfer none
 	return toWindow(C.gdk_screen_get_root_window(v.native()))
 }
 

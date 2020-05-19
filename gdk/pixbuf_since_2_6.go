@@ -66,9 +66,10 @@ func (v *Pixbuf) Flip(horizontal bool) (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
+	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
 	return p, nil
 }

@@ -47,6 +47,7 @@ func init() {
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
 		{glib.Type(C.gdk_drag_context_get_type()), marshalDragContext},
 		{glib.Type(C.gdk_rgba_get_type()), marshalRGBA},
+		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
 		{glib.Type(C.gdk_screen_get_type()), marshalScreen},
 		{glib.Type(C.gdk_visual_get_type()), marshalVisual},
 		{glib.Type(C.gdk_window_get_type()), marshalWindow},
@@ -521,7 +522,7 @@ func (v *Device) Native() uintptr {
 
 func marshalDevice(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &Device{obj}, nil
 }
 
@@ -629,7 +630,7 @@ func (v *Cursor) Native() uintptr {
 
 func marshalCursor(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &Cursor{obj}, nil
 }
 
@@ -658,7 +659,7 @@ func (v *DeviceManager) Native() uintptr {
 
 func marshalDeviceManager(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &DeviceManager{obj}, nil
 }
 
@@ -697,7 +698,7 @@ func (v *Display) Native() uintptr {
 
 func marshalDisplay(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &Display{obj}, nil
 }
 
@@ -857,11 +858,8 @@ func (v *Display) GetMaximalCursorSize() (width, height uint) {
 // GetDefaultGroup is a wrapper around gdk_display_get_default_group().
 func (v *Display) GetDefaultGroup() (*Window, error) {
 	c := C.gdk_display_get_default_group(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	return &Window{glib.Take(unsafe.Pointer(c))}, nil
+	// transfer none
+	return toWindow(c)
 }
 
 // SupportsSelectionNotification is a wrapper around gdk_display_supports_selection_notification().
@@ -949,7 +947,7 @@ func (v *Keymap) Native() uintptr {
 
 func marshalKeymap(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &Keymap{obj}, nil
 }
 
@@ -1126,7 +1124,7 @@ func (v *DragContext) Native() uintptr {
 
 func marshalDragContext(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &DragContext{obj}, nil
 }
 
@@ -1714,6 +1712,12 @@ func wrapRGBA(obj *C.GdkRGBA) *RGBA {
 	return &RGBA{obj}
 }
 
+func marshalPixbuf(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return &Pixbuf{obj}, nil
+}
+
 func NewRGBA(values ...float64) *RGBA {
 	cval := C.GdkRGBA{}
 	c := &RGBA{&cval}
@@ -1993,7 +1997,7 @@ func (v *Visual) Native() uintptr {
 
 func marshalVisual(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &Visual{obj}, nil
 }
 
@@ -2050,10 +2054,11 @@ func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
+	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
 	return p, nil
 }
 
@@ -2063,10 +2068,8 @@ func (v *Window) GetDevicePosition(d *Device) (*Window, int, int, ModifierType) 
 	var y C.gint
 	var mt C.GdkModifierType
 	underneathWindow := C.gdk_window_get_device_position(v.native(), d.native(), &x, &y, &mt)
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(underneathWindow))}
-	rw := &Window{obj}
-	runtime.SetFinalizer(rw, func(_ interface{}) { obj.Unref() })
-	return rw, int(x), int(y), ModifierType(mt)
+
+	return toWindowWithFinalizer(underneathWindow), int(x), int(y), ModifierType(mt)
 }
 
 // TODO:
@@ -2074,14 +2077,29 @@ func (v *Window) GetDevicePosition(d *Device) (*Window, int, int, ModifierType) 
 
 func marshalWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.Take(unsafe.Pointer(c))
 	return &Window{obj}, nil
 }
 
+// toWindowWithFinalizer encapsulates *C.GdkWindow into a *gdk.Window.
+// Only use this on funcs that have the flag "transfer full" on *C.GdkWindow.
+func toWindowWithFinalizer(s *C.GdkWindow) (*Window, error) {
+	if s == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
+	rw := &Window{obj}
+	runtime.SetFinalizer(rw, func(_ interface{}) { obj.Unref() })
+	return rw, nil
+}
+
+// toWindow encapsulates *C.GdkWindow into a *gdk.Window.
+// Only use this on funcs that have the flag "transfer none" on *C.GdkWindow.
 func toWindow(s *C.GdkWindow) (*Window, error) {
 	if s == nil {
 		return nil, nilPtrErr
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(s))}
-	return &Window{obj}, nil
+	rw := &Window{obj}
+	return rw, nil
 }

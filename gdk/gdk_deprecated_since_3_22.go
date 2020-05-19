@@ -18,7 +18,11 @@ import "C"
 
 // GetActiveWindow is a wrapper around gdk_screen_get_active_window().
 func (v *Screen) GetActiveWindow() (*Window, error) {
-	return toWindow(C.gdk_screen_get_active_window(v.native()))
+
+	c := C.gdk_screen_get_active_window(v.native())
+
+	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
+	return toWindowWithFinalizer(c)
 }
 
 // GetHeight is a wrapper around gdk_screen_get_height().

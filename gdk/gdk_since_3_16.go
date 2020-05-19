@@ -98,11 +98,8 @@ func (v *GLContext) GetDisplay() (*Display, error) {
 // GetWindow is a wrapper around gdk_gl_context_get_window().
 func (v *GLContext) GetSurface() (*Window, error) {
 	c := C.gdk_gl_context_get_window(v.native())
-	if c == nil {
-		return nil, nilPtrErr
-	}
-
-	return &Window{glib.Take(unsafe.Pointer(c))}, nil
+	// transfer none
+	return toWindow(c)
 }
 
 // GetSharedContext is a wrapper around gdk_gl_context_get_shared_context().
