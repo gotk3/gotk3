@@ -454,8 +454,10 @@ func (v *Object) toObject() *Object {
 	return v
 }
 
-// newObject creates a new Object from a GObject pointer.
-func newObject(p *C.GObject) *Object {
+// NewObject creates a new Object from a GObject pointer.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
+func NewObject(p *C.GObject) *Object {
 	return &Object{GObject: p}
 }
 
@@ -492,7 +494,7 @@ func (v *Object) goValue() (interface{}, error) {
 // This function is exported for visibility in other gotk3 packages and
 // is not meant to be used by applications.
 func Take(ptr unsafe.Pointer) *Object {
-	obj := newObject(ToGObject(ptr))
+	obj := NewObject(ToGObject(ptr))
 
 	if obj.IsFloating() {
 		obj.RefSink()
@@ -862,7 +864,7 @@ func (v *Object) HandlerDisconnect(handle SignalHandle) {
 
 // Wrapper function for new objects with reference management.
 func wrapObject(ptr unsafe.Pointer) *Object {
-	obj := &Object{ToGObject(ptr)}
+	obj := NewObject(ToGObject(ptr))
 
 	if obj.IsFloating() {
 		obj.RefSink()
@@ -1311,7 +1313,7 @@ func marshalPointer(p uintptr) (interface{}, error) {
 
 func marshalObject(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return newObject((*C.GObject)(c)), nil
+	return glib.Take(unsafe.Pointer(c)), nil
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {
