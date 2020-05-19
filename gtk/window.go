@@ -71,7 +71,11 @@ func WindowNew(t WindowType) (*Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapWindow(glib.Take(unsafe.Pointer(c))), nil
+	/*
+	 * "Due to Gtk+ keeping a reference to the window internally, gtk_window_new() does not return a reference to the caller.
+	 * To delete a GtkWindow, call gtk_widget_destroy()."
+	 */
+	return wrapWindow(unsafe.Pointer(c)), nil
 }
 
 // SetTitle is a wrapper around gtk_window_set_title().
@@ -430,6 +434,7 @@ func (v *Window) GetTitle() (string, error) {
 // GetTransientFor is a wrapper around gtk_window_get_transient_for().
 func (v *Window) GetTransientFor() (*Window, error) {
 	c := C.gtk_window_get_transient_for(v.native())
+	// transfer none
 	if c == nil {
 		return nil, nil
 	}
