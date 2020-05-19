@@ -32,6 +32,7 @@ func (v *SettingsSchemaSource) native() *C.GSettingsSchemaSource {
 
 // SettingsSchemaSourceGetDefault is a wrapper around g_settings_schema_source_get_default().
 func SettingsSchemaSourceGetDefault() *SettingsSchemaSource {
+	// transfer none
 	return wrapSettingsSchemaSource(C.g_settings_schema_source_get_default())
 }
 
@@ -50,7 +51,15 @@ func SettingsSchemaSourceNewFromDirectory(dir string, parent *SettingsSchemaSour
 	cstr := (*C.gchar)(C.CString(dir))
 	defer C.free(unsafe.Pointer(cstr))
 
-	return wrapSettingsSchemaSource(C.g_settings_schema_source_new_from_directory(cstr, parent.native(), gbool(trusted), nil))
+	schemaSource := wrapSettingsSchemaSource(C.g_settings_schema_source_new_from_directory(cstr, parent.native(), gbool(trusted), nil))
+	if schemaSource == nil {
+		return nil
+	}
+
+	// g_settings_schema_source_new_from_directory sets ref counter to 1. So only Unref() via finalizer.
+	runtime.SetFinalizer(schemaSource, (*SettingsSchemaSource).Unref)
+
+	return schemaSource
 }
 
 // Lookup() is a wrapper around g_settings_schema_source_lookup().
@@ -58,7 +67,15 @@ func (v *SettingsSchemaSource) Lookup(schema string, recursive bool) *SettingsSc
 	cstr := (*C.gchar)(C.CString(schema))
 	defer C.free(unsafe.Pointer(cstr))
 
-	return wrapSettingsSchema(C.g_settings_schema_source_lookup(v.native(), cstr, gbool(recursive)))
+	schema := wrapSettingsSchema(C.g_settings_schema_source_lookup(v.native(), cstr, gbool(recursive)))
+	if schema == nil {
+		return nil
+	}
+
+	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
+	runtime.SetFinalizer(schema, (*SettingsSchema).Unref)
+
+	return schema
 }
 
 // ListSchemas is a wrapper around 	g_settings_schema_source_list_schemas().

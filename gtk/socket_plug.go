@@ -88,6 +88,7 @@ func (v *Socket) GetId() uint {
 // Retrieves the window of the plug. Use this to check if the plug has been created inside of the socket.
 func (v *Socket) GetPlugWindow() (*Window, error) {
 	c := C.gtk_socket_get_plug_window(v.native())
+	// transfer none
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -189,6 +190,7 @@ func (v *Plug) GetEmbedded() bool {
 // Retrieves the socket the plug is embedded in.
 func (v *Plug) GetSocketWindow() (*Window, error) {
 	c := C.gtk_plug_get_socket_window(v.native())
+	// transfer none
 	if c == nil {
 		return nil, nilPtrErr
 	}

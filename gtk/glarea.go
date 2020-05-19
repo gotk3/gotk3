@@ -153,6 +153,7 @@ func (v *GLArea) GetContext() (*gdk.GLContext, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
+	// transfer none
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	return &(gdk.GLContext{obj}), nil
 }
