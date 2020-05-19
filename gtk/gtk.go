@@ -8003,14 +8003,14 @@ func (v *Switch) SetActive(isActive bool) {
 
 // TargetEntry is a representation of GTK's GtkTargetEntry
 type TargetEntry struct {
-	Entry *C.GtkTargetEntry
+	entry *C.GtkTargetEntry
 }
 
 func (v *TargetEntry) native() *C.GtkTargetEntry {
-	if v == nil || v.Entry == nil {
+	if v == nil || v.entry == nil {
 		return nil
 	}
-	return (*C.GtkTargetEntry)(unsafe.Pointer(v.Entry))
+	return v.entry
 }
 
 func marshalTargetEntry(p uintptr) (interface{}, error) {
@@ -8020,6 +8020,9 @@ func marshalTargetEntry(p uintptr) (interface{}, error) {
 }
 
 func wrapTargetEntry(entry *C.GtkTargetEntry) *TargetEntry {
+	if entry == nil {
+		return nil
+	}
 	return &TargetEntry{entry}
 }
 
