@@ -32,7 +32,7 @@ func (v *SettingsSchema) native() *C.GSettingsSchema {
 
 // Ref() is a wrapper around g_settings_schema_ref().
 func (v *SettingsSchema) Ref() *SettingsSchema {
-	return wrapSettingsSchema(C.g_settings_schema_ref(v.native()))
+	v = wrapSettingsSchema(C.g_settings_schema_ref(v.native()))
 }
 
 // Unref() is a wrapper around g_settings_schema_unref().

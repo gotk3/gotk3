@@ -368,12 +368,12 @@ func (v *Source) Unref() {
 }
 
 // Ref is a wrapper around g_source_ref()
-func (v *Source) Ref() *Source {
+func (v *Source) Ref() {
 	c := C.g_source_ref(v.native())
 	if c == nil {
 		return nil
 	}
-	return (*Source)(c)
+	v = (*Source)(c)
 }
 
 // SourceRemove is a wrapper around g_source_remove()
@@ -531,7 +531,8 @@ func ToGObject(p unsafe.Pointer) *C.GObject {
 
 // Ref is a wrapper around g_object_ref().
 func (v *Object) Ref() {
-	C.g_object_ref(C.gpointer(v.GObject))
+	c = C.g_object_ref(C.gpointer(v.GObject))
+	v = NewObject(ToGObject(unsafe.Pointer(c)))
 }
 
 // Unref is a wrapper around g_object_unref().
@@ -1313,7 +1314,7 @@ func marshalPointer(p uintptr) (interface{}, error) {
 
 func marshalObject(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return glib.Take(unsafe.Pointer(c)), nil
+	return Take(unsafe.Pointer(c)), nil
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {

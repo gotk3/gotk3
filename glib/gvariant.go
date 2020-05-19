@@ -76,10 +76,11 @@ func TakeVariant(ptr unsafe.Pointer) *Variant {
 // takeVariant wraps a native GVariant,
 // takes ownership and sets up a finalizer to free the instance during GC.
 func takeVariant(p *C.GVariant) *Variant {
-	if p == nil {
+
+	obj := newVariant(p)
+	if obj == nil {
 		return nil
 	}
-	obj := &Variant{GVariant: p}
 
 	if obj.IsFloating() {
 		obj.RefSink()
@@ -102,7 +103,8 @@ func (v *Variant) IsFloating() bool {
 // Reference counting is usually handled in the gotk layer,
 // most applications should not need to call this.
 func (v *Variant) Ref() {
-	C.g_variant_ref(v.native())
+	c := C.g_variant_ref(v.native())
+	v = newVariant((*C.GVariant)(c))
 }
 
 // RefSink is a wrapper around g_variant_ref_sink.
