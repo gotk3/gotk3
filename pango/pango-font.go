@@ -246,7 +246,15 @@ func (v *FontDescription) GetStyle() Style {
 
 //void                 pango_font_description_set_variant       (PangoFontDescription *desc,
 //							       PangoVariant          variant);
+func (v *FontDescription) SetVariant(variant Variant) {
+	C.pango_font_description_set_variant(v.native(), (C.PangoVariant)(variant))
+}
+
 //PangoVariant         pango_font_description_get_variant       (const PangoFontDescription *desc) G_GNUC_PURE;
+func (v *FontDescription) GetVariant() Variant {
+	c := C.pango_font_description_get_variant(v.native())
+	return Variant(c)
+}
 
 //void                 pango_font_description_set_weight        (PangoFontDescription *desc,
 //							       PangoWeight           weight);
