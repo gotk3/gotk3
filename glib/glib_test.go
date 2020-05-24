@@ -89,3 +89,46 @@ func TestTypeNextBase(t *testing.T) {
 		t.Error("Expected GtkBin, got", name)
 	}
 }
+
+func TestValueString_NonEmpty(t *testing.T) {
+	
+	expected := "test"
+
+	value, err := glib.GValue(expected)
+	if err != nil {
+		t.Error("acquiring gvalue failed:", err.Error())
+		return
+	}
+
+	actual, err := value.GetString()
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	if actual != expected {
+		t.Errorf("Expected %q, got %q", expected, actual)
+	}
+}
+
+func TestValueString_Empty(t *testing.T) {
+	
+	expected := ""
+
+	value, err := glib.GValue(expected)
+	if err != nil {
+		t.Error("acquiring gvalue failed:", err.Error())
+		return
+	}
+
+	actual, err := value.GetString()
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+
+	if actual != expected {
+		t.Errorf("Expected %q, got %q", expected, actual)
+	}
+}
+
