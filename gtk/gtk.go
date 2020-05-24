@@ -10210,6 +10210,18 @@ func (v *TreeStore) Append(parent *TreeIter) *TreeIter {
 	return iter
 }
 
+// Prepend is a wrapper around gtk_tree_store_prepend().
+func (v *TreeStore) Prepend(parent *TreeIter) *TreeIter {
+	var ti C.GtkTreeIter
+	var cParent *C.GtkTreeIter
+	if parent != nil {
+		cParent = parent.native()
+	}
+	C.gtk_tree_store_prepend(v.native(), &ti, cParent)
+	iter := &TreeIter{ti}
+	return iter
+}
+
 // Insert is a wrapper around gtk_tree_store_insert
 func (v *TreeStore) Insert(parent *TreeIter, position int) *TreeIter {
 	var ti C.GtkTreeIter
@@ -10297,6 +10309,23 @@ func (v *TreeStore) InsertWithValues(iter, parent *TreeIter, position int, inCol
 	C.gtk_tree_store_insert_with_valuesv(v.native(), iter.native(), parent.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(length))
 
 	return nil
+}
+
+// MoveBefore is a wrapper around gtk_tree_store_move_before().
+func (v *TreeStore) MoveBefore(iter, position *TreeIter) {
+	C.gtk_tree_store_move_before(v.native(), iter.native(),
+		position.native())
+}
+
+// MoveAfter is a wrapper around gtk_tree_store_move_after().
+func (v *TreeStore) MoveAfter(iter, position *TreeIter) {
+	C.gtk_tree_store_move_after(v.native(), iter.native(),
+		position.native())
+}
+
+// Swap is a wrapper around gtk_tree_store_swap().
+func (v *TreeStore) Swap(a, b *TreeIter) {
+	C.gtk_tree_store_swap(v.native(), a.native(), b.native())
 }
 
 /*
