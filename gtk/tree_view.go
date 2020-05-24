@@ -61,12 +61,12 @@ func TreeViewNewWithModel(model ITreeModel) (*TreeView, error) {
 }
 
 // GetModel is a wrapper around gtk_tree_view_get_model().
-func (v *TreeView) GetModel() (*TreeModel, error) {
+func (v *TreeView) GetModel() (ITreeModel, error) {
 	c := C.gtk_tree_view_get_model(v.native())
 	if c == nil {
-		return nil, nil
+		return nil, nilPtrErr
 	}
-	return wrapTreeModel(glib.Take(unsafe.Pointer(c))), nil
+	return castTreeModel(c)
 }
 
 // SetModel is a wrapper around gtk_tree_view_set_model().
