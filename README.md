@@ -1,4 +1,4 @@
-gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3) 
+gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3)
 =====
 
 [![Build Status](https://travis-ci.org/gotk3/gotk3.svg?branch=master)](https://travis-ci.org/gotk3/gotk3)
@@ -17,7 +17,7 @@ Care has been taken for memory management to work seamlessly with Go's
 garbage collector without the need to use or understand GObject's
 floating references.
 
-for better understanding see 
+for better understanding see
 [package reference documation](https://pkg.go.dev/github.com/gotk3/gotk3/gtk?tab=doc)
 
 On Linux, see which version your distribution has [here](https://pkgs.org) with the search terms:
@@ -220,7 +220,7 @@ The same goes for
 
 - Add bindings for all of GTK functions
 - Add tests for each implemented binding
-- See the next steps: [wiki pape](https://github.com/gotk3/gotk3/wiki/The-future-and-what-happens-next) and add [your suggestion](https://github.com/gotk3/gotk3/issues/576)
+- See the next steps: [wiki page](https://github.com/gotk3/gotk3/wiki/The-future-and-what-happens-next) and add [your suggestion](https://github.com/gotk3/gotk3/issues/576)
 
 
 ## License
