@@ -634,6 +634,14 @@ func marshalCursor(p uintptr) (interface{}, error) {
 	return &Cursor{obj}, nil
 }
 
+func wrapCursor(c *C.GdkCursor) *Cursor {
+	if c == nil {
+		return nil
+	}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
+	return &Cursor{obj}
+}
+
 /*
  * GdkDeviceManager
  */
@@ -2021,6 +2029,20 @@ type Window struct {
 // SetCursor is a wrapper around gdk_window_set_cursor().
 func (v *Window) SetCursor(cursor *Cursor) {
 	C.gdk_window_set_cursor(v.native(), cursor.native())
+}
+
+// GetCursor is a wrapper around gdk_window_get_cursor().
+// The returned object is owned by the GdkWindow and should not be unreferenced directly.
+// Use gdk_window_set_cursor() to unset the cursor of the window.
+// Returs nil, if no custom cursor was set.
+func (v *Window) GetCursor() *Cursor {
+	c := C.gdk_window_get_cursor(v.native())
+	if c == nil {
+		return nil
+	}
+	// transfer none
+	// don't Ref or Unref, gdk_window_set_cursor() does it all.
+	return wrapCursor(c)
 }
 
 // native returns a pointer to the underlying GdkWindow.
