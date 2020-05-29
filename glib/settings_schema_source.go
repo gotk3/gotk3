@@ -37,8 +37,8 @@ func SettingsSchemaSourceGetDefault() *SettingsSchemaSource {
 }
 
 // Ref() is a wrapper around g_settings_schema_source_ref().
-func (v *SettingsSchemaSource) Ref() *SettingsSchemaSource {
-	v = wrapSettingsSchemaSource(C.g_settings_schema_source_ref(v.native()))
+func (v *SettingsSchemaSource) Ref() {
+	v.source = wrapSettingsSchemaSource(C.g_settings_schema_source_ref(v.native()))
 }
 
 // Unref() is a wrapper around g_settings_schema_source_unref().

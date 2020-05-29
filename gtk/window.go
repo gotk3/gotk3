@@ -74,6 +74,7 @@ func WindowNew(t WindowType) (*Window, error) {
 	/*
 	 * "Due to Gtk+ keeping a reference to the window internally, gtk_window_new() does not return a reference to the caller.
 	 * To delete a GtkWindow, call gtk_widget_destroy()."
+	 * This means: The window will stick around until you call Destroy(), no need to Ref() or Unref() the window objects.
 	 */
 	return wrapWindow(unsafe.Pointer(c)), nil
 }

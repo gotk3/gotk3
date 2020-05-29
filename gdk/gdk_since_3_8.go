@@ -191,7 +191,7 @@ func marshalFrameTimings(p uintptr) (interface{}, error) {
 // Ref is a wrapper around gdk_frame_timings_ref().
 func (v *FrameTimings) Ref() {
 	c := C.gdk_frame_timings_ref(v.native())
-	v = wrapFrameTimings(unsafe.Pointer(c))
+	v.GObject = glib.ToGObject(unsafe.Pointer(c))
 }
 
 // Unref is a wrapper around gdk_frame_timings_unref().

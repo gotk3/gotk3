@@ -104,7 +104,7 @@ func (v *Variant) IsFloating() bool {
 // most applications should not need to call this.
 func (v *Variant) Ref() {
 	c := C.g_variant_ref(v.native())
-	v = newVariant((*C.GVariant)(c))
+	v.GVariant = (*C.GVariant)(c)
 }
 
 // RefSink is a wrapper around g_variant_ref_sink.

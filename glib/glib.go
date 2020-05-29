@@ -367,13 +367,15 @@ func (v *Source) Unref() {
 	C.g_source_unref(v.native())
 }
 
-// Ref is a wrapper around g_source_ref()
-func (v *Source) Ref() {
+// Ref is a wrapper around g_source_ref().
+// Ref() simply increases an internal counter in the gtk object.
+// Therefore, you need to overwrite your pointer with the return value.
+func (v *Source) Ref() *Source {
 	c := C.g_source_ref(v.native())
 	if c == nil {
 		return nil
 	}
-	v = (*Source)(c)
+	return (*Source)(c)
 }
 
 // SourceRemove is a wrapper around g_source_remove()
@@ -532,7 +534,7 @@ func ToGObject(p unsafe.Pointer) *C.GObject {
 // Ref is a wrapper around g_object_ref().
 func (v *Object) Ref() {
 	c = C.g_object_ref(C.gpointer(v.GObject))
-	v = NewObject(ToGObject(unsafe.Pointer(c)))
+	v.GObject = ToGObject(unsafe.Pointer(c))
 }
 
 // Unref is a wrapper around g_object_unref().

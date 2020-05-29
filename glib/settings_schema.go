@@ -31,8 +31,8 @@ func (v *SettingsSchema) native() *C.GSettingsSchema {
 }
 
 // Ref() is a wrapper around g_settings_schema_ref().
-func (v *SettingsSchema) Ref() *SettingsSchema {
-	v = wrapSettingsSchema(C.g_settings_schema_ref(v.native()))
+func (v *SettingsSchema) Ref() {
+	v.schema = wrapSettingsSchema(C.g_settings_schema_ref(v.native()))
 }
 
 // Unref() is a wrapper around g_settings_schema_unref().
