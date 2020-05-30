@@ -16,3 +16,17 @@ import "C"
 func (v *Keymap) GetScrollLockState() bool {
 	return gobool(C.gdk_keymap_get_scroll_lock_state(v.native()))
 }
+
+/*
+ * GdkWindow
+ */
+
+// SetPassThrough is a wrapper around gdk_window_set_pass_through().
+func (v *Window) SetPassThrough(passThrough bool) {
+	C.gdk_window_set_pass_through(v.native(), gbool(passThrough))
+}
+
+// GetPassThrough is a wrapper around gdk_window_get_pass_through().
+func (v *Window) GetPassThrough() bool {
+	return gobool(C.gdk_window_get_pass_through(v.native()))
+}
