@@ -32,7 +32,7 @@ type CellArea struct {
 
 type ICellArea interface {
 	toCellArea() *C.GtkCellArea
-	ToCellArea() *C.GtkCellArea
+	ToCellArea() *CellArea
 }
 
 // native returns a pointer to the underlying GtkCellArea.
