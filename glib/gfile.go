@@ -7,16 +7,26 @@ package glib
 import "C"
 import "unsafe"
 
+/*
+ * GFile
+ */
+
+// File is a representation of GIO's GFile.
 type File struct {
   *Object
 }
 
-// Native() returns a pointer to the underlying GFile.
+// native returns a pointer to the underlying GFile.
 func (v *File ) native() *C.GFile  {
 	if v == nil || v.GObject == nil {
 		return nil
 	}
 	return C.toGFile(unsafe.Pointer(v.GObject))
+}
+
+// Native returns a pointer to the underlying GFile.
+func (v *File ) Native() uintptr  {
+	return uintptr(unsafe.Pointer(v.native()))
 }
 
 // FileNew is a wrapper around g_file_new_for_path().

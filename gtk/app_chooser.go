@@ -327,25 +327,38 @@ func wrapAppChooserDialog(obj *glib.Object) *AppChooserDialog {
 	return &AppChooserDialog{*dialog, *ac}
 }
 
-// TODO: Uncomment when gio builds successfully
-// AppChooserDialogNew() is a wrapper around gtk_app_chooser_dialog_new().
-// func AppChooserDialogNew(parent IWindow, flags DialogFlags, file *gio.File) (*AppChooserDialog, error) {
-// 	var gfile *C.GFile
-// 	if file != nil {
-// 		gfile = (*C.GFile)(unsafe.Pointer(file.Native()))
-// 	}
-// 	c := C.gtk_app_chooser_dialog_new(parent.toWindow(), C.GtkDialogFlags(flags), gfile)
-// 	if c == nil {
-// 		return nil, nilPtrErr
-// 	}
-// 	return wrapAppChooserDialog(glib.Take(unsafe.Pointer(c))), nil
-// }
+// AppChooserDialogNew is a wrapper around gtk_app_chooser_dialog_new().
+func AppChooserDialogNew(parent IWindow, flags DialogFlags, file *glib.File) (*AppChooserDialog, error) {
+
+	var gfile *C.GFile
+	if file != nil {
+		gfile = (*C.GFile)(unsafe.Pointer(file.Native()))
+	}
+
+	var pw *C.GtkWindow = nil
+	if parent != nil {
+		pw = parent.toWindow()
+	}
+
+	c := C.gtk_app_chooser_dialog_new(pw, C.GtkDialogFlags(flags), gfile)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapAppChooserDialog(glib.Take(unsafe.Pointer(c))), nil
+}
 
 // AppChooserDialogNewForContentType() is a wrapper around gtk_app_chooser_dialog_new_for_content_type().
 func AppChooserDialogNewForContentType(parent IWindow, flags DialogFlags, content_type string) (*AppChooserDialog, error) {
+
 	cstr := C.CString(content_type)
 	defer C.free(unsafe.Pointer(cstr))
-	c := C.gtk_app_chooser_dialog_new_for_content_type(parent.toWindow(), C.GtkDialogFlags(flags), (*C.gchar)(cstr))
+
+	var pw *C.GtkWindow = nil
+	if parent != nil {
+		pw = parent.toWindow()
+	}
+	
+	c := C.gtk_app_chooser_dialog_new_for_content_type(pw, C.GtkDialogFlags(flags), (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
 	}

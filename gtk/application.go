@@ -133,11 +133,17 @@ func (v *Application) IsInhibited(flags ApplicationInhibitFlags) bool {
 }
 
 // Inhibited is a wrapper around gtk_application_inhibit().
-func (v *Application) Inhibited(w IWindow, flags ApplicationInhibitFlags, reason string) uint {
+func (v *Application) Inhibited(window IWindow, flags ApplicationInhibitFlags, reason string) uint {
+	
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
 
-	return uint(C.gtk_application_inhibit(v.native(), w.toWindow(), C.GtkApplicationInhibitFlags(flags), cstr1))
+	var w *C.GtkWindow = nil
+	if window != nil {
+		w = window.toWindow()
+	}
+
+	return uint(C.gtk_application_inhibit(v.native(), w, C.GtkApplicationInhibitFlags(flags), cstr1))
 }
 
 // void 	gtk_application_add_accelerator () // deprecated and uses a gvariant paramater
