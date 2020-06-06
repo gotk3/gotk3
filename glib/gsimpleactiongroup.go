@@ -39,7 +39,7 @@ func (v *SimpleActionGroup) Native() uintptr {
 
 func marshalSimpleActionGroup(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapSimpleActionGroup(wrapObject(unsafe.Pointer(c))), nil
+	return wrapSimpleActionGroup(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapSimpleActionGroup(obj *Object) *SimpleActionGroup {
@@ -54,5 +54,5 @@ func SimpleActionGroupNew() *SimpleActionGroup {
 	if c == nil {
 		return nil
 	}
-	return wrapSimpleActionGroup(wrapObject(unsafe.Pointer(c)))
+	return wrapSimpleActionGroup(Take(unsafe.Pointer(c)))
 }

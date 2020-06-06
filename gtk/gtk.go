@@ -1697,6 +1697,7 @@ func (v *Button) GetEventWindow() (*gdk.Window, error) {
 		return nil, nilPtrErr
 	}
 
+	// transfer none
 	w := &gdk.Window{glib.Take(unsafe.Pointer(c))}
 	return w, nil
 }
@@ -5443,7 +5444,7 @@ func (v *ListStore) SetValue(iter *TreeIter, column int, value interface{}) erro
 }
 
 // func (v *ListStore) Model(model ITreeModel) {
-// 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(model.toTreeModel()))}
+// 	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(model.toTreeModel())))
 //	v.TreeModel = *wrapTreeModel(obj)
 //}
 
@@ -6438,6 +6439,7 @@ func (v *Paned) GetChild2() (IWidget, error) {
 // GetHandleWindow() is a wrapper around gtk_paned_get_handle_window().
 func (v *Paned) GetHandleWindow() (*Window, error) {
 	c := C.gtk_paned_get_handle_window(v.native())
+	// transfer none
 	if c == nil {
 		return nil, nilPtrErr
 	}
@@ -8000,15 +8002,28 @@ func (v *Switch) SetActive(isActive bool) {
  */
 
 // TargetEntry is a representation of GTK's GtkTargetEntry
-type TargetEntry C.GtkTargetEntry
-
-func marshalTargetEntry(p uintptr) (interface{}, error) {
-	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
-	return (*TargetEntry)(unsafe.Pointer(c)), nil
+type TargetEntry struct {
+	entry *C.GtkTargetEntry
 }
 
 func (v *TargetEntry) native() *C.GtkTargetEntry {
-	return (*C.GtkTargetEntry)(unsafe.Pointer(v))
+	if v == nil || v.entry == nil {
+		return nil
+	}
+	return v.entry
+}
+
+func marshalTargetEntry(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	entry := (*C.GtkTargetEntry)(unsafe.Pointer(c))
+	return wrapTargetEntry(entry), nil
+}
+
+func wrapTargetEntry(entry *C.GtkTargetEntry) *TargetEntry {
+	if entry == nil {
+		return nil
+	}
+	return &TargetEntry{entry}
 }
 
 // TargetEntryNew is a wrapper around gtk_target_entry_new().
@@ -8019,9 +8034,10 @@ func TargetEntryNew(target string, flags TargetFlags, info uint) (*TargetEntry, 
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	t := (*TargetEntry)(unsafe.Pointer(c))
-	// causes setFinilizer error
-	//	runtime.SetFinalizer(t, (*TargetEntry).free)
+	// "Returns a pointer to a new GtkTargetEntry. Free with gtk_target_entry_free()"
+	t := wrapTargetEntry(c)
+	runtime.SetFinalizer(t, (*TargetEntry).free)
+
 	return t, nil
 }
 

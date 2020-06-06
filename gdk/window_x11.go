@@ -40,8 +40,6 @@ func (v *Window) GetXID() uint32 {
 // It only works on GDK versions compiled with X11 support - its return value can't be used if WorkspaceControlSupported returns false
 func (v *Display) ForeignNewForDisplay(xid uint32) (*Window, error) {
 	c := C.gdk_x11_window_foreign_new_for_display(v.native(), C.Window(xid))
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	return &Window{glib.Take(unsafe.Pointer(c))}, nil
+	// transfer full -> i.e. don't Ref(), but ensure Unref() via finalizer
+	return toWindowWithFinalizer(c)
 }

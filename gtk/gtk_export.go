@@ -140,6 +140,7 @@ func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.
 	treeModelForeachFuncRegistry.RUnlock()
 
 	goPath := &TreePath{(*C.GtkTreePath)(path)}
+	runtime.SetFinalizer(goPath, (*TreePath).free)
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
 	return gbool(r.fn(
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
@@ -157,6 +158,7 @@ func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter
 	treeSelectionForeachFuncRegistry.RUnlock()
 
 	goPath := &TreePath{(*C.GtkTreePath)(path)}
+	runtime.SetFinalizer(goPath, (*TreePath).free)
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
 
 	r.fn(

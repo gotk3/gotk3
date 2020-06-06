@@ -367,7 +367,9 @@ func (v *Source) Unref() {
 	C.g_source_unref(v.native())
 }
 
-// Ref is a wrapper around g_source_ref()
+// Ref is a wrapper around g_source_ref().
+// Ref() simply increases an internal counter in the gtk object.
+// Therefore, you need to overwrite your pointer with the return value.
 func (v *Source) Ref() *Source {
 	c := C.g_source_ref(v.native())
 	if c == nil {
@@ -454,8 +456,10 @@ func (v *Object) toObject() *Object {
 	return v
 }
 
-// newObject creates a new Object from a GObject pointer.
-func newObject(p *C.GObject) *Object {
+// NewObject creates a new Object from a GObject pointer.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
+func NewObject(p *C.GObject) *Object {
 	return &Object{GObject: p}
 }
 
@@ -492,7 +496,7 @@ func (v *Object) goValue() (interface{}, error) {
 // This function is exported for visibility in other gotk3 packages and
 // is not meant to be used by applications.
 func Take(ptr unsafe.Pointer) *Object {
-	obj := newObject(ToGObject(ptr))
+	obj := NewObject(ToGObject(ptr))
 
 	if obj.IsFloating() {
 		obj.RefSink()
@@ -529,7 +533,8 @@ func ToGObject(p unsafe.Pointer) *C.GObject {
 
 // Ref is a wrapper around g_object_ref().
 func (v *Object) Ref() {
-	C.g_object_ref(C.gpointer(v.GObject))
+	c = C.g_object_ref(C.gpointer(v.GObject))
+	v.GObject = ToGObject(unsafe.Pointer(c))
 }
 
 // Unref is a wrapper around g_object_unref().
@@ -858,20 +863,6 @@ func (v *Object) HandlerDisconnect(handle SignalHandle) {
 	C.g_closure_invalidate(signals[handle])
 	delete(closures.m, signals[handle])
 	delete(signals, handle)
-}
-
-// Wrapper function for new objects with reference management.
-func wrapObject(ptr unsafe.Pointer) *Object {
-	obj := &Object{ToGObject(ptr)}
-
-	if obj.IsFloating() {
-		obj.RefSink()
-	} else {
-		obj.Ref()
-	}
-
-	runtime.SetFinalizer(obj, (*Object).Unref)
-	return obj
 }
 
 /*
@@ -1311,7 +1302,7 @@ func marshalPointer(p uintptr) (interface{}, error) {
 
 func marshalObject(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return newObject((*C.GObject)(c)), nil
+	return Take(unsafe.Pointer(c)), nil
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {

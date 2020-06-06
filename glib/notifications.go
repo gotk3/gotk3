@@ -26,7 +26,7 @@ func (v *Notification) Native() uintptr {
 
 func marshalNotification(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapNotification(wrapObject(unsafe.Pointer(c))), nil
+	return wrapNotification(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapNotification(obj *Object) *Notification {
@@ -42,7 +42,7 @@ func NotificationNew(title string) *Notification {
 	if c == nil {
 		return nil
 	}
-	return wrapNotification(wrapObject(unsafe.Pointer(c)))
+	return wrapNotification(Take(unsafe.Pointer(c)))
 }
 
 // SetTitle is a wrapper around g_notification_set_title().

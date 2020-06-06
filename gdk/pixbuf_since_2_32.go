@@ -37,7 +37,7 @@ func PixbufNewFromBytes(pixbufData []byte, cs Colorspace, hasAlpha bool, bitsPer
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	obj := glib.NewObject(glib.ToGObject(unsafe.Pointer(c)))
 	p := &Pixbuf{obj}
 	//obj.Ref()
 	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })

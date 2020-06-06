@@ -143,7 +143,7 @@ func marshalTabAlign(p uintptr) (interface{}, error) {
 /*
 func marshalLayout(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	obj := wrapObject(unsafe.Pointer(c))
+	obj := Take(unsafe.Pointer(c))
 	return wrapLayout(obj), nil
 }
 

@@ -25,7 +25,7 @@ func (v *Cancellable) native() *C.GCancellable {
 
 func marshalCancellable(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapCancellable(wrapObject(unsafe.Pointer(c))), nil
+	return wrapCancellable(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapCancellable(obj *Object) *Cancellable {
@@ -38,7 +38,7 @@ func CancellableNew() (*Cancellable, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return wrapCancellable(wrapObject(unsafe.Pointer(c))), nil
+	return wrapCancellable(Take(unsafe.Pointer(c))), nil
 }
 
 // IsCancelled is a wrapper around g_cancellable_is_cancelled().

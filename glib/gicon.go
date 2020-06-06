@@ -27,7 +27,7 @@ func FileIconNew(path string) *FileIcon {
 	if c == nil {
 		return nil
 	}
-	return wrapFileIcon(wrapObject(unsafe.Pointer(c)))
+	return wrapFileIcon(Take(unsafe.Pointer(c)))
 }
 
 func wrapFileIcon(obj *Object) *FileIcon {

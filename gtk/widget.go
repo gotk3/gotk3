@@ -535,7 +535,7 @@ func (v *Widget) GetParentWindow() (*gdk.Window, error) {
 	if v == nil {
 		return nil, nilPtrErr
 	}
-
+	// transfer none
 	w := &gdk.Window{glib.Take(unsafe.Pointer(c))}
 	return w, nil
 }
@@ -760,7 +760,7 @@ func (v *Widget) GetWindow() (*gdk.Window, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-
+	// transfer none
 	w := &gdk.Window{glib.Take(unsafe.Pointer(c))}
 	return w, nil
 }

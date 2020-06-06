@@ -111,6 +111,7 @@ func (v *NativeDialog) SetTransientFor(parent IWindow) {
 // GetTransientFor is a wrapper around gtk_native_dialog_get_transient_for().
 func (v *NativeDialog) GetTransientFor() (*Window, error) {
 	c := C.gtk_native_dialog_get_transient_for(v.native())
+	// transfer none
 	if c == nil {
 		return nil, nilPtrErr
 	}

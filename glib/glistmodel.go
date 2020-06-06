@@ -49,7 +49,7 @@ func (v *ListModel) Native() uintptr {
 
 func marshalListModel(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapListModel(wrapObject(unsafe.Pointer(c))), nil
+	return wrapListModel(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapListModel(obj *Object) *ListModel {
@@ -75,7 +75,7 @@ func (v *ListModel) GetItem(position uint) uintptr {
 // GetObject is a wrapper around g_list_model_get_object().
 func (v *ListModel) GetObject(position uint) *Object {
 	c := C.g_list_model_get_object(v.native(), C.guint(position))
-	return wrapObject(unsafe.Pointer(c))
+	return Take(unsafe.Pointer(c))
 }
 
 // ItemsChanged is a wrapper around g_list_model_items_changed().
@@ -105,7 +105,7 @@ func (v *ListStore) Native() uintptr {
 
 func marshalListStore(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapListStore(wrapObject(unsafe.Pointer(c))), nil
+	return wrapListStore(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapListStore(obj *Object) *ListStore {
@@ -118,7 +118,7 @@ func ListStoreNew(itemType Type) *ListStore {
 	if c == nil {
 		return nil
 	}
-	return wrapListStore(wrapObject(unsafe.Pointer(c)))
+	return wrapListStore(Take(unsafe.Pointer(c)))
 }
 
 // Insert is a wrapper around g_list_store_insert().

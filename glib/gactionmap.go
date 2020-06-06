@@ -39,7 +39,7 @@ func (v *ActionMap) Native() uintptr {
 
 func marshalActionMap(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapActionMap(wrapObject(unsafe.Pointer(c))), nil
+	return wrapActionMap(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapActionMap(obj *Object) *ActionMap {
@@ -52,7 +52,7 @@ func (v *ActionMap) LookupAction(actionName string) *Action {
 	if c == nil {
 		return nil
 	}
-	return wrapAction(wrapObject(unsafe.Pointer(c)))
+	return wrapAction(Take(unsafe.Pointer(c)))
 }
 
 // AddAction is a wrapper around g_action_map_add_action

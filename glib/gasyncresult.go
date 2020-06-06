@@ -78,7 +78,7 @@ func (v *AsyncResult) GetSourceObject() *Object {
 	if obj == nil {
 		return nil
 	}
-	return wrapObject(unsafe.Pointer(obj))
+	return Take(unsafe.Pointer(obj))
 }
 
 // IsTagged is a wrapper around g_async_result_is_tagged

@@ -30,7 +30,7 @@ func (v *Permission) Native() uintptr {
 
 func marshalPermission(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapPermission(wrapObject(unsafe.Pointer(c))), nil
+	return wrapPermission(Take(unsafe.Pointer(c))), nil
 }
 
 func wrapPermission(obj *Object) *Permission {
@@ -39,7 +39,7 @@ func wrapPermission(obj *Object) *Permission {
 
 // WrapPermission wraps given unsafe pointer into Permission.
 func WrapPermission(ptr unsafe.Pointer) *Permission {
-	return wrapPermission(wrapObject(ptr))
+	return wrapPermission(Take(ptr))
 }
 
 // GetAllowed is a wrapper around g_permission_get_allowed().

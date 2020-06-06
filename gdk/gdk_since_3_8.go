@@ -92,7 +92,7 @@ func marshalFrameClock(p uintptr) (interface{}, error) {
 }
 
 func WrapFrameClock(ptr unsafe.Pointer) *FrameClock {
-	obj := &glib.Object{glib.ToGObject(ptr)}
+	obj := glib.NewObject(glib.ToGObject(ptr))
 	return &FrameClock{obj}
 }
 
@@ -179,7 +179,7 @@ func (v *FrameTimings) Native() uintptr {
 }
 
 func wrapFrameTimings(ptr unsafe.Pointer) (*FrameTimings) {
-	obj := &glib.Object{glib.ToGObject(ptr)}
+	obj := glib.NewObject(glib.ToGObject(ptr))
 	return &FrameTimings{obj}
 }
 
@@ -191,7 +191,7 @@ func marshalFrameTimings(p uintptr) (interface{}, error) {
 // Ref is a wrapper around gdk_frame_timings_ref().
 func (v *FrameTimings) Ref() {
 	c := C.gdk_frame_timings_ref(v.native())
-	v = wrapFrameTimings(unsafe.Pointer(c))
+	v.GObject = glib.ToGObject(unsafe.Pointer(c))
 }
 
 // Unref is a wrapper around gdk_frame_timings_unref().

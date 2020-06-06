@@ -45,7 +45,7 @@ func (v *DeviceManager) ListDevices(tp DeviceType) *glib.List {
 	//TODO: WrapList should set the finalizer
 	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
 	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
-		return &Device{&glib.Object{glib.ToGObject(ptr)}}
+		return &Device{glib.NewObject(glib.ToGObject(ptr))}
 	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
 		glist.Free()

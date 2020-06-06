@@ -29,7 +29,7 @@ func (v *Binding) native() *C.GBinding {
 
 func marshalBinding(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return &Binding{wrapObject(unsafe.Pointer(c))}, nil
+	return &Binding{Take(unsafe.Pointer(c))}, nil
 }
 
 // Creates a binding between source property on source and target property on
@@ -50,7 +50,7 @@ func BindProperty(source *Object, sourceProperty string,
 	if obj == nil {
 		return nil
 	}
-	return &Binding{wrapObject(unsafe.Pointer(obj))}
+	return &Binding{Take(unsafe.Pointer(obj))}
 }
 
 // Explicitly releases the binding between the source and the target property
@@ -65,7 +65,7 @@ func (v *Binding) GetSource() *Object {
 	if obj == nil {
 		return nil
 	}
-	return wrapObject(unsafe.Pointer(obj))
+	return Take(unsafe.Pointer(obj))
 }
 
 // Retrieves the name of the property of “source” used as the source of
@@ -81,7 +81,7 @@ func (v *Binding) GetTarget() *Object {
 	if obj == nil {
 		return nil
 	}
-	return wrapObject(unsafe.Pointer(obj))
+	return Take(unsafe.Pointer(obj))
 }
 
 // Retrieves the name of the property of “target” used as the target of
