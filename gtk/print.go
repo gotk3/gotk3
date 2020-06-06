@@ -872,7 +872,13 @@ func (po *PrintOperation) SetCustomTabLabel(label string) {
 // Run() is a wrapper around gtk_print_operation_run().
 func (po *PrintOperation) Run(action PrintOperationAction, parent IWindow) (PrintOperationResult, error) {
 	var err *C.GError = nil
-	c := C.gtk_print_operation_run(po.native(), C.GtkPrintOperationAction(action), parent.toWindow(), &err)
+
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+
+	c := C.gtk_print_operation_run(po.native(), C.GtkPrintOperationAction(action), w, &err)
 	res := PrintOperationResult(c)
 	if res == PRINT_OPERATION_RESULT_ERROR {
 		defer C.g_error_free(err)
@@ -949,7 +955,13 @@ func (po *PrintOperation) GetEmbedPageSetup() bool {
 
 // PrintRunPageSetupDialog() is a wrapper around gtk_print_run_page_setup_dialog().
 func PrintRunPageSetupDialog(parent IWindow, pageSetup *PageSetup, settings *PrintSettings) *PageSetup {
-	c := C.gtk_print_run_page_setup_dialog(parent.toWindow(), pageSetup.native(), settings.native())
+
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+
+	c := C.gtk_print_run_page_setup_dialog(w, pageSetup.native(), settings.native())
 	obj := glib.Take(unsafe.Pointer(c))
 	return wrapPageSetup(obj)
 }
@@ -983,7 +995,12 @@ func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
 		pageSetupDoneCallbackData{fn: cb, data: data}
 	pageSetupDoneCallbackRegistry.Unlock()
 
-	C._gtk_print_run_page_setup_dialog_async(parent.toWindow(), setup.native(),
+	var w *C.GtkWindow = nil
+	if parent != nil {
+		w = parent.toWindow()
+	}
+
+	C._gtk_print_run_page_setup_dialog_async(w, setup.native(),
 		settings.native(), C.gpointer(uintptr(id)))
 
 	// This callback is cleaned up as soon as it has been called by GTK.
