@@ -25,6 +25,7 @@ func init() {
 		// Objects/Interfaces
 		{glib.Type(C.gdk_pixbuf_get_type()), marshalPixbuf},
 		{glib.Type(C.gdk_pixbuf_animation_get_type()), marshalPixbufAnimation},
+		{glib.Type(C.gdk_pixbuf_loader_get_type()), marshalPixbufLoader},
 	}
 	glib.RegisterGValueMarshalers(tm)
 }
@@ -440,6 +441,12 @@ func (v *PixbufLoader) native() *C.GdkPixbufLoader {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGdkPixbufLoader(p)
+}
+
+func marshalPixbufLoader(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &PixbufLoader{obj}, nil
 }
 
 // PixbufLoaderNew() is a wrapper around gdk_pixbuf_loader_new().
