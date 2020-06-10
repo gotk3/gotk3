@@ -7520,11 +7520,39 @@ func (v *SelectionData) free() {
 	C.gtk_selection_data_free(v.native())
 }
 
-//for "drag-begin" event
-func DragSetIconPixbuf(context *gdk.DragContext, pixbuf *gdk.Pixbuf, hot_x int, hot_y int) {
+// DragSetIconPixbuf is used for the "drag-begin" event. It binds to gtk_drag_set_icon_pixbuf.
+func DragSetIconPixbuf(context *gdk.DragContext, pixbuf *gdk.Pixbuf, hotX, hotY int) {
 	ctx := unsafe.Pointer(context.Native())
 	pix := unsafe.Pointer(pixbuf.Native())
-	C.gtk_drag_set_icon_pixbuf((*C.GdkDragContext)(ctx), (*C.GdkPixbuf)(pix), C.gint(hot_x), C.gint(hot_y))
+	C.gtk_drag_set_icon_pixbuf((*C.GdkDragContext)(ctx), (*C.GdkPixbuf)(pix), C.gint(hotX), C.gint(hotY))
+}
+
+// DragSetIconWidget binds to gtk_drag_set_icon_widget.
+func DragSetIconWidget(context *gdk.DragContext, w IWidget, hotX, hotY int) {
+	ctx := unsafe.Pointer(context.Native())
+	C.gtk_drag_set_icon_widget((*C.GdkDragContext)(ctx), w.toWidget(), C.gint(hotX), C.gint(hotY))
+}
+
+// DragSetIconSurface binds to gtk_drag_set_icon_surface.
+func DragSetIconSurface(context *gdk.DragContext, surface *cairo.Surface) {
+	ctx := unsafe.Pointer(context.Native())
+	sur := unsafe.Pointer(surface.Native())
+	C.gtk_drag_set_icon_surface((*C.GdkDragContext)(ctx), (*C.cairo_surface_t)(sur))
+}
+
+// DragSetIconName binds to gtk_drag_set_icon_name.
+func DragSetIconName(context *gdk.DragContext, iconName string, hotX, hotY int) {
+	ctx := unsafe.Pointer(context.Native())
+	ico := (*C.gchar)(C.CString(iconName))
+	defer C.free(unsafe.Pointer(ico))
+
+	C.gtk_drag_set_icon_name((*C.GdkDragContext)(ctx), ico, C.gint(hotX), C.gint(hotY))
+}
+
+// DragSetIconDefault binds to gtk_drag_set_icon_default.
+func DragSetIconDefault(context *gdk.DragContext) {
+	ctx := unsafe.Pointer(context.Native())
+	C.gtk_drag_set_icon_default((*C.GdkDragContext)(ctx))
 }
 
 /*
