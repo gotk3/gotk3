@@ -640,6 +640,98 @@ func TestListStoreInsertAfter_WhenNilSibling(t *testing.T) {
 	}
 }
 
+// Test storing and fetching a non-empty string value in a ListStore
+func TestListStoreGetValue_NonEmptyString(t *testing.T) {
+	ls := setupListStore()
+
+	// Add a string
+	err := ls.InsertWithValues(nil, -1, []int{0}, []interface{}{"foo"})
+	if err != nil {
+		t.Fatal("Failed to insert row", err)
+	}
+
+	// Fetch the first iter
+	first, listIsntEmpty := ls.GetIterFirst()
+	if !listIsntEmpty {
+		t.Fatal("Unexpected: liststore is empty")
+	}
+
+	// Obtain a value
+	v, err := ls.GetValue(first, 0)
+	if err != nil {
+		t.Fatal("Failed GetValue()", err)
+	}
+
+	s, err := v.GetString()
+	if err != nil {
+		t.Fatal("Failed GetString()", err)
+	}
+
+	if s != "foo" {
+		t.Errorf("Expected 'foo'; Got %v", s)
+	}
+}
+
+// Test storing and fetching an empty string value in a ListStore
+func TestListStoreGetValue_EmptyString(t *testing.T) {
+	ls := setupListStore()
+
+	// Add a string
+	err := ls.InsertWithValues(nil, -1, []int{0}, []interface{}{""})
+	if err != nil {
+		t.Fatal("Failed to insert row", err)
+	}
+
+	// Fetch the first iter
+	first, listIsntEmpty := ls.GetIterFirst()
+	if !listIsntEmpty {
+		t.Fatal("Unexpected: liststore is empty")
+	}
+
+	// Obtain a value
+	v, err := ls.GetValue(first, 0)
+	if err != nil {
+		t.Fatal("Failed GetValue()", err)
+	}
+
+	s, err := v.GetString()
+	if err != nil {
+		t.Fatal("Failed GetString()", err)
+	}
+
+	if s != "" {
+		t.Errorf("Expected an empty string; Got %v", s)
+	}
+}
+
+// Test storing and fetching a missing string value in a ListStore
+func TestListStoreGetValue_MissingString(t *testing.T) {
+	ls := setupListStore()
+
+	// Add a string
+	err := ls.InsertWithValues(nil, -1, nil, nil)
+	if err != nil {
+		t.Fatal("Failed to insert row", err)
+	}
+
+	// Fetch the first iter
+	first, listIsntEmpty := ls.GetIterFirst()
+	if !listIsntEmpty {
+		t.Fatal("Unexpected: liststore is empty")
+	}
+
+	// Obtain a value
+	v, err := ls.GetValue(first, 0)
+	if err != nil {
+		t.Fatal("Failed GetValue()", err)
+	}
+
+	_, err = v.GetString()
+	if err == nil {
+		t.Fatal("Unexpected success: error expected from GetString()", err)
+	}
+}
+
 func TestBuilder(t *testing.T) {
 	builder, err := BuilderNew()
 	if err != nil {
