@@ -176,7 +176,7 @@ func init() {
 		{glib.Type(C.gtk_scrollbar_get_type()), marshalScrollbar},
 		{glib.Type(C.gtk_scrolled_window_get_type()), marshalScrolledWindow},
 		{glib.Type(C.gtk_search_entry_get_type()), marshalSearchEntry},
-		//{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
+		{glib.Type(C.gtk_selection_data_get_type()), marshalSelectionData},
 		{glib.Type(C.gtk_separator_get_type()), marshalSeparator},
 		{glib.Type(C.gtk_separator_menu_item_get_type()), marshalSeparatorMenuItem},
 		{glib.Type(C.gtk_separator_tool_item_get_type()), marshalSeparatorToolItem},
@@ -7472,7 +7472,11 @@ func (v *SelectionData) native() *C.GtkSelectionData {
 	if v == nil {
 		return nil
 	}
-	return v.GtkSelectionData
+
+	// I don't understand why we need this, but we do.
+	c := (*C.GValue)(unsafe.Pointer(v))
+	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
+	return p
 }
 
 // GetLength is a wrapper around gtk_selection_data_get_length
@@ -7492,28 +7496,13 @@ func (v *SelectionData) GetData() (data []byte) {
 	return
 }
 
-//fixed GetData directly from ptr
-func GetData(pointer uintptr) (data []byte) {
-	c := (*C.GValue)(unsafe.Pointer(pointer))
-	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
-	C.gtk_selection_data_get_text(p)
-
-	var byteData []byte
-	var length C.gint
-	cptr := C.gtk_selection_data_get_data_with_length(p, &length)
-	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&byteData))
-	sliceHeader.Data = uintptr(unsafe.Pointer(cptr))
-	sliceHeader.Len = int(length)
-	sliceHeader.Cap = int(length)
-
-	return byteData
-}
-
-//for "drag-data-get"
-func SetData(pointer uintptr, atom gdk.Atom, data []byte) {
-	c := (*C.GValue)(unsafe.Pointer(pointer))
-	p := (*C.GtkSelectionData)(unsafe.Pointer(c))
-	C.gtk_selection_data_set(p, C.GdkAtom(unsafe.Pointer(atom)), C.gint(8), (*C.guchar)(unsafe.Pointer(&data[0])), C.gint(len(data)))
+// SetData is a wrapper around gtk_selection_data_set_data_with_length.
+func (v *SelectionData) SetData(atom gdk.Atom, data []byte) {
+	C.gtk_selection_data_set(
+		v.native(),
+		C.GdkAtom(unsafe.Pointer(atom)),
+		C.gint(8), (*C.guchar)(&data[0]), C.gint(len(data)),
+	)
 }
 
 func (v *SelectionData) free() {
