@@ -5480,8 +5480,14 @@ func (v *ListStore) InsertWithValues(iter *TreeIter, position int, inColumns []i
 		var cvp *C.GValue = (*C.GValue)(unsafe.Pointer(gv.Native()))
 		cValues = append(cValues, *cvp)
 	}
-	var cColumnsPointer *C.gint = &cColumns[0]
-	var cValuesPointer *C.GValue = &cValues[0]
+	var cColumnsPointer *C.gint
+	if len(cColumns) > 0 {
+		cColumnsPointer = &cColumns[0]
+	}
+	var cValuesPointer *C.GValue
+	if len(cValues) > 0 {
+		cValuesPointer = &cValues[0]
+	}
 
 	C.gtk_list_store_insert_with_valuesv(v.native(), iter.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(length))
 
