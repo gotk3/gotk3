@@ -9203,6 +9203,9 @@ func (v *TreeIter) free() {
 }
 
 // Copy() is a wrapper around gtk_tree_iter_copy().
+//
+// Caution: when this method is used together with selection.GetSelectedRows(),
+// it might cause random crash issue. See issue #590 and #610.
 func (v *TreeIter) Copy() (*TreeIter, error) {
 	c := C.gtk_tree_iter_copy(v.native())
 	if c == nil {
