@@ -8079,13 +8079,20 @@ func wrapTextTag(obj *glib.Object) *TextTag {
 	return &TextTag{obj}
 }
 
+// TextTagNew is a wrapper around gtk_text_tag_new(). If name is empty, then the
+// tag is anonymous.
 func TextTagNew(name string) (*TextTag, error) {
-	cname := C.CString(name)
-	defer C.free(unsafe.Pointer(cname))
-	c := C.gtk_text_tag_new((*C.gchar)(cname))
+	var gchar *C.gchar
+	if name != "" {
+		gchar = (*C.gchar)(C.CString(name))
+		defer C.free(unsafe.Pointer(gchar))
+	}
+
+	c := C.gtk_text_tag_new(gchar)
 	if c == nil {
 		return nil, nilPtrErr
 	}
+
 	return wrapTextTag(glib.Take(unsafe.Pointer(c))), nil
 }
 
