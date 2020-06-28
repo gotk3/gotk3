@@ -4058,10 +4058,10 @@ func wrapExpander(obj *glib.Object) *Expander {
 func ExpanderNew(label string) (*Expander, error) {
 	var cstr *C.gchar
 	if label != "" {
-		cstr := C.CString(label)
+		cstr = (*C.gchar)(C.CString(label))
 		defer C.free(unsafe.Pointer(cstr))
 	}
-	c := C.gtk_expander_new((*C.gchar)(cstr))
+	c := C.gtk_expander_new(cstr)
 	if c == nil {
 		return nil, nilPtrErr
 	}
