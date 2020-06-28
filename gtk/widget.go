@@ -142,7 +142,16 @@ func (v *Widget) QueueDrawArea(x, y, w, h int) {
 // gtk_widget_get_child_visible().
 // gtk_widget_get_settings().
 // gtk_widget_get_clipboard().
-// gtk_widget_get_display().
+
+// GetDisplay is a wrapper around gtk_widget_get_display().
+func (v *Widget) GetDisplay() (*gdk.Display, error) {
+	c := C.gtk_widget_get_display(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	s := &gdk.Display{glib.Take(unsafe.Pointer(c))}
+	return s, nil
+}
 
 // GetScreen is a wrapper around gtk_widget_get_screen().
 func (v *Widget) GetScreen() (*gdk.Screen, error) {
