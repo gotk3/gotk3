@@ -3552,15 +3552,24 @@ func (v *Entry) ResetIMContext() {
 
 // SetIconFromPixbuf is a wrapper around gtk_entry_set_icon_from_pixbuf().
 func (v *Entry) SetIconFromPixbuf(iconPos EntryIconPosition, pixbuf *gdk.Pixbuf) {
-	C.gtk_entry_set_icon_from_pixbuf(v.native(), C.GtkEntryIconPosition(iconPos),
-		(*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native())))
+	var pb *C.GdkPixbuf
+	if pixbuf != nil {
+		pb = (*C.GdkPixbuf)(unsafe.Pointer(pixbuf.Native()))
+	}
+
+	C.gtk_entry_set_icon_from_pixbuf(v.native(), C.GtkEntryIconPosition(iconPos), pb)
 }
 
 // SetIconFromIconName is a wrapper around gtk_entry_set_icon_from_icon_name().
 func (v *Entry) SetIconFromIconName(iconPos EntryIconPosition, name string) {
-	cstr := C.CString(name)
-	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_entry_set_icon_from_icon_name(v.native(), C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
+	var icon *C.gchar
+	if name != "" {
+		n := C.CString(name)
+		defer C.free(unsafe.Pointer(n))
+		icon = (*C.gchar)(n)
+	}
+
+	C.gtk_entry_set_icon_from_icon_name(v.native(), C.GtkEntryIconPosition(iconPos), icon)
 }
 
 // RemoveIcon is a convenience func to set a nil pointer to the icon name.
@@ -3639,9 +3648,14 @@ func (v *Entry) GetIconAtPos(x, y int) int {
 
 // SetIconTooltipText is a wrapper around gtk_entry_set_icon_tooltip_text().
 func (v *Entry) SetIconTooltipText(iconPos EntryIconPosition, tooltip string) {
-	cstr := C.CString(tooltip)
-	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_entry_set_icon_tooltip_text(v.native(), C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
+	var text *C.gchar
+	if tooltip != "" {
+		cstr := C.CString(tooltip)
+		defer C.free(unsafe.Pointer(cstr))
+		text = cstr
+	}
+
+	C.gtk_entry_set_icon_tooltip_text(v.native(), C.GtkEntryIconPosition(iconPos), text)
 }
 
 // GetIconTooltipText is a wrapper around gtk_entry_get_icon_tooltip_text().
@@ -3656,10 +3670,14 @@ func (v *Entry) GetIconTooltipText(iconPos EntryIconPosition) (string, error) {
 
 // SetIconTooltipMarkup is a wrapper around gtk_entry_set_icon_tooltip_markup().
 func (v *Entry) SetIconTooltipMarkup(iconPos EntryIconPosition, tooltip string) {
-	cstr := C.CString(tooltip)
-	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_entry_set_icon_tooltip_markup(v.native(),
-		C.GtkEntryIconPosition(iconPos), (*C.gchar)(cstr))
+	var text *C.gchar
+	if tooltip != "" {
+		cstr := C.CString(tooltip)
+		defer C.free(unsafe.Pointer(cstr))
+		text = cstr
+	}
+
+	C.gtk_entry_set_icon_tooltip_markup(v.native(), C.GtkEntryIconPosition(iconPos), text)
 }
 
 // GetIconTooltipMarkup is a wrapper around gtk_entry_get_icon_tooltip_markup().
