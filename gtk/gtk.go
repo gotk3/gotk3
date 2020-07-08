@@ -10370,8 +10370,15 @@ func (v *TreeStore) InsertWithValues(iter, parent *TreeIter, position int, inCol
 		cColumns = append(cColumns, C.gint(inColumns[i]))
 		cValues = append(cValues, *gvalue)
 	}
-	var cColumnsPointer *C.gint = &cColumns[0]
-	var cValuesPointer *C.GValue = &cValues[0]
+
+	var cColumnsPointer *C.gint
+	if len(cColumns) > 0 {
+		cColumnsPointer = &cColumns[0]
+	}
+	var cValuesPointer *C.GValue
+	if len(cValues) > 0 {
+		cValuesPointer = &cValues[0]
+	}
 
 	C.gtk_tree_store_insert_with_valuesv(v.native(), iter.native(), parent.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(len(cColumns)))
 
