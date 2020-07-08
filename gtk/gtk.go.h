@@ -466,6 +466,24 @@ toGtkCellRendererToggle(void *p)
 	return (GTK_CELL_RENDERER_TOGGLE(p));
 }
 
+static GtkCellRendererCombo *
+toGtkCellRendererCombo(void *p)
+{
+	return (GTK_CELL_RENDERER_COMBO(p));
+}
+
+static GtkCellRendererAccel *
+toGtkCellRendererAccel(void *p)
+{
+	return (GTK_CELL_RENDERER_ACCEL(p));
+}
+
+static GtkCellRendererSpin *
+toGtkCellRendererSpin(void *p)
+{
+	return (GTK_CELL_RENDERER_SPIN(p));
+}
+
 static GtkCellLayout *
 toGtkCellLayout(void *p)
 {

@@ -75,6 +75,9 @@ func init() {
 		{glib.Type(C.gtk_assistant_page_type_get_type()), marshalAssistantPageType},
 		{glib.Type(C.gtk_buttons_type_get_type()), marshalButtonsType},
 		{glib.Type(C.gtk_calendar_display_options_get_type()), marshalCalendarDisplayOptions},
+		{glib.Type(C.gtk_cell_renderer_accel_mode_get_type()), marshalCellRendererAccelMode},
+		{glib.Type(C.gtk_cell_renderer_mode_get_type()), marshalCellRendererMode},
+		{glib.Type(C.gtk_cell_renderer_state_get_type()), marshalCellRendererState},
 		{glib.Type(C.gtk_corner_type_get_type()), marshalCornerType},
 		{glib.Type(C.gtk_dest_defaults_get_type()), marshalDestDefaults},
 		{glib.Type(C.gtk_dialog_flags_get_type()), marshalDialogFlags},
@@ -97,6 +100,7 @@ func init() {
 		{glib.Type(C.gtk_relief_style_get_type()), marshalReliefStyle},
 		{glib.Type(C.gtk_response_type_get_type()), marshalResponseType},
 		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
+		{glib.Type(C.gtk_sensitivity_type_get_type()), marshalSensitivityType},
 		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
 		{glib.Type(C.gtk_sort_type_get_type()), marshalSortType},
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
@@ -129,6 +133,9 @@ func init() {
 		{glib.Type(C.gtk_cell_renderer_text_get_type()), marshalCellRendererText},
 		{glib.Type(C.gtk_cell_renderer_progress_get_type()), marshalCellRendererProgress},
 		{glib.Type(C.gtk_cell_renderer_toggle_get_type()), marshalCellRendererToggle},
+		{glib.Type(C.gtk_cell_renderer_combo_get_type()), marshalCellRendererCombo},
+		{glib.Type(C.gtk_cell_renderer_accel_get_type()), marshalCellRendererAccel},
+		{glib.Type(C.gtk_cell_renderer_spin_get_type()), marshalCellRendererSpin},
 		{glib.Type(C.gtk_check_button_get_type()), marshalCheckButton},
 		{glib.Type(C.gtk_check_menu_item_get_type()), marshalCheckMenuItem},
 		{glib.Type(C.gtk_clipboard_get_type()), marshalClipboard},
@@ -383,8 +390,19 @@ func marshalButtonsType(p uintptr) (interface{}, error) {
 	return ButtonsType(c), nil
 }
 
-// TODO:
-// GtkSensitivityType
+// SensitivityType is a representation of GTK's GtkSensitivityType
+type SensitivityType int
+
+const (
+	SENSITIVITY_AUTO SensitivityType = C.GTK_SENSITIVITY_AUTO
+	SENSITIVITY_ON   SensitivityType = C.GTK_SENSITIVITY_ON
+	SENSITIVITY_OFF  SensitivityType = C.GTK_SENSITIVITY_OFF
+)
+
+func marshalSensitivityType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SensitivityType(c), nil
+}
 
 // CalendarDisplayOptions is a representation of GTK's GtkCalendarDisplayOptions
 type CalendarDisplayOptions int
@@ -701,6 +719,21 @@ const (
 	TREE_VIEW_GRID_LINES_BOTH       TreeViewGridLines = C.GTK_TREE_VIEW_GRID_LINES_BOTH
 )
 
+// CellRendererAccelMode is a representation of GtkCellRendererAccelMode
+type CellRendererAccelMode int
+
+const (
+	// CELL_RENDERER_ACCEL_MODE_GTK is documented as GTK+ accelerators mode
+	CELL_RENDERER_ACCEL_MODE_GTK CellRendererAccelMode = C.GTK_CELL_RENDERER_ACCEL_MODE_GTK
+	// CELL_RENDERER_ACCEL_MODE_OTHER is documented as Other accelerator mode
+	CELL_RENDERER_ACCEL_MODE_OTHER CellRendererAccelMode = C.GTK_CELL_RENDERER_ACCEL_MODE_OTHER
+)
+
+func marshalCellRendererAccelMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return CellRendererAccelMode(c), nil
+}
+
 // CellRendererState is a representation of GTK's GtkCellRendererState
 type CellRendererState int
 
@@ -710,7 +743,28 @@ const (
 	CELL_RENDERER_INSENSITIVE CellRendererState = C.GTK_CELL_RENDERER_INSENSITIVE
 	CELL_RENDERER_SORTED      CellRendererState = C.GTK_CELL_RENDERER_SORTED
 	CELL_RENDERER_FOCUSED     CellRendererState = C.GTK_CELL_RENDERER_FOCUSED
+	CELL_RENDERER_EXPANDABLE  CellRendererState = C.GTK_CELL_RENDERER_EXPANDABLE // since 3.4
+	CELL_RENDERER_EXPANDED    CellRendererState = C.GTK_CELL_RENDERER_EXPANDED   // since 3.4
 )
+
+func marshalCellRendererState(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return CellRendererState(c), nil
+}
+
+// CellRendererMode is a representation of GTK's GtkCellRendererMode
+type CellRendererMode int
+
+const (
+	CELL_RENDERER_MODE_INERT       CellRendererMode = C.GTK_CELL_RENDERER_MODE_INERT
+	CELL_RENDERER_MODE_ACTIVATABLE CellRendererMode = C.GTK_CELL_RENDERER_MODE_ACTIVATABLE
+	CELL_RENDERER_MODE_EDITABLE    CellRendererMode = C.GTK_CELL_RENDERER_MODE_EDITABLE
+)
+
+func marshalCellRendererMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return CellRendererMode(c), nil
+}
 
 // PositionType is a representation of GTK's GtkPositionType.
 type PositionType int
@@ -2119,6 +2173,31 @@ func wrapCellRenderer(obj *glib.Object) *CellRenderer {
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
 }
 
+// TODO: gtk_cell_renderer_get_aligned_area
+// TODO: gtk_cell_renderer_get_size
+// TODO: gtk_cell_renderer_render
+// TODO: gtk_cell_renderer_activate
+// TODO: gtk_cell_renderer_start_editing
+// TODO: gtk_cell_renderer_stop_editing
+// TODO: gtk_cell_renderer_get_fixed_size
+// TODO: gtk_cell_renderer_set_fixed_size
+// TODO: gtk_cell_renderer_get_visible
+// TODO: gtk_cell_renderer_set_visible
+// TODO: gtk_cell_renderer_get_sensitive
+// TODO: gtk_cell_renderer_set_sensitive
+// TODO: gtk_cell_renderer_get_alignment
+// TODO: gtk_cell_renderer_set_alignment
+// TODO: gtk_cell_renderer_get_padding
+// TODO: gtk_cell_renderer_set_padding
+// TODO: gtk_cell_renderer_get_state
+// TODO: gtk_cell_renderer_is_activatable
+// TODO: gtk_cell_renderer_get_preferred_height
+// TODO: gtk_cell_renderer_get_preferred_height_for_width
+// TODO: gtk_cell_renderer_get_preferred_size
+// TODO: gtk_cell_renderer_get_preferred_width
+// TODO: gtk_cell_renderer_get_preferred_width_for_height
+// TODO: gtk_cell_renderer_get_request_mode
+
 /*
  * GtkCellRendererSpinner
  */
@@ -2271,6 +2350,11 @@ func CellRendererTextNew() (*CellRendererText, error) {
 	return wrapCellRendererText(obj), nil
 }
 
+// SetFixedHeightFromFont is a wrapper around gtk_cell_renderer_text_set_fixed_height_from_font
+func (v *CellRendererText) SetFixedHeightFromFont(numberOfRows int) {
+	C.gtk_cell_renderer_text_set_fixed_height_from_font(v.native(), C.gint(numberOfRows))
+}
+
 /*
  * GtkCellRendererToggle
  */
@@ -2348,6 +2432,120 @@ func (v *CellRendererToggle) SetActivatable(activatable bool) {
 func (v *CellRendererToggle) GetActivatable() bool {
 	c := C.gtk_cell_renderer_toggle_get_activatable(v.native())
 	return gobool(c)
+}
+
+/*
+ * GtkCellRendererAccel
+ */
+
+// CellRendererAccel is a representation of GtkCellRendererAccel.
+type CellRendererAccel struct {
+	CellRendererText
+}
+
+// native returns a pointer to the underlying GtkCellRendererAccel.
+func (v *CellRendererAccel) native() *C.GtkCellRendererAccel {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellRendererAccel(p)
+}
+
+func marshalCellRendererAccel(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererAccel(obj), nil
+}
+
+func wrapCellRendererAccel(obj *glib.Object) *CellRendererAccel {
+	return &CellRendererAccel{CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}}
+}
+
+// CellRendererAccelNew is a wrapper around gtk_cell_renderer_accel_new().
+func CellRendererAccelNew() (*CellRendererAccel, error) {
+	c := C.gtk_cell_renderer_accel_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererAccel(obj), nil
+}
+
+/*
+ * GtkCellRendererCombo
+ */
+
+// CellRendererCombo is a representation of GtkCellRendererCombo.
+type CellRendererCombo struct {
+	CellRendererText
+}
+
+// native returns a pointer to the underlying GtkCellRendererCombo.
+func (v *CellRendererCombo) native() *C.GtkCellRendererCombo {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellRendererCombo(p)
+}
+
+func marshalCellRendererCombo(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererCombo(obj), nil
+}
+
+func wrapCellRendererCombo(obj *glib.Object) *CellRendererCombo {
+	return &CellRendererCombo{CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}}
+}
+
+// CellRendererComboNew is a wrapper around gtk_cell_renderer_combo_new().
+func CellRendererComboNew() (*CellRendererCombo, error) {
+	c := C.gtk_cell_renderer_combo_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererCombo(obj), nil
+}
+
+/*
+ * GtkCellRendererSpin
+ */
+
+// CellRendererSpin is a representation of GtkCellRendererSpin.
+type CellRendererSpin struct {
+	CellRendererText
+}
+
+// native returns a pointer to the underlying GtkCellRendererSpin.
+func (v *CellRendererSpin) native() *C.GtkCellRendererSpin {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellRendererSpin(p)
+}
+
+func marshalCellRendererSpin(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererSpin(obj), nil
+}
+
+func wrapCellRendererSpin(obj *glib.Object) *CellRendererSpin {
+	return &CellRendererSpin{CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}}
+}
+
+// CellRendererSpinNew is a wrapper around gtk_cell_renderer_spin_new().
+func CellRendererSpinNew() (*CellRendererSpin, error) {
+	c := C.gtk_cell_renderer_spin_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellRendererSpin(obj), nil
 }
 
 /*
@@ -10519,6 +10717,9 @@ var WrapMap = map[string]WrapFn{
 	"GtkCellRendererText":     wrapCellRendererText,
 	"GtkCellRendererProgress": wrapCellRendererProgress,
 	"GtkCellRendererToggle":   wrapCellRendererToggle,
+	"GtkCellRendererCombo":    wrapCellRendererCombo,
+	"GtkCellRendererAccel":    wrapCellRendererAccel,
+	"GtkCellRendererSpin":     wrapCellRendererSpin,
 	"GtkCheckButton":          wrapCheckButton,
 	"GtkCheckMenuItem":        wrapCheckMenuItem,
 	"GtkClipboard":            wrapClipboard,

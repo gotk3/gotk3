@@ -519,6 +519,50 @@ func TestCellRendererToggle_WhenSetActivatableTrue_ExpectGetActivatableReturnsTr
 	}
 }
 
+func TestCellRendererAccel_AccelModeMarshaling(t *testing.T) {
+	// CellRendererAccel has no getters/setters, everything is handled via properties, so marshaling has to work
+	renderer, err := CellRendererAccelNew()
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = renderer.SetProperty("accel-mode", CELL_RENDERER_ACCEL_MODE_OTHER)
+	if err != nil {
+		t.Error(err)
+	}
+
+	value, err := renderer.GetProperty("accel-mode")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if CELL_RENDERER_ACCEL_MODE_OTHER != value {
+		t.Errorf("Expected %v, got %v", CELL_RENDERER_ACCEL_MODE_OTHER, value)
+	}
+}
+
+func TestCellRendererAccel_ModifierTypeMarshaling(t *testing.T) {
+	// CellRendererAccel has no getters/setters, everything is handled via properties, so marshaling has to work
+	renderer, err := CellRendererAccelNew()
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = renderer.SetProperty("accel-mods", gdk.META_MASK)
+	if err != nil {
+		t.Error(err)
+	}
+
+	value, err := renderer.GetProperty("accel-mods")
+	if err != nil {
+		t.Error(err)
+	}
+
+	if gdk.META_MASK != value.(gdk.ModifierType) {
+		t.Errorf("Expected %v, got %v", gdk.META_MASK, value.(gdk.ModifierType))
+	}
+}
+
 func setupListStore() *ListStore {
 	ls, err := ListStoreNew(glib.TYPE_STRING)
 	if err != nil {
