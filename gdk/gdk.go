@@ -153,7 +153,7 @@ const (
 )
 
 func marshalModifierType(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	c := C.g_value_get_flags((*C.GValue)(unsafe.Pointer(p)))
 	return ModifierType(c), nil
 }
 
@@ -215,7 +215,6 @@ func marshalEventMask(p uintptr) (interface{}, error) {
 
 // added by lazyshot
 // ScrollDirection is a representation of GDK's GdkScrollDirection
-
 type ScrollDirection int
 
 const (
