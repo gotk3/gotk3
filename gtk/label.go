@@ -69,8 +69,10 @@ func (v *Label) SetText(str string) {
 
 // TODO:
 // gtk_label_set_text_with_mnemonic().
-// gtk_label_set_attributes().
 // gtk_label_get_attributes().
+func (v *Label) SetAttributes(attributes *pango.AttrList) {
+	C.gtk_label_set_attributes(v.native(), (*C.PangoAttrList)(unsafe.Pointer(attributes.Native())))
+}
 
 // SetMarkup is a wrapper around gtk_label_set_markup().
 func (v *Label) SetMarkup(str string) {
