@@ -26,6 +26,7 @@ import (
 	"runtime"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -2069,8 +2070,18 @@ func (v *Window) GetDevicePosition(d *Device) (*Window, int, int, ModifierType) 
 	return rw, int(x), int(y), ModifierType(mt)
 }
 
-// TODO:
-// gdk_pixbuf_get_from_surface().
+func PixbufGetFromSurface(surface *cairo.Surface, src_x, src_y, width, height int) (*Pixbuf, error) {
+	c := C.gdk_pixbuf_get_from_surface((*C.cairo_surface_t)(unsafe.Pointer(surface.Native())), C.gint(src_x), C.gint(src_y), C.gint(width), C.gint(height))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	//obj.Ref()
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	return p, nil
+}
 
 func marshalWindow(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
