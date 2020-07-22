@@ -38,6 +38,10 @@ import (
  */
 
 const (
+	DIALOG_USE_HEADER_BAR DialogFlags = C.GTK_DIALOG_USE_HEADER_BAR
+)
+
+const (
 	STATE_FLAG_LINK    StateFlags = C.GTK_STATE_FLAG_LINK
 	STATE_FLAG_VISITED StateFlags = C.GTK_STATE_FLAG_VISITED
 )
