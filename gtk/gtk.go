@@ -4820,6 +4820,15 @@ func (v *FileFilter) SetName(name string) {
 	C.gtk_file_filter_set_name(v.native(), (*C.gchar)(cstr))
 }
 
+// GetName is a wrapper around gtk_file_filter_get_name().
+func (v *FileFilter) GetName() (name string) {
+	cstr := C.gtk_file_filter_get_name(v.native())
+	if cstr != nil {
+		name = goString(cstr)
+	}
+	return
+}
+
 // AddMimeType is a wrapper around gtk_file_filter_add_mime_type().
 func (v *FileFilter) AddMimeType(mimeType string) {
 	cstr := C.CString(mimeType)
