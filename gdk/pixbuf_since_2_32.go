@@ -49,7 +49,7 @@ func PixbufNewFromBytes(pixbufData []byte, cs Colorspace, hasAlpha bool, bitsPer
 // see go package "encoding/base64"
 func PixbufNewFromBytesOnly(pixbufData []byte) (*Pixbuf, error) {
 	pixbufLoader, err := PixbufLoaderNew()
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 	return pixbufLoader.WriteAndReturnPixbuf(pixbufData)
