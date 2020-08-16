@@ -5621,11 +5621,16 @@ func (v *ListStore) Remove(iter *TreeIter) bool {
 	return gobool(c)
 }
 
-// TODO(jrick)
-/*
+// SetColumnTypes is a wrapper around gtk_list_store_set_column_types().
+// The size of glib.Type must match the number of columns
 func (v *ListStore) SetColumnTypes(types ...glib.Type) {
+	gtypes := C.alloc_types(C.int(len(types)))
+	for n, val := range types {
+		C.set_type(gtypes, C.int(n), C.GType(val))
+	}
+	defer C.g_free(C.gpointer(gtypes))
+	C.gtk_list_store_set_column_types(v.native(), C.gint(len(types)), gtypes)
 }
-*/
 
 // Set() is a wrapper around gtk_list_store_set_value() but provides
 // a function similar to gtk_list_store_set() in that multiple columns
