@@ -10586,6 +10586,17 @@ func (v *TreeStore) Swap(a, b *TreeIter) {
 	C.gtk_tree_store_swap(v.native(), a.native(), b.native())
 }
 
+// SetColumnTypes is a wrapper around gtk_tree_store_set_column_types().
+// The size of glib.Type must match the number of columns
+func (v *TreeStore) SetColumnTypes(types ...glib.Type) {
+	gtypes := C.alloc_types(C.int(len(types)))
+	for n, val := range types {
+		C.set_type(gtypes, C.int(n), C.GType(val))
+	}
+	defer C.g_free(C.gpointer(gtypes))
+	C.gtk_tree_store_set_column_types(v.native(), C.gint(len(types)), gtypes)
+}
+
 /*
  * GtkViewport
  */
