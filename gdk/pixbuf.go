@@ -397,6 +397,19 @@ func (v *PixbufAnimation) NativePrivate() *C.GdkPixbufAnimation {
 	return C.toGdkPixbufAnimation(p)
 }
 
+func (v *PixbufAnimation) GetStaticImage() *Pixbuf {
+	c := C.gdk_pixbuf_animation_get_static_image(v.native())
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+
+	// Add a reference so the pixbuf doesn't outlive the parent pixbuf
+	// animation.
+	v.Ref()
+	runtime.SetFinalizer(p, func(*Pixbuf) { v.Unref() })
+
+	return p
+}
+
 func marshalPixbufAnimation(p uintptr) (interface{}, error) {
 	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
