@@ -22,6 +22,14 @@ const (
 	STATE_FLAG_CHECKED StateFlags = C.GTK_STATE_FLAG_CHECKED
 )
 
+// IconLookupFlags is a representation of GTK's GtkIconLookupFlags.
+const (
+	ICON_LOOKUP_FORCE_REGULAR  IconLookupFlags = C.GTK_ICON_LOOKUP_FORCE_REGULAR
+	ICON_LOOKUP_FORCE_SYMBOLIC                 = C.GTK_ICON_LOOKUP_FORCE_SYMBOLIC
+	ICON_LOOKUP_DIR_LTR                        = C.GTK_ICON_LOOKUP_DIR_LTR
+	ICON_LOOKUP_DIR_RTL                        = C.GTK_ICON_LOOKUP_DIR_RTL
+)
+
 /*
  * GtkStack
  */
