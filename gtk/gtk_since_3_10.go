@@ -109,6 +109,24 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
 // gtk_image_set_from_surface().
 
 /*
+ * GtkIconTheme
+ */
+
+// HasIcon is a wrapper around gtk_icon_theme_load_icon_for_scale().
+func (v *IconTheme) LoadIconForScale(iconName string, size, scale int, flags IconLookupFlags) (*gdk.Pixbuf, error) {
+	cstr := C.CString(iconName)
+	defer C.free(unsafe.Pointer(cstr))
+
+	var err *C.GError = nil
+	c := C.gtk_icon_theme_load_icon_for_scale(v.Theme, (*C.gchar)(cstr), C.gint(size), C.gint(scale), C.GtkIconLookupFlags(flags), &err)
+	if c == nil {
+		defer C.g_error_free(err)
+		return nil, errors.New(goString(err.message))
+	}
+	return &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
+}
+
+/*
  * GtkEntry
  */
 
