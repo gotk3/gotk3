@@ -5160,6 +5160,15 @@ func (v *IconTheme) LoadIcon(iconName string, size int, flags IconLookupFlags) (
 	return &gdk.Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
 }
 
+// HasIcon is a wrapper around gtk_icon_theme_has_icon().
+func (v *IconTheme) HasIcon(iconName string) bool {
+	cstr := C.CString(iconName)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gtk_icon_theme_has_icon(v.Theme, (*C.gchar)(cstr))
+	return gobool(c)
+}
+
 /*
  * GtkImage
  */
