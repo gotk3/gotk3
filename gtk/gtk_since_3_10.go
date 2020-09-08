@@ -11,6 +11,7 @@ package gtk
 // #include "gtk_since_3_10.go.h"
 import "C"
 import (
+	"errors"
 	"sync"
 	"unsafe"
 
