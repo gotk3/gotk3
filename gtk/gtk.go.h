@@ -1060,3 +1060,9 @@ extern void goTreeSelectionForeachFunc(GtkTreeModel *model, GtkTreePath *path, G
 static inline void _gtk_tree_selection_selected_foreach(GtkTreeSelection *selection, gpointer user_data) {
     gtk_tree_selection_selected_foreach(selection, (GtkTreeSelectionForeachFunc)(goTreeSelectionForeachFunc), user_data);
 }
+
+extern gboolean goTreeSelectionFunc(GtkTreeSelection *selection, GtkTreeModel *model, GtkTreePath *path, gboolean selected, gpointer data);
+
+static inline void _gtk_tree_selection_set_select_function(GtkTreeSelection *selection, gpointer user_data) {
+    gtk_tree_selection_set_select_function(selection, (GtkTreeSelectionFunc)(goTreeSelectionFunc), user_data, NULL);
+}
