@@ -8793,6 +8793,74 @@ func (v *TextBuffer) GetIterAtLineIndex(lineNumber, charIndex int) (iter *TextIt
 	return
 }
 
+// InsertInteractiveAtCursor() is a wrapper around gtk_text_buffer_insert_interactive_at_cursor().
+func (v *TextBuffer) InsertInteractiveAtCursor(text string, editable bool) bool {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+
+	return gobool(C.gtk_text_buffer_insert_interactive_at_cursor(
+		v.native(),
+		(*C.gchar)(cstr),
+		C.gint(len(text)),
+		gbool(editable)))
+}
+
+// InsertInteractive() is a wrapper around gtk_text_buffer_insert_interactive().
+func (v *TextBuffer) InsertInteractive(iter *TextIter, text string, editable bool) bool {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+
+	return gobool(C.gtk_text_buffer_insert_interactive(
+		v.native(),
+		(*C.GtkTextIter)(iter),
+		(*C.gchar)(cstr),
+		C.gint(len(text)),
+		gbool(editable)))
+}
+
+// InsertRangeInteractive() is a wrapper around gtk_text_buffer_insert_range_interactive().
+func (v *TextBuffer) InsertRangeInteractive(iter, start, end *TextIter, editable bool) bool {
+
+	return gobool(C.gtk_text_buffer_insert_range_interactive(
+		v.native(),
+		(*C.GtkTextIter)(iter),
+		(*C.GtkTextIter)(start),
+		(*C.GtkTextIter)(end),
+		gbool(editable)))
+}
+
+// InsertRange() is a wrapper around gtk_text_buffer_insert_range().
+func (v *TextBuffer) InsertRange(iter, start, end *TextIter) {
+
+	C.gtk_text_buffer_insert_range(
+		v.native(),
+		(*C.GtkTextIter)(iter),
+		(*C.GtkTextIter)(start),
+		(*C.GtkTextIter)(end))
+}
+
+// DeleteInteractive() is a wrapper around gtk_text_buffer_delete_interactive().
+func (v *TextBuffer) DeleteInteractive(start, end *TextIter, editable bool) bool {
+
+	return gobool(C.gtk_text_buffer_delete_interactive(
+		v.native(),
+		(*C.GtkTextIter)(start),
+		(*C.GtkTextIter)(end),
+		gbool(editable)))
+}
+
+// BeginUserAction() is a wrapper around gtk_text_buffer_begin_user_action().
+func (v *TextBuffer) BeginUserAction() {
+
+	C.gtk_text_buffer_begin_user_action(v.native())
+}
+
+// EndUserAction() is a wrapper around gtk_text_buffer_end_user_action().
+func (v *TextBuffer) EndUserAction() {
+
+	C.gtk_text_buffer_end_user_action(v.native())
+}
+
 /*
  * GtkToggleButton
  */
