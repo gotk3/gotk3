@@ -27,7 +27,7 @@ type TextMark struct {
 	*glib.Object
 }
 
-// native returns a pointer to the underlying GtkSourceStyleSchemeManager.
+// native returns a pointer to the underlying GtkTextMark.
 func (v *TextMark) native() *C.GtkTextMark {
 	if v == nil || v.GObject == nil {
 		return nil
