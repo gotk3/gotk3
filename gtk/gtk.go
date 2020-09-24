@@ -8616,7 +8616,7 @@ func (v *TextBuffer) SetText(text string) {
 // GetIterAtMark() is a wrapper around gtk_text_buffer_get_iter_at_mark().
 func (v *TextBuffer) GetIterAtMark(mark *TextMark) *TextIter {
 	var iter C.GtkTextIter
-	C.gtk_text_buffer_get_iter_at_mark(v.native(), &iter, (*C.GtkTextMark)(mark))
+	C.gtk_text_buffer_get_iter_at_mark(v.native(), &iter, mark.native())
 	return (*TextIter)(&iter)
 }
 
@@ -8625,7 +8625,7 @@ func (v *TextBuffer) CreateMark(mark_name string, where *TextIter, left_gravity 
 	cstr := C.CString(mark_name)
 	defer C.free(unsafe.Pointer(cstr))
 	ret := C.gtk_text_buffer_create_mark(v.native(), (*C.gchar)(cstr), (*C.GtkTextIter)(where), gbool(left_gravity))
-	return (*TextMark)(ret)
+	return wrapTextMark(glib.Take(unsafe.Pointer(ret)))
 }
 
 // GetMark() is a wrapper around gtk_text_buffer_get_mark().
@@ -8633,12 +8633,12 @@ func (v *TextBuffer) GetMark(mark_name string) *TextMark {
 	cstr := C.CString(mark_name)
 	defer C.free(unsafe.Pointer(cstr))
 	ret := C.gtk_text_buffer_get_mark(v.native(), (*C.gchar)(cstr))
-	return (*TextMark)(ret)
+	return wrapTextMark(glib.Take(unsafe.Pointer(ret)))
 }
 
 // DeleteMark() is a wrapper around gtk_text_buffer_delete_mark()
 func (v *TextBuffer) DeleteMark(mark *TextMark) {
-	C.gtk_text_buffer_delete_mark(v.native(), (*C.GtkTextMark)(mark))
+	C.gtk_text_buffer_delete_mark(v.native(), mark.native())
 }
 
 // DeleteMarkByName() is a wrapper around  gtk_text_buffer_delete_mark_by_name()
@@ -8667,7 +8667,7 @@ func (v *TextBuffer) DeleteSelection(interactive, defaultEditable bool) bool {
 // GetSelectionBound() is a wrapper around gtk_text_buffer_get_selection_bound().
 func (v *TextBuffer) GetSelectionBound() *TextMark {
 	ret := C.gtk_text_buffer_get_selection_bound(v.native())
-	return (*TextMark)(ret)
+	return wrapTextMark(glib.Take(unsafe.Pointer(ret)))
 }
 
 // GetSelectionBounds() is a wrapper around gtk_text_buffer_get_selection_bounds().
@@ -8758,7 +8758,7 @@ func (v *TextBuffer) Deserialize(contentBuffer *TextBuffer, format gdk.Atom, ite
 // GetInsert() is a wrapper around gtk_text_buffer_get_insert().
 func (v *TextBuffer) GetInsert() *TextMark {
 	ret := C.gtk_text_buffer_get_insert(v.native())
-	return (*TextMark)(ret)
+	return wrapTextMark(glib.Take(unsafe.Pointer(ret)))
 }
 
 // CopyClipboard() is a wrapper around gtk_text_buffer_copy_clipboard().
