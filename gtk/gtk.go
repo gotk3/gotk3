@@ -10120,6 +10120,38 @@ func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc, userData ...
 	treeSelectionForeachFuncRegistry.Unlock()
 }
 
+// TreeSelectionFunc defines the function prototype for the gtk_tree_selection_set_select_function
+// function (f arg) for (* TreeSelection).SetSelectFunction
+type TreeSelectionFunc func(selection *TreeSelection, model *TreeModel, path *TreePath, selected bool, userData ...interface{}) bool
+
+type treeSelectionFuncData struct {
+	fn       TreeSelectionFunc
+	userData []interface{}
+}
+
+var (
+	TreeSelectionFuncRegistry = struct {
+		sync.RWMutex
+		next int
+		m    map[int]treeSelectionFuncData
+	}{
+		next: 1,
+		m:    make(map[int]treeSelectionFuncData),
+	}
+)
+
+// SetSelectFunction() is a wrapper around gtk_tree_selection_set_select_function()
+func (v *TreeSelection) SetSelectFunction(f TreeSelectionFunc, userData ...interface{}) {
+	// TODO: figure out a way to determine when we can clean up
+	TreeSelectionFuncRegistry.Lock()
+	id := TreeSelectionFuncRegistry.next
+	TreeSelectionFuncRegistry.next++
+	TreeSelectionFuncRegistry.m[id] = treeSelectionFuncData{fn: f, userData: userData}
+	TreeSelectionFuncRegistry.Unlock()
+
+	C._gtk_tree_selection_set_select_function(v.native(), C.gpointer(uintptr(id)))
+}
+
 /*
  * GtkTreeRowReference
  */
