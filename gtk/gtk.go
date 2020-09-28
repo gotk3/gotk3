@@ -57,6 +57,7 @@ import (
 	"sync"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/gio"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -5254,12 +5255,18 @@ func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
 	return wrapImage(obj), nil
 }
 
-// TODO(jrick) GIcon
-/*
-// gtk_image_new_from_gicon().
-func ImageNewFromGIcon() {
+// ImageNewFromGIcon is a wrapper around gtk_image_new_from_gicon()
+func ImageNewFromGIcon(icon *gio.Icon, size IconSize) (*Image, error) {
+	c := C.gtk_image_new_from_gicon(
+		(*C.GIcon)(icon.NativePrivate()),
+		C.GtkIconSize(size))
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapImage(obj), nil
 }
-*/
 
 // Clear() is a wrapper around gtk_image_clear().
 func (v *Image) Clear() {
@@ -5294,12 +5301,13 @@ func (v *Image) SetFromIconName(iconName string, size IconSize) {
 		C.GtkIconSize(size))
 }
 
-// TODO(jrick) GIcon
-/*
-// gtk_image_set_from_gicon().
-func (v *Image) SetFromGIcon() {
+// SetFromGIcon is a wrapper around gtk_image_set_from_gicon()
+func (v *Image) SetFromGIcon(icon *gio.Icon, size IconSize) {
+	C.gtk_image_set_from_gicon(
+		v.native(),
+		(*C.GIcon)(icon.NativePrivate()),
+		C.GtkIconSize(size))
 }
-*/
 
 // SetPixelSize() is a wrapper around gtk_image_set_pixel_size().
 func (v *Image) SetPixelSize(pixelSize int) {
@@ -5356,12 +5364,25 @@ func (v *Image) GetIconName() (string, IconSize) {
 	return goString(iconName), IconSize(size)
 }
 
-// TODO(jrick) GIcon
-/*
-// gtk_image_get_gicon().
-func (v *Image) GetGIcon() {
+// GetGIcon is a wrapper around gtk_image_get_gicon()
+func (v *Image) GetGIcon() (*gio.Icon, IconSize, error) {
+	gicon := new(C.GIcon)
+	size := new(C.GtkIconSize)
+	C.gtk_image_get_gicon(
+		v.native(),
+		&gicon,
+		size)
+
+	if gicon == nil {
+		return nil, ICON_SIZE_INVALID, nilPtrErr
+	}
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(gicon))}
+	i := &gio.Icon{obj}
+
+	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
+	return i, IconSize(*size), nil
 }
-*/
 
 // GetPixelSize() is a wrapper around gtk_image_get_pixel_size().
 func (v *Image) GetPixelSize() int {
