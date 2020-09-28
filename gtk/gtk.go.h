@@ -412,6 +412,12 @@ toGtkTextView(void *p)
 	return (GTK_TEXT_VIEW(p));
 }
 
+static GtkTextMark *
+toGtkTextMark(void *p)
+{
+	return (GTK_TEXT_MARK(p));
+}
+
 static GtkTextTagTable *
 toGtkTextTagTable(void *p)
 {
