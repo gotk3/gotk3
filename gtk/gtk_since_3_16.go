@@ -326,3 +326,18 @@ func (v *CssProvider) LoadFromResource(path string) {
 	defer C.free(unsafe.Pointer(cpath))
 	C.gtk_css_provider_load_from_resource(v.native(), (*C.gchar)(cpath))
 }
+
+/*
+ * GtkTextView
+ */
+
+// SetMonospace is a wrapper around  gtk_text_view_set_monospace()
+func (v *TextView) SetMonospace(monospace bool) {
+	C.gtk_text_view_set_monospace(v.native(), gbool(monospace))
+}
+
+// GetMonospace is a wrapper around  gtk_text_view_get_monospace()
+func (v *TextView) GetMonospace() bool {
+	return gobool(C.gtk_text_view_get_monospace(v.native()))
+}
+
