@@ -165,3 +165,19 @@ func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter
 		goIter,
 		r.userData)
 }
+
+//export goTreeSelectionFunc
+func goTreeSelectionFunc(selection *C.GtkTreeSelection, model *C.GtkTreeModel, path *C.GtkTreePath, selected C.gboolean, data C.gpointer) C.gboolean {
+
+	id := int(uintptr(data))
+	TreeSelectionFuncRegistry.RLock()
+	r := TreeSelectionFuncRegistry.m[id]
+	TreeSelectionFuncRegistry.RUnlock()
+
+	return gbool(r.fn(
+		wrapTreeSelection(glib.Take(unsafe.Pointer(selection))),
+		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
+		&TreePath{(*C.GtkTreePath)(path)},
+		gobool(selected),
+		r.userData))
+}
