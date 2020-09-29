@@ -57,7 +57,6 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/gio"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -523,8 +522,6 @@ const (
 	IMAGE_ICON_NAME ImageType = C.GTK_IMAGE_ICON_NAME
 	IMAGE_GICON     ImageType = C.GTK_IMAGE_GICON
 )
-
-// TODO: add GTK_IMAGE_SURFACE for GTK 3.10
 
 func marshalImageType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
@@ -3776,12 +3773,12 @@ func (v *Entry) RemoveIcon(iconPos EntryIconPosition) {
 	C.gtk_entry_set_icon_from_icon_name(v.native(), C.GtkEntryIconPosition(iconPos), nil)
 }
 
-// TODO: Needs gio/GIcon implemented first
 // SetIconFromGIcon is a wrapper around gtk_entry_set_icon_from_gicon().
-// func (v *Entry) SetIconFromGIcon(iconPos EntryIconPosition, icon *glib.Icon) {
-// 	C.gtk_entry_set_icon_from_gicon(v.native(),
-//		(*C.GIcon)(unsafe.Pointer(icon.Native())))
-// }
+func (v *Entry) SetIconFromGIcon(iconPos EntryIconPosition, icon *glib.Icon) {
+	C.gtk_entry_set_icon_from_gicon(v.native(),
+		C.GtkEntryIconPosition(iconPos),
+		(*C.GIcon)(icon.NativePrivate()))
+}
 
 // GetIconStorageType is a wrapper around gtk_entry_get_icon_storage_type().
 func (v *Entry) GetIconStorageType(iconPos EntryIconPosition) ImageType {
@@ -3807,15 +3804,17 @@ func (v *Entry) GetIconName(iconPos EntryIconPosition) (string, error) {
 	return goString(c), nil
 }
 
-// TODO
-// GetIconGIcon is a wrapper aroudn gtk_entry_get_icon_gicon().
-// func (v *Entry) GetIconGIcon(iconPos EntryIconPosition) (*glib.Icon, error) {
-// 	c := C.gtk_entry_get_icon_gicon(v.native(), C.GtkEntryIconPosition(iconPos))
-// 	if c == nil {
-// 		return nil, nilPtrErr
-// 	}
-// 	return &glib.Icon{unsafe.Pointer(c)}, nil
-// }
+// GetIconGIcon is a wrapper around gtk_entry_get_icon_gicon().
+func (v *Entry) GetIconGIcon(iconPos EntryIconPosition) (*glib.Icon, error) {
+	c := C.gtk_entry_get_icon_gicon(v.native(), C.GtkEntryIconPosition(iconPos))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	i := &glib.Icon{obj}
+	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
+	return i, nil
+}
 
 // SetIconActivatable is a wrapper around gtk_entry_set_icon_activatable().
 func (v *Entry) SetIconActivatable(iconPos EntryIconPosition, activatable bool) {
@@ -5256,7 +5255,7 @@ func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
 }
 
 // ImageNewFromGIcon is a wrapper around gtk_image_new_from_gicon()
-func ImageNewFromGIcon(icon *gio.Icon, size IconSize) (*Image, error) {
+func ImageNewFromGIcon(icon *glib.Icon, size IconSize) (*Image, error) {
 	c := C.gtk_image_new_from_gicon(
 		(*C.GIcon)(icon.NativePrivate()),
 		C.GtkIconSize(size))
@@ -5302,7 +5301,7 @@ func (v *Image) SetFromIconName(iconName string, size IconSize) {
 }
 
 // SetFromGIcon is a wrapper around gtk_image_set_from_gicon()
-func (v *Image) SetFromGIcon(icon *gio.Icon, size IconSize) {
+func (v *Image) SetFromGIcon(icon *glib.Icon, size IconSize) {
 	C.gtk_image_set_from_gicon(
 		v.native(),
 		(*C.GIcon)(icon.NativePrivate()),
@@ -5365,7 +5364,7 @@ func (v *Image) GetIconName() (string, IconSize) {
 }
 
 // GetGIcon is a wrapper around gtk_image_get_gicon()
-func (v *Image) GetGIcon() (*gio.Icon, IconSize, error) {
+func (v *Image) GetGIcon() (*glib.Icon, IconSize, error) {
 	gicon := new(C.GIcon)
 	size := new(C.GtkIconSize)
 	C.gtk_image_get_gicon(
@@ -5378,7 +5377,7 @@ func (v *Image) GetGIcon() (*gio.Icon, IconSize, error) {
 	}
 
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(gicon))}
-	i := &gio.Icon{obj}
+	i := &glib.Icon{obj}
 
 	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
 	return i, IconSize(*size), nil
