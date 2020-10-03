@@ -100,6 +100,8 @@ func init() {
 		{glib.Type(C.gtk_relief_style_get_type()), marshalReliefStyle},
 		{glib.Type(C.gtk_response_type_get_type()), marshalResponseType},
 		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
+		{glib.Type(C.gtk_scroll_type_get_type()), marshalScrollType},
+		{glib.Type(C.gtk_scroll_step_get_type()), marshalScrollStep},
 		{glib.Type(C.gtk_sensitivity_type_get_type()), marshalSensitivityType},
 		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
 		{glib.Type(C.gtk_sort_type_get_type()), marshalSortType},
@@ -523,6 +525,8 @@ const (
 	IMAGE_GICON     ImageType = C.GTK_IMAGE_GICON
 )
 
+// TODO: add GTK_IMAGE_SURFACE for GTK 3.10
+
 func marshalImageType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return ImageType(c), nil
@@ -567,6 +571,7 @@ const (
 	INPUT_PURPOSE_NAME      InputPurpose = C.GTK_INPUT_PURPOSE_NAME
 	INPUT_PURPOSE_PASSWORD  InputPurpose = C.GTK_INPUT_PURPOSE_PASSWORD
 	INPUT_PURPOSE_PIN       InputPurpose = C.GTK_INPUT_PURPOSE_PIN
+	INPUT_PURPOSE_TERMINAL               = C.GTK_INPUT_PURPOSE_TERMINAL
 )
 
 func marshalInputPurpose(p uintptr) (interface{}, error) {
@@ -815,9 +820,49 @@ func marshalResponseType(p uintptr) (interface{}, error) {
 	return ResponseType(c), nil
 }
 
-// TODO:
-// GtkScrollStep
-// GtkScrollType
+// ScrollType is a representation of GTK's GtkScrollType.
+type ScrollType int
+
+const (
+	SCROLL_NONE          ScrollType = C.GTK_SCROLL_NONE
+	SCROLL_JUMP                     = C.GTK_SCROLL_JUMP
+	SCROLL_STEP_BACKWARD            = C.GTK_SCROLL_STEP_BACKWARD
+	SCROLL_STEP_FORWARD             = C.GTK_SCROLL_STEP_FORWARD
+	SCROLL_PAGE_BACKWARD            = C.GTK_SCROLL_PAGE_BACKWARD
+	SCROLL_PAGE_FORWARD             = C.GTK_SCROLL_PAGE_FORWARD
+	SCROLL_STEP_UP                  = C.GTK_SCROLL_STEP_UP
+	SCROLL_STEP_DOWN                = C.GTK_SCROLL_STEP_DOWN
+	SCROLL_PAGE_UP                  = C.GTK_SCROLL_PAGE_UP
+	SCROLL_PAGE_DOWN                = C.GTK_SCROLL_PAGE_DOWN
+	SCROLL_STEP_LEFT                = C.GTK_SCROLL_STEP_LEFT
+	SCROLL_STEP_RIGHT               = C.GTK_SCROLL_STEP_RIGHT
+	SCROLL_PAGE_LEFT                = C.GTK_SCROLL_PAGE_LEFT
+	SCROLL_PAGE_RIGHT               = C.GTK_SCROLL_PAGE_RIGHT
+	SCROLL_START                    = C.GTK_SCROLL_START
+	SCROLL_END                      = C.GTK_SCROLL_END
+)
+
+func marshalScrollType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ScrollType(c), nil
+}
+
+// ScrollStep is a representation of GTK's GtkScrollStep.
+type ScrollStep int
+
+const (
+	SCROLL_STEPS            ScrollStep = C.GTK_SCROLL_STEPS
+	SCROLL_PAGES                       = C.GTK_SCROLL_PAGES
+	SCROLL_ENDS                        = C.GTK_SCROLL_ENDS
+	SCROLL_HORIZONTAL_STEPS            = C.GTK_SCROLL_HORIZONTAL_STEPS
+	SCROLL_HORIZONTAL_PAGES            = C.GTK_SCROLL_HORIZONTAL_PAGES
+	SCROLL_HORIZONTAL_ENDS             = C.GTK_SCROLL_HORIZONTAL_ENDS
+)
+
+func marshalScrollStep(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ScrollStep(c), nil
+}
 
 // SelectionMode is a representation of GTK's GtkSelectionMode.
 type SelectionMode int
@@ -3773,6 +3818,7 @@ func (v *Entry) RemoveIcon(iconPos EntryIconPosition) {
 	C.gtk_entry_set_icon_from_icon_name(v.native(), C.GtkEntryIconPosition(iconPos), nil)
 }
 
+// TODO: Needs gio/GIcon implemented first
 // SetIconFromGIcon is a wrapper around gtk_entry_set_icon_from_gicon().
 func (v *Entry) SetIconFromGIcon(iconPos EntryIconPosition, icon *glib.Icon) {
 	C.gtk_entry_set_icon_from_gicon(v.native(),
