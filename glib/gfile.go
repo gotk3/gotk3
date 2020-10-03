@@ -4,13 +4,19 @@ package glib
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
+// #include "gfile.go.h"
 import "C"
-import "unsafe"
+import (
+	"errors"
+	"unsafe"
+)
 
 func init() {
 
 	tm := []TypeMarshaler{
 		{Type(C.g_file_get_type()), marshalFile},
+		{Type(C.g_file_input_stream_get_type()), marshalFileInputStream},
+		{Type(C.g_file_output_stream_get_type()), marshalFileOutputStream},
 	}
 
 	RegisterGValueMarshalers(tm)
@@ -63,7 +69,7 @@ func wrapFile(obj *Object) *File {
 }
 
 // FileNew is a wrapper around g_file_new_for_path().
-// To not break previous implementation of GFile ...
+// To avoid breaking previous implementation of GFile ...
 func FileNew(path string) *File {
 	f, e := FileNewForPath(path)
 	if e != nil {
@@ -84,6 +90,7 @@ func FileNewForPath(path string) (*File, error) {
 	return wrapFile(Take(unsafe.Pointer(c))), nil
 }
 
+// TODO g_file_*** and more
 /*
 void 	(*GFileProgressCallback) ()
 gboolean 	(*GFileReadMoreCallback) ()
@@ -129,7 +136,30 @@ GFile * 	g_file_resolve_relative_path ()
 gboolean 	g_file_is_native ()
 gboolean 	g_file_has_uri_scheme ()
 char * 	g_file_get_uri_scheme ()
-GFileInputStream * 	g_file_read ()
+*/
+
+/*
+GFileInputStream *
+g_file_read (GFile *file,
+             GCancellable *cancellable,
+             GError **error);
+*/
+// Read is a wrapper around g_file_read().
+// Object.Unref() must be used after use
+func (v *File) Read(cancellable *Cancellable) (*FileInputStream, error) {
+	var gerr *C.GError
+	c := C.g_file_read(
+		v.native(),
+		cancellable.native(),
+		&gerr)
+	if c == nil {
+		defer C.g_error_free(gerr)
+		return nil, errors.New(goString(gerr.message))
+	}
+	return wrapFileInputStream(Take(unsafe.Pointer(c))), nil
+}
+
+/*
 void 	g_file_read_async ()
 GFileInputStream * 	g_file_read_finish ()
 GFileOutputStream * 	g_file_append_to ()
@@ -235,4 +265,103 @@ GFileIOStream * 	g_file_replace_readwrite ()
 void 	g_file_replace_readwrite_async ()
 GFileIOStream * 	g_file_replace_readwrite_finish ()
 gboolean 	g_file_supports_thread_contexts ()
+*/
+
+/*
+ * GFileInputStream
+ */
+
+// FileInputStream is a representation of GIO's GFileInputStream.
+type FileInputStream struct {
+	*InputStream
+}
+
+// native returns a pointer to the underlying GFileInputStream.
+func (v *FileInputStream) native() *C.GFileInputStream {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGFileInputStream(p)
+}
+
+// NativePrivate: to be used inside Gotk3 only.
+func (v *FileInputStream) NativePrivate() *C.GFileInputStream {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGFileInputStream(p)
+}
+
+// Native returns a pointer to the underlying GFileInputStream.
+func (v *FileInputStream) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalFileInputStream(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := Take(unsafe.Pointer(c))
+	return wrapFileInputStream(obj), nil
+}
+
+func wrapFileInputStream(obj *Object) *FileInputStream {
+	return &FileInputStream{wrapInputStream(obj)}
+}
+
+// TODO g_file_input_stream_query_info and more
+/*
+GFileInfo * 	g_file_input_stream_query_info ()
+void 	g_file_input_stream_query_info_async ()
+GFileInfo * 	g_file_input_stream_query_info_finish ()
+*/
+
+/*
+ * GFileOutputStream
+ */
+
+// FileOutputStream is a representation of GIO's GFileOutputStream.
+type FileOutputStream struct {
+	*OutputStream
+}
+
+// native returns a pointer to the underlying GFileOutputStream.
+func (v *FileOutputStream) native() *C.GFileOutputStream {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGFileOutputStream(p)
+}
+
+// NativePrivate: to be used inside Gotk3 only.
+func (v *FileOutputStream) NativePrivate() *C.GFileOutputStream {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGFileOutputStream(p)
+}
+
+// Native returns a pointer to the underlying GFileOutputStream.
+func (v *FileOutputStream) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalFileOutputStream(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := Take(unsafe.Pointer(c))
+	return wrapFileOutputStream(obj), nil
+}
+
+func wrapFileOutputStream(obj *Object) *FileOutputStream {
+	return &FileOutputStream{wrapOutputStream(obj)}
+}
+
+// TODO g_file_output_stream_query_info and more
+/*
+GFileInfo * 	g_file_output_stream_query_info ()
+void 	g_file_output_stream_query_info_async ()
+GFileInfo * 	g_file_output_stream_query_info_finish ()
+char * 	g_file_output_stream_get_etag ()
 */
