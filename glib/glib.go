@@ -143,6 +143,18 @@ func TypeNextBase(leafType, rootType Type) Type {
 	return Type(C.g_type_next_base(C.GType(leafType), C.GType(rootType)))
 }
 
+// SettingsBindFlags is a representation of GLib's GSettingsBindFlags.
+type SettingsBindFlags int
+
+const (
+	SETTINGS_BIND_DEFAULT        SettingsBindFlags = C.G_SETTINGS_BIND_DEFAULT
+	SETTINGS_BIND_GET                              = C.G_SETTINGS_BIND_GET
+	SETTINGS_BIND_SET                              = C.G_SETTINGS_BIND_SET
+	SETTINGS_BIND_NO_SENSITIVITY                   = C.G_SETTINGS_BIND_NO_SENSITIVITY
+	SETTINGS_BIND_GET_NO_CHANGES                   = C.G_SETTINGS_BIND_GET_NO_CHANGES
+	SETTINGS_BIND_INVERT_BOOLEAN                   = C.G_SETTINGS_BIND_INVERT_BOOLEAN
+)
+
 // UserDirectory is a representation of GLib's GUserDirectory.
 type UserDirectory int
 

@@ -58,6 +58,11 @@ const (
 	ALIGN_BASELINE Align = C.GTK_ALIGN_BASELINE
 )
 
+// ImageType
+const (
+	IMAGE_SURFACE ImageType = C.GTK_IMAGE_SURFACE
+)
+
 // RevealerTransitionType is a representation of GTK's GtkRevealerTransitionType.
 type RevealerTransitionType int
 
@@ -193,7 +198,7 @@ func (v *Grid) RemoveColumn(position int) {
  * GtkHeaderBar
  */
 
- // HeaderBar is a representation of GtkHeaderBar
+// HeaderBar is a representation of GtkHeaderBar
 type HeaderBar struct {
 	Container
 }

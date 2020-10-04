@@ -57,7 +57,6 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/gio"
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -101,6 +100,8 @@ func init() {
 		{glib.Type(C.gtk_relief_style_get_type()), marshalReliefStyle},
 		{glib.Type(C.gtk_response_type_get_type()), marshalResponseType},
 		{glib.Type(C.gtk_selection_mode_get_type()), marshalSelectionMode},
+		{glib.Type(C.gtk_scroll_type_get_type()), marshalScrollType},
+		{glib.Type(C.gtk_scroll_step_get_type()), marshalScrollStep},
 		{glib.Type(C.gtk_sensitivity_type_get_type()), marshalSensitivityType},
 		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
 		{glib.Type(C.gtk_sort_type_get_type()), marshalSortType},
@@ -570,6 +571,7 @@ const (
 	INPUT_PURPOSE_NAME      InputPurpose = C.GTK_INPUT_PURPOSE_NAME
 	INPUT_PURPOSE_PASSWORD  InputPurpose = C.GTK_INPUT_PURPOSE_PASSWORD
 	INPUT_PURPOSE_PIN       InputPurpose = C.GTK_INPUT_PURPOSE_PIN
+	INPUT_PURPOSE_TERMINAL               = C.GTK_INPUT_PURPOSE_TERMINAL
 )
 
 func marshalInputPurpose(p uintptr) (interface{}, error) {
@@ -818,9 +820,49 @@ func marshalResponseType(p uintptr) (interface{}, error) {
 	return ResponseType(c), nil
 }
 
-// TODO:
-// GtkScrollStep
-// GtkScrollType
+// ScrollType is a representation of GTK's GtkScrollType.
+type ScrollType int
+
+const (
+	SCROLL_NONE          ScrollType = C.GTK_SCROLL_NONE
+	SCROLL_JUMP                     = C.GTK_SCROLL_JUMP
+	SCROLL_STEP_BACKWARD            = C.GTK_SCROLL_STEP_BACKWARD
+	SCROLL_STEP_FORWARD             = C.GTK_SCROLL_STEP_FORWARD
+	SCROLL_PAGE_BACKWARD            = C.GTK_SCROLL_PAGE_BACKWARD
+	SCROLL_PAGE_FORWARD             = C.GTK_SCROLL_PAGE_FORWARD
+	SCROLL_STEP_UP                  = C.GTK_SCROLL_STEP_UP
+	SCROLL_STEP_DOWN                = C.GTK_SCROLL_STEP_DOWN
+	SCROLL_PAGE_UP                  = C.GTK_SCROLL_PAGE_UP
+	SCROLL_PAGE_DOWN                = C.GTK_SCROLL_PAGE_DOWN
+	SCROLL_STEP_LEFT                = C.GTK_SCROLL_STEP_LEFT
+	SCROLL_STEP_RIGHT               = C.GTK_SCROLL_STEP_RIGHT
+	SCROLL_PAGE_LEFT                = C.GTK_SCROLL_PAGE_LEFT
+	SCROLL_PAGE_RIGHT               = C.GTK_SCROLL_PAGE_RIGHT
+	SCROLL_START                    = C.GTK_SCROLL_START
+	SCROLL_END                      = C.GTK_SCROLL_END
+)
+
+func marshalScrollType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ScrollType(c), nil
+}
+
+// ScrollStep is a representation of GTK's GtkScrollStep.
+type ScrollStep int
+
+const (
+	SCROLL_STEPS            ScrollStep = C.GTK_SCROLL_STEPS
+	SCROLL_PAGES                       = C.GTK_SCROLL_PAGES
+	SCROLL_ENDS                        = C.GTK_SCROLL_ENDS
+	SCROLL_HORIZONTAL_STEPS            = C.GTK_SCROLL_HORIZONTAL_STEPS
+	SCROLL_HORIZONTAL_PAGES            = C.GTK_SCROLL_HORIZONTAL_PAGES
+	SCROLL_HORIZONTAL_ENDS             = C.GTK_SCROLL_HORIZONTAL_ENDS
+)
+
+func marshalScrollStep(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return ScrollStep(c), nil
+}
 
 // SelectionMode is a representation of GTK's GtkSelectionMode.
 type SelectionMode int
@@ -3778,10 +3820,11 @@ func (v *Entry) RemoveIcon(iconPos EntryIconPosition) {
 
 // TODO: Needs gio/GIcon implemented first
 // SetIconFromGIcon is a wrapper around gtk_entry_set_icon_from_gicon().
-// func (v *Entry) SetIconFromGIcon(iconPos EntryIconPosition, icon *glib.Icon) {
-// 	C.gtk_entry_set_icon_from_gicon(v.native(),
-//		(*C.GIcon)(unsafe.Pointer(icon.Native())))
-// }
+func (v *Entry) SetIconFromGIcon(iconPos EntryIconPosition, icon *glib.Icon) {
+	C.gtk_entry_set_icon_from_gicon(v.native(),
+		C.GtkEntryIconPosition(iconPos),
+		(*C.GIcon)(icon.NativePrivate()))
+}
 
 // GetIconStorageType is a wrapper around gtk_entry_get_icon_storage_type().
 func (v *Entry) GetIconStorageType(iconPos EntryIconPosition) ImageType {
@@ -3807,15 +3850,17 @@ func (v *Entry) GetIconName(iconPos EntryIconPosition) (string, error) {
 	return goString(c), nil
 }
 
-// TODO
-// GetIconGIcon is a wrapper aroudn gtk_entry_get_icon_gicon().
-// func (v *Entry) GetIconGIcon(iconPos EntryIconPosition) (*glib.Icon, error) {
-// 	c := C.gtk_entry_get_icon_gicon(v.native(), C.GtkEntryIconPosition(iconPos))
-// 	if c == nil {
-// 		return nil, nilPtrErr
-// 	}
-// 	return &glib.Icon{unsafe.Pointer(c)}, nil
-// }
+// GetIconGIcon is a wrapper around gtk_entry_get_icon_gicon().
+func (v *Entry) GetIconGIcon(iconPos EntryIconPosition) (*glib.Icon, error) {
+	c := C.gtk_entry_get_icon_gicon(v.native(), C.GtkEntryIconPosition(iconPos))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	i := &glib.Icon{obj}
+	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
+	return i, nil
+}
 
 // SetIconActivatable is a wrapper around gtk_entry_set_icon_activatable().
 func (v *Entry) SetIconActivatable(iconPos EntryIconPosition, activatable bool) {
@@ -5256,7 +5301,7 @@ func ImageNewFromIconName(iconName string, size IconSize) (*Image, error) {
 }
 
 // ImageNewFromGIcon is a wrapper around gtk_image_new_from_gicon()
-func ImageNewFromGIcon(icon *gio.Icon, size IconSize) (*Image, error) {
+func ImageNewFromGIcon(icon *glib.Icon, size IconSize) (*Image, error) {
 	c := C.gtk_image_new_from_gicon(
 		(*C.GIcon)(icon.NativePrivate()),
 		C.GtkIconSize(size))
@@ -5302,7 +5347,7 @@ func (v *Image) SetFromIconName(iconName string, size IconSize) {
 }
 
 // SetFromGIcon is a wrapper around gtk_image_set_from_gicon()
-func (v *Image) SetFromGIcon(icon *gio.Icon, size IconSize) {
+func (v *Image) SetFromGIcon(icon *glib.Icon, size IconSize) {
 	C.gtk_image_set_from_gicon(
 		v.native(),
 		(*C.GIcon)(icon.NativePrivate()),
@@ -5365,7 +5410,7 @@ func (v *Image) GetIconName() (string, IconSize) {
 }
 
 // GetGIcon is a wrapper around gtk_image_get_gicon()
-func (v *Image) GetGIcon() (*gio.Icon, IconSize, error) {
+func (v *Image) GetGIcon() (*glib.Icon, IconSize, error) {
 	gicon := new(C.GIcon)
 	size := new(C.GtkIconSize)
 	C.gtk_image_get_gicon(
@@ -5378,7 +5423,7 @@ func (v *Image) GetGIcon() (*gio.Icon, IconSize, error) {
 	}
 
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(gicon))}
-	i := &gio.Icon{obj}
+	i := &glib.Icon{obj}
 
 	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
 	return i, IconSize(*size), nil

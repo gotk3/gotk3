@@ -14,6 +14,16 @@ import (
 	"github.com/gotk3/gotk3/pango"
 )
 
+func init() {
+
+	tm := []glib.TypeMarshaler{
+		{glib.Type(C.gtk_text_window_type_get_type()), marshalTextWindowType},
+		{glib.Type(C.gtk_text_extend_selection_get_type()), marshalTextExtendSelection},
+	}
+
+	glib.RegisterGValueMarshalers(tm)
+}
+
 // TextWindowType is a representation of GTK's GtkTextWindowType.
 type TextWindowType int
 
@@ -26,6 +36,24 @@ const (
 	TEXT_WINDOW_TOP     TextWindowType = C.GTK_TEXT_WINDOW_TOP
 	TEXT_WINDOW_BOTTOM  TextWindowType = C.GTK_TEXT_WINDOW_BOTTOM
 )
+
+func marshalTextWindowType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TextWindowType(c), nil
+}
+
+// TextExtendSelection is a representation of GTK's GtkTextExtendSelection.
+type TextExtendSelection int
+
+const (
+	TEXT_EXTEND_SELECTION_WORD TextExtendSelection = C.GTK_TEXT_EXTEND_SELECTION_WORD
+	TEXT_EXTEND_SELECTION_LINE                     = C.GTK_TEXT_EXTEND_SELECTION_LINE
+)
+
+func marshalTextExtendSelection(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TextExtendSelection(c), nil
+}
 
 /*
  * GtkTextView
