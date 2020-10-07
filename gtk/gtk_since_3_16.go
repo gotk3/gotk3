@@ -68,7 +68,7 @@ type TextExtendSelection int
 
 const (
 	TEXT_EXTEND_SELECTION_WORD TextExtendSelection = C.GTK_TEXT_EXTEND_SELECTION_WORD
-	TEXT_EXTEND_SELECTION_LINE                     = C.GTK_TEXT_EXTEND_SELECTION_LINE
+	TEXT_EXTEND_SELECTION_LINE TextExtendSelection = C.GTK_TEXT_EXTEND_SELECTION_LINE
 )
 
 func marshalTextExtendSelection(p uintptr) (interface{}, error) {
