@@ -5411,8 +5411,8 @@ func (v *Image) GetIconName() (string, IconSize) {
 
 // GetGIcon is a wrapper around gtk_image_get_gicon()
 func (v *Image) GetGIcon() (*glib.Icon, IconSize, error) {
-	gicon := new(C.GIcon)
-	size := new(C.GtkIconSize)
+	var gicon *C.GIcon
+	var size *C.GtkIconSize
 	C.gtk_image_get_gicon(
 		v.native(),
 		&gicon,
