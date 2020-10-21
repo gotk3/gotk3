@@ -92,7 +92,7 @@ func IconNewForString(str string) (*Icon, error) {
 	defer C.free(unsafe.Pointer(cstr))
 
 	var err *C.GError
-	c := C.g_icon_new_for_string((*C.char)(cstr), &err)
+	c := C.g_icon_new_for_string((*C.gchar)(cstr), &err)
 	if c == nil {
 		defer C.g_error_free(err)
 		return nil, errors.New(C.GoString((*C.char)(err.message)))
