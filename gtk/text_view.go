@@ -18,7 +18,6 @@ func init() {
 
 	tm := []glib.TypeMarshaler{
 		{glib.Type(C.gtk_text_window_type_get_type()), marshalTextWindowType},
-		{glib.Type(C.gtk_text_extend_selection_get_type()), marshalTextExtendSelection},
 	}
 
 	glib.RegisterGValueMarshalers(tm)
@@ -40,19 +39,6 @@ const (
 func marshalTextWindowType(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return TextWindowType(c), nil
-}
-
-// TextExtendSelection is a representation of GTK's GtkTextExtendSelection.
-type TextExtendSelection int
-
-const (
-	TEXT_EXTEND_SELECTION_WORD TextExtendSelection = C.GTK_TEXT_EXTEND_SELECTION_WORD
-	TEXT_EXTEND_SELECTION_LINE                     = C.GTK_TEXT_EXTEND_SELECTION_LINE
-)
-
-func marshalTextExtendSelection(p uintptr) (interface{}, error) {
-	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
-	return TextExtendSelection(c), nil
 }
 
 /*
@@ -465,4 +451,3 @@ func (v *TextView) AddChildAtAnchor(child IWidget, anchor *TextChildAnchor) {
 // void 	gtk_text_view_set_monospace () -- SINCE 3.16
 // gboolean 	gtk_text_view_get_monospace () -- SINCE 3.16
 // GtkTextViewLayer
-// GtkTextExtendSelection

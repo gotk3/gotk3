@@ -27,6 +27,7 @@ func init() {
 		{glib.Type(C.gtk_popover_menu_get_type()), marshalPopoverMenu},
 		{glib.Type(C.gtk_model_button_get_type()), marshalModelButton},
 		{glib.Type(C.gtk_stack_sidebar_get_type()), marshalStackSidebar},
+		{glib.Type(C.gtk_text_extend_selection_get_type()), marshalTextExtendSelection},
 	}
 	glib.RegisterGValueMarshalers(tm)
 
@@ -59,21 +60,54 @@ func marshalButtonRole(p uintptr) (interface{}, error) {
 }
 
 /*
+ * TextView
+ */
+
+// TextExtendSelection is a representation of GTK's GtkTextExtendSelection.
+type TextExtendSelection int
+
+const (
+	TEXT_EXTEND_SELECTION_WORD TextExtendSelection = C.GTK_TEXT_EXTEND_SELECTION_WORD
+	TEXT_EXTEND_SELECTION_LINE TextExtendSelection = C.GTK_TEXT_EXTEND_SELECTION_LINE
+)
+
+func marshalTextExtendSelection(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return TextExtendSelection(c), nil
+}
+
+/*
  * GtkStack
  */
 
-// TODO:
-// gtk_stack_set_hhomogeneous().
-// gtk_stack_get_hhomogeneous().
-// gtk_stack_set_vhomogeneous().
-// gtk_stack_get_vhomogeneous().
+// SetHHomogeneous is a wrapper around gtk_stack_set_hhomogeneous().
+func (v *Stack) SetHHomogeneous(hhomogeneous bool) {
+	C.gtk_stack_set_hhomogeneous(v.native(), gbool(hhomogeneous))
+}
+
+// GetHHomogeneous is a wrapper around gtk_stack_get_hhomogeneous().
+func (v *Stack) GetHHomogeneous() bool {
+	return gobool(C.gtk_stack_get_hhomogeneous(v.native()))
+}
+
+// SetVHomogeneous is a wrapper around gtk_stack_set_vhomogeneous().
+func (v *Stack) SetVHomogeneous(vhomogeneous bool) {
+	C.gtk_stack_set_vhomogeneous(v.native(), gbool(vhomogeneous))
+}
+
+// GetVHomogeneous is a wrapper around gtk_stack_get_vhomogeneous().
+func (v *Stack) GetVHomogeneous() bool {
+	return gobool(C.gtk_stack_get_vhomogeneous(v.native()))
+}
 
 /*
  * GtkNotebook
  */
 
-// TODO:
-// gtk_notebook_detach_tab().
+// DetachTab is a wrapper around gtk_notebook_detach_tab().
+func (v *Notebook) DetachTab(child IWidget) {
+	C.gtk_notebook_detach_tab(v.native(), child.toWidget())
+}
 
 /*
  * GtkListBox
@@ -340,4 +374,3 @@ func (v *TextView) SetMonospace(monospace bool) {
 func (v *TextView) GetMonospace() bool {
 	return gobool(C.gtk_text_view_get_monospace(v.native()))
 }
-
