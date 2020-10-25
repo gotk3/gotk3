@@ -483,10 +483,10 @@ type IconLookupFlags int
 
 const (
 	ICON_LOOKUP_NO_SVG           IconLookupFlags = C.GTK_ICON_LOOKUP_NO_SVG
-	ICON_LOOKUP_FORCE_SVG                        = C.GTK_ICON_LOOKUP_FORCE_SVG
-	ICON_LOOKUP_USE_BUILTIN                      = C.GTK_ICON_LOOKUP_USE_BUILTIN
-	ICON_LOOKUP_GENERIC_FALLBACK                 = C.GTK_ICON_LOOKUP_GENERIC_FALLBACK
-	ICON_LOOKUP_FORCE_SIZE                       = C.GTK_ICON_LOOKUP_FORCE_SIZE
+	ICON_LOOKUP_FORCE_SVG        IconLookupFlags = C.GTK_ICON_LOOKUP_FORCE_SVG
+	ICON_LOOKUP_USE_BUILTIN      IconLookupFlags = C.GTK_ICON_LOOKUP_USE_BUILTIN
+	ICON_LOOKUP_GENERIC_FALLBACK IconLookupFlags = C.GTK_ICON_LOOKUP_GENERIC_FALLBACK
+	ICON_LOOKUP_FORCE_SIZE       IconLookupFlags = C.GTK_ICON_LOOKUP_FORCE_SIZE
 )
 
 func marshalIconLookupFlags(p uintptr) (interface{}, error) {
@@ -571,6 +571,7 @@ const (
 	INPUT_PURPOSE_NAME      InputPurpose = C.GTK_INPUT_PURPOSE_NAME
 	INPUT_PURPOSE_PASSWORD  InputPurpose = C.GTK_INPUT_PURPOSE_PASSWORD
 	INPUT_PURPOSE_PIN       InputPurpose = C.GTK_INPUT_PURPOSE_PIN
+	INPUT_PURPOSE_TERMINAL  InputPurpose = C.GTK_INPUT_PURPOSE_TERMINAL
 )
 
 func marshalInputPurpose(p uintptr) (interface{}, error) {
@@ -824,21 +825,21 @@ type ScrollType int
 
 const (
 	SCROLL_NONE          ScrollType = C.GTK_SCROLL_NONE
-	SCROLL_JUMP                     = C.GTK_SCROLL_JUMP
-	SCROLL_STEP_BACKWARD            = C.GTK_SCROLL_STEP_BACKWARD
-	SCROLL_STEP_FORWARD             = C.GTK_SCROLL_STEP_FORWARD
-	SCROLL_PAGE_BACKWARD            = C.GTK_SCROLL_PAGE_BACKWARD
-	SCROLL_PAGE_FORWARD             = C.GTK_SCROLL_PAGE_FORWARD
-	SCROLL_STEP_UP                  = C.GTK_SCROLL_STEP_UP
-	SCROLL_STEP_DOWN                = C.GTK_SCROLL_STEP_DOWN
-	SCROLL_PAGE_UP                  = C.GTK_SCROLL_PAGE_UP
-	SCROLL_PAGE_DOWN                = C.GTK_SCROLL_PAGE_DOWN
-	SCROLL_STEP_LEFT                = C.GTK_SCROLL_STEP_LEFT
-	SCROLL_STEP_RIGHT               = C.GTK_SCROLL_STEP_RIGHT
-	SCROLL_PAGE_LEFT                = C.GTK_SCROLL_PAGE_LEFT
-	SCROLL_PAGE_RIGHT               = C.GTK_SCROLL_PAGE_RIGHT
-	SCROLL_START                    = C.GTK_SCROLL_START
-	SCROLL_END                      = C.GTK_SCROLL_END
+	SCROLL_JUMP          ScrollType = C.GTK_SCROLL_JUMP
+	SCROLL_STEP_BACKWARD ScrollType = C.GTK_SCROLL_STEP_BACKWARD
+	SCROLL_STEP_FORWARD  ScrollType = C.GTK_SCROLL_STEP_FORWARD
+	SCROLL_PAGE_BACKWARD ScrollType = C.GTK_SCROLL_PAGE_BACKWARD
+	SCROLL_PAGE_FORWARD  ScrollType = C.GTK_SCROLL_PAGE_FORWARD
+	SCROLL_STEP_UP       ScrollType = C.GTK_SCROLL_STEP_UP
+	SCROLL_STEP_DOWN     ScrollType = C.GTK_SCROLL_STEP_DOWN
+	SCROLL_PAGE_UP       ScrollType = C.GTK_SCROLL_PAGE_UP
+	SCROLL_PAGE_DOWN     ScrollType = C.GTK_SCROLL_PAGE_DOWN
+	SCROLL_STEP_LEFT     ScrollType = C.GTK_SCROLL_STEP_LEFT
+	SCROLL_STEP_RIGHT    ScrollType = C.GTK_SCROLL_STEP_RIGHT
+	SCROLL_PAGE_LEFT     ScrollType = C.GTK_SCROLL_PAGE_LEFT
+	SCROLL_PAGE_RIGHT    ScrollType = C.GTK_SCROLL_PAGE_RIGHT
+	SCROLL_START         ScrollType = C.GTK_SCROLL_START
+	SCROLL_END           ScrollType = C.GTK_SCROLL_END
 )
 
 func marshalScrollType(p uintptr) (interface{}, error) {
@@ -851,11 +852,11 @@ type ScrollStep int
 
 const (
 	SCROLL_STEPS            ScrollStep = C.GTK_SCROLL_STEPS
-	SCROLL_PAGES                       = C.GTK_SCROLL_PAGES
-	SCROLL_ENDS                        = C.GTK_SCROLL_ENDS
-	SCROLL_HORIZONTAL_STEPS            = C.GTK_SCROLL_HORIZONTAL_STEPS
-	SCROLL_HORIZONTAL_PAGES            = C.GTK_SCROLL_HORIZONTAL_PAGES
-	SCROLL_HORIZONTAL_ENDS             = C.GTK_SCROLL_HORIZONTAL_ENDS
+	SCROLL_PAGES            ScrollStep = C.GTK_SCROLL_PAGES
+	SCROLL_ENDS             ScrollStep = C.GTK_SCROLL_ENDS
+	SCROLL_HORIZONTAL_STEPS ScrollStep = C.GTK_SCROLL_HORIZONTAL_STEPS
+	SCROLL_HORIZONTAL_PAGES ScrollStep = C.GTK_SCROLL_HORIZONTAL_PAGES
+	SCROLL_HORIZONTAL_ENDS  ScrollStep = C.GTK_SCROLL_HORIZONTAL_ENDS
 )
 
 func marshalScrollStep(p uintptr) (interface{}, error) {
@@ -5410,8 +5411,8 @@ func (v *Image) GetIconName() (string, IconSize) {
 
 // GetGIcon is a wrapper around gtk_image_get_gicon()
 func (v *Image) GetGIcon() (*glib.Icon, IconSize, error) {
-	gicon := new(C.GIcon)
-	size := new(C.GtkIconSize)
+	var gicon *C.GIcon
+	var size *C.GtkIconSize
 	C.gtk_image_get_gicon(
 		v.native(),
 		&gicon,

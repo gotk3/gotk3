@@ -115,7 +115,7 @@ g_file_get_path (GFile *file);
 func (v *File) GetPath() string {
 	var s string
 	if c := C.g_file_get_path(v.native()); c != nil {
-		s = goString(c)
+		s = C.GoString(c)
 		defer C.g_free((C.gpointer)(c))
 	}
 
