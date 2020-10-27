@@ -571,7 +571,6 @@ const (
 	INPUT_PURPOSE_NAME      InputPurpose = C.GTK_INPUT_PURPOSE_NAME
 	INPUT_PURPOSE_PASSWORD  InputPurpose = C.GTK_INPUT_PURPOSE_PASSWORD
 	INPUT_PURPOSE_PIN       InputPurpose = C.GTK_INPUT_PURPOSE_PIN
-	INPUT_PURPOSE_TERMINAL  InputPurpose = C.GTK_INPUT_PURPOSE_TERMINAL
 )
 
 func marshalInputPurpose(p uintptr) (interface{}, error) {
