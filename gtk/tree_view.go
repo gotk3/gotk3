@@ -546,6 +546,16 @@ func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
 	C.gtk_tree_view_set_tooltip_row(v.native(), tooltip.native(), path.native())
 }
 
+// TreeViewDropPosition describes GtkTreeViewDropPosition.
+type TreeViewDropPosition int
+
+const (
+	TREE_VIEW_DROP_BEFORE         TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_BEFORE
+	TREE_VIEW_DROP_AFTER          TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_AFTER
+	TREE_VIEW_DROP_INTO_OR_BEFORE TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_INTO_OR_BEFORE
+	TREE_VIEW_DROP_INTO_OR_AFTER  TreeViewDropPosition = C.GTK_TREE_VIEW_DROP_INTO_OR_AFTER
+)
+
 // TODO:
 // GtkTreeViewDropPosition
 // gboolean 	gtk_tree_view_get_tooltip_context ()
@@ -567,11 +577,68 @@ func (v *TreeView) SetTooltipRow(tooltip *Tooltip, path *TreePath) {
 // void 	gtk_tree_view_convert_tree_to_bin_window_coords ()
 // void 	gtk_tree_view_convert_tree_to_widget_coords ()
 // void 	gtk_tree_view_convert_widget_to_tree_coords ()
-// void 	gtk_tree_view_enable_model_drag_dest ()
-// void 	gtk_tree_view_enable_model_drag_source ()
-// void 	gtk_tree_view_unset_rows_drag_source ()
-// void 	gtk_tree_view_unset_rows_drag_dest ()
-// void 	gtk_tree_view_set_drag_dest_row ()
-// void 	gtk_tree_view_get_drag_dest_row ()
-// gboolean 	gtk_tree_view_get_dest_row_at_pos ()
 // cairo_surface_t * 	gtk_tree_view_create_row_drag_icon ()
+
+// EnableModelDragDest is a wrapper around gtk_tree_view_enable_model_drag_dest().
+func (v *TreeView) EnableModelDragDest(targets []TargetEntry, actions gdk.DragAction) {
+	C.gtk_tree_view_enable_model_drag_dest(v.native(), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
+// EnableModelDragSource is a wrapper around gtk_tree_view_enable_model_drag_source().
+func (v *TreeView) EnableModelDragSource(startButtonMask gdk.ModifierType, targets []TargetEntry, actions gdk.DragAction) {
+	C.gtk_tree_view_enable_model_drag_source(v.native(), C.GdkModifierType(startButtonMask), (*C.GtkTargetEntry)(&targets[0]), C.gint(len(targets)), C.GdkDragAction(actions))
+}
+
+// UnsetRowsDragSource is a wrapper around gtk_tree_view_unset_rows_drag_source().
+func (v *TreeView) UnsetRowsDragSource() {
+	C.gtk_tree_view_unset_rows_drag_source(v.native())
+}
+
+// UnsetRowsDragDest is a wrapper around gtk_tree_view_unset_rows_drag_dest().
+func (v *TreeView) UnsetRowsDragDest() {
+	C.gtk_tree_view_unset_rows_drag_dest(v.native())
+}
+
+// SetDragDestRow is a wrapper around gtk_tree_view_set_drag_dest_row().
+func (v *TreeView) SetDragDestRow(path *TreePath, pos TreeViewDropPosition) {
+	C.gtk_tree_view_set_drag_dest_row(v.native(), path.native(), C.GtkTreeViewDropPosition(pos))
+}
+
+// GetDragDestRow is a wrapper around gtk_tree_view_get_drag_dest_row().
+func (v *TreeView) GetDragDestRow() (path *TreePath, pos TreeViewDropPosition) {
+	var (
+		cpath *C.GtkTreePath
+		cpos  C.GtkTreeViewDropPosition
+	)
+
+	C.gtk_tree_view_get_drag_dest_row(v.native(), &cpath, &cpos)
+
+	pos = TreeViewDropPosition(cpos)
+
+	if cpath != nil {
+		path = &TreePath{cpath}
+		runtime.SetFinalizer(path, (*TreePath).free)
+	}
+
+	return
+}
+
+// GetDestRowAtPos is a wrapper around gtk_tree_view_get_dest_row_at_pos().
+func (v *TreeView) GetDestRowAtPos(dragX, dragY int) (path *TreePath, pos TreeViewDropPosition, ok bool) {
+	var (
+		cpath *C.GtkTreePath
+		cpos  C.GtkTreeViewDropPosition
+	)
+
+	cbool := C.gtk_tree_view_get_dest_row_at_pos(v.native(), C.gint(dragX), C.gint(dragY), &cpath, &cpos)
+
+	ok = gobool(cbool)
+	pos = TreeViewDropPosition(cpos)
+
+	if cpath != nil {
+		path = &TreePath{cpath}
+		runtime.SetFinalizer(path, (*TreePath).free)
+	}
+
+	return
+}
