@@ -9711,6 +9711,14 @@ func (v *TreeModel) GetPath(iter *TreeIter) (*TreePath, error) {
 	return p, nil
 }
 
+// GetStringFromIter() is a wrapper around gtk_tree_model_get_string_from_iter().
+func (v *TreeModel) GetStringFromIter(iter *TreeIter) string {
+	c := C.gtk_tree_model_get_string_from_iter(v.native(), iter.native())
+	s := goString(c)
+	defer C.g_free((C.gpointer)(c))
+	return s
+}
+
 // GetValue() is a wrapper around gtk_tree_model_get_value().
 func (v *TreeModel) GetValue(iter *TreeIter, column int) (*glib.Value, error) {
 	val, err := glib.ValueAlloc()
