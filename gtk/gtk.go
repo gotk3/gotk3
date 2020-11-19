@@ -7415,8 +7415,22 @@ func (v *Scale) SetDrawValue(drawValue bool) {
 // gtk_scale_get_value_pos().
 // gtk_scale_get_layout().
 // gtk_scale_get_layout_offsets().
-// gtk_scale_add_mark().
-// gtk_scale_clear_marks().
+
+// AddMark is a wrpaper around gtk_scale_add_mark.
+func (v *Scale) AddMark(value float64, pos PositionType, markup string) {
+	var markupchar *C.gchar
+	if markup != "" {
+		markupchar = (*C.gchar)(C.CString(markup))
+		defer C.free(unsafe.Pointer(markupchar))
+	}
+
+	C.gtk_scale_add_mark(v.native(), C.gdouble(value), C.GtkPositionType(pos), markupchar)
+}
+
+// ClearMarks is a wrapper around gtk_scale_clear_marks.
+func (v *Scale) ClearMarks() {
+	C.gtk_scale_clear_marks(v.native())
+}
 
 /*
  * GtkScaleButton
