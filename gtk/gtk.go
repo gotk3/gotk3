@@ -5798,6 +5798,14 @@ func (v *ListStore) InsertWithValues(iter *TreeIter, position int, inColumns []i
 	return nil
 }
 
+// Insert() is a wrapper around gtk_list_store_insert().
+func (v *ListStore) Insert(position int) *TreeIter {
+	var ti C.GtkTreeIter
+	C.gtk_list_store_insert(v.native(), &ti, C.gint(position))
+	iter := &TreeIter{ti}
+	return iter
+}
+
 // InsertBefore() is a wrapper around gtk_list_store_insert_before().
 func (v *ListStore) InsertBefore(sibling *TreeIter) *TreeIter {
 	var ti C.GtkTreeIter
