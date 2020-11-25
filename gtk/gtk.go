@@ -129,6 +129,7 @@ func init() {
 		{glib.Type(C.gtk_box_get_type()), marshalBox},
 		{glib.Type(C.gtk_calendar_get_type()), marshalCalendar},
 		{glib.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},
+		{glib.Type(C.gtk_cell_editable_get_type()), marshalCellEditable},
 		{glib.Type(C.gtk_cell_renderer_get_type()), marshalCellRenderer},
 		{glib.Type(C.gtk_cell_renderer_spinner_get_type()), marshalCellRendererSpinner},
 		{glib.Type(C.gtk_cell_renderer_pixbuf_get_type()), marshalCellRendererPixbuf},
@@ -2166,11 +2167,60 @@ func (v *CellLayout) AddAttribute(cell ICellRenderer, attribute string, column i
  * GtkCellEditable
  */
 
-// TODO:
-// GtkCellEditableIface
-// gtk_cell_editable_start_editing().
-// gtk_cell_editable_editing_done().
-// gtk_cell_editable_remove_widget().
+// CellEditable is a representation of GTK's GtkCellEditable GInterface.
+type CellEditable struct {
+	*glib.Object
+}
+
+// ICellEditable is an interface type implemented by all structs
+// embedding an CellEditable.  It is meant to be used as an argument type
+// for wrapper functions that wrap around a C GTK function taking a
+// GtkCellEditable.
+type ICellEditable interface {
+	toCellEditable() *C.GtkCellEditable
+}
+
+// native() returns a pointer to the underlying GObject as a GtkCellEditable.
+func (v *CellEditable) native() *C.GtkCellEditable {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellEditable(p)
+}
+
+func marshalCellEditable(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellEditable(obj), nil
+}
+
+func wrapCellEditable(obj *glib.Object) *CellEditable {
+	return &CellEditable{obj}
+}
+
+func (v *CellEditable) toCellEditable() *C.GtkCellEditable {
+	if v == nil {
+		return nil
+	}
+	return v.native()
+}
+
+// StartEditing is a wrapper around gtk_cell_editable_start_editing().
+func (v *CellEditable) StartEditing(event *gdk.Event) {
+	C.gtk_cell_editable_start_editing(v.native(),
+		(*C.GdkEvent)(unsafe.Pointer(event.Native())))
+}
+
+// EditingDone is a wrapper around gtk_cell_editable_editing_done().
+func (v *CellEditable) EditingDone() {
+	C.gtk_cell_editable_editing_done(v.native())
+}
+
+// RemoveWidget is a wrapper around gtk_cell_editable_remove_widget().
+func (v *CellEditable) RemoveWidget() {
+	C.gtk_cell_editable_remove_widget(v.native())
+}
 
 /*
  * GtkCellRenderer
@@ -2215,24 +2265,88 @@ func wrapCellRenderer(obj *glib.Object) *CellRenderer {
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
 }
 
+// Activate is a wrapper around gtk_cell_renderer_activate().
+func (v *CellRenderer) Activate(event *gdk.Event, widget *Widget, path string,
+	backgroundArea, cellArea *gdk.Rectangle, flags CellRendererState) bool {
+
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+	e := (*C.GdkEvent)(unsafe.Pointer(event.Native()))
+
+	c := C.gtk_cell_renderer_activate(v.native(), e, widget.toWidget(),
+		(*C.gchar)(cstr), nativeGdkRectangle(*backgroundArea),
+		nativeGdkRectangle(*cellArea), C.GtkCellRendererState(flags))
+
+	return gobool(c)
+}
+
+// StartEditing is a wrapper around gtk_cell_renderer_start_editing().
+func (v *CellRenderer) StartEditing(event *gdk.Event, widget *Widget, path string,
+	backgroundArea, cellArea *gdk.Rectangle, flags CellRendererState) (*CellEditable, error) {
+
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+	e := (*C.GdkEvent)(unsafe.Pointer(event.Native()))
+
+	c := C.gtk_cell_renderer_start_editing(v.native(), e, widget.toWidget(),
+		(*C.gchar)(cstr), nativeGdkRectangle(*backgroundArea),
+		nativeGdkRectangle(*cellArea), C.GtkCellRendererState(flags))
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellEditable(obj), nil
+}
+
+// StopEditing is a wrapper around gtk_cell_renderer_stop_editing().
+func (v *CellRenderer) StopEditing(canceled bool) {
+	C.gtk_cell_renderer_stop_editing(v.native(), gbool(canceled))
+}
+
+// GetVisible is a wrapper around gtk_cell_renderer_get_visible().
+func (v *CellRenderer) GetVisible() bool {
+	return gobool(C.gtk_cell_renderer_get_visible(v.native()))
+}
+
+// SetVisible is a wrapper around gtk_cell_renderer_set_visible().
+func (v *CellRenderer) SetVisible(visible bool) {
+	C.gtk_cell_renderer_set_visible(v.native(), gbool(visible))
+}
+
+// GetSensitive is a wrapper around gtk_cell_renderer_get_sensitive().
+func (v *CellRenderer) GetSensitive() bool {
+	return gobool(C.gtk_cell_renderer_get_sensitive(v.native()))
+}
+
+// SetSentitive is a wrapper around gtk_cell_renderer_set_sensitive().
+func (v *CellRenderer) SetSentitive(sensitive bool) {
+	C.gtk_cell_renderer_set_sensitive(v.native(), gbool(sensitive))
+}
+
+// IsActivatable is a wrapper around gtk_cell_renderer_is_activatable().
+func (v *CellRenderer) IsActivatable() bool {
+	return gobool(C.gtk_cell_renderer_is_activatable(v.native()))
+}
+
+// GetState is a wrapper around gtk_cell_renderer_get_state().
+func (v *CellRenderer) GetState(widget *Widget,
+	flags CellRendererState) StateFlags {
+
+	return StateFlags(C.gtk_cell_renderer_get_state(v.native(),
+		widget.toWidget(),
+		C.GtkCellRendererState(flags)))
+}
+
 // TODO: gtk_cell_renderer_get_aligned_area
-// TODO: gtk_cell_renderer_get_size
+// TODO: gtk_cell_renderer_get_size -> deprecated since version 3.0
 // TODO: gtk_cell_renderer_render
-// TODO: gtk_cell_renderer_activate
-// TODO: gtk_cell_renderer_start_editing
-// TODO: gtk_cell_renderer_stop_editing
 // TODO: gtk_cell_renderer_get_fixed_size
 // TODO: gtk_cell_renderer_set_fixed_size
-// TODO: gtk_cell_renderer_get_visible
-// TODO: gtk_cell_renderer_set_visible
-// TODO: gtk_cell_renderer_get_sensitive
-// TODO: gtk_cell_renderer_set_sensitive
 // TODO: gtk_cell_renderer_get_alignment
 // TODO: gtk_cell_renderer_set_alignment
 // TODO: gtk_cell_renderer_get_padding
 // TODO: gtk_cell_renderer_set_padding
-// TODO: gtk_cell_renderer_get_state
-// TODO: gtk_cell_renderer_is_activatable
 // TODO: gtk_cell_renderer_get_preferred_height
 // TODO: gtk_cell_renderer_get_preferred_height_for_width
 // TODO: gtk_cell_renderer_get_preferred_size
@@ -10910,6 +11024,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkButton":               wrapButton,
 	"GtkCalendar":             wrapCalendar,
 	"GtkCellLayout":           wrapCellLayout,
+	"GtkCellEditable":         wrapCellEditable,
 	"GtkCellRenderer":         wrapCellRenderer,
 	"GtkCellRendererSpinner":  wrapCellRendererSpinner,
 	"GtkCellRendererPixbuf":   wrapCellRendererPixbuf,
