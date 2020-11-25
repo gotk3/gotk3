@@ -2266,7 +2266,7 @@ func wrapCellRenderer(obj *glib.Object) *CellRenderer {
 }
 
 // Activate is a wrapper around gtk_cell_renderer_activate().
-func (v *CellRenderer) Activate(event *gdk.Event, widget *Widget, path string,
+func (v *CellRenderer) Activate(event *gdk.Event, widget IWidget, path string,
 	backgroundArea, cellArea *gdk.Rectangle, flags CellRendererState) bool {
 
 	cstr := C.CString(path)
@@ -2281,7 +2281,7 @@ func (v *CellRenderer) Activate(event *gdk.Event, widget *Widget, path string,
 }
 
 // StartEditing is a wrapper around gtk_cell_renderer_start_editing().
-func (v *CellRenderer) StartEditing(event *gdk.Event, widget *Widget, path string,
+func (v *CellRenderer) StartEditing(event *gdk.Event, widget IWidget, path string,
 	backgroundArea, cellArea *gdk.Rectangle, flags CellRendererState) (*CellEditable, error) {
 
 	cstr := C.CString(path)
