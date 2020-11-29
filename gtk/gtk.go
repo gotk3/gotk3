@@ -129,6 +129,7 @@ func init() {
 		{glib.Type(C.gtk_box_get_type()), marshalBox},
 		{glib.Type(C.gtk_calendar_get_type()), marshalCalendar},
 		{glib.Type(C.gtk_cell_layout_get_type()), marshalCellLayout},
+		{glib.Type(C.gtk_cell_editable_get_type()), marshalCellEditable},
 		{glib.Type(C.gtk_cell_renderer_get_type()), marshalCellRenderer},
 		{glib.Type(C.gtk_cell_renderer_spinner_get_type()), marshalCellRendererSpinner},
 		{glib.Type(C.gtk_cell_renderer_pixbuf_get_type()), marshalCellRendererPixbuf},
@@ -2166,11 +2167,73 @@ func (v *CellLayout) AddAttribute(cell ICellRenderer, attribute string, column i
  * GtkCellEditable
  */
 
-// TODO:
-// GtkCellEditableIface
-// gtk_cell_editable_start_editing().
-// gtk_cell_editable_editing_done().
-// gtk_cell_editable_remove_widget().
+// CellEditable is a representation of GTK's GtkCellEditable GInterface.
+type CellEditable struct {
+	glib.InitiallyUnowned
+	// Widget
+}
+
+// ICellEditable is an interface type implemented by all structs
+// embedding an CellEditable. It is meant to be used as an argument type
+// for wrapper functions that wrap around a C GTK function taking a
+// GtkCellEditable.
+type ICellEditable interface {
+	toCellEditable() *C.GtkCellEditable
+	ToEntry() *Entry
+}
+
+// native() returns a pointer to the underlying GObject as a GtkCellEditable.
+func (v *CellEditable) native() *C.GtkCellEditable {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGtkCellEditable(p)
+}
+
+func marshalCellEditable(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCellEditable(obj), nil
+}
+
+func wrapCellEditable(obj *glib.Object) *CellEditable {
+	// return &CellEditable{Widget{glib.InitiallyUnowned{obj}}}
+	return &CellEditable{glib.InitiallyUnowned{obj}}
+}
+
+func (v *CellEditable) toCellEditable() *C.GtkCellEditable {
+	if v == nil {
+		return nil
+	}
+	return v.native()
+}
+
+// ToEntry is a helper tool, e.g: it returns *gtk.CellEditable as a *gtk.Entry
+// that embedding this CellEditable instance, then it can be used with
+// CellRendererText to adding EntryCompletion tools or intercepting EntryBuffer,
+// (to bypass "canceled" signal for example) then record entry, and much more.
+func (v *CellEditable) ToEntry() *Entry {
+	return &Entry{Widget{glib.InitiallyUnowned{v.Object}},
+		Editable{v.Object},
+		*v}
+}
+
+// StartEditing is a wrapper around gtk_cell_editable_start_editing().
+func (v *CellEditable) StartEditing(event *gdk.Event) {
+	C.gtk_cell_editable_start_editing(v.native(),
+		(*C.GdkEvent)(unsafe.Pointer(event.Native())))
+}
+
+// EditingDone is a wrapper around gtk_cell_editable_editing_done().
+func (v *CellEditable) EditingDone() {
+	C.gtk_cell_editable_editing_done(v.native())
+}
+
+// RemoveWidget is a wrapper around gtk_cell_editable_remove_widget().
+func (v *CellEditable) RemoveWidget() {
+	C.gtk_cell_editable_remove_widget(v.native())
+}
 
 /*
  * GtkCellRenderer
@@ -2213,6 +2276,75 @@ func marshalCellRenderer(p uintptr) (interface{}, error) {
 
 func wrapCellRenderer(obj *glib.Object) *CellRenderer {
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
+}
+
+// Activate is a wrapper around gtk_cell_renderer_activate().
+func (v *CellRenderer) Activate(event *gdk.Event, widget IWidget, path string,
+	backgroundArea, cellArea *gdk.Rectangle, flags CellRendererState) bool {
+
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+	e := (*C.GdkEvent)(unsafe.Pointer(event.Native()))
+
+	c := C.gtk_cell_renderer_activate(v.native(), e, widget.toWidget(),
+		(*C.gchar)(cstr), nativeGdkRectangle(*backgroundArea),
+		nativeGdkRectangle(*cellArea), C.GtkCellRendererState(flags))
+
+	return gobool(c)
+}
+
+// StartEditing is a wrapper around gtk_cell_renderer_start_editing().
+func (v *CellRenderer) StartEditing(event *gdk.Event, widget IWidget, path string,
+	backgroundArea, cellArea *gdk.Rectangle, flags CellRendererState) (ICellEditable, error) {
+
+	cstr := C.CString(path)
+	defer C.free(unsafe.Pointer(cstr))
+	e := (*C.GdkEvent)(unsafe.Pointer(event.Native()))
+
+	c := C.gtk_cell_renderer_start_editing(v.native(), e, widget.toWidget(),
+		(*C.gchar)(cstr), nativeGdkRectangle(*backgroundArea),
+		nativeGdkRectangle(*cellArea), C.GtkCellRendererState(flags))
+
+	return castCellEditable(c)
+}
+
+// StopEditing is a wrapper around gtk_cell_renderer_stop_editing().
+func (v *CellRenderer) StopEditing(canceled bool) {
+	C.gtk_cell_renderer_stop_editing(v.native(), gbool(canceled))
+}
+
+// GetVisible is a wrapper around gtk_cell_renderer_get_visible().
+func (v *CellRenderer) GetVisible() bool {
+	return gobool(C.gtk_cell_renderer_get_visible(v.native()))
+}
+
+// SetVisible is a wrapper around gtk_cell_renderer_set_visible().
+func (v *CellRenderer) SetVisible(visible bool) {
+	C.gtk_cell_renderer_set_visible(v.native(), gbool(visible))
+}
+
+// GetSensitive is a wrapper around gtk_cell_renderer_get_sensitive().
+func (v *CellRenderer) GetSensitive() bool {
+	return gobool(C.gtk_cell_renderer_get_sensitive(v.native()))
+}
+
+// SetSentitive is a wrapper around gtk_cell_renderer_set_sensitive().
+func (v *CellRenderer) SetSentitive(sensitive bool) {
+	C.gtk_cell_renderer_set_sensitive(v.native(), gbool(sensitive))
+}
+
+// IsActivatable is a wrapper around gtk_cell_renderer_is_activatable().
+func (v *CellRenderer) IsActivatable() bool {
+	return gobool(C.gtk_cell_renderer_is_activatable(v.native()))
+}
+
+// GetState is a wrapper around gtk_cell_renderer_get_state().
+func (v *CellRenderer) GetState(widget IWidget,
+	flags CellRendererState) StateFlags {
+
+	return StateFlags(C.gtk_cell_renderer_get_state(v.native(),
+		widget.toWidget(),
+		C.GtkCellRendererState(flags)))
 }
 
 // TODO: gtk_cell_renderer_get_aligned_area
@@ -3473,6 +3605,7 @@ type Entry struct {
 
 	// Interfaces
 	Editable
+	CellEditable
 }
 
 type IEntry interface {
@@ -3500,7 +3633,8 @@ func marshalEntry(p uintptr) (interface{}, error) {
 
 func wrapEntry(obj *glib.Object) *Entry {
 	e := wrapEditable(obj)
-	return &Entry{Widget{glib.InitiallyUnowned{obj}}, *e}
+	ce := wrapCellEditable(obj)
+	return &Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}
 }
 
 // EntryNew() is a wrapper around gtk_entry_new().
@@ -7767,7 +7901,8 @@ func marshalSearchEntry(p uintptr) (interface{}, error) {
 
 func wrapSearchEntry(obj *glib.Object) *SearchEntry {
 	e := wrapEditable(obj)
-	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}, *e}}
+	ce := wrapCellEditable(obj)
+	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}}
 }
 
 // SearchEntryNew is a wrapper around gtk_search_entry_new().
@@ -8082,7 +8217,8 @@ func marshalSpinButton(p uintptr) (interface{}, error) {
 
 func wrapSpinButton(obj *glib.Object) *SpinButton {
 	e := wrapEditable(obj)
-	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}, *e}}
+	ce := wrapCellEditable(obj)
+	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}}
 }
 
 // Configure is a wrapper around gtk_spin_button_configure().
@@ -9725,6 +9861,14 @@ func (v *TreeModel) GetPath(iter *TreeIter) (*TreePath, error) {
 	return p, nil
 }
 
+// GetStringFromIter() is a wrapper around gtk_tree_model_get_string_from_iter().
+func (v *TreeModel) GetStringFromIter(iter *TreeIter) string {
+	c := C.gtk_tree_model_get_string_from_iter(v.native(), iter.native())
+	s := goString(c)
+	defer C.g_free((C.gpointer)(c))
+	return s
+}
+
 // GetValue() is a wrapper around gtk_tree_model_get_value().
 func (v *TreeModel) GetValue(iter *TreeIter, column int) (*glib.Value, error) {
 	val, err := glib.ValueAlloc()
@@ -10924,6 +11068,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkButton":               wrapButton,
 	"GtkCalendar":             wrapCalendar,
 	"GtkCellLayout":           wrapCellLayout,
+	"GtkCellEditable":         wrapCellEditable,
 	"GtkCellRenderer":         wrapCellRenderer,
 	"GtkCellRendererSpinner":  wrapCellRendererSpinner,
 	"GtkCellRendererPixbuf":   wrapCellRendererPixbuf,
@@ -11127,6 +11272,27 @@ func castTreeModel(c *C.GtkTreeModel) (ITreeModel, error) {
 	ret, ok := intf.(ITreeModel)
 	if !ok {
 		return nil, fmt.Errorf("expected value of type ITreeModel, got %T", intf)
+	}
+
+	return ret, nil
+}
+
+// castCellEditable takes a native GtkCellEditable and casts it to the appropriate Go struct.
+func castCellEditable(c *C.GtkCellEditable) (ICellEditable, error) {
+	ptr := unsafe.Pointer(c)
+	var (
+		className = goString(C.object_get_class_name(C.toGObject(ptr)))
+		obj       = glib.Take(ptr)
+	)
+
+	intf, err := castInternal(className, obj)
+	if err != nil {
+		return nil, err
+	}
+
+	ret, ok := intf.(ICellEditable)
+	if !ok {
+		return nil, fmt.Errorf("expected value of type ICellEditable, got %T", intf)
 	}
 
 	return ret, nil

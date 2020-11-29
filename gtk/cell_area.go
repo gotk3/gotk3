@@ -352,8 +352,11 @@ func (v *CellArea) GetEditedCell() (ICellRenderer, error) {
 	return castCellRenderer(c)
 }
 
-// TODO:
-// gtk_cell_area_get_edit_widget // depends on GtkCellEditable
+// GetEditWidget is a wrapper around gtk_cell_area_get_edit_widget().
+func (v *CellArea) GetEditWidget() (ICellEditable, error) {
+	c := C.gtk_cell_area_get_edit_widget(v.native())
+	return castCellEditable(c)
+}
 
 // ActivateCell is a wrapper around gtk_cell_area_activate_cell().
 func (v *CellArea) ActivateCell(widget IWidget, renderer ICellRenderer,
