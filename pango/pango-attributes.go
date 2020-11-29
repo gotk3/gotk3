@@ -105,6 +105,17 @@ func (v *AttrList) native() *C.PangoAttrList {
 	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
 }
 
+func (v *AttrList) Insert(attribute *Attribute) {
+	C.pango_attr_list_insert(v.pangoAttrList, attribute.native())
+}
+
+func AttrListNew() *AttrList {
+	c := C.pango_attr_list_new()
+	attrList := new(AttrList)
+	attrList.pangoAttrList = c
+	return attrList
+}
+
 // AttrType is a representation of Pango's PangoAttrType.
 type AttrType int
 
@@ -174,6 +185,13 @@ func (v *Attribute) Native() uintptr {
 
 func (v *Attribute) native() *C.PangoAttribute {
 	return (*C.PangoAttribute)(unsafe.Pointer(v.pangoAttribute))
+}
+
+func AttrInsertHyphensNew(insertHyphens bool) *Attribute {
+	c := C.pango_attr_insert_hyphens_new(gbool(insertHyphens))
+	attr := new(Attribute)
+	attr.pangoAttribute = c
+	return attr
 }
 
 /*
