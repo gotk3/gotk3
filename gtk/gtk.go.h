@@ -448,6 +448,12 @@ toGtkCellRenderer(void *p)
 	return (GTK_CELL_RENDERER(p));
 }
 
+static GtkCellEditable *
+toGtkCellEditable(void *p)
+{
+	return (GTK_CELL_EDITABLE(p));
+}
+
 static GtkCellRendererPixbuf *
 toGtkCellRendererPixbuf(void *p)
 {

@@ -112,8 +112,9 @@ func marshalAppChooserButton(p uintptr) (interface{}, error) {
 
 func wrapAppChooserButton(obj *glib.Object) *AppChooserButton {
 	cl := wrapCellLayout(obj)
+	ce := wrapCellEditable(obj)
 	ac := wrapAppChooser(obj)
-	return &AppChooserButton{ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl}, *ac}
+	return &AppChooserButton{ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl, *ce}, *ac}
 }
 
 // AppChooserButtonNew() is a wrapper around gtk_app_chooser_button_new().
@@ -357,7 +358,7 @@ func AppChooserDialogNewForContentType(parent IWindow, flags DialogFlags, conten
 	if parent != nil {
 		pw = parent.toWindow()
 	}
-	
+
 	c := C.gtk_app_chooser_dialog_new_for_content_type(pw, C.GtkDialogFlags(flags), (*C.gchar)(cstr))
 	if c == nil {
 		return nil, nilPtrErr
