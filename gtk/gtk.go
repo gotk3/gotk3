@@ -10893,23 +10893,46 @@ func (v *TreeStore) InsertWithValues(iter, parent *TreeIter, position int, inCol
 		length = len(inValues)
 	}
 
-	var cColumns []C.gint
-	var cValues []C.GValue
-	for i := 0; i < length; i++ {
-		cColumns = append(cColumns, C.gint(inColumns[i]))
+	cColumns := make([]C.gint, 0, length)
+	cValues := make([]C.GValue, 0, length)
 
-		gv, err := glib.GValue(inValues[i])
-		if err != nil {
-			return err
+	for i := 0; i < length; i++ {
+
+		value := inValues[i]
+		var gvalue *C.GValue
+
+		switch value.(type) {
+		case *gdk.Pixbuf:
+			pix := value.(*gdk.Pixbuf)
+
+			if pix == nil {
+				continue
+			}
+
+			gvalue = (*C.GValue)(unsafe.Pointer(pix.Native()))
+
+		default:
+			gv, err := glib.GValue(value)
+			if err != nil {
+				return err
+			}
+			gvalue = (*C.GValue)(C.gpointer(gv.Native()))
 		}
 
-		var cvp *C.GValue = (*C.GValue)(unsafe.Pointer(gv.Native()))
-		cValues = append(cValues, *cvp)
+		cColumns = append(cColumns, C.gint(inColumns[i]))
+		cValues = append(cValues, *gvalue)
 	}
-	var cColumnsPointer *C.gint = &cColumns[0]
-	var cValuesPointer *C.GValue = &cValues[0]
 
-	C.gtk_tree_store_insert_with_valuesv(v.native(), iter.native(), parent.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(length))
+	var cColumnsPointer *C.gint
+	if len(cColumns) > 0 {
+		cColumnsPointer = &cColumns[0]
+	}
+	var cValuesPointer *C.GValue
+	if len(cValues) > 0 {
+		cValuesPointer = &cValues[0]
+	}
+
+	C.gtk_tree_store_insert_with_valuesv(v.native(), iter.native(), parent.native(), C.gint(position), cColumnsPointer, cValuesPointer, C.gint(len(cColumns)))
 
 	return nil
 }
