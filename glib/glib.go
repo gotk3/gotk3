@@ -71,7 +71,12 @@ var (
 		m: make(map[*C.GClosure]closureContext),
 	}
 
-	signals = make(map[SignalHandle]*C.GClosure)
+	signals = struct {
+		sync.RWMutex
+		m map[SignalHandle]*C.GClosure
+	}{
+		m: make(map[SignalHandle]*C.GClosure),
+	}
 )
 
 /*
@@ -867,9 +872,16 @@ func (v *Object) HandlerUnblock(handle SignalHandle) {
 // HandlerDisconnect is a wrapper around g_signal_handler_disconnect().
 func (v *Object) HandlerDisconnect(handle SignalHandle) {
 	C.g_signal_handler_disconnect(C.gpointer(v.GObject), C.gulong(handle))
-	C.g_closure_invalidate(signals[handle])
-	delete(closures.m, signals[handle])
-	delete(signals, handle)
+
+	signals.Lock()
+	closure := signals.m[handle]
+	C.g_closure_invalidate(closure)
+	delete(signals.m, handle)
+	signals.Unlock()
+
+	closures.Lock()
+	delete(closures.m, closure)
+	closures.Unlock()
 }
 
 // Wrapper function for new objects with reference management.

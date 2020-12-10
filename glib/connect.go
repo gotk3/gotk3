@@ -36,7 +36,9 @@ func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}
 	handle := SignalHandle(c)
 
 	// Map the signal handle to the closure.
-	signals[handle] = closure
+	signals.Lock()
+	signals.m[handle] = closure
+	signals.Unlock()
 
 	return handle, nil
 }
