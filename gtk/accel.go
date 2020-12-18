@@ -247,32 +247,13 @@ func AccelMapAddEntry(path string, key uint, mods gdk.ModifierType) {
 	C.gtk_accel_map_add_entry((*C.gchar)(cstr), C.guint(key), C.GdkModifierType(mods))
 }
 
-type AccelKey struct {
-	key   uint
-	mods  gdk.ModifierType
-	flags uint16
-}
+type AccelKey C.GtkAccelKey
 
-func (v *AccelKey) native() *C.struct__GtkAccelKey {
+func (v *AccelKey) native() *C.GtkAccelKey {
 	if v == nil {
 		return nil
 	}
-
-	var val C.struct__GtkAccelKey
-	val.accel_key = C.guint(v.key)
-	val.accel_mods = C.GdkModifierType(v.mods)
-	val.accel_flags = v.flags
-	return &val
-}
-
-func wrapAccelKey(obj *C.struct__GtkAccelKey) *AccelKey {
-	var v AccelKey
-
-	v.key = uint(obj.accel_key)
-	v.mods = gdk.ModifierType(obj.accel_mods)
-	v.flags = uint16(obj.accel_flags)
-
-	return &v
+	return (*C.GtkAccelKey)(v)
 }
 
 // AccelMapLookupEntry is a wrapper around gtk_accel_map_lookup_entry().
@@ -280,10 +261,10 @@ func AccelMapLookupEntry(path string) *AccelKey {
 	cstr := C.CString(path)
 	defer C.free(unsafe.Pointer(cstr))
 
-	var v *C.struct__GtkAccelKey
+	var v = new(AccelKey)
 
-	C.gtk_accel_map_lookup_entry((*C.gchar)(cstr), v)
-	return wrapAccelKey(v)
+	C.gtk_accel_map_lookup_entry((*C.gchar)(cstr), v.native())
+	return v
 }
 
 // AccelMapChangeEntry is a wrapper around gtk_accel_map_change_entry().
