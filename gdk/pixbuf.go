@@ -221,9 +221,6 @@ func (v *Pixbuf) GetBitsPerSample() int {
 	return int(c)
 }
 
-// TODO:
-// gdk_pixbuf_get_pixels().
-
 // GetPixels is a wrapper around gdk_pixbuf_get_pixels_with_length().
 // A Go slice is used to represent the underlying Pixbuf data array, one
 // byte per channel.
@@ -290,10 +287,43 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 	return p, nil
 }
 
+// Scale is a wrapper around gdk_pixbuf_scale().
+func (v *Pixbuf) Scale(dest *Pixbuf, destX, destY, destWidth, destHeight int, offsetX, offsetY, scaleX, scaleY float64, interpType InterpType) {
+	C.gdk_pixbuf_scale(
+		v.native(),
+		dest.native(),
+		C.int(destX),
+		C.int(destY),
+		C.int(destWidth),
+		C.int(destHeight),
+		C.double(offsetX),
+		C.double(offsetY),
+		C.double(scaleX),
+		C.double(scaleY),
+		C.GdkInterpType(interpType),
+	)
+}
+
+// Composite is a wrapper around gdk_pixbuf_composite().
+func (v *Pixbuf) Composite(dest *Pixbuf, destX, destY, destWidth, destHeight int, offsetX, offsetY, scaleX, scaleY float64, interpType InterpType, overallAlpha int) {
+	C.gdk_pixbuf_composite(
+		v.native(),
+		dest.native(),
+		C.int(destX),
+		C.int(destY),
+		C.int(destWidth),
+		C.int(destHeight),
+		C.double(offsetX),
+		C.double(offsetY),
+		C.double(scaleX),
+		C.double(scaleY),
+		C.GdkInterpType(interpType),
+		C.int(overallAlpha),
+	)
+}
+
 // TODO:
-// gdk_pixbuf_scale().
 // gdk_pixbuf_composite_color_simple().
-// gdk_pixbuf_composite().
 // gdk_pixbuf_composite_color().
 
 // Utilities
