@@ -20,8 +20,4 @@
 #include <stdlib.h>
 #include <string.h>
 
-static PangoColor* toPangoColor(void *p)
-{
-	return ( (PangoColor*) (p) );
-}
-
+static PangoColor *toPangoColor(void *p) { return ((PangoColor *)(p)); }
