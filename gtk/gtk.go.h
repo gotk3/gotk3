@@ -994,8 +994,6 @@ static inline void set_string(gchar** strings, int n, gchar* str) {
 	strings[n] = str;
 }
 
-static inline gchar** next_gcharptr(gchar** s) { return (s+1); }
-
 extern void goBuilderConnect (GtkBuilder *builder,
                           GObject *object,
                           gchar *signal_name,
