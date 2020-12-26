@@ -2,7 +2,6 @@
 
 package cairo
 
-// #include <stdlib.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>
 import "C"
