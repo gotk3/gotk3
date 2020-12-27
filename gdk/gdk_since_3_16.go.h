@@ -19,8 +19,4 @@
 #include <stdlib.h>
 
 // Type Casting
-static GdkGLContext *
-toGdkGLContext(void *p)
-{
-  return (GDK_GL_CONTEXT(p));
-}
+static GdkGLContext *toGdkGLContext(void *p) { return (GDK_GL_CONTEXT(p)); }

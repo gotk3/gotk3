@@ -18,8 +18,11 @@
 
 #include <stdlib.h>
 
-extern gboolean goTickCallbacks (GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data);
+extern gboolean goTickCallbacks(GtkWidget *widget, GdkFrameClock *frame_clock,
+                                gpointer user_data);
 
-static inline guint _gtk_widget_add_tick_callback(GtkWidget *widget, gpointer user_data) {
-    return gtk_widget_add_tick_callback(widget, (GtkTickCallback)(goTickCallbacks), user_data, NULL);
+static inline guint _gtk_widget_add_tick_callback(GtkWidget *widget,
+                                                  gpointer user_data) {
+  return gtk_widget_add_tick_callback(
+      widget, (GtkTickCallback)(goTickCallbacks), user_data, NULL);
 }
