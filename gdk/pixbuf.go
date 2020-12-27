@@ -329,10 +329,25 @@ func (v *Pixbuf) Composite(dest *Pixbuf, destX, destY, destWidth, destHeight int
 // Utilities
 
 // TODO:
-// gdk_pixbuf_add_alpha().
 // gdk_pixbuf_copy_area().
 // gdk_pixbuf_saturate_and_pixelate().
-// gdk_pixbuf_fill().
+
+// Fill is a wrapper around gdk_pixbuf_fill(). The given pixel is an RGBA value.
+func (v *Pixbuf) Fill(pixel uint32) {
+	C.gdk_pixbuf_fill(v.native(), C.guint32(pixel))
+}
+
+// AddAlpha is a wrapper around gdk_pixbuf_add_alpha(). If substituteColor is
+// true, then the color specified by r, g and b will be assigned zero opacity.
+func (v *Pixbuf) AddAlpha(substituteColor bool, r, g, b uint8) *Pixbuf {
+	c := C.gdk_pixbuf_add_alpha(v.native(), gbool(substituteColor), C.guchar(r), C.guchar(g), C.guchar(b))
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
+	return p
+}
 
 // File saving
 
