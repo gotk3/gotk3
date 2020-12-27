@@ -75,3 +75,27 @@ func (p *Popover) GetDefaultWidget() (IWidget, error) {
 	}
 	return castWidget(w)
 }
+
+/*
+ * GtkTextView
+ */
+
+// SetTopMargin is a wrapper around gtk_text_view_set_top_margin().
+func (v *TextView) SetTopMargin(topMargin int) {
+	C.gtk_text_view_set_top_margin(v.native(), C.gint(topMargin))
+}
+
+// GetTopMargin is a wrapper around gtk_text_view_get_top_margin().
+func (v *TextView) GetTopMargin() int {
+	return int(C.gtk_text_view_get_top_margin(v.native()))
+}
+
+// SetBottomMargin is a wrapper around gtk_text_view_set_bottom_margin().
+func (v *TextView) SetBottomMargin(bottomMargin int) {
+	C.gtk_text_view_set_bottom_margin(v.native(), C.gint(bottomMargin))
+}
+
+// GetBottomMargin is a wrapper around gtk_text_view_get_bottom_margin().
+func (v *TextView) GetBottomMargin() int {
+	return int(C.gtk_text_view_get_bottom_margin(v.native()))
+}

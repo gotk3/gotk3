@@ -8695,9 +8695,12 @@ func (v *TextBuffer) SelectRange(start, end *TextIter) {
 // CreateChildAnchor() is a wrapper around gtk_text_buffer_create_child_anchor().
 // Since it copies garbage from the stack into the padding bytes of iter,
 // iter can't be reliably reused after this call unless GODEBUG=cgocheck=0.
-func (v *TextBuffer) CreateChildAnchor(iter *TextIter) *TextChildAnchor {
-	ret := C.gtk_text_buffer_create_child_anchor(v.native(), iter.native())
-	return (*TextChildAnchor)(ret)
+func (v *TextBuffer) CreateChildAnchor(iter *TextIter) (*TextChildAnchor, error) {
+	c := C.gtk_text_buffer_create_child_anchor(v.native(), iter.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return wrapTextChildAnchor(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // Delete() is a wrapper around gtk_text_buffer_delete().
@@ -11166,10 +11169,11 @@ var WrapMap = map[string]WrapFn{
 	"GtkSpinner":              wrapSpinner,
 	"GtkStatusbar":            wrapStatusbar,
 	"GtkSwitch":               wrapSwitch,
-	"GtkTextView":             wrapTextView,
 	"GtkTextBuffer":           wrapTextBuffer,
+	"GtkTextChildAnchor":      wrapTextChildAnchor,
 	"GtkTextTag":              wrapTextTag,
 	"GtkTextTagTable":         wrapTextTagTable,
+	"GtkTextView":             wrapTextView,
 	"GtkToggleButton":         wrapToggleButton,
 	"GtkToolbar":              wrapToolbar,
 	"GtkToolButton":           wrapToolButton,
