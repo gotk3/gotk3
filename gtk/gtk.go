@@ -60,6 +60,7 @@ import (
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/internal/callback"
 	"github.com/gotk3/gotk3/pango"
 )
 
@@ -228,6 +229,15 @@ func init() {
 		{glib.Type(C.gtk_tree_path_get_type()), marshalTreePath},
 	}
 	glib.RegisterGValueMarshalers(tm)
+}
+
+/*
+ * Callback helpers
+ */
+
+//export callbackDelete
+func callbackDelete(callbackID C.gpointer) {
+	callback.Delete(uintptr(callbackID))
 }
 
 /*
@@ -6588,8 +6598,8 @@ func wrapMessageDialog(obj *glib.Object) *MessageDialog {
 // MessageDialogNew() is a wrapper around gtk_message_dialog_new().
 // The text is created and formatted by the format specifier and any
 // additional arguments.
-func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, buttons ButtonsType, format string, a ...interface{}) *MessageDialog {
-	s := fmt.Sprintf(format, a...)
+func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, buttons ButtonsType, format string, args ...interface{}) *MessageDialog {
+	s := fmt.Sprintf(format, args...)
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
 	var w *C.GtkWindow = nil
@@ -6604,8 +6614,8 @@ func MessageDialogNew(parent IWindow, flags DialogFlags, mType MessageType, butt
 
 // MessageDialogNewWithMarkup is a wrapper around
 // gtk_message_dialog_new_with_markup().
-func MessageDialogNewWithMarkup(parent IWindow, flags DialogFlags, mType MessageType, buttons ButtonsType, format string, a ...interface{}) *MessageDialog {
-	s := fmt.Sprintf(format, a...)
+func MessageDialogNewWithMarkup(parent IWindow, flags DialogFlags, mType MessageType, buttons ButtonsType, format string, args ...interface{}) *MessageDialog {
+	s := fmt.Sprintf(format, args...)
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
 	var w *C.GtkWindow = nil
@@ -6627,8 +6637,8 @@ func (v *MessageDialog) SetMarkup(str string) {
 
 // FormatSecondaryText is a wrapper around
 // gtk_message_dialog_format_secondary_text().
-func (v *MessageDialog) FormatSecondaryText(format string, a ...interface{}) {
-	s := fmt.Sprintf(format, a...)
+func (v *MessageDialog) FormatSecondaryText(format string, args ...interface{}) {
+	s := fmt.Sprintf(format, args...)
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
 	C._gtk_message_dialog_format_secondary_text(v.native(),
@@ -6637,8 +6647,8 @@ func (v *MessageDialog) FormatSecondaryText(format string, a ...interface{}) {
 
 // FormatSecondaryMarkup is a wrapper around
 // gtk_message_dialog_format_secondary_text().
-func (v *MessageDialog) FormatSecondaryMarkup(format string, a ...interface{}) {
-	s := fmt.Sprintf(format, a...)
+func (v *MessageDialog) FormatSecondaryMarkup(format string, args ...interface{}) {
+	s := fmt.Sprintf(format, args...)
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
 	C._gtk_message_dialog_format_secondary_markup(v.native(),
@@ -10624,38 +10634,14 @@ func (v *TreeModel) FilterNew(root *TreePath) (*TreeModelFilter, error) {
 
 // TreeModelForeachFunc defines the function prototype for the foreach function (f arg) for
 // (* TreeModel).ForEach
-type TreeModelForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData ...interface{}) bool
-
-type treeModelForeachFuncData struct {
-	fn       TreeModelForeachFunc
-	userData []interface{}
-}
-
-var (
-	treeModelForeachFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]treeModelForeachFuncData
-	}{
-		next: 1,
-		m:    make(map[int]treeModelForeachFuncData),
-	}
-)
+type TreeModelForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter) bool
 
 // ForEach() is a wrapper around gtk_tree_model_foreach ()
-func (v *TreeModel) ForEach(f TreeModelForeachFunc, userData ...interface{}) {
-	treeModelForeachFuncRegistry.Lock()
-	id := treeModelForeachFuncRegistry.next
-	treeModelForeachFuncRegistry.next++
-	treeModelForeachFuncRegistry.m[id] = treeModelForeachFuncData{fn: f, userData: userData}
-	treeModelForeachFuncRegistry.Unlock()
+func (v *TreeModel) ForEach(f TreeModelForeachFunc) {
+	id := callback.Assign(f)
+	defer callback.Delete(id)
 
-	C._gtk_tree_model_foreach(v.toTreeModel(), C.gpointer(uintptr(id)))
-
-	// Clean up callback immediately as we only need it for the duration of this Foreach call
-	treeModelForeachFuncRegistry.Lock()
-	delete(treeModelForeachFuncRegistry.m, id)
-	treeModelForeachFuncRegistry.Unlock()
+	C._gtk_tree_model_foreach(v.toTreeModel(), C.gpointer(id))
 }
 
 /*
@@ -10750,34 +10736,11 @@ func (v *TreeModelFilter) Refilter() {
 
 // TreeModelFilterVisibleFunc defines the function prototype for the filter visibility function (f arg)
 // to TreeModelFilter.SetVisibleFunc.
-type TreeModelFilterVisibleFunc func(model *TreeModelFilter, iter *TreeIter, userData ...interface{}) bool
-
-type treeModelFilterVisibleFuncData struct {
-	fn       TreeModelFilterVisibleFunc
-	userData []interface{}
-}
-
-var (
-	treeModelVisibleFilterFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]treeModelFilterVisibleFuncData
-	}{
-		next: 1,
-		m:    make(map[int]treeModelFilterVisibleFuncData),
-	}
-)
+type TreeModelFilterVisibleFunc func(model *TreeModel, iter *TreeIter) bool
 
 // SetVisibleFunc is a wrapper around gtk_tree_model_filter_set_visible_func().
-func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	treeModelVisibleFilterFuncRegistry.Lock()
-	id := treeModelVisibleFilterFuncRegistry.next
-	treeModelVisibleFilterFuncRegistry.next++
-	treeModelVisibleFilterFuncRegistry.m[id] = treeModelFilterVisibleFuncData{fn: f, userData: userData}
-	treeModelVisibleFilterFuncRegistry.Unlock()
-
-	C._gtk_tree_model_filter_set_visible_func(v.native(), C.gpointer(uintptr(id)))
+func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc) {
+	C._gtk_tree_model_filter_set_visible_func(v.native(), C.gpointer(callback.Assign(f)))
 }
 
 // Down() is a wrapper around gtk_tree_path_down()
@@ -11063,70 +11026,23 @@ func (v *TreeSelection) PathIsSelected(path *TreePath) bool {
 
 // TreeSelectionForeachFunc defines the function prototype for the selected_foreach function (f arg) for
 // (* TreeSelection).SelectedForEach
-type TreeSelectionForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter, userData ...interface{})
-
-type treeSelectionForeachFuncData struct {
-	fn       TreeSelectionForeachFunc
-	userData []interface{}
-}
-
-var (
-	treeSelectionForeachFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]treeSelectionForeachFuncData
-	}{
-		next: 1,
-		m:    make(map[int]treeSelectionForeachFuncData),
-	}
-)
+type TreeSelectionForeachFunc func(model *TreeModel, path *TreePath, iter *TreeIter)
 
 // SelectedForEach() is a wrapper around gtk_tree_selection_selected_foreach()
-func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc, userData ...interface{}) {
-	treeSelectionForeachFuncRegistry.Lock()
-	id := treeSelectionForeachFuncRegistry.next
-	treeSelectionForeachFuncRegistry.next++
-	treeSelectionForeachFuncRegistry.m[id] = treeSelectionForeachFuncData{fn: f, userData: userData}
-	treeSelectionForeachFuncRegistry.Unlock()
+func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc) {
+	id := callback.Assign(f)
+	defer callback.Delete(id)
 
-	C._gtk_tree_selection_selected_foreach(v.native(), C.gpointer(uintptr(id)))
-
-	// Clean up callback immediately as we only need it for the duration of this Foreach call
-	treeSelectionForeachFuncRegistry.Lock()
-	delete(treeSelectionForeachFuncRegistry.m, id)
-	treeSelectionForeachFuncRegistry.Unlock()
+	C._gtk_tree_selection_selected_foreach(v.native(), C.gpointer(id))
 }
 
 // TreeSelectionFunc defines the function prototype for the gtk_tree_selection_set_select_function
 // function (f arg) for (* TreeSelection).SetSelectFunction
-type TreeSelectionFunc func(selection *TreeSelection, model *TreeModel, path *TreePath, selected bool, userData ...interface{}) bool
-
-type treeSelectionFuncData struct {
-	fn       TreeSelectionFunc
-	userData []interface{}
-}
-
-var (
-	TreeSelectionFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]treeSelectionFuncData
-	}{
-		next: 1,
-		m:    make(map[int]treeSelectionFuncData),
-	}
-)
+type TreeSelectionFunc func(selection *TreeSelection, model *TreeModel, path *TreePath, selected bool) bool
 
 // SetSelectFunction() is a wrapper around gtk_tree_selection_set_select_function()
-func (v *TreeSelection) SetSelectFunction(f TreeSelectionFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	TreeSelectionFuncRegistry.Lock()
-	id := TreeSelectionFuncRegistry.next
-	TreeSelectionFuncRegistry.next++
-	TreeSelectionFuncRegistry.m[id] = treeSelectionFuncData{fn: f, userData: userData}
-	TreeSelectionFuncRegistry.Unlock()
-
-	C._gtk_tree_selection_set_select_function(v.native(), C.gpointer(uintptr(id)))
+func (v *TreeSelection) SetSelectFunction(f TreeSelectionFunc) {
+	C._gtk_tree_selection_set_select_function(v.native(), C.gpointer(callback.Assign(f)))
 }
 
 /*
@@ -11235,7 +11151,7 @@ func wrapTreeSortable(obj *glib.Object) *TreeSortable {
 
 // TreeIterCompareFunc is a representation of GtkTreeIterCompareFunc.
 // It defines the function prototype for the sort function (f arg) for (* TreeSortable).SetSortFunc
-type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter, userData ...interface{}) int
+type TreeIterCompareFunc func(model *TreeModel, a, b *TreeIter) int
 
 // GetSortColumnId() is a wrapper around gtk_tree_sortable_get_sort_column_id().
 func (v *TreeSortable) GetSortColumnId() (int, SortType, bool) {
@@ -11245,49 +11161,19 @@ func (v *TreeSortable) GetSortColumnId() (int, SortType, bool) {
 	return int(column), SortType(order), ok
 }
 
-type treeStoreSortFuncData struct {
-	fn       TreeIterCompareFunc
-	userData []interface{}
-}
-
-var (
-	treeStoreSortFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]treeStoreSortFuncData
-	}{
-		next: 1,
-		m:    make(map[int]treeStoreSortFuncData),
-	}
-)
-
 // SetSortColumnId() is a wrapper around gtk_tree_sortable_set_sort_column_id().
 func (v *TreeSortable) SetSortColumnId(column int, order SortType) {
 	C.gtk_tree_sortable_set_sort_column_id(v.native(), C.gint(column), C.GtkSortType(order))
 }
 
 // SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
-func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	treeStoreSortFuncRegistry.Lock()
-	id := treeStoreSortFuncRegistry.next
-	treeStoreSortFuncRegistry.next++
-	treeStoreSortFuncRegistry.m[id] = treeStoreSortFuncData{fn: f, userData: userData}
-	treeStoreSortFuncRegistry.Unlock()
-
-	C._gtk_tree_sortable_set_sort_func(v.native(), C.gint(sortColumn), C.gpointer(uintptr(id)))
+func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc) {
+	C._gtk_tree_sortable_set_sort_func(v.native(), C.gint(sortColumn), C.gpointer(callback.Assign(f)))
 }
 
 // SetDefaultSortFunc() is a wrapper around gtk_tree_sortable_set_default_sort_func().
-func (v *TreeSortable) SetDefaultSortFunc(f TreeIterCompareFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	treeStoreSortFuncRegistry.Lock()
-	id := treeStoreSortFuncRegistry.next
-	treeStoreSortFuncRegistry.next++
-	treeStoreSortFuncRegistry.m[id] = treeStoreSortFuncData{fn: f, userData: userData}
-	treeStoreSortFuncRegistry.Unlock()
-
-	C._gtk_tree_sortable_set_default_sort_func(v.native(), C.gpointer(uintptr(id)))
+func (v *TreeSortable) SetDefaultSortFunc(f TreeIterCompareFunc) {
+	C._gtk_tree_sortable_set_default_sort_func(v.native(), C.gpointer(callback.Assign(f)))
 }
 
 func (v *TreeSortable) HasDefaultSortFunc() bool {

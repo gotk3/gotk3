@@ -11,17 +11,15 @@ import "C"
 import (
 	"unsafe"
 
+	"github.com/gotk3/gotk3/internal/callback"
 	"github.com/gotk3/gotk3/glib"
 )
 
 // BindModel is a wrapper around gtk_list_box_bind_model().
-func (v *ListBox) BindModel(listModel *glib.ListModel, createWidgetFunc ListBoxCreateWidgetFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	listBoxCreateWidgetFuncRegistry.Lock()
-	id := listBoxCreateWidgetFuncRegistry.next
-	listBoxCreateWidgetFuncRegistry.next++
-	listBoxCreateWidgetFuncRegistry.m[id] = listBoxCreateWidgetFuncData{fn: createWidgetFunc, userData: userData}
-	listBoxCreateWidgetFuncRegistry.Unlock()
-
-	C._gtk_list_box_bind_model(v.native(), C.toGListModel(unsafe.Pointer(listModel.Native())), C.gpointer(uintptr(id)))
+func (v *ListBox) BindModel(listModel *glib.ListModel, createWidgetFunc ListBoxCreateWidgetFunc) {
+	C._gtk_list_box_bind_model(
+		v.native(),
+		C.toGListModel(unsafe.Pointer(listModel.Native())),
+		C.gpointer(callback.Assign(createWidgetFunc)),
+	)
 }

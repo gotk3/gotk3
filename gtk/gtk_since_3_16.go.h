@@ -18,7 +18,8 @@
 
 #pragma once
 
-#include <stdlib.h>
+#include "gtk.go.h"
+#include <stdlib.h> // for callbackDelete
 
 static GListModel *toGListModel(void *p) { return (G_LIST_MODEL(p)); }
 
@@ -42,5 +43,5 @@ static inline void _gtk_list_box_bind_model(GtkListBox *box, GListModel *model,
                                             gpointer user_data) {
   gtk_list_box_bind_model(
       box, model, (GtkListBoxCreateWidgetFunc)(goListBoxCreateWidgetFuncs),
-      user_data, NULL);
+      user_data, (GDestroyNotify)(callbackDelete));
 }

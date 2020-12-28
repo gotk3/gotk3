@@ -31,7 +31,15 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
+	"github.com/gotk3/gotk3/internal/callback"
 )
+
+/*
+ * GtkTickCallback
+ */
+
+// TickCallback is a representation of GtkTickCallback
+type TickCallback func(widget *Widget, frameClock *gdk.FrameClock) bool
 
 /*
  * GtkWidget
@@ -61,25 +69,13 @@ func (v *Widget) GetFrameClock() *gdk.FrameClock {
 }
 
 // AddTickCallback is a wrapper around gtk_widget_add_tick_callback().
-func (v *Widget) AddTickCallback(fn TickCallback, userData ...interface{}) int {
-	tickCallbackRegistry.Lock()
-	id := tickCallbackRegistry.next
-	tickCallbackRegistry.next++
-	tickCallbackRegistry.m[id] = tickCallbackData{fn: fn, userData: userData}
-	tickCallbackRegistry.Unlock()
-
-	return int(C._gtk_widget_add_tick_callback(v.native(), C.gpointer(uintptr(id))))
-
-	// This callback is cleaned up when calling RemoveTickCallback()
+func (v *Widget) AddTickCallback(fn TickCallback) int {
+	return int(C._gtk_widget_add_tick_callback(v.native(), C.gpointer(callback.Assign(fn))))
 }
 
 // RemoveTickCallback is a wrapper around gtk_widget_remove_tick_callback().
 func (v *Widget) RemoveTickCallback(id int) {
 	C.gtk_widget_remove_tick_callback(v.native(), C.guint(id))
-
-	tickCallbackRegistry.Lock()
-	delete(tickCallbackRegistry.m, id)
-	tickCallbackRegistry.Unlock()
 }
 
 // TODO:

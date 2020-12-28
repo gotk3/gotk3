@@ -9,10 +9,12 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/internal/callback"
 )
 
 //export substring_match_equal_func
-func substring_match_equal_func(model *C.GtkTreeModel,
+func substring_match_equal_func(
+	model *C.GtkTreeModel,
 	column C.gint,
 	key *C.gchar,
 	iter *C.GtkTreeIter,
@@ -37,7 +39,8 @@ func substring_match_equal_func(model *C.GtkTreeModel,
 }
 
 //export goBuilderConnect
-func goBuilderConnect(builder *C.GtkBuilder,
+func goBuilderConnect(
+	builder *C.GtkBuilder,
 	object *C.GObject,
 	signal_name *C.gchar,
 	handler_name *C.gchar,
@@ -70,114 +73,53 @@ func goBuilderConnect(builder *C.GtkBuilder,
 	gobj.Connect(s, handler)
 }
 
-//export goPageSetupDone
-func goPageSetupDone(setup *C.GtkPageSetup,
-	data C.gpointer) {
-
-	id := int(uintptr(data))
-
-	pageSetupDoneCallbackRegistry.Lock()
-	r := pageSetupDoneCallbackRegistry.m[id]
-	// This callback is only used once, so we can clean up immediately
-	delete(pageSetupDoneCallbackRegistry.m, id)
-	pageSetupDoneCallbackRegistry.Unlock()
-
-	obj := glib.Take(unsafe.Pointer(setup))
-	r.fn(wrapPageSetup(obj), r.data)
-
-}
-
-//export goPrintSettings
-func goPrintSettings(key *C.gchar,
-	value *C.gchar,
-	userData C.gpointer) {
-
-	id := int(uintptr(userData))
-
-	printSettingsCallbackRegistry.RLock()
-	r := printSettingsCallbackRegistry.m[id]
-	printSettingsCallbackRegistry.RUnlock()
-
-	r.fn(C.GoString((*C.char)(key)), C.GoString((*C.char)(value)), r.userData)
-
-}
-
-//export goTreeModelFilterFuncs
-func goTreeModelFilterFuncs(filter *C.GtkTreeModelFilter, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
-	id := int(uintptr(data))
-
-	treeModelVisibleFilterFuncRegistry.RLock()
-	r := treeModelVisibleFilterFuncRegistry.m[id]
-	treeModelVisibleFilterFuncRegistry.RUnlock()
-
+//export goTreeModelFilterVisibleFuncs
+func goTreeModelFilterVisibleFuncs(model *C.GtkTreeModel, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
-	return gbool(r.fn(
-		wrapTreeModelFilter(glib.Take(unsafe.Pointer(filter))),
+	fn := callback.Get(uintptr(data)).(TreeModelFilterVisibleFunc)
+	return gbool(fn(
+		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
 		goIter,
-		r.userData))
+	))
 }
 
 //export goTreeSortableSortFuncs
 func goTreeSortableSortFuncs(model *C.GtkTreeModel, a, b *C.GtkTreeIter, data C.gpointer) C.gint {
-	id := int(uintptr(data))
-
-	treeStoreSortFuncRegistry.RLock()
-	r := treeStoreSortFuncRegistry.m[id]
-	treeStoreSortFuncRegistry.RUnlock()
-
-	goIterA := &TreeIter{(C.GtkTreeIter)(*a)}
-	goIterB := &TreeIter{(C.GtkTreeIter)(*b)}
-
-	return C.gint(r.fn(wrapTreeModel(glib.Take(unsafe.Pointer(model))), goIterA, goIterB, r.userData))
+	fn := callback.Get(uintptr(data)).(TreeIterCompareFunc)
+	return C.gint(fn(
+		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
+		&TreeIter{(C.GtkTreeIter)(*a)},
+		&TreeIter{(C.GtkTreeIter)(*b)},
+	))
 }
 
 //export goTreeModelForeachFunc
 func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
-	id := int(uintptr(data))
-
-	treeModelForeachFuncRegistry.RLock()
-	r := treeModelForeachFuncRegistry.m[id]
-	treeModelForeachFuncRegistry.RUnlock()
-
-	goPath := &TreePath{(*C.GtkTreePath)(path)}
-	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
-	return gbool(r.fn(
+	fn := callback.Get(uintptr(data)).(TreeModelForeachFunc)
+	return gbool(fn(
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
-		goPath,
-		goIter,
-		r.userData))
+		&TreePath{(*C.GtkTreePath)(path)},
+		&TreeIter{(C.GtkTreeIter)(*iter)},
+	))
 }
 
 //export goTreeSelectionForeachFunc
 func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.gpointer) {
-	id := int(uintptr(data))
-
-	treeSelectionForeachFuncRegistry.RLock()
-	r := treeSelectionForeachFuncRegistry.m[id]
-	treeSelectionForeachFuncRegistry.RUnlock()
-
-	goPath := &TreePath{(*C.GtkTreePath)(path)}
-	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
-
-	r.fn(
+	fn := callback.Get(uintptr(data)).(TreeSelectionForeachFunc)
+	fn(
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
-		goPath,
-		goIter,
-		r.userData)
+		&TreePath{(*C.GtkTreePath)(path)},
+		&TreeIter{(C.GtkTreeIter)(*iter)},
+	)
 }
 
 //export goTreeSelectionFunc
 func goTreeSelectionFunc(selection *C.GtkTreeSelection, model *C.GtkTreeModel, path *C.GtkTreePath, selected C.gboolean, data C.gpointer) C.gboolean {
-
-	id := int(uintptr(data))
-	TreeSelectionFuncRegistry.RLock()
-	r := TreeSelectionFuncRegistry.m[id]
-	TreeSelectionFuncRegistry.RUnlock()
-
-	return gbool(r.fn(
+	fn := callback.Get(uintptr(data)).(TreeSelectionFunc)
+	return gbool(fn(
 		wrapTreeSelection(glib.Take(unsafe.Pointer(selection))),
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
 		&TreePath{(*C.GtkTreePath)(path)},
 		gobool(selected),
-		r.userData))
+	))
 }

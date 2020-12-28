@@ -10,7 +10,11 @@ package glib
 // #include "glib.go.h"
 // #include "glib_since_2_44.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+
+	"github.com/gotk3/gotk3/internal/callback"
+)
 
 /*
  * GListModel
@@ -128,17 +132,9 @@ func (v *ListStore) Insert(position uint, item interface{}) {
 }
 
 // InsertSorted is a wrapper around g_list_store_insert_sorted().
-func (v *ListStore) InsertSorted(item interface{}, compareFunc CompareDataFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	compareDataFuncRegistry.Lock()
-	id := compareDataFuncRegistry.next
-	compareDataFuncRegistry.next++
-	compareDataFuncRegistry.m[id] = compareDataFuncData{fn: compareFunc, userData: userData}
-	compareDataFuncRegistry.Unlock()
-
+func (v *ListStore) InsertSorted(item interface{}, compareFunc CompareDataFunc) {
 	gItem := ToGObject(unsafe.Pointer(&item))
-
-	C._g_list_store_insert_sorted(v.native(), C.gpointer(gItem), C.gpointer(uintptr(id)))
+	C._g_list_store_insert_sorted(v.native(), C.gpointer(gItem), C.gpointer(callback.Assign(compareFunc)))
 }
 
 // Append is a wrapper around g_list_store_append().

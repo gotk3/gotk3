@@ -5,114 +5,135 @@ package glib
 // #include "glib.go.h"
 import "C"
 import (
-	"errors"
 	"reflect"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/internal/closure"
 )
 
 /*
  * Events
  */
 
+// SignalHandle is the ID of a signal handler.
 type SignalHandle uint
 
-func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}, userData ...interface{}) (SignalHandle, error) {
-	if len(userData) > 1 {
-		return 0, errors.New("userData len must be 0 or 1")
+// Connect is a wrapper around g_signal_connect_closure(). f must be a function
+// with at least one parameter matching the type it is connected to.
+//
+// It is optional to list the rest of the required types from Gtk, as values
+// that don't fit into the function parameter will simply be ignored; however,
+// extraneous types will trigger a runtime panic. Arguments for f must be a
+// matching Go equivalent type for the C callback, or an interface type which
+// the value may be packed in. If the type is not suitable, a runtime panic will
+// occur when the signal is emitted.
+//
+// Circular References
+//
+// To prevent circular references, prefer declaring Connect functions like so:
+//
+//    obj.Connect(func(obj *ObjType) { obj.Do() })
+//
+// Instead of directly referencing the object from outside like so:
+//
+//    obj.Connect(func() { obj.Do() })
+//
+// When using Connect, beware of referencing variables outside the closure that
+// may cause a circular reference that prevents both Go from garbage collecting
+// the callback and GTK from successfully unreferencing its values.
+//
+// Below is an example piece of code that is considered "leaky":
+//
+//    type ChatBox struct {
+//        gtk.TextView
+//        Loader *gdk.PixbufLoader
+//
+//        State State
+//    }
+//
+//    func (box *ChatBox) Method() {
+//        box.Loader.Connect("size-allocate", func(loader *gdk.PixbufLoader) {
+//            // Here, we're dereferencing box to get the state, which might
+//            // keep box alive along with the PixbufLoader, causing a circular
+//            // reference.
+//            loader.SetSize(box.State.Width, box.State.Height)
+//        })
+//    }
+//
+// There are many solutions to fix the above piece of code. For example,
+// box.Loader could be discarded manually immediately after it's done by setting
+// it to nil, or the signal handle could be disconnected manually, or box could
+// be set to nil after its first call in the callback.
+func (v *Object) Connect(detailedSignal string, f interface{}) SignalHandle {
+	return v.connectClosure(false, detailedSignal, f)
+}
+
+// ConnectAfter is a wrapper around g_signal_connect_closure(). The difference
+// between Connect and ConnectAfter is that the latter will be invoked after the
+// default handler, not before. For more information, refer to Connect.
+func (v *Object) ConnectAfter(detailedSignal string, f interface{}) SignalHandle {
+	return v.connectClosure(true, detailedSignal, f)
+}
+
+func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}) SignalHandle {
+	fs := closure.NewFuncStack(f, 2)
+
+	// This is a bit slow, but we could be careful.
+	objValue, err := v.goValue()
+	if err == nil {
+		fsType := fs.Func.Type()
+		if fsType.NumIn() < 1 {
+			fs.Panicf("callback should have the object parameter to avoid circular references")
+		}
+		objType := reflect.TypeOf(objValue)
+		if fsType.In(0) != objType {
+			fs.Panicf("first parameter type mismatch: expected %s, got %s", objType, fsType)
+		}
 	}
+	// Allow the type check to fail if we can't get a value marshaler. This
+	// rarely happens, but it might, and we want to at least allow working
+	// around it.
 
 	cstr := C.CString(detailedSignal)
 	defer C.free(unsafe.Pointer(cstr))
 
-	closure, err := ClosureNew(f, userData...)
-	if err != nil {
-		return 0, err
-	}
+	gclosure := ClosureNewFunc(fs)
+	c := C.g_signal_connect_closure(C.gpointer(v.native()), (*C.gchar)(cstr), gclosure, gbool(after))
 
-	C._g_closure_add_finalize_notifier(closure)
+	// TODO: There's a slight race condition here, where
+	// g_signal_connect_closure may trigger signal callbacks before the signal
+	// is registered. It is therefore ideal to have another intermediate ID to
+	// pass into the connect function.
+	closure.RegisterSignal(uint(c), unsafe.Pointer(gclosure))
 
-	c := C.g_signal_connect_closure(C.gpointer(v.native()),
-		(*C.gchar)(cstr), closure, gbool(after))
-	handle := SignalHandle(c)
-
-	// Map the signal handle to the closure.
-	signals.Lock()
-	signals.m[handle] = closure
-	signals.Unlock()
-
-	return handle, nil
+	return SignalHandle(c)
 }
 
-// Connect is a wrapper around g_signal_connect_closure().  f must be
-// a function with a signaure matching the callback signature for
-// detailedSignal.  userData must either 0 or 1 elements which can
-// be optionally passed to f.  If f takes less arguments than it is
-// passed from the GLib runtime, the extra arguments are ignored.
-//
-// Arguments for f must be a matching Go equivalent type for the
-// C callback, or an interface type which the value may be packed in.
-// If the type is not suitable, a runtime panic will occur when the
-// signal is emitted.
-func (v *Object) Connect(detailedSignal string, f interface{}, userData ...interface{}) (SignalHandle, error) {
-	return v.connectClosure(false, detailedSignal, f, userData...)
+// ClosureNew creates a new GClosure and adds its callback function to the
+// internal registry. It's exported for visibility to other gotk3 packages and
+// should not be used in a regular application.
+func ClosureNew(f interface{}) *C.GClosure {
+	return ClosureNewFunc(closure.NewFuncStack(f, 2))
 }
 
-// ConnectAfter is a wrapper around g_signal_connect_closure().  f must be
-// a function with a signaure matching the callback signature for
-// detailedSignal.  userData must either 0 or 1 elements which can
-// be optionally passed to f.  If f takes less arguments than it is
-// passed from the GLib runtime, the extra arguments are ignored.
-//
-// Arguments for f must be a matching Go equivalent type for the
-// C callback, or an interface type which the value may be packed in.
-// If the type is not suitable, a runtime panic will occur when the
-// signal is emitted.
-//
-// The difference between Connect and ConnectAfter is that the latter
-// will be invoked after the default handler, not before.
-func (v *Object) ConnectAfter(detailedSignal string, f interface{}, userData ...interface{}) (SignalHandle, error) {
-	return v.connectClosure(true, detailedSignal, f, userData...)
+// ClosureNewFunc creates a new GClosure and adds its callback function to the
+// internal registry. It's exported for visibility to other gotk3 packages; it
+// cannot be used in application code, as package closure is part of the
+// internals.
+func ClosureNewFunc(funcStack closure.FuncStack) *C.GClosure {
+	gclosure := C._g_closure_new()
+	C._g_closure_add_finalize_notifier(gclosure)
+	closure.Assign(unsafe.Pointer(gclosure), funcStack)
+
+	return gclosure
 }
 
-// ClosureNew creates a new GClosure and adds its callback function
-// to the internally-maintained map. It's exported for visibility to other
-// gotk3 packages and shouldn't be used in application code.
-func ClosureNew(f interface{}, marshalData ...interface{}) (*C.GClosure, error) {
-	// Create a reflect.Value from f.  This is called when the
-	// returned GClosure runs.
-	rf := reflect.ValueOf(f)
-
-	// Create closure context which points to the reflected func.
-	cc := closureContext{rf: rf}
-
-	// Closures can only be created from funcs.
-	if rf.Type().Kind() != reflect.Func {
-		return nil, errors.New("value is not a func")
-	}
-
-	if len(marshalData) > 0 {
-		cc.userData = reflect.ValueOf(marshalData[0])
-	}
-
-	c := C._g_closure_new()
-
-	// Associate the GClosure with rf.  rf will be looked up in this
-	// map by the closure when the closure runs.
-	closures.Lock()
-	closures.m[c] = cc
-	closures.Unlock()
-
-	return c, nil
-}
-
-// removeClosure removes a closure from the internal closures map.  This is
+// removeClosure removes a closure from the internal closures map. This is
 // needed to prevent a leak where Go code can access the closure context
 // (along with rf and userdata) even after an object has been destroyed and
 // the GClosure is invalidated and will never run.
 //
 //export removeClosure
-func removeClosure(_ C.gpointer, closure *C.GClosure) {
-	closures.Lock()
-	delete(closures.m, closure)
-	closures.Unlock()
+func removeClosure(_ C.gpointer, gclosure *C.GClosure) {
+	closure.Delete(unsafe.Pointer(gclosure))
 }

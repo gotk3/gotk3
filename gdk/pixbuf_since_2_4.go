@@ -18,32 +18,19 @@ import (
 	"reflect"
 	"runtime"
 	"strconv"
-	"sync"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/internal/callback"
 )
 
 // File saving
 
-var (
-	pixbufSaveFuncRegistry = struct {
-		sync.RWMutex
-		next uintptr
-		m    map[uintptr]io.Writer
-	}{
-		next: 0,
-		m:    make(map[uintptr]io.Writer),
-	}
-)
-
 //export goPixbufSaveCallback
 func goPixbufSaveCallback(buf *C.gchar, count C.gsize, gerr **C.GError, id C.gpointer) C.gboolean {
-	pixbufSaveFuncRegistry.RLock()
-	writer, ok := pixbufSaveFuncRegistry.m[uintptr(id)]
-	pixbufSaveFuncRegistry.RUnlock()
+	v := callback.Get(uintptr(id))
 
-	if !ok {
+	if v == nil {
 		C._pixbuf_error_set_callback_not_found(gerr)
 		return C.FALSE
 	}
@@ -54,7 +41,7 @@ func goPixbufSaveCallback(buf *C.gchar, count C.gsize, gerr **C.GError, id C.gpo
 	header.Len = int(count)
 	header.Data = uintptr(unsafe.Pointer(buf))
 
-	_, err := writer.Write(bytes)
+	_, err := v.(io.Writer).Write(bytes)
 	if err != nil {
 		cerr := C.CString(err.Error())
 		defer C.free(unsafe.Pointer(cerr))
@@ -70,21 +57,15 @@ func goPixbufSaveCallback(buf *C.gchar, count C.gsize, gerr **C.GError, id C.gpo
 // saving images using a streaming callback API. Compression is a number from 0
 // to 9.
 func (v *Pixbuf) WritePNG(w io.Writer, compression int) error {
-	pixbufSaveFuncRegistry.Lock()
-	id := pixbufSaveFuncRegistry.next
-	pixbufSaveFuncRegistry.next++
-	pixbufSaveFuncRegistry.m[id] = w
-	pixbufSaveFuncRegistry.Unlock()
-
 	ccompression := C.CString(strconv.Itoa(compression))
 	defer C.free(unsafe.Pointer(ccompression))
+
+	id := callback.Assign(w)
 
 	var err *C.GError
 	c := C._gdk_pixbuf_save_png_writer(v.native(), C.gpointer(id), &err, ccompression)
 
-	pixbufSaveFuncRegistry.Lock()
-	delete(pixbufSaveFuncRegistry.m, id)
-	pixbufSaveFuncRegistry.Unlock()
+	callback.Delete(id)
 
 	if !gobool(c) {
 		defer C.g_error_free(err)
@@ -98,21 +79,15 @@ func (v *Pixbuf) WritePNG(w io.Writer, compression int) error {
 // saving images using a streaming callback API. Quality is a number from 0 to
 // 100.
 func (v *Pixbuf) WriteJPEG(w io.Writer, quality int) error {
-	pixbufSaveFuncRegistry.Lock()
-	id := pixbufSaveFuncRegistry.next
-	pixbufSaveFuncRegistry.next++
-	pixbufSaveFuncRegistry.m[id] = w
-	pixbufSaveFuncRegistry.Unlock()
-
 	cquality := C.CString(strconv.Itoa(quality))
 	defer C.free(unsafe.Pointer(cquality))
 
-	var err *C.GError
-	c := C._gdk_pixbuf_save_jpeg_writer(v.native(), C.gpointer(uintptr(id)), &err, cquality)
+	id := callback.Assign(w)
 
-	pixbufSaveFuncRegistry.Lock()
-	delete(pixbufSaveFuncRegistry.m, id)
-	pixbufSaveFuncRegistry.Unlock()
+	var err *C.GError
+	c := C._gdk_pixbuf_save_jpeg_writer(v.native(), C.gpointer(id), &err, cquality)
+
+	callback.Delete(id)
 
 	if !gobool(c) {
 		defer C.g_error_free(err)

@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// callbackDelete satisfies the GDestroyNotify type.
+extern void callbackDelete(gpointer callback_id);
+
 static GtkAboutDialog *toGtkAboutDialog(void *p) {
   return (GTK_ABOUT_DIALOG(p));
 }
@@ -548,33 +551,15 @@ static inline void _gtk_builder_connect_signals_full(GtkBuilder *builder) {
       builder, (GtkBuilderConnectFunc)(goBuilderConnect), NULL);
 }
 
-extern void goPrintSettings(gchar *key, gchar *value, gpointer user_data);
-
-static inline void _gtk_print_settings_foreach(GtkPrintSettings *ps,
-                                               gpointer user_data) {
-  gtk_print_settings_foreach(ps, (GtkPrintSettingsFunc)(goPrintSettings),
-                             user_data);
-}
-
-extern void goPageSetupDone(GtkPageSetup *setup, gpointer data);
-
-static inline void
-_gtk_print_run_page_setup_dialog_async(GtkWindow *parent, GtkPageSetup *setup,
-                                       GtkPrintSettings *settings,
-                                       gpointer data) {
-  gtk_print_run_page_setup_dialog_async(
-      parent, setup, settings, (GtkPageSetupDoneFunc)(goPageSetupDone), data);
-}
-
-extern gboolean goTreeModelFilterFuncs(GtkTreeModel *model, GtkTreeIter *iter,
-                                       gpointer data);
+extern gboolean goTreeModelFilterVisibleFuncs(GtkTreeModel *model,
+                                              GtkTreeIter *iter, gpointer data);
 
 static inline void
 _gtk_tree_model_filter_set_visible_func(GtkTreeModelFilter *filter,
                                         gpointer user_data) {
   gtk_tree_model_filter_set_visible_func(
-      filter, (GtkTreeModelFilterVisibleFunc)(goTreeModelFilterFuncs),
-      user_data, NULL);
+      filter, (GtkTreeModelFilterVisibleFunc)(goTreeModelFilterVisibleFuncs),
+      user_data, (GDestroyNotify)(callbackDelete));
 }
 
 static inline void _gtk_text_buffer_insert_with_tag_by_name(
@@ -607,7 +592,7 @@ _gtk_tree_sortable_set_default_sort_func(GtkTreeSortable *sortable,
                                          gpointer user_data) {
   gtk_tree_sortable_set_default_sort_func(
       sortable, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data,
-      NULL);
+      (GDestroyNotify)(callbackDelete));
 }
 
 static GtkWidget *_gtk_dialog_new_with_buttons(const gchar *title,
@@ -649,5 +634,7 @@ static inline void
 _gtk_tree_selection_set_select_function(GtkTreeSelection *selection,
                                         gpointer user_data) {
   gtk_tree_selection_set_select_function(
-      selection, (GtkTreeSelectionFunc)(goTreeSelectionFunc), user_data, NULL);
+
+      selection, (GtkTreeSelectionFunc)(goTreeSelectionFunc), user_data,
+      (GDestroyNotify)(callbackDelete));
 }

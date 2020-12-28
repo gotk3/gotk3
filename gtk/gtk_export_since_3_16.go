@@ -5,14 +5,10 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
+import "github.com/gotk3/gotk3/internal/callback"
 
 //export goListBoxCreateWidgetFuncs
 func goListBoxCreateWidgetFuncs(item, userData C.gpointer) {
-	id := int(uintptr(userData))
-
-	listBoxCreateWidgetFuncRegistry.RLock()
-	r := listBoxCreateWidgetFuncRegistry.m[id]
-	listBoxCreateWidgetFuncRegistry.RUnlock()
-
-	r.fn(uintptr(item), r.userData)
+	fn := callback.Get(uintptr(userData)).(ListBoxCreateWidgetFunc)
+	fn(uintptr(item))
 }

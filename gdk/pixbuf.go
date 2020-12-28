@@ -557,12 +557,7 @@ func PixbufLoaderNew() (*PixbufLoader, error) {
 	if c == nil {
 		return nil, nilPtrErr
 	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &PixbufLoader{obj}
-	obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-	return p, nil
+	return &PixbufLoader{glib.AssumeOwnership(unsafe.Pointer(c))}, nil
 }
 
 // PixbufLoaderNewWithType() is a wrapper around gdk_pixbuf_loader_new_with_type().
@@ -582,7 +577,7 @@ func PixbufLoaderNewWithType(t string) (*PixbufLoader, error) {
 		return nil, nilPtrErr
 	}
 
-	return &PixbufLoader{glib.Take(unsafe.Pointer(c))}, nil
+	return &PixbufLoader{glib.AssumeOwnership(unsafe.Pointer(c))}, nil
 }
 
 // Write() is a wrapper around gdk_pixbuf_loader_write().  The
@@ -611,33 +606,18 @@ func (v *PixbufLoader) Write(data []byte) (int, error) {
 	return len(data), nil
 }
 
+// Convenient function like above for Pixbuf. Write data, close loader and return Pixbuf.
 func (v *PixbufLoader) WriteAndReturnPixbuf(data []byte) (*Pixbuf, error) {
-
-	if len(data) == 0 {
-		return nil, errors.New("no data")
+	_, err := v.Write(data)
+	if err != nil {
+		return nil, err
 	}
 
-	var err *C.GError
-	c := C.gdk_pixbuf_loader_write(v.native(), (*C.guchar)(unsafe.Pointer(&data[0])), C.gsize(len(data)), &err)
-
-	if !gobool(c) {
-		defer C.g_error_free(err)
-		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	if err := v.Close(); err != nil {
+		return nil, err
 	}
 
-	v.Close()
-
-	c2 := C.gdk_pixbuf_loader_get_pixbuf(v.native())
-	if c2 == nil {
-		return nil, nilPtrErr
-	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c2))}
-	p := &Pixbuf{obj}
-	//obj.Ref() // Don't call Ref here, gdk_pixbuf_loader_get_pixbuf already did that for us.
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-
-	return p, nil
+	return v.GetPixbuf()
 }
 
 // Close is a wrapper around gdk_pixbuf_loader_close().  An error is
@@ -660,11 +640,7 @@ func (v *PixbufLoader) GetPixbuf() (*Pixbuf, error) {
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &Pixbuf{obj}
-	//obj.Ref() // Don't call Ref here, gdk_pixbuf_loader_get_pixbuf already did that for us.
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-	return p, nil
+	return &Pixbuf{glib.Take(unsafe.Pointer(c))}, nil
 }
 
 // GetAnimation is a wrapper around gdk_pixbuf_loader_get_animation().
@@ -674,37 +650,19 @@ func (v *PixbufLoader) GetAnimation() (*PixbufAnimation, error) {
 		return nil, nilPtrErr
 	}
 
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
-	p := &PixbufAnimation{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-	return p, nil
+	return &PixbufAnimation{glib.Take(unsafe.Pointer(c))}, nil
 }
 
 // Convenient function like above for Pixbuf. Write data, close loader and return PixbufAnimation.
 func (v *PixbufLoader) WriteAndReturnPixbufAnimation(data []byte) (*PixbufAnimation, error) {
-
-	if len(data) == 0 {
-		return nil, errors.New("no data")
+	_, err := v.Write(data)
+	if err != nil {
+		return nil, err
 	}
 
-	var err *C.GError
-	c := C.gdk_pixbuf_loader_write(v.native(), (*C.guchar)(unsafe.Pointer(&data[0])), C.gsize(len(data)), &err)
-
-	if !gobool(c) {
-		defer C.g_error_free(err)
-		return nil, errors.New(C.GoString((*C.char)(err.message)))
+	if err := v.Close(); err != nil {
+		return nil, err
 	}
 
-	v.Close()
-
-	c2 := C.gdk_pixbuf_loader_get_animation(v.native())
-	if c2 == nil {
-		return nil, nilPtrErr
-	}
-
-	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c2))}
-	p := &PixbufAnimation{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
-
-	return p, nil
+	return v.GetAnimation()
 }

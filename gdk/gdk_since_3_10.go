@@ -44,11 +44,7 @@ func CairoSurfaceCreateFromPixbuf(pixbuf *Pixbuf, scale int, window *Window) (*c
 	}
 
 	surface := cairo.WrapSurface(uintptr(unsafe.Pointer(v)))
-	// Keep pixbuf alive.
-	runtime.SetFinalizer(surface, func(surface *cairo.Surface) {
-		runtime.KeepAlive(pixbuf)
-		surface.Close()
-	})
+	runtime.SetFinalizer(surface, (*cairo.Surface).Close)
 
 	return surface, nil
 }

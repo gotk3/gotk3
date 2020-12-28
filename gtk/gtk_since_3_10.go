@@ -12,12 +12,12 @@ package gtk
 import "C"
 import (
 	"errors"
-	"sync"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/internal/callback"
 	"github.com/gotk3/gotk3/pango"
 )
 
@@ -462,96 +462,27 @@ func (v *ListBox) InvalidateSort() {
 }
 
 // ListBoxFilterFunc is a representation of GtkListBoxFilterFunc
-type ListBoxFilterFunc func(row *ListBoxRow, userData ...interface{}) bool
-
-type listBoxFilterFuncData struct {
-	fn       ListBoxFilterFunc
-	userData []interface{}
-}
-
-var (
-	listBoxFilterFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]listBoxFilterFuncData
-	}{
-		next: 1,
-		m:    make(map[int]listBoxFilterFuncData),
-	}
-)
+type ListBoxFilterFunc func(row *ListBoxRow) bool
 
 // SetFilterFunc is a wrapper around gtk_list_box_set_filter_func
-func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	listBoxFilterFuncRegistry.Lock()
-	id := listBoxFilterFuncRegistry.next
-	listBoxFilterFuncRegistry.next++
-	listBoxFilterFuncRegistry.m[id] = listBoxFilterFuncData{fn: fn, userData: userData}
-	listBoxFilterFuncRegistry.Unlock()
-
-	C._gtk_list_box_set_filter_func(v.native(), C.gpointer(uintptr(id)))
+func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc) {
+	C._gtk_list_box_set_filter_func(v.native(), C.gpointer(callback.Assign(fn)))
 }
 
 // ListBoxHeaderFunc is a representation of GtkListBoxUpdateHeaderFunc
-type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow, userData ...interface{})
-
-type listBoxHeaderFuncData struct {
-	fn       ListBoxHeaderFunc
-	userData []interface{}
-}
-
-var (
-	listBoxHeaderFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]listBoxHeaderFuncData
-	}{
-		next: 1,
-		m:    make(map[int]listBoxHeaderFuncData),
-	}
-)
+type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow)
 
 // SetHeaderFunc is a wrapper around gtk_list_box_set_header_func
-func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	listBoxHeaderFuncRegistry.Lock()
-	id := listBoxHeaderFuncRegistry.next
-	listBoxHeaderFuncRegistry.next++
-	listBoxHeaderFuncRegistry.m[id] = listBoxHeaderFuncData{fn: fn, userData: userData}
-	listBoxHeaderFuncRegistry.Unlock()
-
-	C._gtk_list_box_set_header_func(v.native(), C.gpointer(uintptr(id)))
+func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc) {
+	C._gtk_list_box_set_header_func(v.native(), C.gpointer(callback.Assign(fn)))
 }
 
 // ListBoxSortFunc is a representation of GtkListBoxSortFunc
-type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow, userData ...interface{}) int
-
-type listBoxSortFuncData struct {
-	fn       ListBoxSortFunc
-	userData []interface{}
-}
-
-var (
-	listBoxSortFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]listBoxSortFuncData
-	}{
-		next: 1,
-		m:    make(map[int]listBoxSortFuncData),
-	}
-)
+type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow) int
 
 // SetSortFunc is a wrapper around gtk_list_box_set_sort_func
-func (v *ListBox) SetSortFunc(fn ListBoxSortFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	listBoxSortFuncRegistry.Lock()
-	id := listBoxSortFuncRegistry.next
-	listBoxSortFuncRegistry.next++
-	listBoxSortFuncRegistry.m[id] = listBoxSortFuncData{fn: fn, userData: userData}
-	listBoxSortFuncRegistry.Unlock()
-
-	C._gtk_list_box_set_sort_func(v.native(), C.gpointer(uintptr(id)))
+func (v *ListBox) SetSortFunc(fn ListBoxSortFunc) {
+	C._gtk_list_box_set_sort_func(v.native(), C.gpointer(callback.Assign(fn)))
 }
 
 // DragHighlightRow is a wrapper around gtk_list_box_drag_highlight_row()
