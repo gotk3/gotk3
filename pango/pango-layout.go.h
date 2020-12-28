@@ -20,8 +20,4 @@
 #include <stdlib.h>
 #include <string.h>
 
-static PangoLayout* toPangoLayout(void *p)
-{
-	return ( (PangoLayout*) (p) );
-}
-
+static PangoLayout *toPangoLayout(void *p) { return ((PangoLayout *)(p)); }

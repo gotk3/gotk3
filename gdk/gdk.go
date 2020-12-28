@@ -2044,6 +2044,18 @@ func (v *Window) WindowGetHeight() (height int) {
 	return int(C.gdk_window_get_height(v.native()))
 }
 
+// CreateSimilarSurface is a wrapper around gdk_window_create_similar_surface().
+func (v *Window) CreateSimilarSurface(content cairo.Content, w, h int) (*cairo.Surface, error) {
+	surface := C.gdk_window_create_similar_surface(v.native(), C.cairo_content_t(content), C.gint(w), C.gint(h))
+
+	status := cairo.Status(C.cairo_surface_status(surface))
+	if status != cairo.STATUS_SUCCESS {
+		return nil, cairo.ErrorStatus(status)
+	}
+
+	return cairo.NewSurface(uintptr(unsafe.Pointer(surface)), false), nil
+}
+
 //PixbufGetFromWindow is a wrapper around gdk_pixbuf_get_from_window()
 func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_get_from_window(v.native(), C.gint(x), C.gint(y), C.gint(w), C.gint(h))

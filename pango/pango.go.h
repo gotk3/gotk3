@@ -25,14 +25,12 @@
 
 #include "pangocairo.go.h"
 
-
-static PangoRectangle *
-createPangoRectangle(int x, int y, int width, int height)
-{
-	PangoRectangle *r = (PangoRectangle *)malloc(sizeof(PangoRectangle));
-	r->x = x;
-	r->y = y;
-	r->width = width;
-	r->height = height;
-	return r;
+static PangoRectangle *createPangoRectangle(int x, int y, int width,
+                                            int height) {
+  PangoRectangle *r = (PangoRectangle *)malloc(sizeof(PangoRectangle));
+  r->x = x;
+  r->y = y;
+  r->width = width;
+  r->height = height;
+  return r;
 }

@@ -19,8 +19,4 @@
 //#include <stdlib.h>
 
 // Type Casting
-static GdkMonitor *
-toGdkMonitor(void *p)
-{
-    return (GDK_MONITOR(p));
-}
+static GdkMonitor *toGdkMonitor(void *p) { return (GDK_MONITOR(p)); }
