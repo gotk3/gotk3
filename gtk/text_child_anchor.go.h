@@ -16,7 +16,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stdlib.h>
-
-// Type Casting
-static GdkGLContext *toGdkGLContext(void *p) { return (GDK_GL_CONTEXT(p)); }
+static GtkTextChildAnchor *
+toGtkTextChildAnchor(void *p)
+{
+	return (GTK_TEXT_CHILD_ANCHOR(p));
+}

@@ -440,14 +440,5 @@ func (v *TextView) AddChildAtAnchor(child IWidget, anchor *TextChildAnchor) {
 }
 
 // TODO:
-// GtkTextChildAnchor * 	gtk_text_child_anchor_new ()
-// GList * 	gtk_text_child_anchor_get_widgets ()
-// gboolean 	gtk_text_child_anchor_get_deleted ()
-// void 	gtk_text_view_set_top_margin () -- SINCE 3.18
-// gint 	gtk_text_view_get_top_margin () -- SINCE 3.18
-// void 	gtk_text_view_set_bottom_margin ()  -- SINCE 3.18
-// gint 	gtk_text_view_get_bottom_margin ()  -- SINCE 3.18
 // GtkTextAttributes * 	gtk_text_view_get_default_attributes () -- GtkTextAttributes
-// void 	gtk_text_view_set_monospace () -- SINCE 3.16
-// gboolean 	gtk_text_view_get_monospace () -- SINCE 3.16
 // GtkTextViewLayer

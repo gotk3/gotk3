@@ -221,9 +221,6 @@ func (v *Pixbuf) GetBitsPerSample() int {
 	return int(c)
 }
 
-// TODO:
-// gdk_pixbuf_get_pixels().
-
 // GetPixels is a wrapper around gdk_pixbuf_get_pixels_with_length().
 // A Go slice is used to represent the underlying Pixbuf data array, one
 // byte per channel.
@@ -290,19 +287,67 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 	return p, nil
 }
 
+// Scale is a wrapper around gdk_pixbuf_scale().
+func (v *Pixbuf) Scale(dest *Pixbuf, destX, destY, destWidth, destHeight int, offsetX, offsetY, scaleX, scaleY float64, interpType InterpType) {
+	C.gdk_pixbuf_scale(
+		v.native(),
+		dest.native(),
+		C.int(destX),
+		C.int(destY),
+		C.int(destWidth),
+		C.int(destHeight),
+		C.double(offsetX),
+		C.double(offsetY),
+		C.double(scaleX),
+		C.double(scaleY),
+		C.GdkInterpType(interpType),
+	)
+}
+
+// Composite is a wrapper around gdk_pixbuf_composite().
+func (v *Pixbuf) Composite(dest *Pixbuf, destX, destY, destWidth, destHeight int, offsetX, offsetY, scaleX, scaleY float64, interpType InterpType, overallAlpha int) {
+	C.gdk_pixbuf_composite(
+		v.native(),
+		dest.native(),
+		C.int(destX),
+		C.int(destY),
+		C.int(destWidth),
+		C.int(destHeight),
+		C.double(offsetX),
+		C.double(offsetY),
+		C.double(scaleX),
+		C.double(scaleY),
+		C.GdkInterpType(interpType),
+		C.int(overallAlpha),
+	)
+}
+
 // TODO:
-// gdk_pixbuf_scale().
 // gdk_pixbuf_composite_color_simple().
-// gdk_pixbuf_composite().
 // gdk_pixbuf_composite_color().
 
 // Utilities
 
 // TODO:
-// gdk_pixbuf_add_alpha().
 // gdk_pixbuf_copy_area().
 // gdk_pixbuf_saturate_and_pixelate().
-// gdk_pixbuf_fill().
+
+// Fill is a wrapper around gdk_pixbuf_fill(). The given pixel is an RGBA value.
+func (v *Pixbuf) Fill(pixel uint32) {
+	C.gdk_pixbuf_fill(v.native(), C.guint32(pixel))
+}
+
+// AddAlpha is a wrapper around gdk_pixbuf_add_alpha(). If substituteColor is
+// true, then the color specified by r, g and b will be assigned zero opacity.
+func (v *Pixbuf) AddAlpha(substituteColor bool, r, g, b uint8) *Pixbuf {
+	c := C.gdk_pixbuf_add_alpha(v.native(), gbool(substituteColor), C.guchar(r), C.guchar(g), C.guchar(b))
+
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	p := &Pixbuf{obj}
+	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+
+	return p
+}
 
 // File saving
 

@@ -37,7 +37,7 @@ func NewSurfaceFromPNG(fileName string) (*Surface, error) {
 
 // CreateImageSurfaceForData is a wrapper around cairo_image_surface_create_for_data().
 func CreateImageSurfaceForData(data []byte, format Format, width, height, stride int) (*Surface, error) {
-	surfaceNative := C.cairo_image_surface_create_for_data((*C.uchar)(unsafe.Pointer(&data[0])), 
+	surfaceNative := C.cairo_image_surface_create_for_data((*C.uchar)(unsafe.Pointer(&data[0])),
 		C.cairo_format_t(format), C.int(width), C.int(height), C.int(stride))
 
 	status := Status(C.cairo_surface_status(surfaceNative))
@@ -91,6 +91,10 @@ func (v *Surface) native() *C.cairo_surface_t {
 // Native returns a pointer to the underlying cairo_surface_t.
 func (v *Surface) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func (v *Surface) GetCSurface() *C.cairo_surface_t {
+	return v.native()
 }
 
 func marshalSurface(p uintptr) (interface{}, error) {

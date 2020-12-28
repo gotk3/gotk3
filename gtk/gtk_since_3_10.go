@@ -15,6 +15,7 @@ import (
 	"sync"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/pango"
@@ -110,9 +111,21 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
  * GtkImage
  */
 
-// TODO:
-// gtk_image_new_from_surface().
-// gtk_image_set_from_surface().
+// ImageNewFromSurface is a wrapper around gtk_image_new_from_surface().
+func ImageNewFromSurface(surface *cairo.Surface) (*Image, error) {
+	c := C.gtk_image_new_from_surface((*C.cairo_surface_t)(surface.GetCSurface()))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapImage(obj), nil
+}
+
+// SetFromSurface is a wrapper around gtk_image_set_from_surface().
+func (v *Image) SetFromSurface(surface *cairo.Surface) {
+	csurface := (*C.cairo_surface_t)(surface.GetCSurface())
+	C.gtk_image_set_from_surface(v.native(), csurface)
+}
 
 /*
  * GtkIconTheme
