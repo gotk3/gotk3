@@ -163,7 +163,7 @@ func (v *AboutDialog) GetAuthors() []string {
 			break
 		}
 		authors = append(authors, C.GoString((*C.char)(*cauthors)))
-		cauthors = C.next_gcharptr(cauthors)
+		cauthors = nextgcharptr(cauthors)
 	}
 	return authors
 }
@@ -194,7 +194,7 @@ func (v *AboutDialog) GetArtists() []string {
 			break
 		}
 		artists = append(artists, C.GoString((*C.char)(*cartists)))
-		cartists = C.next_gcharptr(cartists)
+		cartists = nextgcharptr(cartists)
 	}
 	return artists
 }
@@ -225,7 +225,7 @@ func (v *AboutDialog) GetDocumenters() []string {
 			break
 		}
 		documenters = append(documenters, C.GoString((*C.char)(*cdocumenters)))
-		cdocumenters = C.next_gcharptr(cdocumenters)
+		cdocumenters = nextgcharptr(cdocumenters)
 	}
 	return documenters
 }
