@@ -17,6 +17,11 @@ import (
 // TODO:
 // gdk_device_get_position_double().
 
+// GetScaleFactor is a wrapper around gdk_window_get_scale_factor().
+func (v *Window) GetScaleFactor() int {
+	return int(C.gdk_window_get_scale_factor(v.native()))
+}
+
 // CreateSimilarImageSurface is a wrapper around gdk_window_create_similar_image_surface().
 func (v *Window) CreateSimilarImageSurface(format cairo.Format, w, h, scale int) (*cairo.Surface, error) {
 	surface := C.gdk_window_create_similar_image_surface(v.native(), C.cairo_format_t(format), C.gint(w), C.gint(h), C.gint(scale))

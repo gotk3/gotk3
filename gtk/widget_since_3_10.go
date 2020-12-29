@@ -20,3 +20,8 @@ import "C"
 // gtk_widget_class_bind_template_callback().
 // gtk_widget_class_bind_template_callback_full().
 // gtk_widget_class_set_connect_func().
+
+// GetScaleFactor is a wrapper around gtk_widget_get_scale_factor().
+func (v *Widget) GetScaleFactor() int {
+	return int(C.gtk_widget_get_scale_factor(v.native()))
+}

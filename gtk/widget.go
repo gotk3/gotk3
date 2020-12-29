@@ -423,7 +423,6 @@ func (v *Widget) Unmap() {
 //void gtk_widget_queue_resize(GtkWidget *widget);
 //void gtk_widget_queue_resize_no_redraw(GtkWidget *widget);
 // gtk_widget_queue_allocate().
-// gtk_widget_get_scale_factor().
 
 // Event() is a wrapper around gtk_widget_event().
 func (v *Widget) Event(event *gdk.Event) bool {
