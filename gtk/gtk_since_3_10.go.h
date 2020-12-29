@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "gtk.go.h" // for callbackDelete
+#include "gtk.go.h" // for gotk3_callbackDelete
 #include <stdlib.h>
 
 static GtkHeaderBar *toGtkHeaderBar(void *p) { return (GTK_HEADER_BAR(p)); }
@@ -41,7 +41,7 @@ static inline void _gtk_list_box_set_filter_func(GtkListBox *box,
                                                  gpointer user_data) {
   gtk_list_box_set_filter_func(box,
                                (GtkListBoxFilterFunc)(goListBoxFilterFuncs),
-                               user_data, (GDestroyNotify)(callbackDelete));
+                               user_data, (GDestroyNotify)(gotk3_callbackDelete));
 }
 
 extern void goListBoxHeaderFuncs(GtkListBoxRow *row, GtkListBoxRow *before,
@@ -51,7 +51,7 @@ static inline void _gtk_list_box_set_header_func(GtkListBox *box,
                                                  gpointer user_data) {
   gtk_list_box_set_header_func(
       box, (GtkListBoxUpdateHeaderFunc)(goListBoxHeaderFuncs), user_data,
-      (GDestroyNotify)(callbackDelete));
+      (GDestroyNotify)(gotk3_callbackDelete));
 }
 
 extern gint goListBoxSortFuncs(GtkListBoxRow *row1, GtkListBoxRow *row2,
@@ -60,5 +60,5 @@ extern gint goListBoxSortFuncs(GtkListBoxRow *row1, GtkListBoxRow *row2,
 static inline void _gtk_list_box_set_sort_func(GtkListBox *box,
                                                gpointer user_data) {
   gtk_list_box_set_sort_func(box, (GtkListBoxSortFunc)(goListBoxSortFuncs),
-                             user_data, (GDestroyNotify)(callbackDelete));
+                             user_data, (GDestroyNotify)(gotk3_callbackDelete));
 }

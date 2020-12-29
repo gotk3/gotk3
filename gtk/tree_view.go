@@ -8,10 +8,12 @@ package gtk
 import "C"
 import (
 	"runtime"
+	"strings"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/internal/callback"
 )
 
 /*
@@ -413,15 +415,22 @@ func (v *TreeView) SetSearchEntry(e *Entry) {
 	C.gtk_tree_view_set_search_entry(v.native(), e.native())
 }
 
-// SetSearchEqualSubstringMatch is a wrapper around gtk_tree_view_set_search_equal_func().
-// TODO: user data is ignored
-// TODO: searc and destroy GDestroyNotify cannot be specified
+// TreeViewSearchEqualFunc is the callback type for TreeView's
+// SetSearchEqualFunc. It is worth noting that the returned boolean should be
+// false if the row matches.
+type TreeViewSearchEqualFunc func(model *TreeModel, column int, key string, iter *TreeIter) (notMatch bool)
+
+// SetSearchEqualFunc is a wrapper around gtk_tree_view_set_search_equal_func().
+func (v *TreeView) SetSearchEqualFunc(f TreeViewSearchEqualFunc) {
+	C._gtk_tree_view_set_search_equal_func(v.native(), C.gpointer(callback.Assign(f)))
+}
+
+// SetSearchEqualSubstringMatch calls SetSearchEqualFunc with a strings.Contains
+// adapter.
 func (v *TreeView) SetSearchEqualSubstringMatch() {
-	C.gtk_tree_view_set_search_equal_func(
-		v.native(),
-		(C.GtkTreeViewSearchEqualFunc)(unsafe.Pointer(C.substring_match_equal_func)),
-		nil,
-		nil)
+	v.SetSearchEqualFunc(func(model *TreeModel, column int, key string, iter *TreeIter) bool {
+		return !strings.Contains(model.GetStringFromIter(iter), key)
+	})
 }
 
 // SetFixedHeightMode is a wrapper around gtk_tree_view_set_fixed_height_mode().

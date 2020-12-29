@@ -235,8 +235,8 @@ func init() {
  * Callback helpers
  */
 
-//export callbackDelete
-func callbackDelete(callbackID C.gpointer) {
+//export gotk3_callbackDelete
+func gotk3_callbackDelete(callbackID C.gpointer) {
 	callback.Delete(uintptr(callbackID))
 }
 

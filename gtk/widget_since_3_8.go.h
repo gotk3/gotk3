@@ -16,7 +16,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "gtk.go.h" // for callbackDelete
+#include "gtk.go.h" // for gotk3_callbackDelete
 #include <stdlib.h>
 
 extern gboolean goTickCallbacks(GtkWidget *widget, GdkFrameClock *frame_clock,
@@ -26,5 +26,5 @@ static inline guint _gtk_widget_add_tick_callback(GtkWidget *widget,
                                                   gpointer user_data) {
   return gtk_widget_add_tick_callback(
       widget, (GtkTickCallback)(goTickCallbacks), user_data,
-      (GDestroyNotify)(callbackDelete));
+      (GDestroyNotify)(gotk3_callbackDelete));
 }
