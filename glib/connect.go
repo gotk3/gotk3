@@ -38,6 +38,10 @@ type SignalHandle uint
 //
 //    obj.Connect(func() { obj.Do() })
 //
+// By default, the direct referencing piece of code will trigger a runtime panic
+// upon registering, unless ClosureCheckReceiver is set to false. This is to
+// ensure the minimum correct behavior in most scenarios.
+//
 // When using Connect, beware of referencing variables outside the closure that
 // may cause a circular reference that prevents both Go from garbage collecting
 // the callback and GTK from successfully unreferencing its values.
@@ -75,24 +79,33 @@ func (v *Object) ConnectAfter(detailedSignal string, f interface{}) SignalHandle
 	return v.connectClosure(true, detailedSignal, f)
 }
 
+// ClosureCheckReceiver, if true, will make GLib check for every single
+// closure's first argument to ensure that it is correct, otherwise it will
+// panic with a message warning about the possible circular references. The
+// receiver in this case is most often the first argument of the callback.
+var ClosureCheckReceiver = true
+
 func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}) SignalHandle {
 	fs := closure.NewFuncStack(f, 2)
 
-	// This is a bit slow, but we could be careful.
-	objValue, err := v.goValue()
-	if err == nil {
-		fsType := fs.Func.Type()
-		if fsType.NumIn() < 1 {
-			fs.Panicf("callback should have the object parameter to avoid circular references")
+	if ClosureCheckReceiver {
+		// This is a bit slow, but we could be careful.
+		objValue, err := v.goValue()
+		if err == nil {
+			fsType := fs.Func.Type()
+			if fsType.NumIn() < 1 {
+				fs.Panicf("callback should have the object receiver to avoid circular references")
+			}
+			objType := reflect.TypeOf(objValue)
+			if first := fsType.In(0); !objType.ConvertibleTo(first) {
+				fs.Panicf("receiver not convertible to expected type %s, got %s", objType, first)
+			}
 		}
-		objType := reflect.TypeOf(objValue)
-		if first := fsType.In(0); !objType.ConvertibleTo(first) {
-			fs.Panicf("first parameter not convertible to expected type %s, got %s", objType, first)
-		}
+
+		// Allow the type check to fail if we can't get a value marshaler. This
+		// rarely happens, but it might, and we want to at least allow working
+		// around it.
 	}
-	// Allow the type check to fail if we can't get a value marshaler. This
-	// rarely happens, but it might, and we want to at least allow working
-	// around it.
 
 	cstr := C.CString(detailedSignal)
 	defer C.free(unsafe.Pointer(cstr))
