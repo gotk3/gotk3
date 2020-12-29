@@ -86,8 +86,8 @@ func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}
 			fs.Panicf("callback should have the object parameter to avoid circular references")
 		}
 		objType := reflect.TypeOf(objValue)
-		if fsType.In(0) != objType {
-			fs.Panicf("first parameter type mismatch: expected %s, got %s", objType, fsType)
+		if first := fsType.In(0); !objType.ConvertibleTo(first) {
+			fs.Panicf("first parameter not convertible to expected type %s, got %s", objType, first)
 		}
 	}
 	// Allow the type check to fail if we can't get a value marshaler. This

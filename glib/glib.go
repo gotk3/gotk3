@@ -192,13 +192,18 @@ func goMarshal(
 		return
 	}
 
+	fsType := fs.Func.Type()
+
 	// Get number of parameters passed in.
 	nGLibParams := int(nParams)
 	nTotalParams := nGLibParams
 
+	// Reflect may panic, so we defer recover here to re-panic with our trace.
+	defer fs.TryRepanic()
+
 	// Get number of parameters from the callback closure. If this exceeds
 	// the total number of marshaled parameters, trigger a runtime panic.
-	nCbParams := fs.Func.Type().NumIn()
+	nCbParams := fsType.NumIn()
 	if nCbParams > nTotalParams {
 		fs.Panicf("too many closure args: have %d, max %d", nCbParams, nTotalParams)
 	}
@@ -223,16 +228,13 @@ func goMarshal(
 		// 'peeks' into the enclosing object and passes the wrapped object to
 		// the handler. Use the *Object.goValue function to emulate that for Go
 		// signal handlers.
-		switch objVal := val.(type) {
-		case *Object:
-			innerVal, err := objVal.goValue()
-			if err == nil {
+		if obj, ok := val.(*Object); ok {
+			if innerVal, err := obj.goValue(); err == nil {
 				val = innerVal
 			}
 		}
 
-		rv := reflect.ValueOf(val)
-		args = append(args, rv.Convert(fs.Func.Type().In(i)))
+		args = append(args, reflect.ValueOf(val).Convert(fsType.In(i)))
 	}
 
 	// Call closure with args. If the callback returns one or more values, save

@@ -47,10 +47,12 @@ func (fs FuncStack) IsValid() bool {
 	return fs.Frames != nil
 }
 
+const headerSignature = "closure error: "
+
 // Panicf panics with the given FuncStack printed to standard error.
 func (fs FuncStack) Panicf(msgf string, v ...interface{}) {
 	msg := strings.Builder{}
-	msg.WriteString("closure error: ")
+	msg.WriteString(headerSignature)
 	fmt.Fprintf(&msg, msgf, v...)
 
 	msg.WriteString("\n\nClosure added at:")
@@ -71,4 +73,22 @@ func (fs FuncStack) Panicf(msgf string, v ...interface{}) {
 	}
 
 	panic(msg.String())
+}
+
+// TryRepanic attempts to recover a panic. If successful, it will re-panic with
+// the trace, or none if there is already one.
+func (fs FuncStack) TryRepanic() {
+	panicking := recover()
+	if panicking == nil {
+		return
+	}
+
+	if msg, ok := panicking.(string); ok {
+		if strings.HasPrefix(msg, headerSignature) {
+			// We can just repanic as-is.
+			panic(msg)
+		}
+	}
+
+	fs.Panicf("unexpected panic caught: %v", panicking)
 }
