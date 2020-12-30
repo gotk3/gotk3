@@ -1674,6 +1674,7 @@ func (v *EventConfigure) Height() int {
 /*
  * GdkGravity
  */
+
 type Gravity int
 
 const (
@@ -1711,24 +1712,8 @@ func WrapRGBA(p unsafe.Pointer) *RGBA {
 	return wrapRGBA((*C.GdkRGBA)(p))
 }
 
-func wrapRGBA(obj *C.GdkRGBA) *RGBA {
-	return &RGBA{obj}
-}
-
-// newRGBAFromNative that handle finalizer.
-func newRGBAFromNative(c *C.GdkRGBA) (*RGBA, error) {
-	if c == nil {
-		return nil, nilPtrErr
-	}
-	obj := wrapRGBA(c)
-
-	runtime.SetFinalizer(obj, (*RGBA).free)
-	return obj, nil
-}
-
-// free is a representation of gdk_rgba_free().
-func (c *RGBA) free() {
-	C.gdk_rgba_free(c.rgba)
+func wrapRGBA(cRgba *C.GdkRGBA) *RGBA {
+	return &RGBA{cRgba}
 }
 
 func NewRGBA(values ...float64) *RGBA {
@@ -1778,9 +1763,22 @@ func (c *RGBA) String() string {
 	return C.GoString((*C.char)(C.gdk_rgba_to_string(c.rgba)))
 }
 
+// free is a representation of gdk_rgba_free().
+func (c *RGBA) free() {
+	C.gdk_rgba_free(c.rgba)
+}
+
 // Copy is a representation of gdk_rgba_copy().
 func (c *RGBA) Copy() (*RGBA, error) {
-	return newRGBAFromNative(C.gdk_rgba_copy(c.rgba))
+	cRgba := C.gdk_rgba_copy(c.rgba)
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := wrapRGBA(cRgba)
+
+	runtime.SetFinalizer(obj, (*RGBA).free)
+	return obj, nil
 }
 
 // Equal is a representation of gdk_rgba_equal().
