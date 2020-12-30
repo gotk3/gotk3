@@ -116,7 +116,9 @@ func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}
 	// TODO: There's a slight race condition here, where
 	// g_signal_connect_closure may trigger signal callbacks before the signal
 	// is registered. It is therefore ideal to have another intermediate ID to
-	// pass into the connect function.
+	// pass into the connect function. This is not a big issue though, since
+	// there isn't really any guarantee that signals should arrive until after
+	// the Connect functions return successfully.
 	closure.RegisterSignal(uint(c), unsafe.Pointer(gclosure))
 
 	return SignalHandle(c)

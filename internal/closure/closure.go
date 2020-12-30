@@ -19,10 +19,8 @@ var (
 // closure pointer. This association allows the closure to be removed as well
 // when the signal removal is requested from the user using DisconnectSignal.
 func RegisterSignal(handle uint, closure unsafe.Pointer) {
-	// Try and load the closure. Panic if we can't confirm that it is there.
-	if _, ok := closures.Load(closure); !ok {
-		panic("BUG: RegisterSignal called on invalid closure pointer")
-	}
+	// Safety check omitted until the race condition in glib/connect.go is
+	// fixed. Check that file for more info.
 
 	signalMu.Lock()
 	defer signalMu.Unlock()
