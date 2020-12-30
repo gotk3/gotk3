@@ -1716,25 +1716,46 @@ func wrapRGBA(obj *C.GdkRGBA) *RGBA {
 }
 
 func NewRGBA(values ...float64) *RGBA {
-	cval := C.GdkRGBA{}
-	c := &RGBA{&cval}
+
+	cRgba := new(C.GdkRGBA)
 	if len(values) > 0 {
-		c.rgba.red = C.gdouble(values[0])
+		cRgba.red = C.gdouble(values[0])
 	}
 	if len(values) > 1 {
-		c.rgba.green = C.gdouble(values[1])
+		cRgba.green = C.gdouble(values[1])
 	}
 	if len(values) > 2 {
-		c.rgba.blue = C.gdouble(values[2])
+		cRgba.blue = C.gdouble(values[2])
 	}
 	if len(values) > 3 {
-		c.rgba.alpha = C.gdouble(values[3])
+		cRgba.alpha = C.gdouble(values[3])
 	}
-	return c
+
+	if rgba, err := newRGBAFromNative(cRgba); err == nil {
+		return rgba
+	}
+	// Error not returned to avoid breaking the previous written code
+	return nil
+}
+
+// newRGBAFromNative that handle finalizer.
+func newRGBAFromNative(c *C.GdkRGBA) (*RGBA, error) {
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	ptr := wrapRGBA(c)
+
+	runtime.SetFinalizer(ptr, (*RGBA).free)
+	return ptr, nil
 }
 
 func (c *RGBA) Floats() []float64 {
 	return []float64{float64(c.rgba.red), float64(c.rgba.green), float64(c.rgba.blue), float64(c.rgba.alpha)}
+}
+
+// free is a representation of gdk_rgba_free().
+func (c *RGBA) free() {
+	C.gdk_rgba_free(c.rgba)
 }
 
 // SetColors sets all colors values in the RGBA.
@@ -1762,15 +1783,22 @@ func (c *RGBA) String() string {
 	return C.GoString((*C.char)(C.gdk_rgba_to_string(c.rgba)))
 }
 
-// TODO:
-// GdkRGBA * 	gdk_rgba_copy ()
-// void 	gdk_rgba_free ()
-// gboolean 	gdk_rgba_equal ()
-// guint 	gdk_rgba_hash ()
+// Copy is a representation of gdk_rgba_copy().
+func (c *RGBA) Copy() (*RGBA, error) {
+	return newRGBAFromNative(C.gdk_rgba_copy(c.rgba))
+}
 
-/*
- * GdkRGBA
- */
+// Equal is a representation of gdk_rgba_equal().
+func (c *RGBA) Equal(rgba *RGBA) bool {
+	return gobool(C.gdk_rgba_equal(
+		C.gconstpointer(c.rgba),
+		C.gconstpointer(rgba.rgba)))
+}
+
+// Hash is a representation of gdk_rgba_hash().
+func (c *RGBA) Hash() uint {
+	return uint(C.gdk_rgba_hash(C.gconstpointer(c.rgba)))
+}
 
 /*
  * GdkRectangle
