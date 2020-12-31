@@ -105,6 +105,8 @@ func init() {
 		{glib.Type(C.gtk_sensitivity_type_get_type()), marshalSensitivityType},
 		{glib.Type(C.gtk_shadow_type_get_type()), marshalShadowType},
 		{glib.Type(C.gtk_sort_type_get_type()), marshalSortType},
+		{glib.Type(C.gtk_spin_button_update_policy_get_type()), marshalSpinButtonUpdatePolicy},
+		{glib.Type(C.gtk_spin_type_get_type()), marshalSpinType},
 		{glib.Type(C.gtk_state_flags_get_type()), marshalStateFlags},
 		{glib.Type(C.gtk_target_flags_get_type()), marshalTargetFlags},
 		{glib.Type(C.gtk_text_direction_get_type()), marshalTextDirection},
@@ -750,9 +752,35 @@ func marshalPolicyType(p uintptr) (interface{}, error) {
 	return PolicyType(c), nil
 }
 
-// TODO:
-// GtkSpinButtonUpdatePolicy
-// GtkSpinType
+// SpinButtonUpdatePolicy is a representation of GTK's GtkSpinButtonUpdatePolicy.
+type SpinButtonUpdatePolicy int
+
+const (
+	UPDATE_ALWAYS   SpinButtonUpdatePolicy = C.GTK_UPDATE_ALWAYS
+	UPDATE_IF_VALID SpinButtonUpdatePolicy = C.GTK_UPDATE_IF_VALID
+)
+
+func marshalSpinButtonUpdatePolicy(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SpinButtonUpdatePolicy(c), nil
+}
+
+// SpinType is a representation of GTK's GtkSpinType.
+type SpinType int
+
+const (
+	SPIN_STEP_FORWARD  SpinType = C.GTK_SPIN_STEP_FORWARD
+	SPIN_STEP_BACKWARD SpinType = C.GTK_SPIN_STEP_BACKWARD
+	SPIN_PAGE_BACKWARD SpinType = C.GTK_SPIN_PAGE_BACKWARD
+	SPIN_HOME          SpinType = C.GTK_SPIN_HOME
+	SPIN_END           SpinType = C.GTK_SPIN_END
+	SPIN_USER_DEFINED  SpinType = C.GTK_SPIN_USER_DEFINED
+)
+
+func marshalSpinType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SpinType(c), nil
+}
 
 // TreeViewGridLine is a representation of GTK's GtkTreeViewGridLines.
 type TreeViewGridLines int
@@ -8379,8 +8407,10 @@ func SpinButtonNewWithRange(min, max, step float64) (*SpinButton, error) {
 	return wrapSpinButton(glib.Take(unsafe.Pointer(c))), nil
 }
 
-// TODO:
-// gtk_spin_button_set_adjustment().
+// SetAdjustment() is a wrapper around gtk_spin_button_set_adjustment().
+func (v *SpinButton) SetAdjustment(adjustment *Adjustment) {
+	C.gtk_spin_button_set_adjustment(v.native(), adjustment.native())
+}
 
 // GetAdjustment() is a wrapper around gtk_spin_button_get_adjustment
 func (v *SpinButton) GetAdjustment() *Adjustment {
@@ -8391,8 +8421,10 @@ func (v *SpinButton) GetAdjustment() *Adjustment {
 	return wrapAdjustment(glib.Take(unsafe.Pointer(c)))
 }
 
-// TODO:
-// gtk_spin_button_set_digits().
+// SetDigits() is a wrapper around gtk_spin_button_set_digits().
+func (v *SpinButton) SetDigits(digits uint) {
+	C.gtk_spin_button_set_digits(v.native(), C.guint(digits))
+}
 
 // SetIncrements() is a wrapper around gtk_spin_button_set_increments().
 func (v *SpinButton) SetIncrements(step, page float64) {
@@ -8421,18 +8453,51 @@ func (v *SpinButton) GetValueAsInt() int {
 	return int(c)
 }
 
-// gtk_spin_button_set_update_policy().
-// gtk_spin_button_set_numeric().
-// gtk_spin_button_spin().
+// SetUpdatePolicy() is a wrapper around gtk_spin_button_set_update_policy().
+func (v *SpinButton) SetUpdatePolicy(policy SpinButtonUpdatePolicy) {
+	C.gtk_spin_button_set_update_policy(
+		v.native(),
+		C.GtkSpinButtonUpdatePolicy(policy))
+}
+
+// SetNumeric() is a wrapper around gtk_spin_button_set_numeric().
+func (v *SpinButton) SetNumeric(numeric bool) {
+	C.gtk_spin_button_set_numeric(v.native(), gbool(numeric))
+}
+
+// Spin() is a wrapper around gtk_spin_button_spin().
+func (v *SpinButton) Spin(direction SpinType, increment float64) {
+	C.gtk_spin_button_spin(
+		v.native(),
+		C.GtkSpinType(direction),
+		C.gdouble(increment))
+}
+
 // gtk_spin_button_set_wrap().
 // gtk_spin_button_set_snap_to_ticks().
-// gtk_spin_button_update().
-// gtk_spin_button_get_digits().
+
+// Update() is a wrapper around gtk_spin_button_update().
+func (v *SpinButton) Update() {
+	C.gtk_spin_button_update(v.native())
+}
+
+// GetDigits() is a wrapper around gtk_spin_button_get_digits().
+func (v *SpinButton) GetDigits() uint {
+	return uint(C.gtk_spin_button_get_digits(v.native()))
+}
+
 // gtk_spin_button_get_increments().
 // gtk_spin_button_get_numeric().
 // gtk_spin_button_get_range().
 // gtk_spin_button_get_snap_to_ticks().
-// gtk_spin_button_get_update_policy().
+
+// GetUpdatePolicy() is a wrapper around gtk_spin_button_get_update_policy().
+func (v *SpinButton) GetUpdatePolicy() SpinButtonUpdatePolicy {
+	return SpinButtonUpdatePolicy(
+		C.gtk_spin_button_get_update_policy(
+			v.native()))
+}
+
 // gtk_spin_button_get_wrap().
 
 /*
