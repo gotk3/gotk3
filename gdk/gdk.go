@@ -1674,6 +1674,7 @@ func (v *EventConfigure) Height() int {
 /*
  * GdkGravity
  */
+
 type Gravity int
 
 const (
@@ -1711,26 +1712,26 @@ func WrapRGBA(p unsafe.Pointer) *RGBA {
 	return wrapRGBA((*C.GdkRGBA)(p))
 }
 
-func wrapRGBA(obj *C.GdkRGBA) *RGBA {
-	return &RGBA{obj}
+func wrapRGBA(cRgba *C.GdkRGBA) *RGBA {
+	return &RGBA{cRgba}
 }
 
 func NewRGBA(values ...float64) *RGBA {
-	cval := C.GdkRGBA{}
-	c := &RGBA{&cval}
+
+	cRgba := new(C.GdkRGBA)
 	if len(values) > 0 {
-		c.rgba.red = C.gdouble(values[0])
+		cRgba.red = C.gdouble(values[0])
 	}
 	if len(values) > 1 {
-		c.rgba.green = C.gdouble(values[1])
+		cRgba.green = C.gdouble(values[1])
 	}
 	if len(values) > 2 {
-		c.rgba.blue = C.gdouble(values[2])
+		cRgba.blue = C.gdouble(values[2])
 	}
 	if len(values) > 3 {
-		c.rgba.alpha = C.gdouble(values[3])
+		cRgba.alpha = C.gdouble(values[3])
 	}
-	return c
+	return wrapRGBA(cRgba)
 }
 
 func (c *RGBA) Floats() []float64 {
@@ -1762,15 +1763,35 @@ func (c *RGBA) String() string {
 	return C.GoString((*C.char)(C.gdk_rgba_to_string(c.rgba)))
 }
 
-// TODO:
-// GdkRGBA * 	gdk_rgba_copy ()
-// void 	gdk_rgba_free ()
-// gboolean 	gdk_rgba_equal ()
-// guint 	gdk_rgba_hash ()
+// free is a representation of gdk_rgba_free().
+func (c *RGBA) free() {
+	C.gdk_rgba_free(c.rgba)
+}
 
-/*
- * GdkRGBA
- */
+// Copy is a representation of gdk_rgba_copy().
+func (c *RGBA) Copy() (*RGBA, error) {
+	cRgba := C.gdk_rgba_copy(c.rgba)
+
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := wrapRGBA(cRgba)
+
+	runtime.SetFinalizer(obj, (*RGBA).free)
+	return obj, nil
+}
+
+// Equal is a representation of gdk_rgba_equal().
+func (c *RGBA) Equal(rgba *RGBA) bool {
+	return gobool(C.gdk_rgba_equal(
+		C.gconstpointer(c.rgba),
+		C.gconstpointer(rgba.rgba)))
+}
+
+// Hash is a representation of gdk_rgba_hash().
+func (c *RGBA) Hash() uint {
+	return uint(C.gdk_rgba_hash(C.gconstpointer(c.rgba)))
+}
 
 /*
  * GdkRectangle
