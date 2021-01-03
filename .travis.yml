@@ -21,15 +21,6 @@ jobs:
       # Majority of the go versions here for compatibility checking
     - os: linux
       dist: focal
-      go: "1.9"
-    - os: linux
-      dist: focal
-      go: "1.10"
-    - os: linux
-      dist: focal
-      go: "1.11"
-    - os: linux
-      dist: focal
       go: "1.12"
     - os: linux
       dist: focal
@@ -37,6 +28,9 @@ jobs:
     - os: linux
       dist: focal
       go: "1.14"
+    - os: linux
+      dist: focal
+      go: "1.15"
     - os: linux
       dist: focal
       go: tip
