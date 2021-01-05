@@ -195,7 +195,7 @@ func (v *Monitor) GetHeightMM() int {
 // GetManufacturer is a wrapper around gdk_monitor_get_manufacturer().
 func (v *Monitor) GetManufacturer() string {
 	// transfer none: don't free data after the code is done.
-	return  C.GoString(C.gdk_monitor_get_manufacturer(v.native()))
+	return C.GoString(C.gdk_monitor_get_manufacturer(v.native()))
 }
 
 // GetModel is a wrapper around gdk_monitor_get_model().

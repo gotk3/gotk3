@@ -118,6 +118,10 @@ func marshalWidget(p uintptr) (interface{}, error) {
 }
 
 func wrapWidget(obj *glib.Object) *Widget {
+	if obj == nil {
+		return nil
+	}
+
 	return &Widget{glib.InitiallyUnowned{obj}}
 }
 

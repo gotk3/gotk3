@@ -55,6 +55,10 @@ func marshalFontChooser(p uintptr) (interface{}, error) {
 }
 
 func wrapFontChooser(obj *glib.Object) *FontChooser {
+	if obj == nil {
+		return nil
+	}
+
 	return &FontChooser{obj}
 }
 
@@ -120,6 +124,10 @@ func marshalFontButton(p uintptr) (interface{}, error) {
 }
 
 func wrapFontButton(obj *glib.Object) *FontButton {
+	if obj == nil {
+		return nil
+	}
+
 	button := wrapButton(obj)
 	fc := wrapFontChooser(obj)
 	return &FontButton{*button, *fc}

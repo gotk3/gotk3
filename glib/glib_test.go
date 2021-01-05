@@ -91,7 +91,7 @@ func TestTypeNextBase(t *testing.T) {
 }
 
 func TestValueString_NonEmpty(t *testing.T) {
-	
+
 	expected := "test"
 
 	value, err := glib.GValue(expected)
@@ -112,7 +112,7 @@ func TestValueString_NonEmpty(t *testing.T) {
 }
 
 func TestValueString_Empty(t *testing.T) {
-	
+
 	expected := ""
 
 	value, err := glib.GValue(expected)
@@ -131,4 +131,3 @@ func TestValueString_Empty(t *testing.T) {
 		t.Errorf("Expected %q, got %q", expected, actual)
 	}
 }
-

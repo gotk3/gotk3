@@ -62,6 +62,10 @@ func marshalWindow(p uintptr) (interface{}, error) {
 }
 
 func wrapWindow(obj *glib.Object) *Window {
+	if obj == nil {
+		return nil
+	}
+
 	return &Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 

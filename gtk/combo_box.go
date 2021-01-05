@@ -60,6 +60,10 @@ func marshalComboBox(p uintptr) (interface{}, error) {
 }
 
 func wrapComboBox(obj *glib.Object) *ComboBox {
+	if obj == nil {
+		return nil
+	}
+
 	cl := wrapCellLayout(obj)
 	ce := wrapCellEditable(obj)
 	return &ComboBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, *cl, *ce}
@@ -302,6 +306,10 @@ func marshalComboBoxText(p uintptr) (interface{}, error) {
 }
 
 func wrapComboBoxText(obj *glib.Object) *ComboBoxText {
+	if obj == nil {
+		return nil
+	}
+
 	return &ComboBoxText{*wrapComboBox(obj)}
 }
 

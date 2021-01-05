@@ -5,7 +5,6 @@ package gtk
 // #include <gtk/gtk.h>
 import "C"
 
-
 /*
  * GtkInputPurpose
  */

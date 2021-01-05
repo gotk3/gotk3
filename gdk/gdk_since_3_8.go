@@ -48,14 +48,14 @@ func init() {
 type ClockPhase int
 
 const (
-	PHASE_NONE          ClockPhase = C.GDK_FRAME_CLOCK_PHASE_NONE         
-	PHASE_FLUSH_EVENTS  ClockPhase = C.GDK_FRAME_CLOCK_PHASE_FLUSH_EVENTS 
-	PHASE_BEFORE_PAINT  ClockPhase = C.GDK_FRAME_CLOCK_PHASE_BEFORE_PAINT 
-	PHASE_UPDATE        ClockPhase = C.GDK_FRAME_CLOCK_PHASE_UPDATE       
-	PHASE_LAYOUT        ClockPhase = C.GDK_FRAME_CLOCK_PHASE_LAYOUT       
-	PHASE_PAINT         ClockPhase = C.GDK_FRAME_CLOCK_PHASE_PAINT        
+	PHASE_NONE          ClockPhase = C.GDK_FRAME_CLOCK_PHASE_NONE
+	PHASE_FLUSH_EVENTS  ClockPhase = C.GDK_FRAME_CLOCK_PHASE_FLUSH_EVENTS
+	PHASE_BEFORE_PAINT  ClockPhase = C.GDK_FRAME_CLOCK_PHASE_BEFORE_PAINT
+	PHASE_UPDATE        ClockPhase = C.GDK_FRAME_CLOCK_PHASE_UPDATE
+	PHASE_LAYOUT        ClockPhase = C.GDK_FRAME_CLOCK_PHASE_LAYOUT
+	PHASE_PAINT         ClockPhase = C.GDK_FRAME_CLOCK_PHASE_PAINT
 	PHASE_RESUME_EVENTS ClockPhase = C.GDK_FRAME_CLOCK_PHASE_RESUME_EVENTS
-	PHASE_AFTER_PAINT   ClockPhase = C.GDK_FRAME_CLOCK_PHASE_AFTER_PAINT  
+	PHASE_AFTER_PAINT   ClockPhase = C.GDK_FRAME_CLOCK_PHASE_AFTER_PAINT
 )
 
 func marshalClockPhase(p uintptr) (interface{}, error) {
@@ -142,12 +142,13 @@ func (v *FrameClock) GetCurrentTimings() (*FrameTimings, error) {
 // GetRefreshInfo is a wrapper around gdk_frame_clock_get_refresh_info().
 func (v *FrameClock) GetRefreshInfo(baseTime int64) (int64, int64) {
 	var cr, cp (*C.gint64)
-	defer C.free(unsafe.Pointer(cr)); defer C.free(unsafe.Pointer(cp))
+	defer C.free(unsafe.Pointer(cr))
+	defer C.free(unsafe.Pointer(cp))
 	b := C.gint64(baseTime)
-	
+
 	C.gdk_frame_clock_get_refresh_info(v.native(), b, cr, cp)
 	r, p := int64(*cr), int64(*cp)
-	return r,p
+	return r, p
 }
 
 // RequestPhase is a wrapper around gdk_frame_clock_request_phase().
@@ -178,7 +179,7 @@ func (v *FrameTimings) Native() uintptr {
 	return uintptr(unsafe.Pointer(v.native()))
 }
 
-func wrapFrameTimings(ptr unsafe.Pointer) (*FrameTimings) {
+func wrapFrameTimings(ptr unsafe.Pointer) *FrameTimings {
 	obj := &glib.Object{glib.ToGObject(ptr)}
 	return &FrameTimings{obj}
 }

@@ -232,6 +232,10 @@ func marshalHeaderBar(p uintptr) (interface{}, error) {
 }
 
 func wrapHeaderBar(obj *glib.Object) *HeaderBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &HeaderBar{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -345,6 +349,10 @@ func marshalListBox(p uintptr) (interface{}, error) {
 }
 
 func wrapListBox(obj *glib.Object) *ListBox {
+	if obj == nil {
+		return nil
+	}
+
 	return &ListBox{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -581,6 +589,10 @@ func marshalListBoxRow(p uintptr) (interface{}, error) {
 }
 
 func wrapListBoxRow(obj *glib.Object) *ListBoxRow {
+	if obj == nil {
+		return nil
+	}
+
 	return &ListBoxRow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -661,6 +673,10 @@ func marshalRevealer(p uintptr) (interface{}, error) {
 }
 
 func wrapRevealer(obj *glib.Object) *Revealer {
+	if obj == nil {
+		return nil
+	}
+
 	return &Revealer{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -738,6 +754,10 @@ func marshalSearchBar(p uintptr) (interface{}, error) {
 }
 
 func wrapSearchBar(obj *glib.Object) *SearchBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &SearchBar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -808,6 +828,10 @@ func marshalStack(p uintptr) (interface{}, error) {
 }
 
 func wrapStack(obj *glib.Object) *Stack {
+	if obj == nil {
+		return nil
+	}
+
 	return &Stack{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

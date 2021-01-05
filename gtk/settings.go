@@ -39,6 +39,10 @@ func marshalSettings(p uintptr) (interface{}, error) {
 }
 
 func wrapSettings(obj *glib.Object) *Settings {
+	if obj == nil {
+		return nil
+	}
+
 	return &Settings{obj}
 }
 

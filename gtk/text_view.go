@@ -66,6 +66,10 @@ func marshalTextView(p uintptr) (interface{}, error) {
 }
 
 func wrapTextView(obj *glib.Object) *TextView {
+	if obj == nil {
+		return nil
+	}
+
 	return &TextView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

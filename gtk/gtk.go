@@ -1277,6 +1277,10 @@ func marshalAdjustment(p uintptr) (interface{}, error) {
 }
 
 func wrapAdjustment(obj *glib.Object) *Adjustment {
+	if obj == nil {
+		return nil
+	}
+
 	return &Adjustment{glib.InitiallyUnowned{obj}}
 }
 
@@ -1405,6 +1409,10 @@ func marshalAssistant(p uintptr) (interface{}, error) {
 }
 
 func wrapAssistant(obj *glib.Object) *Assistant {
+	if obj == nil {
+		return nil
+	}
+
 	return &Assistant{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -1562,6 +1570,10 @@ func marshalBin(p uintptr) (interface{}, error) {
 }
 
 func wrapBin(obj *glib.Object) *Bin {
+	if obj == nil {
+		return nil
+	}
+
 	return &Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -1740,6 +1752,10 @@ func marshalButton(p uintptr) (interface{}, error) {
 }
 
 func wrapButton(obj *glib.Object) *Button {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := &Actionable{obj}
 	return &Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}
 }
@@ -1890,6 +1906,10 @@ func (v *ColorButton) native() *C.GtkColorButton {
 }
 
 func wrapColorButton(obj *glib.Object) *ColorButton {
+	if obj == nil {
+		return nil
+	}
+
 	cc := wrapColorChooser(obj)
 	actionable := wrapActionable(obj)
 	return &ColorButton{Button{Bin{Container{Widget{
@@ -1953,6 +1973,10 @@ func marshalBox(p uintptr) (interface{}, error) {
 }
 
 func wrapBox(obj *glib.Object) *Box {
+	if obj == nil {
+		return nil
+	}
+
 	return &Box{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -2064,6 +2088,10 @@ func marshalCalendar(p uintptr) (interface{}, error) {
 }
 
 func wrapCalendar(obj *glib.Object) *Calendar {
+	if obj == nil {
+		return nil
+	}
+
 	return &Calendar{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2188,6 +2216,10 @@ func marshalCellLayout(p uintptr) (interface{}, error) {
 }
 
 func wrapCellLayout(obj *glib.Object) *CellLayout {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellLayout{obj}
 }
 
@@ -2268,6 +2300,10 @@ func marshalCellEditable(p uintptr) (interface{}, error) {
 }
 
 func wrapCellEditable(obj *glib.Object) *CellEditable {
+	if obj == nil {
+		return nil
+	}
+
 	// return &CellEditable{Widget{glib.InitiallyUnowned{obj}}}
 	return &CellEditable{glib.InitiallyUnowned{obj}}
 }
@@ -2345,6 +2381,10 @@ func marshalCellRenderer(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRenderer(obj *glib.Object) *CellRenderer {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRenderer{glib.InitiallyUnowned{obj}}
 }
 
@@ -2467,6 +2507,10 @@ func marshalCellRendererSpinner(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererSpinner(obj *glib.Object) *CellRendererSpinner {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererSpinner{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2505,6 +2549,10 @@ func marshalCellRendererPixbuf(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererPixbuf(obj *glib.Object) *CellRendererPixbuf {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererPixbuf{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2543,6 +2591,10 @@ func marshalCellRendererProgress(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererProgress(obj *glib.Object) *CellRendererProgress {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererProgress{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2581,6 +2633,10 @@ func marshalCellRendererText(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererText(obj *glib.Object) *CellRendererText {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2631,6 +2687,10 @@ func marshalCellRendererToggle(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererToggle(obj *glib.Object) *CellRendererToggle {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererToggle{CellRenderer{glib.InitiallyUnowned{obj}}}
 }
 
@@ -2703,6 +2763,10 @@ func marshalCellRendererAccel(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererAccel(obj *glib.Object) *CellRendererAccel {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererAccel{CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -2741,6 +2805,10 @@ func marshalCellRendererCombo(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererCombo(obj *glib.Object) *CellRendererCombo {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererCombo{CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -2779,6 +2847,10 @@ func marshalCellRendererSpin(p uintptr) (interface{}, error) {
 }
 
 func wrapCellRendererSpin(obj *glib.Object) *CellRendererSpin {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellRendererSpin{CellRendererText{CellRenderer{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -2817,6 +2889,10 @@ func marshalCheckButton(p uintptr) (interface{}, error) {
 }
 
 func wrapCheckButton(obj *glib.Object) *CheckButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &CheckButton{ToggleButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}, actionable}}}
@@ -2881,6 +2957,10 @@ func marshalCheckMenuItem(p uintptr) (interface{}, error) {
 }
 
 func wrapCheckMenuItem(obj *glib.Object) *CheckMenuItem {
+	if obj == nil {
+		return nil
+	}
+
 	return &CheckMenuItem{MenuItem{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -2982,6 +3062,10 @@ func marshalClipboard(p uintptr) (interface{}, error) {
 }
 
 func wrapClipboard(obj *glib.Object) *Clipboard {
+	if obj == nil {
+		return nil
+	}
+
 	return &Clipboard{obj}
 }
 
@@ -3114,6 +3198,10 @@ func marshalContainer(p uintptr) (interface{}, error) {
 }
 
 func wrapContainer(obj *glib.Object) *Container {
+	if obj == nil {
+		return nil
+	}
+
 	return &Container{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -3305,6 +3393,10 @@ func (v *CssProvider) native() *C.GtkCssProvider {
 }
 
 func wrapCssProvider(obj *glib.Object) *CssProvider {
+	if obj == nil {
+		return nil
+	}
+
 	return &CssProvider{obj}
 }
 
@@ -3392,6 +3484,10 @@ func marshalDialog(p uintptr) (interface{}, error) {
 }
 
 func wrapDialog(obj *glib.Object) *Dialog {
+	if obj == nil {
+		return nil
+	}
+
 	return &Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -3529,6 +3625,10 @@ func marshalDrawingArea(p uintptr) (interface{}, error) {
 }
 
 func wrapDrawingArea(obj *glib.Object) *DrawingArea {
+	if obj == nil {
+		return nil
+	}
+
 	return &DrawingArea{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -3575,6 +3675,10 @@ func marshalEditable(p uintptr) (interface{}, error) {
 }
 
 func wrapEditable(obj *glib.Object) *Editable {
+	if obj == nil {
+		return nil
+	}
+
 	return &Editable{obj}
 }
 
@@ -3702,6 +3806,10 @@ func marshalEntry(p uintptr) (interface{}, error) {
 }
 
 func wrapEntry(obj *glib.Object) *Entry {
+	if obj == nil {
+		return nil
+	}
+
 	e := wrapEditable(obj)
 	ce := wrapCellEditable(obj)
 	return &Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}
@@ -4205,6 +4313,10 @@ func marshalEntryBuffer(p uintptr) (interface{}, error) {
 }
 
 func wrapEntryBuffer(obj *glib.Object) *EntryBuffer {
+	if obj == nil {
+		return nil
+	}
+
 	return &EntryBuffer{obj}
 }
 
@@ -4318,6 +4430,10 @@ func marshalEntryCompletion(p uintptr) (interface{}, error) {
 }
 
 func wrapEntryCompletion(obj *glib.Object) *EntryCompletion {
+	if obj == nil {
+		return nil
+	}
+
 	return &EntryCompletion{obj}
 }
 
@@ -4456,6 +4572,10 @@ func marshalEventBox(p uintptr) (interface{}, error) {
 }
 
 func wrapEventBox(obj *glib.Object) *EventBox {
+	if obj == nil {
+		return nil
+	}
+
 	return &EventBox{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -4516,6 +4636,10 @@ func marshalExpander(p uintptr) (interface{}, error) {
 }
 
 func wrapExpander(obj *glib.Object) *Expander {
+	if obj == nil {
+		return nil
+	}
+
 	return &Expander{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -4607,6 +4731,10 @@ func marshalFileChooser(p uintptr) (interface{}, error) {
 }
 
 func wrapFileChooser(obj *glib.Object) *FileChooser {
+	if obj == nil {
+		return nil
+	}
+
 	return &FileChooser{obj}
 }
 
@@ -4840,6 +4968,10 @@ func marshalFileChooserButton(p uintptr) (interface{}, error) {
 }
 
 func wrapFileChooserButton(obj *glib.Object) *FileChooserButton {
+	if obj == nil {
+		return nil
+	}
+
 	fc := wrapFileChooser(obj)
 	return &FileChooserButton{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
 }
@@ -4917,6 +5049,10 @@ func marshalFileChooserDialog(p uintptr) (interface{}, error) {
 }
 
 func wrapFileChooserDialog(obj *glib.Object) *FileChooserDialog {
+	if obj == nil {
+		return nil
+	}
+
 	fc := wrapFileChooser(obj)
 	return &FileChooserDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}, *fc}
 }
@@ -5008,6 +5144,10 @@ func marshalFileChooserWidget(p uintptr) (interface{}, error) {
 }
 
 func wrapFileChooserWidget(obj *glib.Object) *FileChooserWidget {
+	if obj == nil {
+		return nil
+	}
+
 	fc := wrapFileChooser(obj)
 	return &FileChooserWidget{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}, *fc}
 }
@@ -5047,6 +5187,10 @@ func marshalFileFilter(p uintptr) (interface{}, error) {
 }
 
 func wrapFileFilter(obj *glib.Object) *FileFilter {
+	if obj == nil {
+		return nil
+	}
+
 	return &FileFilter{obj}
 }
 
@@ -5120,6 +5264,10 @@ func marshalFrame(p uintptr) (interface{}, error) {
 }
 
 func wrapFrame(obj *glib.Object) *Frame {
+	if obj == nil {
+		return nil
+	}
+
 	return &Frame{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -5214,6 +5362,10 @@ func marshalAspectFrame(p uintptr) (interface{}, error) {
 }
 
 func wrapAspectFrame(obj *glib.Object) *AspectFrame {
+	if obj == nil {
+		return nil
+	}
+
 	return &AspectFrame{Frame{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -5270,6 +5422,10 @@ func marshalGrid(p uintptr) (interface{}, error) {
 }
 
 func wrapGrid(obj *glib.Object) *Grid {
+	if obj == nil {
+		return nil
+	}
+
 	o := wrapOrientable(obj)
 	return &Grid{Container{Widget{glib.InitiallyUnowned{obj}}}, *o}
 }
@@ -5441,6 +5597,10 @@ func marshalImage(p uintptr) (interface{}, error) {
 }
 
 func wrapImage(obj *glib.Object) *Image {
+	if obj == nil {
+		return nil
+	}
+
 	return &Image{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -5662,6 +5822,10 @@ func marshalLayout(p uintptr) (interface{}, error) {
 }
 
 func wrapLayout(obj *glib.Object) *Layout {
+	if obj == nil {
+		return nil
+	}
+
 	return &Layout{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -5725,6 +5889,10 @@ func marshalLinkButton(p uintptr) (interface{}, error) {
 }
 
 func wrapLinkButton(obj *glib.Object) *LinkButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &LinkButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}, actionable}}
@@ -5802,6 +5970,10 @@ func marshalLockButton(p uintptr) (interface{}, error) {
 }
 
 func wrapLockButton(obj *glib.Object) *LockButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &LockButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}, actionable}}
@@ -5856,6 +6028,10 @@ func marshalListStore(p uintptr) (interface{}, error) {
 }
 
 func wrapListStore(obj *glib.Object) *ListStore {
+	if obj == nil {
+		return nil
+	}
+
 	tm := wrapTreeModel(obj)
 	ts := wrapTreeSortable(obj)
 	return &ListStore{obj, *tm, *ts}
@@ -6099,6 +6275,10 @@ func marshalMenuBar(p uintptr) (interface{}, error) {
 }
 
 func wrapMenuBar(obj *glib.Object) *MenuBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &MenuBar{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -6136,6 +6316,10 @@ func marshalMenuButton(p uintptr) (interface{}, error) {
 }
 
 func wrapMenuButton(obj *glib.Object) *MenuButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &MenuButton{ToggleButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}, actionable}}}
@@ -6244,6 +6428,10 @@ func marshalMenuItem(p uintptr) (interface{}, error) {
 }
 
 func wrapMenuItem(obj *glib.Object) *MenuItem {
+	if obj == nil {
+		return nil
+	}
+
 	return &MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -6342,6 +6530,10 @@ func marshalMessageDialog(p uintptr) (interface{}, error) {
 }
 
 func wrapMessageDialog(obj *glib.Object) *MessageDialog {
+	if obj == nil {
+		return nil
+	}
+
 	return &MessageDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
 }
 
@@ -6441,6 +6633,10 @@ func marshalNotebook(p uintptr) (interface{}, error) {
 }
 
 func wrapNotebook(obj *glib.Object) *Notebook {
+	if obj == nil {
+		return nil
+	}
+
 	return &Notebook{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -6747,6 +6943,10 @@ func marshalOffscreenWindow(p uintptr) (interface{}, error) {
 }
 
 func wrapOffscreenWindow(obj *glib.Object) *OffscreenWindow {
+	if obj == nil {
+		return nil
+	}
+
 	return &OffscreenWindow{Window{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -6818,6 +7018,10 @@ func marshalOrientable(p uintptr) (interface{}, error) {
 }
 
 func wrapOrientable(obj *glib.Object) *Orientable {
+	if obj == nil {
+		return nil
+	}
+
 	return &Orientable{obj}
 }
 
@@ -6858,6 +7062,10 @@ func marshalOverlay(p uintptr) (interface{}, error) {
 }
 
 func wrapOverlay(obj *glib.Object) *Overlay {
+	if obj == nil {
+		return nil
+	}
+
 	return &Overlay{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -6900,6 +7108,10 @@ func marshalPaned(p uintptr) (interface{}, error) {
 }
 
 func wrapPaned(obj *glib.Object) *Paned {
+	if obj == nil {
+		return nil
+	}
+
 	return &Paned{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -7006,6 +7218,10 @@ func marshalProgressBar(p uintptr) (interface{}, error) {
 }
 
 func wrapProgressBar(obj *glib.Object) *ProgressBar {
+	if obj == nil {
+		return nil
+	}
+
 	o := wrapOrientable(obj)
 	return &ProgressBar{Widget{glib.InitiallyUnowned{obj}}, *o}
 }
@@ -7105,6 +7321,10 @@ func marshalRadioButton(p uintptr) (interface{}, error) {
 }
 
 func wrapRadioButton(obj *glib.Object) *RadioButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &RadioButton{CheckButton{ToggleButton{Button{Bin{Container{
 		Widget{glib.InitiallyUnowned{obj}}}}, actionable}}}}
@@ -7232,6 +7452,10 @@ func marshalRadioMenuItem(p uintptr) (interface{}, error) {
 }
 
 func wrapRadioMenuItem(obj *glib.Object) *RadioMenuItem {
+	if obj == nil {
+		return nil
+	}
+
 	return &RadioMenuItem{CheckMenuItem{MenuItem{Bin{Container{
 		Widget{glib.InitiallyUnowned{obj}}}}}}}
 }
@@ -7342,6 +7566,10 @@ func marshalRange(p uintptr) (interface{}, error) {
 }
 
 func wrapRange(obj *glib.Object) *Range {
+	if obj == nil {
+		return nil
+	}
+
 	return &Range{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -7428,6 +7656,10 @@ func (v *RecentChooser) native() *C.GtkRecentChooser {
 }
 
 func wrapRecentChooser(obj *glib.Object) *RecentChooser {
+	if obj == nil {
+		return nil
+	}
+
 	return &RecentChooser{obj}
 }
 
@@ -7476,6 +7708,10 @@ func (v *RecentChooserMenu) native() *C.GtkRecentChooserMenu {
 }
 
 func wrapRecentChooserMenu(obj *glib.Object) *RecentChooserMenu {
+	if obj == nil {
+		return nil
+	}
+
 	return &RecentChooserMenu{
 		Menu{MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}},
 		RecentChooser{obj},
@@ -7501,6 +7737,10 @@ func (v *RecentFilter) native() *C.GtkRecentFilter {
 }
 
 func wrapRecentFilter(obj *glib.Object) *RecentFilter {
+	if obj == nil {
+		return nil
+	}
+
 	return &RecentFilter{glib.InitiallyUnowned{obj}}
 }
 
@@ -7538,6 +7778,10 @@ func marshalRecentManager(p uintptr) (interface{}, error) {
 }
 
 func wrapRecentManager(obj *glib.Object) *RecentManager {
+	if obj == nil {
+		return nil
+	}
+
 	return &RecentManager{obj}
 }
 
@@ -7585,6 +7829,10 @@ func marshalScale(p uintptr) (interface{}, error) {
 }
 
 func wrapScale(obj *glib.Object) *Scale {
+	if obj == nil {
+		return nil
+	}
+
 	return &Scale{Range{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -7667,6 +7915,10 @@ func marshalScaleButton(p uintptr) (interface{}, error) {
 }
 
 func wrapScaleButton(obj *glib.Object) *ScaleButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}
 }
@@ -7774,6 +8026,10 @@ func (v *Scrollable) native() *C.GtkScrollable {
 }
 
 func wrapScrollable(obj *glib.Object) *Scrollable {
+	if obj == nil {
+		return nil
+	}
+
 	return &Scrollable{obj}
 }
 
@@ -7837,6 +8093,10 @@ func marshalScrollbar(p uintptr) (interface{}, error) {
 }
 
 func wrapScrollbar(obj *glib.Object) *Scrollbar {
+	if obj == nil {
+		return nil
+	}
+
 	return &Scrollbar{Range{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -7874,6 +8134,10 @@ func marshalScrolledWindow(p uintptr) (interface{}, error) {
 }
 
 func wrapScrolledWindow(obj *glib.Object) *ScrolledWindow {
+	if obj == nil {
+		return nil
+	}
+
 	return &ScrolledWindow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -7976,6 +8240,10 @@ func marshalSearchEntry(p uintptr) (interface{}, error) {
 }
 
 func wrapSearchEntry(obj *glib.Object) *SearchEntry {
+	if obj == nil {
+		return nil
+	}
+
 	e := wrapEditable(obj)
 	ce := wrapCellEditable(obj)
 	return &SearchEntry{Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}}
@@ -8188,6 +8456,10 @@ func marshalSeparator(p uintptr) (interface{}, error) {
 }
 
 func wrapSeparator(obj *glib.Object) *Separator {
+	if obj == nil {
+		return nil
+	}
+
 	return &Separator{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -8225,6 +8497,10 @@ func marshalSeparatorMenuItem(p uintptr) (interface{}, error) {
 }
 
 func wrapSeparatorMenuItem(obj *glib.Object) *SeparatorMenuItem {
+	if obj == nil {
+		return nil
+	}
+
 	return &SeparatorMenuItem{MenuItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -8262,6 +8538,10 @@ func marshalSeparatorToolItem(p uintptr) (interface{}, error) {
 }
 
 func wrapSeparatorToolItem(obj *glib.Object) *SeparatorToolItem {
+	if obj == nil {
+		return nil
+	}
+
 	return &SeparatorToolItem{ToolItem{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -8311,6 +8591,10 @@ func marshalSizeGroup(p uintptr) (interface{}, error) {
 }
 
 func wrapSizeGroup(obj *glib.Object) *SizeGroup {
+	if obj == nil {
+		return nil
+	}
+
 	return &SizeGroup{obj}
 }
 
@@ -8376,6 +8660,10 @@ func marshalSpinButton(p uintptr) (interface{}, error) {
 }
 
 func wrapSpinButton(obj *glib.Object) *SpinButton {
+	if obj == nil {
+		return nil
+	}
+
 	e := wrapEditable(obj)
 	ce := wrapCellEditable(obj)
 	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}}
@@ -8525,6 +8813,10 @@ func marshalSpinner(p uintptr) (interface{}, error) {
 }
 
 func wrapSpinner(obj *glib.Object) *Spinner {
+	if obj == nil {
+		return nil
+	}
+
 	return &Spinner{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -8572,6 +8864,10 @@ func marshalStatusbar(p uintptr) (interface{}, error) {
 }
 
 func wrapStatusbar(obj *glib.Object) *Statusbar {
+	if obj == nil {
+		return nil
+	}
+
 	return &Statusbar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -8646,6 +8942,10 @@ func marshalSwitch(p uintptr) (interface{}, error) {
 }
 
 func wrapSwitch(obj *glib.Object) *Switch {
+	if obj == nil {
+		return nil
+	}
+
 	return &Switch{Widget{glib.InitiallyUnowned{obj}}}
 }
 
@@ -8727,6 +9027,10 @@ func marshalTextTag(p uintptr) (interface{}, error) {
 }
 
 func wrapTextTag(obj *glib.Object) *TextTag {
+	if obj == nil {
+		return nil
+	}
+
 	return &TextTag{obj}
 }
 
@@ -8791,6 +9095,10 @@ func marshalTextTagTable(p uintptr) (interface{}, error) {
 }
 
 func wrapTextTagTable(obj *glib.Object) *TextTagTable {
+	if obj == nil {
+		return nil
+	}
+
 	return &TextTagTable{obj}
 }
 
@@ -8849,6 +9157,10 @@ func marshalTextBuffer(p uintptr) (interface{}, error) {
 }
 
 func wrapTextBuffer(obj *glib.Object) *TextBuffer {
+	if obj == nil {
+		return nil
+	}
+
 	return &TextBuffer{obj}
 }
 
@@ -9301,6 +9613,10 @@ func marshalToggleButton(p uintptr) (interface{}, error) {
 }
 
 func wrapToggleButton(obj *glib.Object) *ToggleButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &ToggleButton{Button{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}, actionable}}
@@ -9402,6 +9718,10 @@ func marshalToolbar(p uintptr) (interface{}, error) {
 }
 
 func wrapToolbar(obj *glib.Object) *Toolbar {
+	if obj == nil {
+		return nil
+	}
+
 	return &Toolbar{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -9526,6 +9846,10 @@ func marshalToolButton(p uintptr) (interface{}, error) {
 }
 
 func wrapToolButton(obj *glib.Object) *ToolButton {
+	if obj == nil {
+		return nil
+	}
+
 	return &ToolButton{ToolItem{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}
 }
@@ -9632,6 +9956,10 @@ func marshalToggleToolButton(p uintptr) (interface{}, error) {
 }
 
 func wrapToggleToolButton(obj *glib.Object) *ToggleToolButton {
+	if obj == nil {
+		return nil
+	}
+
 	return &ToggleToolButton{ToolButton{ToolItem{Bin{Container{Widget{
 		glib.InitiallyUnowned{obj}}}}}}}
 }
@@ -9692,6 +10020,10 @@ func marshalToolItem(p uintptr) (interface{}, error) {
 }
 
 func wrapToolItem(obj *glib.Object) *ToolItem {
+	if obj == nil {
+		return nil
+	}
+
 	return &ToolItem{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -9986,6 +10318,10 @@ func marshalTreeModel(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeModel(obj *glib.Object) *TreeModel {
+	if obj == nil {
+		return nil
+	}
+
 	return &TreeModel{obj}
 }
 
@@ -10214,6 +10550,10 @@ func marshalTreeModelFilter(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeModelFilter(obj *glib.Object) *TreeModelFilter {
+	if obj == nil {
+		return nil
+	}
+
 	tm := wrapTreeModel(obj)
 	return &TreeModelFilter{obj, *tm}
 }
@@ -10463,6 +10803,10 @@ func marshalTreeSelection(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeSelection(obj *glib.Object) *TreeSelection {
+	if obj == nil {
+		return nil
+	}
+
 	return &TreeSelection{obj}
 }
 
@@ -10740,6 +11084,10 @@ func marshalTreeSortable(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeSortable(obj *glib.Object) *TreeSortable {
+	if obj == nil {
+		return nil
+	}
+
 	return &TreeSortable{obj}
 }
 
@@ -10833,6 +11181,10 @@ func marshalTreeModelSort(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeModelSort(obj *glib.Object) *TreeModelSort {
+	if obj == nil {
+		return nil
+	}
+
 	tm := wrapTreeModel(obj)
 	ts := wrapTreeSortable(obj)
 	return &TreeModelSort{obj, *tm, *ts}
@@ -10958,6 +11310,10 @@ func marshalTreeStore(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeStore(obj *glib.Object) *TreeStore {
+	if obj == nil {
+		return nil
+	}
+
 	tm := wrapTreeModel(obj)
 	ts := wrapTreeSortable(obj)
 	return &TreeStore{obj, *tm, *ts}
@@ -11187,6 +11543,10 @@ func (v *Viewport) native() *C.GtkViewport {
 }
 
 func wrapViewport(obj *glib.Object) *Viewport {
+	if obj == nil {
+		return nil
+	}
+
 	b := wrapBin(obj)
 	s := wrapScrollable(obj)
 	return &Viewport{
@@ -11265,6 +11625,10 @@ func marshalVolumeButton(p uintptr) (interface{}, error) {
 }
 
 func wrapVolumeButton(obj *glib.Object) *VolumeButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &VolumeButton{ScaleButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}}
 }

@@ -248,6 +248,10 @@ func marshalPageSetup(p uintptr) (interface{}, error) {
 }
 
 func wrapPageSetup(obj *glib.Object) *PageSetup {
+	if obj == nil {
+		return nil
+	}
+
 	return &PageSetup{obj}
 }
 
@@ -648,6 +652,10 @@ func marshalPrintContext(p uintptr) (interface{}, error) {
 }
 
 func wrapPrintContext(obj *glib.Object) *PrintContext {
+	if obj == nil {
+		return nil
+	}
+
 	return &PrintContext{obj}
 }
 
@@ -755,6 +763,10 @@ func marshalPrintOperation(p uintptr) (interface{}, error) {
 }
 
 func wrapPrintOperation(obj *glib.Object) *PrintOperation {
+	if obj == nil {
+		return nil
+	}
+
 	pop := wrapPrintOperationPreview(obj)
 	return &PrintOperation{obj, *pop}
 }
@@ -1039,6 +1051,10 @@ func marshalPrintOperationPreview(p uintptr) (interface{}, error) {
 }
 
 func wrapPrintOperationPreview(obj *glib.Object) *PrintOperationPreview {
+	if obj == nil {
+		return nil
+	}
+
 	return &PrintOperationPreview{obj}
 }
 
@@ -1088,6 +1104,10 @@ func marshalPrintSettings(p uintptr) (interface{}, error) {
 }
 
 func wrapPrintSettings(obj *glib.Object) *PrintSettings {
+	if obj == nil {
+		return nil
+	}
+
 	return &PrintSettings{obj}
 }
 

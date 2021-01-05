@@ -45,6 +45,10 @@ func marshalAboutDialog(p uintptr) (interface{}, error) {
 }
 
 func wrapAboutDialog(obj *glib.Object) *AboutDialog {
+	if obj == nil {
+		return nil
+	}
+
 	return &AboutDialog{Dialog{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}}
 }
 

@@ -34,6 +34,10 @@ func marshalTooltip(p uintptr) (interface{}, error) {
 }
 
 func wrapTooltip(obj *glib.Object) *Tooltip {
+	if obj == nil {
+		return nil
+	}
+
 	return &Tooltip{Widget{glib.InitiallyUnowned{obj}}}
 }
 

@@ -36,6 +36,10 @@ func marshalIconView(p uintptr) (interface{}, error) {
 }
 
 func wrapIconView(obj *glib.Object) *IconView {
+	if obj == nil {
+		return nil
+	}
+
 	return &IconView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

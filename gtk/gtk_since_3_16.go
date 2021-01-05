@@ -210,6 +210,10 @@ func marshalModelButton(p uintptr) (interface{}, error) {
 }
 
 func wrapModelButton(obj *glib.Object) *ModelButton {
+	if obj == nil {
+		return nil
+	}
+
 	actionable := wrapActionable(obj)
 	return &ModelButton{Button{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}, actionable}}
 }
@@ -247,6 +251,10 @@ func marshalPopoverMenu(p uintptr) (interface{}, error) {
 }
 
 func wrapPopoverMenu(obj *glib.Object) *PopoverMenu {
+	if obj == nil {
+		return nil
+	}
+
 	return &PopoverMenu{Popover{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -292,6 +300,10 @@ func marshalStackSidebar(p uintptr) (interface{}, error) {
 }
 
 func wrapStackSidebar(obj *glib.Object) *StackSidebar {
+	if obj == nil {
+		return nil
+	}
+
 	return &StackSidebar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 

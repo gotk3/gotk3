@@ -39,6 +39,10 @@ func marshalTreeView(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeView(obj *glib.Object) *TreeView {
+	if obj == nil {
+		return nil
+	}
+
 	return &TreeView{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

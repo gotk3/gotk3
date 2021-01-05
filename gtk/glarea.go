@@ -68,6 +68,10 @@ func marshalGLArea(p uintptr) (interface{}, error) {
 }
 
 func wrapGLArea(obj *glib.Object) *GLArea {
+	if obj == nil {
+		return nil
+	}
+
 	return &GLArea{Widget{glib.InitiallyUnowned{obj}}}
 }
 
