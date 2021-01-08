@@ -1007,10 +1007,8 @@ func (v *DisplayManager) ListDisplays() *[]Display {
 	var displays = make([]Display, 0, dlist.Length())
 	for ; dlist.DataRaw() != nil; dlist = dlist.Next() {
 		d := (*C.GdkDisplay)(dlist.DataRaw())
-		if d != nil {
-			obj := &glib.Object{glib.ToGObject(unsafe.Pointer(d))}
-			displays = append(displays, Display{obj})
-		}
+		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(d))}
+		displays = append(displays, Display{obj})
 	}
 	return &displays
 }
