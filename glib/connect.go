@@ -38,10 +38,6 @@ type SignalHandle uint
 //
 //    obj.Connect(func() { obj.Do() })
 //
-// By default, the direct referencing piece of code will trigger a runtime panic
-// upon registering, unless ClosureCheckReceiver is set to false. This is to
-// ensure the minimum correct behavior in most scenarios.
-//
 // When using Connect, beware of referencing variables outside the closure that
 // may cause a circular reference that prevents both Go from garbage collecting
 // the callback and GTK from successfully unreferencing its values.
@@ -83,7 +79,10 @@ func (v *Object) ConnectAfter(detailedSignal string, f interface{}) SignalHandle
 // closure's first argument to ensure that it is correct, otherwise it will
 // panic with a message warning about the possible circular references. The
 // receiver in this case is most often the first argument of the callback.
-var ClosureCheckReceiver = true
+//
+// This constant can be changed by using go.mod's replace directive for
+// debugging purposes.
+const ClosureCheckReceiver = false
 
 func (v *Object) connectClosure(after bool, detailedSignal string, f interface{}) SignalHandle {
 	fs := closure.NewFuncStack(f, 2)
