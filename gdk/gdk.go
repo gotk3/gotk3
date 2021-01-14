@@ -40,9 +40,11 @@ func init() {
 		{glib.Type(C.gdk_modifier_type_get_type()), marshalModifierType},
 		{glib.Type(C.gdk_event_mask_get_type()), marshalEventMask},
 		{glib.Type(C.gdk_gravity_get_type()), marshalGravity},
+		{glib.Type(C.gdk_visual_type_get_type()), marshalVisualType},
 
 		// Objects/Interfaces
 		{glib.Type(C.gdk_device_get_type()), marshalDevice},
+		{glib.Type(C.gdk_display_manager_get_type()), marshalDisplayManager},
 		{glib.Type(C.gdk_cursor_get_type()), marshalCursor},
 		{glib.Type(C.gdk_device_manager_get_type()), marshalDeviceManager},
 		{glib.Type(C.gdk_display_get_type()), marshalDisplay},
@@ -84,6 +86,23 @@ var nilPtrErr = errors.New("cgo returned unexpected nil pointer")
 /*
  * Constants
  */
+
+// VisualType is a representation of GDK's GdkVisualType.
+type VisualType int
+
+const (
+	VISUAL_STATIC_GRAY  VisualType = C.GDK_VISUAL_STATIC_GRAY
+	VISUAL_GRAYSCALE    VisualType = C.GDK_VISUAL_GRAYSCALE
+	VISUAL_STATIC_COLOR VisualType = C.GDK_VISUAL_STATIC_COLOR
+	ISUAL_PSEUDO_COLOR  VisualType = C.GDK_VISUAL_PSEUDO_COLOR
+	VISUAL_TRUE_COLOR   VisualType = C.GDK_VISUAL_TRUE_COLOR
+	VISUAL_DIRECT_COLOR VisualType = C.GDK_VISUAL_DIRECT_COLOR
+)
+
+func marshalVisualType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return VisualType(c), nil
+}
 
 // DragAction is a representation of GDK's GdkDragAction.
 type DragAction int
@@ -918,13 +937,94 @@ func (v *Display) NotifyStartupComplete(startupID string) {
 /*
  * GdkDisplayManager
  */
+// DisplayManager is a representation of GDK's GdkDisplayManager.
+type DisplayManager struct {
+	*glib.Object
+}
 
-// TODO:
-// gdk_display_manager_get().
-// gdk_display_manager_get_default_display().
-// gdk_display_manager_set_default_display().
-// gdk_display_manager_list_displays().
-// gdk_display_manager_open_display().
+// native returns a pointer to the underlying GdkDisplayManager.
+func (v *DisplayManager) native() *C.GdkDisplayManager {
+	if v == nil || v.GObject == nil {
+		return nil
+	}
+	p := unsafe.Pointer(v.GObject)
+	return C.toGdkDisplayManager(p)
+}
+
+// Native returns a pointer to the underlying GdkDisplayManager.
+func (v *DisplayManager) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalDisplayManager(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &DisplayManager{obj}, nil
+}
+
+func wrapDisplayManager(obj *glib.Object) *DisplayManager {
+	if obj == nil {
+		return nil
+	}
+	return &DisplayManager{obj}
+}
+
+// DisplayManagerGet is a wrapper around gdk_display_manager_get().
+func DisplayManagerGet() (*DisplayManager, error) {
+	c := C.gdk_display_manager_get()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &DisplayManager{obj}, nil
+}
+
+// GetDefaultDisplay is a wrapper around gdk_display_manager_get_default_display().
+func (v *DisplayManager) GetDefaultDisplay() (*Display, error) {
+	c := C.gdk_display_manager_get_default_display(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Display{obj}, nil
+}
+
+// SetDefaultDisplay is a wrapper around gdk_display_manager_set_default_display().
+func (v *DisplayManager) SetDefaultDisplay(display *Display) {
+	C.gdk_display_manager_set_default_display(v.native(), display.native())
+}
+
+// ListDisplays is a wrapper around gdk_display_manager_list_displays().
+func (v *DisplayManager) ListDisplays() *[]Display {
+
+	clist := C.gdk_display_manager_list_displays(v.native())
+	if clist == nil {
+		return nil
+	}
+	dlist := glib.WrapSList(uintptr(unsafe.Pointer(clist)))
+	defer dlist.Free()
+
+	var displays = make([]Display, 0, dlist.Length())
+	for ; dlist.DataRaw() != nil; dlist = dlist.Next() {
+		d := (*C.GdkDisplay)(dlist.DataRaw())
+		obj := &glib.Object{glib.ToGObject(unsafe.Pointer(d))}
+		displays = append(displays, Display{obj})
+	}
+	return &displays
+}
+
+// OpenDisplay is a representation of gdk_display_manager_open_display().
+func (v *DisplayManager) OpenDisplay(name string) (*Display, error) {
+	cstr := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gdk_display_manager_open_display(v.native(), cstr)
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
+	return &Display{obj}, nil
+}
 
 /*
  * GdkKeymap
@@ -1698,7 +1798,7 @@ func marshalGravity(p uintptr) (interface{}, error) {
 /*
  * GdkRGBA
  */
-
+// To create a GdkRGBA you have to use NewRGBA function.
 type RGBA struct {
 	rgba *C.GdkRGBA
 }
@@ -1713,29 +1813,39 @@ func WrapRGBA(p unsafe.Pointer) *RGBA {
 }
 
 func wrapRGBA(cRgba *C.GdkRGBA) *RGBA {
+	if cRgba == nil {
+		return nil
+	}
 	return &RGBA{cRgba}
 }
 
 func NewRGBA(values ...float64) *RGBA {
-
 	cRgba := new(C.GdkRGBA)
-	if len(values) > 0 {
-		cRgba.red = C.gdouble(values[0])
-	}
-	if len(values) > 1 {
-		cRgba.green = C.gdouble(values[1])
-	}
-	if len(values) > 2 {
-		cRgba.blue = C.gdouble(values[2])
-	}
-	if len(values) > 3 {
-		cRgba.alpha = C.gdouble(values[3])
+	for i, value := range values {
+		switch i {
+		case 0:
+			cRgba.red = C.gdouble(value)
+		case 1:
+			cRgba.green = C.gdouble(value)
+		case 2:
+			cRgba.blue = C.gdouble(value)
+		case 3:
+			cRgba.alpha = C.gdouble(value)
+		}
 	}
 	return wrapRGBA(cRgba)
 }
 
 func (c *RGBA) Floats() []float64 {
-	return []float64{float64(c.rgba.red), float64(c.rgba.green), float64(c.rgba.blue), float64(c.rgba.alpha)}
+	return []float64{
+		float64(c.rgba.red),
+		float64(c.rgba.green),
+		float64(c.rgba.blue),
+		float64(c.rgba.alpha)}
+}
+
+func (c *RGBA) Native() uintptr {
+	return uintptr(unsafe.Pointer(c.rgba))
 }
 
 // SetColors sets all colors values in the RGBA.
@@ -1746,8 +1856,48 @@ func (c *RGBA) SetColors(r, g, b, a float64) {
 	c.rgba.alpha = C.gdouble(a)
 }
 
-func (c *RGBA) Native() uintptr {
-	return uintptr(unsafe.Pointer(c.rgba))
+/*
+ * The following methods (Get/Set) are made for
+ * more convenient use of the GdkRGBA object
+ */
+// GetRed get red value from the RGBA.
+func (c *RGBA) GetRed() float64 {
+	return float64(c.rgba.red)
+}
+
+// GetGreen get green value from the RGBA.
+func (c *RGBA) GetGreen() float64 {
+	return float64(c.rgba.green)
+}
+
+// GetBlue get blue value from the RGBA.
+func (c *RGBA) GetBlue() float64 {
+	return float64(c.rgba.blue)
+}
+
+// GetAlpha get alpha value from the RGBA.
+func (c *RGBA) GetAlpha() float64 {
+	return float64(c.rgba.alpha)
+}
+
+// SetRed set red value in the RGBA.
+func (c *RGBA) SetRed(red float64) {
+	c.rgba.red = C.gdouble(red)
+}
+
+// SetGreen set green value in the RGBA.
+func (c *RGBA) SetGreen(green float64) {
+	c.rgba.green = C.gdouble(green)
+}
+
+// SetBlue set blue value in the RGBA.
+func (c *RGBA) SetBlue(blue float64) {
+	c.rgba.blue = C.gdouble(blue)
+}
+
+// SetAlpha set alpha value in the RGBA.
+func (c *RGBA) SetAlpha(alpha float64) {
+	c.rgba.alpha = C.gdouble(alpha)
 }
 
 // Parse is a representation of gdk_rgba_parse().
@@ -2019,13 +2169,92 @@ func marshalVisual(p uintptr) (interface{}, error) {
 	return &Visual{obj}, nil
 }
 
-// TODO:
-// gdk_visual_get_blue_pixel_details().
-// gdk_visual_get_depth().
-// gdk_visual_get_green_pixel_details().
-// gdk_visual_get_red_pixel_details().
-// gdk_visual_get_visual_type().
-// gdk_visual_get_screen().
+// GetBluePixelDetails is a wrapper around gdk_visual_get_blue_pixel_details().
+func (v *Visual) GetBluePixelDetails() (*uint32, *int, *int) {
+	var (
+		m                *uint32 = nil
+		s, p             *int    = nil, nil
+		mask             C.guint32
+		shift, precision C.gint
+	)
+	C.gdk_visual_get_blue_pixel_details(v.native(), &mask, &shift, &precision)
+	if &mask != nil {
+		m = new(uint32)
+		*m = uint32(mask)
+	}
+	if &shift != nil {
+		s = new(int)
+		*s = int(shift)
+	}
+	if &precision != nil {
+		p = new(int)
+		*p = int(precision)
+	}
+	return m, s, p
+}
+
+// GetDepth is a wrapper around gdk_visual_get_depth().
+func (v *Visual) GetDepth() int {
+	return int(C.gdk_visual_get_depth(v.native()))
+}
+
+// GetGreenPixelDetails is a wrapper around gdk_visual_get_green_pixel_details().
+func (v *Visual) GetGreenPixelDetails() (*uint32, *int, *int) {
+	var (
+		m                *uint32 = nil
+		s, p             *int    = nil, nil
+		mask             C.guint32
+		shift, precision C.gint
+	)
+	C.gdk_visual_get_green_pixel_details(v.native(), &mask, &shift, &precision)
+	if &mask != nil {
+		m = new(uint32)
+		*m = uint32(mask)
+	}
+	if &shift != nil {
+		s = new(int)
+		*s = int(shift)
+	}
+	if &precision != nil {
+		p = new(int)
+		*p = int(precision)
+	}
+	return m, s, p
+}
+
+// GetRedPixelDetails is a wrapper around gdk_visual_get_red_pixel_details().
+func (v *Visual) GetRedPixelDetails() (*uint32, *int, *int) {
+	var (
+		m                *uint32 = nil
+		s, p             *int    = nil, nil
+		mask             C.guint32
+		shift, precision C.gint
+	)
+	C.gdk_visual_get_red_pixel_details(v.native(), &mask, &shift, &precision)
+	if &mask != nil {
+		m = new(uint32)
+		*m = uint32(mask)
+	}
+	if &shift != nil {
+		s = new(int)
+		*s = int(shift)
+	}
+	if &precision != nil {
+		p = new(int)
+		*p = int(precision)
+	}
+	return m, s, p
+}
+
+// GetVisualType is a wrapper around gdk_visual_get_visual_type().
+func (v *Visual) GetVisualType() VisualType {
+	return VisualType(C.gdk_visual_get_visual_type(v.native()))
+}
+
+// GetScreen is a wrapper around gdk_visual_get_screen().
+func (v *Visual) GetScreen() (*Screen, error) {
+	return toScreen(C.gdk_visual_get_screen(v.native()))
+}
 
 /*
  * GdkWindow

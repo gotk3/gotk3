@@ -31,6 +31,8 @@ static GdkDeviceManager *toGdkDeviceManager(void *p) {
 
 static GdkDisplay *toGdkDisplay(void *p) { return (GDK_DISPLAY(p)); }
 
+static GdkDisplayManager *toGdkDisplayManager(void *p) { return (GDK_DISPLAY_MANAGER(p)); }
+
 static GdkKeymap *toGdkKeymap(void *p) { return (GDK_KEYMAP(p)); }
 
 static GdkDragContext *toGdkDragContext(void *p) {
