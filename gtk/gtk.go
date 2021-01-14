@@ -7573,15 +7573,51 @@ func wrapRange(obj *glib.Object) *Range {
 	return &Range{Widget{glib.InitiallyUnowned{obj}}}
 }
 
-// TODO:
-// gtk_range_get_fill_level().
-// gtk_range_get_restrict_to_fill_level().
-// gtk_range_get_show_fill_level().
-// gtk_range_set_fill_level().
-// gtk_range_set_restrict_to_fill_level().
-// gtk_range_set_show_fill_level().
-// gtk_range_get_adjustment().
-// gtk_range_set_adjustment().
+// GetFillLevel is a wrapper around gtk_range_get_fill_level().
+func (v *Range) GetFillLevel() float64 {
+	return float64(C.gtk_range_get_fill_level(v.native()))
+}
+
+// GetRestrictToFillLevel is a wrapper around gtk_range_get_restrict_to_fill_level().
+func (v *Range) GetRestrictToFillLevel() bool {
+	return gobool(C.gtk_range_get_restrict_to_fill_level(v.native()))
+}
+
+// GetShowFillLevel is a wrapper around gtk_range_get_show_fill_level().
+func (v *Range) GetShowFillLevel() bool {
+	return gobool(C.gtk_range_get_show_fill_level(v.native()))
+}
+
+// SetFillLevel is a wrapper around gtk_range_set_fill_level().
+func (v *Range) SetFillLevel(fill_level float64) {
+	C.gtk_range_set_fill_level(v.native(), C.gdouble(fill_level))
+}
+
+// RestrictToFillLevel is a wrapper around gtk_range_set_restrict_to_fill_level().
+func (v *Range) RestrictToFillLevel(restrict_to_fill_level bool) {
+	C.gtk_range_set_restrict_to_fill_level(v.native(), gbool(restrict_to_fill_level))
+}
+
+// SetShowFillLevel is a wrapper around gtk_range_set_show_fill_level().
+func (v *Range) SetShowFillLevel(show_fill_level bool) {
+	C.gtk_range_set_show_fill_level(v.native(), gbool(show_fill_level))
+}
+
+// GetAdjustment is a wrapper around gtk_range_get_adjustment().
+func (v *Range) GetAdjustment() *Adjustment {
+
+	c := C.gtk_range_get_adjustment(v.native())
+	if c == nil {
+		return nil
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapAdjustment(obj)
+}
+
+// SetAdjustment is a wrapper around gtk_range_set_adjustment().
+func (v *Range) SetAdjustment(adjustment *Adjustment) {
+	C.gtk_range_set_adjustment(v.native(), adjustment.native())
+}
 
 // GetValue is a wrapper around gtk_range_get_value().
 func (v *Range) GetValue() float64 {
@@ -7615,19 +7651,75 @@ func (v *Range) SetInverted(inverted bool) {
 	C.gtk_range_set_inverted(v.native(), gbool(inverted))
 }
 
-// TODO:
-// gtk_range_get_round_digits().
-// gtk_range_set_round_digits().
-// gtk_range_set_lower_stepper_sensitivity().
-// gtk_range_get_lower_stepper_sensitivity().
-// gtk_range_set_upper_stepper_sensitivity().
-// gtk_range_get_upper_stepper_sensitivity().
-// gtk_range_get_flippable().
-// gtk_range_set_flippable().
-// gtk_range_get_range_rect().
-// gtk_range_get_slider_range().
-// gtk_range_get_slider_size_fixed().
-// gtk_range_set_slider_size_fixed().
+// GetRoundDigits is a wrapper around gtk_range_get_round_digits().
+func (v *Range) GetRoundDigits() int {
+	return int(C.gtk_range_get_round_digits(v.native()))
+}
+
+// SetRoundDigits is a wrapper around gtk_range_set_round_digits().
+func (v *Range) SetRoundDigits(round_digits int) {
+	C.gtk_range_set_round_digits(v.native(), C.gint(round_digits))
+}
+
+// SetLowerStepperSensitivity is a wrapper around gtk_range_set_lower_stepper_sensitivity().
+func (v *Range) SetLowerStepperSensitivity(sensitivity SensitivityType) {
+	C.gtk_range_set_lower_stepper_sensitivity(
+		v.native(),
+		C.GtkSensitivityType(sensitivity))
+}
+
+// GetLowerStepperSensitivity is a wrapper around gtk_range_get_lower_stepper_sensitivity().
+func (v *Range) GetLowerStepperSensitivity() SensitivityType {
+	return SensitivityType(C.gtk_range_get_lower_stepper_sensitivity(
+		v.native()))
+}
+
+// SetUpperStepperSensitivity is a wrapper around gtk_range_set_upper_stepper_sensitivity().
+func (v *Range) SetUpperStepperSensitivity(sensitivity SensitivityType) {
+	C.gtk_range_set_upper_stepper_sensitivity(
+		v.native(),
+		C.GtkSensitivityType(sensitivity))
+}
+
+// GetUpperStepperSensitivity is a wrapper around gtk_range_get_upper_stepper_sensitivity().
+func (v *Range) GetUpperStepperSensitivity() SensitivityType {
+	return SensitivityType(C.gtk_range_get_upper_stepper_sensitivity(
+		v.native()))
+}
+
+// GetFlippable is a wrapper around gtk_range_get_flippable().
+func (v *Range) GetFlippable() bool {
+	return gobool(C.gtk_range_get_flippable(v.native()))
+}
+
+// SetFlippable is a wrapper around gtk_range_set_flippable().
+func (v *Range) SetFlippable(flippable bool) {
+	C.gtk_range_set_flippable(v.native(), gbool(flippable))
+}
+
+// GetRangeRect is a wrapper around gtk_range_get_range_rect().
+func (v *Range) GetRangeRect() *gdk.Rectangle {
+	var cRect *C.GdkRectangle
+	C.gtk_range_get_range_rect(v.native(), cRect)
+	return gdk.WrapRectangle(uintptr(unsafe.Pointer(cRect)))
+}
+
+// GetSliderRange is a wrapper around gtk_range_get_slider_range().
+func (v *Range) GetSliderRange() (int, int) {
+	var cStart, cEnd C.gint
+	C.gtk_range_get_slider_range(v.native(), &cStart, &cEnd)
+	return int(cStart), int(cEnd)
+}
+
+// GetSliderFixedSize is a wrapper gtk_range_get_slider_size_fixed().
+func (v *Range) GetSliderFixedSize() bool {
+	return gobool(C.gtk_range_get_slider_size_fixed(v.native()))
+}
+
+// SetSliderFixedSize is a wrapper around gtk_range_set_slider_size_fixed().
+func (v *Range) SetSliderFixedSize(size_fixed bool) {
+	C.gtk_range_set_slider_size_fixed(v.native(), gbool(size_fixed))
+}
 
 // IRecentChooser is an interface type implemented by all structs
 // embedding a RecentChooser.  It is meant to be used as an argument type
