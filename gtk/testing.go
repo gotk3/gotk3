@@ -64,7 +64,6 @@ func TestFindWidget(widget IWidget, labelPattern string, widgetType glib.Type) (
 	return obj, nil
 }
 
-
 /*
 TestInit is a wrapper around gtk_test_init().
 This function is used to initialize a GTK+ test program.

@@ -33,7 +33,7 @@ func nativeGdkGeometry(geom gdk.Geometry) *C.GdkGeometry {
 		base_width:  C.gint(geom.GetBaseWidth()),
 		base_height: C.gint(geom.GetBaseHeight()),
 		width_inc:   C.gint(geom.GetWidthInc()),
-		height_inc:  C.gint(geom.GetHeightInc()),		
+		height_inc:  C.gint(geom.GetHeightInc()),
 		min_aspect:  C.gdouble(geom.GetMinAspect()),
 		max_aspect:  C.gdouble(geom.GetMaxAspect()),
 		win_gravity: C.GdkGravity(geom.GetWinGravity()),

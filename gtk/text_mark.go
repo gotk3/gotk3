@@ -43,6 +43,10 @@ func marshalTextMark(p uintptr) (interface{}, error) {
 }
 
 func wrapTextMark(obj *glib.Object) *TextMark {
+	if obj == nil {
+		return nil
+	}
+
 	return &TextMark{obj}
 }
 

@@ -143,7 +143,7 @@ func (v *ListStore) InsertSorted(item interface{}, compareFunc CompareDataFunc, 
 
 // Append is a wrapper around g_list_store_append().
 func (v *ListStore) Append(item interface{}) {
- 	gItem := ToGObject(unsafe.Pointer(&item))
+	gItem := ToGObject(unsafe.Pointer(&item))
 	C.g_list_store_append(v.native(), C.gpointer(gItem))
 }
 

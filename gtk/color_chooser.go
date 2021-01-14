@@ -55,6 +55,10 @@ func marshalColorChooser(p uintptr) (interface{}, error) {
 }
 
 func wrapColorChooser(obj *glib.Object) *ColorChooser {
+	if obj == nil {
+		return nil
+	}
+
 	return &ColorChooser{obj}
 }
 
@@ -131,6 +135,10 @@ func marshalColorChooserDialog(p uintptr) (interface{}, error) {
 }
 
 func wrapColorChooserDialog(obj *glib.Object) *ColorChooserDialog {
+	if obj == nil {
+		return nil
+	}
+
 	dialog := wrapDialog(obj)
 	cc := wrapColorChooser(obj)
 	return &ColorChooserDialog{*dialog, *cc}

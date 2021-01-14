@@ -41,6 +41,10 @@ func marshalApplicationWindow(p uintptr) (interface{}, error) {
 }
 
 func wrapApplicationWindow(obj *glib.Object) *ApplicationWindow {
+	if obj == nil {
+		return nil
+	}
+
 	am := &glib.ActionMap{obj}
 	ag := &glib.ActionGroup{obj}
 	return &ApplicationWindow{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}, am, ag}

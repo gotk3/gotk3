@@ -66,6 +66,10 @@ func marshalLevelBar(p uintptr) (interface{}, error) {
 }
 
 func wrapLevelBar(obj *glib.Object) *LevelBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &LevelBar{Widget{glib.InitiallyUnowned{obj}}}
 }
 

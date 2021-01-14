@@ -44,6 +44,10 @@ func marshalTextChildAnchor(p uintptr) (interface{}, error) {
 }
 
 func wrapTextChildAnchor(obj *glib.Object) *TextChildAnchor {
+	if obj == nil {
+		return nil
+	}
+
 	return &TextChildAnchor{glib.InitiallyUnowned{obj}}
 }
 

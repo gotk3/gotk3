@@ -473,6 +473,9 @@ func (v *Object) toObject() *Object {
 
 // newObject creates a new Object from a GObject pointer.
 func newObject(p *C.GObject) *Object {
+	if p == nil {
+		return nil
+	}
 	return &Object{GObject: p}
 }
 
@@ -510,6 +513,9 @@ func (v *Object) goValue() (interface{}, error) {
 // is not meant to be used by applications.
 func Take(ptr unsafe.Pointer) *Object {
 	obj := newObject(ToGObject(ptr))
+	if obj == nil {
+		return nil
+	}
 
 	if obj.IsFloating() {
 		obj.RefSink()

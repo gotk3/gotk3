@@ -215,6 +215,10 @@ func marshalArrow(p uintptr) (interface{}, error) {
 }
 
 func wrapArrow(obj *glib.Object) *Arrow {
+	if obj == nil {
+		return nil
+	}
+
 	return &Arrow{Misc{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -243,6 +247,10 @@ func marshalAlignment(p uintptr) (interface{}, error) {
 }
 
 func wrapAlignment(obj *glib.Object) *Alignment {
+	if obj == nil {
+		return nil
+	}
+
 	return &Alignment{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -265,6 +273,10 @@ func marshalStatusIcon(p uintptr) (interface{}, error) {
 }
 
 func wrapStatusIcon(obj *glib.Object) *StatusIcon {
+	if obj == nil {
+		return nil
+	}
+
 	return &StatusIcon{obj}
 }
 
@@ -484,6 +496,10 @@ func marshalMisc(p uintptr) (interface{}, error) {
 }
 
 func wrapMisc(obj *glib.Object) *Misc {
+	if obj == nil {
+		return nil
+	}
+
 	return &Misc{Widget{glib.InitiallyUnowned{obj}}}
 }
 
