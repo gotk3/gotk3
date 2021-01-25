@@ -1472,6 +1472,21 @@ func (s *Signal) String() string {
 
 type Quark uint32
 
+// GetPrgname is a wrapper around g_get_prgname().
+func GetPrgname() string {
+	c := C.g_get_prgname()
+
+	return C.GoString((*C.char)(c))
+}
+
+// SetPrgname is a wrapper around g_set_prgname().
+func SetPrgname(name string) {
+	cstr := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.g_set_prgname(cstr)
+}
+
 // GetApplicationName is a wrapper around g_get_application_name().
 func GetApplicationName() string {
 	c := C.g_get_application_name()
