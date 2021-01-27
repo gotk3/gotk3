@@ -2456,7 +2456,10 @@ func (v *CellRenderer) GetState(widget IWidget,
 		widget.toWidget(),
 		C.GtkCellRendererState(flags)))
 }
-
+// SetAlignment is a wrapper around gtk_tree_view_column_set_alignment().
+func (v *CellRenderer) SetAlignment(xalign float64, yalign float64) {
+	C.gtk_cell_renderer_set_alignment(v.native(), C.gfloat(xalign), C.gfloat(yalign))
+}
 // TODO: gtk_cell_renderer_get_aligned_area
 // TODO: gtk_cell_renderer_get_size
 // TODO: gtk_cell_renderer_render
