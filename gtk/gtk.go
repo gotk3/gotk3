@@ -8734,6 +8734,7 @@ func (v *SizeGroup) GetWidgets() *glib.SList {
 // SpinButton is a representation of GTK's GtkSpinButton.
 type SpinButton struct {
 	Entry
+	Orientable
 }
 
 // native returns a pointer to the underlying GtkSpinButton.
@@ -8758,7 +8759,8 @@ func wrapSpinButton(obj *glib.Object) *SpinButton {
 
 	e := wrapEditable(obj)
 	ce := wrapCellEditable(obj)
-	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}}
+	o := wrapOrientable(obj)
+	return &SpinButton{Entry{Widget{glib.InitiallyUnowned{obj}}, *e, *ce}, *o}
 }
 
 // Configure is a wrapper around gtk_spin_button_configure().
