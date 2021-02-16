@@ -78,3 +78,13 @@ func (v *Menu) Popdown() {
 func (v *Menu) ReorderChild(child IWidget, position int) {
 	C.gtk_menu_reorder_child(v.native(), child.toWidget(), C.gint(position))
 }
+
+// SetReserveToggleSize() is a wrapper around gtk_menu_set_reserve_toggle_size().
+func (v *Menu) SetReserveToggleSize(reserve bool) {
+	C.gtk_menu_set_reserve_toggle_size(v.native(), gbool(reserve))
+}
+
+// GetReserveToggleSize() is a wrapper around gtk_menu_get_reserve_toggle_size().
+func (v *Menu) GetReserveToggleSize() bool {
+	return gobool(C.gtk_menu_get_reserve_toggle_size(v.native()))
+}
