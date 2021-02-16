@@ -15,4 +15,3 @@ func (v *GLArea) GetUseES() bool {
 func (v *GLArea) SetUseES(es bool) {
 	C.gtk_gl_area_set_use_es(v.native(), gbool(es))
 }
- 

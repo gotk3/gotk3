@@ -58,6 +58,10 @@ func marshalActionable(p uintptr) (interface{}, error) {
 }
 
 func wrapActionable(obj *glib.Object) *Actionable {
+	if obj == nil {
+		return nil
+	}
+
 	return &Actionable{obj}
 }
 

@@ -107,6 +107,10 @@ func marshalAccelGroup(p uintptr) (interface{}, error) {
 }
 
 func wrapAccelGroup(obj *glib.Object) *AccelGroup {
+	if obj == nil {
+		return nil
+	}
+
 	return &AccelGroup{obj}
 }
 
@@ -236,6 +240,10 @@ func marshalAccelMap(p uintptr) (interface{}, error) {
 }
 
 func wrapAccelMap(obj *glib.Object) *AccelMap {
+	if obj == nil {
+		return nil
+	}
+
 	return &AccelMap{obj}
 }
 
@@ -250,21 +258,21 @@ func AccelMapAddEntry(path string, key uint, mods gdk.ModifierType) {
 type AccelKey C.GtkAccelKey
 
 func (v *AccelKey) native() *C.GtkAccelKey {
-	if v == nil {
-		return nil
-	}
-	return (*C.GtkAccelKey)(v)
+    if v == nil {
+        return nil
+    }
+    return (*C.GtkAccelKey)(v)
 }
 
 // AccelMapLookupEntry is a wrapper around gtk_accel_map_lookup_entry().
 func AccelMapLookupEntry(path string) *AccelKey {
-	cstr := C.CString(path)
-	defer C.free(unsafe.Pointer(cstr))
+    cstr := C.CString(path)
+    defer C.free(unsafe.Pointer(cstr))
 
-	var v = new(AccelKey)
+    var v = new(AccelKey)
 
-	C.gtk_accel_map_lookup_entry((*C.gchar)(cstr), v.native())
-	return v
+    C.gtk_accel_map_lookup_entry((*C.gchar)(cstr), v.native())
+    return v
 }
 
 // AccelMapChangeEntry is a wrapper around gtk_accel_map_change_entry().

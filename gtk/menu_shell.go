@@ -37,6 +37,10 @@ func marshalMenuShell(p uintptr) (interface{}, error) {
 }
 
 func wrapMenuShell(obj *glib.Object) *MenuShell {
+	if obj == nil {
+		return nil
+	}
+
 	return &MenuShell{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

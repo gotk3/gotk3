@@ -37,6 +37,10 @@ func marshalTreeViewColumn(p uintptr) (interface{}, error) {
 }
 
 func wrapTreeViewColumn(obj *glib.Object) *TreeViewColumn {
+	if obj == nil {
+		return nil
+	}
+
 	return &TreeViewColumn{glib.InitiallyUnowned{obj}}
 }
 

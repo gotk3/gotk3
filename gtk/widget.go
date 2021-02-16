@@ -8,8 +8,10 @@ package gtk
 import "C"
 import (
 	"errors"
+	"runtime"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 )
@@ -17,6 +19,33 @@ import (
 /*
  * GtkWidget
  */
+
+func init() {
+	tm := []glib.TypeMarshaler{
+		// Enums
+		{glib.Type(C.gtk_size_request_mode_get_type()), marshalSizeRequestMode},
+
+		// Boxed
+		{glib.Type(C.gtk_requisition_get_type()), marshalRequisition},
+	}
+	glib.RegisterGValueMarshalers(tm)
+
+	WrapMap["GtkRequisition"] = wrapRequisition
+}
+
+// SizeRequestMode is a representation of GTK's GtkSizeRequestMode.
+type SizeRequestMode int
+
+const (
+	SIZE_REQUEST_HEIGHT_FOR_WIDTH SizeRequestMode = C.GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH
+	SIZE_REQUEST_WIDTH_FOR_HEIGHT SizeRequestMode = C.GTK_SIZE_REQUEST_WIDTH_FOR_HEIGHT
+	SIZE_REQUEST_CONSTANT_SIZE    SizeRequestMode = C.GTK_SIZE_REQUEST_CONSTANT_SIZE
+)
+
+func marshalSizeRequestMode(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return SizeRequestMode(c), nil
+}
 
 // Widget is a representation of GTK's GtkWidget.
 type Widget struct {
@@ -89,6 +118,10 @@ func marshalWidget(p uintptr) (interface{}, error) {
 }
 
 func wrapWidget(obj *glib.Object) *Widget {
+	if obj == nil {
+		return nil
+	}
+
 	return &Widget{glib.InitiallyUnowned{obj}}
 }
 
@@ -123,8 +156,12 @@ func (v *Widget) QueueDrawArea(x, y, w, h int) {
 	C.gtk_widget_queue_draw_area(v.native(), C.gint(x), C.gint(y), C.gint(w), C.gint(h))
 }
 
+// QueueDrawRegion is a wrapper aroung gtk_widget_queue_draw_region().
+func (v *Widget) QueueDrawRegion(region *cairo.Region) {
+	C.gtk_widget_queue_draw_region(v.native(), (*C.cairo_region_t)(unsafe.Pointer(region.Native())))
+}
+
 // TODO:
-// gtk_widget_queue_draw_region().
 // gtk_widget_set_redraw_on_allocate().
 // gtk_widget_mnemonic_activate().
 // gtk_widget_class_install_style_property().
@@ -280,12 +317,64 @@ func (v *Widget) GetPreferredWidth() (int, int) {
 	return int(minimum), int(natural)
 }
 
+// GetPreferredHeightForWidth is a wrapper around gtk_widget_get_preferred_height_for_width().
+func (v *Widget) GetPreferredHeightForWidth(width int) (int, int) {
+
+	var minimum, natural C.gint
+
+	C.gtk_widget_get_preferred_height_for_width(
+		v.native(),
+		C.gint(width),
+		&minimum,
+		&natural)
+	return int(minimum), int(natural)
+}
+
+// GetPreferredWidthForHeight is a wrapper around gtk_widget_get_preferred_width_for_height().
+func (v *Widget) GetPreferredWidthForHeight(height int) (int, int) {
+
+	var minimum, natural C.gint
+
+	C.gtk_widget_get_preferred_width_for_height(
+		v.native(),
+		C.gint(height),
+		&minimum,
+		&natural)
+	return int(minimum), int(natural)
+}
+
+// GetRequestMode is a wrapper around gtk_widget_get_request_mode().
+func (v *Widget) GetRequestMode() SizeRequestMode {
+	return SizeRequestMode(C.gtk_widget_get_request_mode(v.native()))
+}
+
+// GetPreferredSize is a wrapper around gtk_widget_get_preferred_size().
+func (v *Widget) GetPreferredSize() (*Requisition, *Requisition) {
+
+	minimum_size := new(C.GtkRequisition)
+	natural_size := new(C.GtkRequisition)
+
+	C.gtk_widget_get_preferred_size(v.native(), minimum_size, natural_size)
+
+	minR, err := requisitionFromNative(minimum_size)
+	if err != nil {
+		minR = nil
+	}
+	natR, err := requisitionFromNative(natural_size)
+	if err != nil {
+		natR = nil
+	}
+
+	return minR, natR
+}
+
 // TODO:
-// gtk_widget_get_preferred_height_for_width().
-// gtk_widget_get_preferred_width_for_height().
-// gtk_widget_get_request_mode().
-// gtk_widget_get_preferred_size().
-// gtk_distribute_natural_allocation().
+/*
+gint
+gtk_distribute_natural_allocation (gint extra_space,
+                                   guint n_requested_sizes,
+                                   GtkRequestedSize *sizes);
+*/
 
 // GetHAlign is a wrapper around gtk_widget_get_halign().
 func (v *Widget) GetHAlign() Align {
@@ -423,7 +512,6 @@ func (v *Widget) Unmap() {
 //void gtk_widget_queue_resize(GtkWidget *widget);
 //void gtk_widget_queue_resize_no_redraw(GtkWidget *widget);
 // gtk_widget_queue_allocate().
-// gtk_widget_get_scale_factor().
 
 // Event() is a wrapper around gtk_widget_event().
 func (v *Widget) Event(event *gdk.Event) bool {
@@ -778,10 +866,72 @@ func (v *Widget) GetWindow() (*gdk.Window, error) {
  * GtkRequisition
  */
 
-// TODO:
-// gtk_requisition_new().
-// gtk_requisition_copy().
-// gtk_requisition_free().
+// Requisition is a representation of GTK's GtkRequisition
+type Requisition struct {
+	requisition *C.GtkRequisition
+	Width,
+	Height int
+}
+
+func (v *Requisition) native() *C.GtkRequisition {
+	if v == nil {
+		return nil
+	}
+	v.requisition.width = C.int(v.Width)
+	v.requisition.height = C.int(v.Height)
+	return v.requisition
+}
+
+// Native returns a pointer to the underlying GtkRequisition.
+func (v *Requisition) Native() uintptr {
+	return uintptr(unsafe.Pointer(v.native()))
+}
+
+func marshalRequisition(p uintptr) (interface{}, error) {
+	c := C.g_value_get_boxed((*C.GValue)(unsafe.Pointer(p)))
+	requisition := (*C.GtkRequisition)(unsafe.Pointer(c))
+	return wrapRequisition(requisition), nil
+}
+
+func wrapRequisition(requisition *C.GtkRequisition) *Requisition {
+	if requisition == nil {
+		return nil
+	}
+	return &Requisition{requisition, int(requisition.width), int(requisition.height)}
+}
+
+// requisitionFromNative that handle finalizer.
+func requisitionFromNative(requisitionNative *C.GtkRequisition) (*Requisition, error) {
+	requisition := wrapRequisition(requisitionNative)
+	if requisition == nil {
+		return nil, nilPtrErr
+	}
+	runtime.SetFinalizer(requisition, (*Requisition).free)
+	return requisition, nil
+}
+
+// RequisitionNew is a wrapper around gtk_requisition_new().
+func RequisitionNew() (*Requisition, error) {
+	c := C.gtk_requisition_new()
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return requisitionFromNative(c)
+}
+
+// free is a wrapper around gtk_requisition_free().
+func (v *Requisition) free() {
+	C.gtk_requisition_free(v.native())
+}
+
+// Copy is a wrapper around gtk_requisition_copy().
+func (v *Requisition) Copy() (*Requisition, error) {
+	c := C.gtk_requisition_copy(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return requisitionFromNative(c)
+}
 
 /*
  * GtkAllocation

@@ -473,6 +473,9 @@ func (v *Object) toObject() *Object {
 
 // newObject creates a new Object from a GObject pointer.
 func newObject(p *C.GObject) *Object {
+	if p == nil {
+		return nil
+	}
 	return &Object{GObject: p}
 }
 
@@ -510,6 +513,9 @@ func (v *Object) goValue() (interface{}, error) {
 // is not meant to be used by applications.
 func Take(ptr unsafe.Pointer) *Object {
 	obj := newObject(ToGObject(ptr))
+	if obj == nil {
+		return nil
+	}
 
 	if obj.IsFloating() {
 		obj.RefSink()
@@ -1465,6 +1471,21 @@ func (s *Signal) String() string {
 }
 
 type Quark uint32
+
+// GetPrgname is a wrapper around g_get_prgname().
+func GetPrgname() string {
+	c := C.g_get_prgname()
+
+	return C.GoString((*C.char)(c))
+}
+
+// SetPrgname is a wrapper around g_set_prgname().
+func SetPrgname(name string) {
+	cstr := (*C.gchar)(C.CString(name))
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.g_set_prgname(cstr)
+}
 
 // GetApplicationName is a wrapper around g_get_application_name().
 func GetApplicationName() string {

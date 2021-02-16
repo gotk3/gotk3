@@ -52,6 +52,10 @@ func marshalShortcutsWindow(p uintptr) (interface{}, error) {
 }
 
 func wrapShortcutsWindow(obj *glib.Object) *ShortcutsWindow {
+	if obj == nil {
+		return nil
+	}
+
 	return &ShortcutsWindow{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 
@@ -80,6 +84,10 @@ func marshalShortcutsSection(p uintptr) (interface{}, error) {
 }
 
 func wrapShortcutsSection(obj *glib.Object) *ShortcutsSection {
+	if obj == nil {
+		return nil
+	}
+
 	return &ShortcutsSection{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -108,6 +116,10 @@ func marshalShortcutsGroup(p uintptr) (interface{}, error) {
 }
 
 func wrapShortcutsGroup(obj *glib.Object) *ShortcutsGroup {
+	if obj == nil {
+		return nil
+	}
+
 	return &ShortcutsGroup{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -136,5 +148,9 @@ func marshalShortcutsShortcut(p uintptr) (interface{}, error) {
 }
 
 func wrapShortcutsShortcut(obj *glib.Object) *ShortcutsShortcut {
+	if obj == nil {
+		return nil
+	}
+
 	return &ShortcutsShortcut{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }

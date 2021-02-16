@@ -18,8 +18,4 @@
 
 //#include <stdlib.h>
 
-static GdkSeat *
-toGdkSeat(void *p)
-{
-	return ((GdkSeat*)p);
-}
+static GdkSeat *toGdkSeat(void *p) { return ((GdkSeat *)p); }

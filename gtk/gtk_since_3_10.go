@@ -15,6 +15,7 @@ import (
 	"sync"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/pango"
@@ -110,9 +111,21 @@ func marshalStackTransitionType(p uintptr) (interface{}, error) {
  * GtkImage
  */
 
-// TODO:
-// gtk_image_new_from_surface().
-// gtk_image_set_from_surface().
+// ImageNewFromSurface is a wrapper around gtk_image_new_from_surface().
+func ImageNewFromSurface(surface *cairo.Surface) (*Image, error) {
+	c := C.gtk_image_new_from_surface((*C.cairo_surface_t)(surface.GetCSurface()))
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapImage(obj), nil
+}
+
+// SetFromSurface is a wrapper around gtk_image_set_from_surface().
+func (v *Image) SetFromSurface(surface *cairo.Surface) {
+	csurface := (*C.cairo_surface_t)(surface.GetCSurface())
+	C.gtk_image_set_from_surface(v.native(), csurface)
+}
 
 /*
  * GtkIconTheme
@@ -219,6 +232,10 @@ func marshalHeaderBar(p uintptr) (interface{}, error) {
 }
 
 func wrapHeaderBar(obj *glib.Object) *HeaderBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &HeaderBar{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -332,6 +349,10 @@ func marshalListBox(p uintptr) (interface{}, error) {
 }
 
 func wrapListBox(obj *glib.Object) *ListBox {
+	if obj == nil {
+		return nil
+	}
+
 	return &ListBox{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -568,6 +589,10 @@ func marshalListBoxRow(p uintptr) (interface{}, error) {
 }
 
 func wrapListBoxRow(obj *glib.Object) *ListBoxRow {
+	if obj == nil {
+		return nil
+	}
+
 	return &ListBoxRow{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -648,6 +673,10 @@ func marshalRevealer(p uintptr) (interface{}, error) {
 }
 
 func wrapRevealer(obj *glib.Object) *Revealer {
+	if obj == nil {
+		return nil
+	}
+
 	return &Revealer{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -725,6 +754,10 @@ func marshalSearchBar(p uintptr) (interface{}, error) {
 }
 
 func wrapSearchBar(obj *glib.Object) *SearchBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &SearchBar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -795,6 +828,10 @@ func marshalStack(p uintptr) (interface{}, error) {
 }
 
 func wrapStack(obj *glib.Object) *Stack {
+	if obj == nil {
+		return nil
+	}
+
 	return &Stack{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

@@ -38,6 +38,10 @@ func marshalInfoBar(p uintptr) (interface{}, error) {
 }
 
 func wrapInfoBar(obj *glib.Object) *InfoBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &InfoBar{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 

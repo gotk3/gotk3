@@ -47,6 +47,10 @@ func marshalApplication(p uintptr) (interface{}, error) {
 }
 
 func wrapApplication(obj *glib.Object) *Application {
+	if obj == nil {
+		return nil
+	}
+
 	am := &glib.ActionMap{obj}
 	ag := &glib.ActionGroup{obj}
 	return &Application{glib.Application{obj, am, ag}}
@@ -134,7 +138,7 @@ func (v *Application) IsInhibited(flags ApplicationInhibitFlags) bool {
 
 // Inhibited is a wrapper around gtk_application_inhibit().
 func (v *Application) Inhibited(window IWindow, flags ApplicationInhibitFlags, reason string) uint {
-	
+
 	cstr1 := (*C.gchar)(C.CString(reason))
 	defer C.free(unsafe.Pointer(cstr1))
 

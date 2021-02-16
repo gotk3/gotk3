@@ -39,6 +39,10 @@ func marshalLabel(p uintptr) (interface{}, error) {
 }
 
 func wrapLabel(obj *glib.Object) *Label {
+	if obj == nil {
+		return nil
+	}
+
 	return &Label{Widget{glib.InitiallyUnowned{obj}}}
 }
 

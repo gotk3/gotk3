@@ -9,9 +9,10 @@ package gtk
 // #include "socket_plug.go.h"
 import "C"
 import (
+	"unsafe"
+
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
-	"unsafe"
 )
 
 func init() {
@@ -51,6 +52,10 @@ func marshalSocket(p uintptr) (interface{}, error) {
 }
 
 func wrapSocket(obj *glib.Object) *Socket {
+	if obj == nil {
+		return nil
+	}
+
 	return &Socket{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -130,6 +135,10 @@ func marshalPlug(p uintptr) (interface{}, error) {
 }
 
 func wrapPlug(obj *glib.Object) *Plug {
+	if obj == nil {
+		return nil
+	}
+
 	return &Plug{Window{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}}
 }
 

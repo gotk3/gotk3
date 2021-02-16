@@ -4,20 +4,123 @@
 
 package gdk
 
-// #cgo pkg-config: gdk-3.0 glib-2.0 gobject-2.0
+// #cgo pkg-config: gdk-3.0 glib-2.0 gobject-2.0 gmodule-2.0
+// #include <glib.h>
+// #include <gmodule.h>
 // #include <gdk/gdk.h>
 // #include "gdk.go.h"
 // #include "pixbuf.go.h"
+// #include "pixbuf_since_2_4.go.h"
 import "C"
 import (
 	"errors"
+	"io"
+	"reflect"
 	"runtime"
+	"strconv"
+	"sync"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
 )
 
 // File saving
+
+var (
+	pixbufSaveFuncRegistry = struct {
+		sync.RWMutex
+		next uintptr
+		m    map[uintptr]io.Writer
+	}{
+		next: 0,
+		m:    make(map[uintptr]io.Writer),
+	}
+)
+
+//export goPixbufSaveCallback
+func goPixbufSaveCallback(buf *C.gchar, count C.gsize, gerr **C.GError, id C.gpointer) C.gboolean {
+	pixbufSaveFuncRegistry.RLock()
+	writer, ok := pixbufSaveFuncRegistry.m[uintptr(id)]
+	pixbufSaveFuncRegistry.RUnlock()
+
+	if !ok {
+		C._pixbuf_error_set_callback_not_found(gerr)
+		return C.FALSE
+	}
+
+	var bytes []byte
+	header := (*reflect.SliceHeader)((unsafe.Pointer(&bytes)))
+	header.Cap = int(count)
+	header.Len = int(count)
+	header.Data = uintptr(unsafe.Pointer(buf))
+
+	_, err := writer.Write(bytes)
+	if err != nil {
+		cerr := C.CString(err.Error())
+		defer C.free(unsafe.Pointer(cerr))
+
+		C._pixbuf_error_set(gerr, cerr)
+		return C.FALSE
+	}
+
+	return C.TRUE
+}
+
+// WritePNG is a convenience wrapper around gdk_pixbuf_save_to_callback() for
+// saving images using a streaming callback API. Compression is a number from 0
+// to 9.
+func (v *Pixbuf) WritePNG(w io.Writer, compression int) error {
+	pixbufSaveFuncRegistry.Lock()
+	id := pixbufSaveFuncRegistry.next
+	pixbufSaveFuncRegistry.next++
+	pixbufSaveFuncRegistry.m[id] = w
+	pixbufSaveFuncRegistry.Unlock()
+
+	ccompression := C.CString(strconv.Itoa(compression))
+	defer C.free(unsafe.Pointer(ccompression))
+
+	var err *C.GError
+	c := C._gdk_pixbuf_save_png_writer(v.native(), C.gpointer(id), &err, ccompression)
+
+	pixbufSaveFuncRegistry.Lock()
+	delete(pixbufSaveFuncRegistry.m, id)
+	pixbufSaveFuncRegistry.Unlock()
+
+	if !gobool(c) {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	return nil
+}
+
+// WriteJPEG is a convenience wrapper around gdk_pixbuf_save_to_callback() for
+// saving images using a streaming callback API. Quality is a number from 0 to
+// 100.
+func (v *Pixbuf) WriteJPEG(w io.Writer, quality int) error {
+	pixbufSaveFuncRegistry.Lock()
+	id := pixbufSaveFuncRegistry.next
+	pixbufSaveFuncRegistry.next++
+	pixbufSaveFuncRegistry.m[id] = w
+	pixbufSaveFuncRegistry.Unlock()
+
+	cquality := C.CString(strconv.Itoa(quality))
+	defer C.free(unsafe.Pointer(cquality))
+
+	var err *C.GError
+	c := C._gdk_pixbuf_save_jpeg_writer(v.native(), C.gpointer(uintptr(id)), &err, cquality)
+
+	pixbufSaveFuncRegistry.Lock()
+	delete(pixbufSaveFuncRegistry.m, id)
+	pixbufSaveFuncRegistry.Unlock()
+
+	if !gobool(c) {
+		defer C.g_error_free(err)
+		return errors.New(C.GoString((*C.char)(err.message)))
+	}
+
+	return nil
+}
 
 // TODO:
 // GdkPixbufSaveFunc

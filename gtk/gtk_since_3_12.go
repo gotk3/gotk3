@@ -200,6 +200,10 @@ func marshalFlowBox(p uintptr) (interface{}, error) {
 }
 
 func wrapFlowBox(obj *glib.Object) *FlowBox {
+	if obj == nil {
+		return nil
+	}
+
 	return &FlowBox{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 
@@ -384,6 +388,10 @@ func marshalFlowBoxChild(p uintptr) (interface{}, error) {
 }
 
 func wrapFlowBoxChild(obj *glib.Object) *FlowBoxChild {
+	if obj == nil {
+		return nil
+	}
+
 	return &FlowBoxChild{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 
@@ -445,6 +453,10 @@ func marshalPopover(p uintptr) (interface{}, error) {
 }
 
 func wrapPopover(obj *glib.Object) *Popover {
+	if obj == nil {
+		return nil
+	}
+
 	return &Popover{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 

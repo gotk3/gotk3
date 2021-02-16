@@ -42,6 +42,10 @@ func (v *StyleContext) native() *C.GtkStyleContext {
 }
 
 func wrapStyleContext(obj *glib.Object) *StyleContext {
+	if obj == nil {
+		return nil
+	}
+
 	return &StyleContext{obj}
 }
 

@@ -37,6 +37,10 @@ func marshalWindowGroup(p uintptr) (interface{}, error) {
 }
 
 func wrapWindowGroup(obj *glib.Object) *WindowGroup {
+	if obj == nil {
+		return nil
+	}
+
 	return &WindowGroup{obj}
 }
 

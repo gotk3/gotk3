@@ -58,6 +58,10 @@ func marshalAppChooser(p uintptr) (interface{}, error) {
 }
 
 func wrapAppChooser(obj *glib.Object) *AppChooser {
+	if obj == nil {
+		return nil
+	}
+
 	return &AppChooser{obj}
 }
 
@@ -111,6 +115,10 @@ func marshalAppChooserButton(p uintptr) (interface{}, error) {
 }
 
 func wrapAppChooserButton(obj *glib.Object) *AppChooserButton {
+	if obj == nil {
+		return nil
+	}
+
 	cl := wrapCellLayout(obj)
 	ce := wrapCellEditable(obj)
 	ac := wrapAppChooser(obj)
@@ -210,6 +218,10 @@ func marshalAppChooserWidget(p uintptr) (interface{}, error) {
 }
 
 func wrapAppChooserWidget(obj *glib.Object) *AppChooserWidget {
+	if obj == nil {
+		return nil
+	}
+
 	box := wrapBox(obj)
 	ac := wrapAppChooser(obj)
 	return &AppChooserWidget{*box, *ac}
@@ -323,6 +335,10 @@ func marshalAppChooserDialog(p uintptr) (interface{}, error) {
 }
 
 func wrapAppChooserDialog(obj *glib.Object) *AppChooserDialog {
+	if obj == nil {
+		return nil
+	}
+
 	dialog := wrapDialog(obj)
 	ac := wrapAppChooser(obj)
 	return &AppChooserDialog{*dialog, *ac}

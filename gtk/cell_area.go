@@ -64,6 +64,10 @@ func marshalCellArea(p uintptr) (interface{}, error) {
 }
 
 func wrapCellArea(obj *glib.Object) *CellArea {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellArea{glib.InitiallyUnowned{obj}}
 }
 
@@ -426,6 +430,10 @@ func marshalCellAreaContext(p uintptr) (interface{}, error) {
 }
 
 func wrapCellAreaContext(obj *glib.Object) *CellAreaContext {
+	if obj == nil {
+		return nil
+	}
+
 	return &CellAreaContext{obj}
 }
 
@@ -533,6 +541,10 @@ func marshalCellAreaBox(p uintptr) (interface{}, error) {
 }
 
 func wrapCellAreaBox(obj *glib.Object) *CellAreaBox {
+	if obj == nil {
+		return nil
+	}
+
 	cellArea := wrapCellArea(obj)
 	o := wrapOrientable(obj)
 	return &CellAreaBox{*cellArea, *o}

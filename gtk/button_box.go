@@ -7,8 +7,9 @@ package gtk
 // #include "gtk.go.h"
 import "C"
 import (
-	"github.com/gotk3/gotk3/glib"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
 )
 
 type ButtonBoxStyle int
@@ -46,6 +47,10 @@ func marshalButtonBox(p uintptr) (interface{}, error) {
 }
 
 func wrapButtonBox(obj *glib.Object) *ButtonBox {
+	if obj == nil {
+		return nil
+	}
+
 	return &ButtonBox{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 

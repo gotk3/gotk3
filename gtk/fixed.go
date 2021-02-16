@@ -44,6 +44,10 @@ func marshalFixed(p uintptr) (interface{}, error) {
 }
 
 func wrapFixed(obj *glib.Object) *Fixed {
+	if obj == nil {
+		return nil
+	}
+
 	return &Fixed{Container{Widget{glib.InitiallyUnowned{obj}}}}
 }
 

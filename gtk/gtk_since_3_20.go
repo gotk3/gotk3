@@ -62,6 +62,10 @@ func (v *NativeDialog) native() *C.GtkNativeDialog {
 }
 
 func wrapNativeDialog(obj *glib.Object) *NativeDialog {
+	if obj == nil {
+		return nil
+	}
+
 	return &NativeDialog{glib.InitiallyUnowned{obj}}
 }
 
@@ -155,6 +159,10 @@ func (v *FileChooserNativeDialog) native() *C.GtkFileChooserNative {
 }
 
 func wrapFileChooserNativeDialog(obj *glib.Object) *FileChooserNativeDialog {
+	if obj == nil {
+		return nil
+	}
+
 	fc := wrapFileChooser(obj)
 	return &FileChooserNativeDialog{NativeDialog{glib.InitiallyUnowned{obj}}, *fc}
 }

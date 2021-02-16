@@ -18,8 +18,4 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-static GtkActionBar *
-toGtkActionBar(void *p)
-{
-	return (GTK_ACTION_BAR(p));
-}
+static GtkActionBar *toGtkActionBar(void *p) { return (GTK_ACTION_BAR(p)); }

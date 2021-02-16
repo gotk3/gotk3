@@ -64,6 +64,10 @@ func marshalActionBar(p uintptr) (interface{}, error) {
 }
 
 func wrapActionBar(obj *glib.Object) *ActionBar {
+	if obj == nil {
+		return nil
+	}
+
 	return &ActionBar{Bin{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 

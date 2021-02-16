@@ -50,6 +50,10 @@ func marshalStackSwitcher(p uintptr) (interface{}, error) {
 }
 
 func wrapStackSwitcher(obj *glib.Object) *StackSwitcher {
+	if obj == nil {
+		return nil
+	}
+
 	return &StackSwitcher{Box{Container{Widget{glib.InitiallyUnowned{obj}}}}}
 }
 

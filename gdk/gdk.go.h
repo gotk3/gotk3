@@ -19,64 +19,30 @@
 #include <stdlib.h>
 
 // Type Casting
-static GdkAtom
-toGdkAtom(void *p)
-{
-	return ((GdkAtom)p);
+static GdkAtom toGdkAtom(void *p) { return ((GdkAtom)p); }
+
+static GdkDevice *toGdkDevice(void *p) { return (GDK_DEVICE(p)); }
+
+static GdkCursor *toGdkCursor(void *p) { return (GDK_CURSOR(p)); }
+
+static GdkDeviceManager *toGdkDeviceManager(void *p) {
+  return (GDK_DEVICE_MANAGER(p));
 }
 
-static GdkDevice *
-toGdkDevice(void *p)
-{
-	return (GDK_DEVICE(p));
+static GdkDisplay *toGdkDisplay(void *p) { return (GDK_DISPLAY(p)); }
+
+static GdkDisplayManager *toGdkDisplayManager(void *p) { return (GDK_DISPLAY_MANAGER(p)); }
+
+static GdkKeymap *toGdkKeymap(void *p) { return (GDK_KEYMAP(p)); }
+
+static GdkDragContext *toGdkDragContext(void *p) {
+  return (GDK_DRAG_CONTEXT(p));
 }
 
-static GdkCursor *
-toGdkCursor(void *p)
-{
-	return (GDK_CURSOR(p));
-}
+static GdkScreen *toGdkScreen(void *p) { return (GDK_SCREEN(p)); }
 
-static GdkDeviceManager *
-toGdkDeviceManager(void *p)
-{
-	return (GDK_DEVICE_MANAGER(p));
-}
+static GdkVisual *toGdkVisual(void *p) { return (GDK_VISUAL(p)); }
 
-static GdkDisplay *
-toGdkDisplay(void *p)
-{
-	return (GDK_DISPLAY(p));
-}
+static GdkWindow *toGdkWindow(void *p) { return (GDK_WINDOW(p)); }
 
-static GdkKeymap *
-toGdkKeymap(void *p)
-{
-	return (GDK_KEYMAP(p));
-}
-
-static GdkDragContext *
-toGdkDragContext(void *p)
-{
-	return (GDK_DRAG_CONTEXT(p));
-}
-
-static GdkScreen *
-toGdkScreen(void *p)
-{
-	return (GDK_SCREEN(p));
-}
-
-static GdkVisual *
-toGdkVisual(void *p)
-{
-	return (GDK_VISUAL(p));
-}
-
-static GdkWindow *
-toGdkWindow(void *p)
-{
-	return (GDK_WINDOW(p));
-}
-
-static inline gchar** next_gcharptr(gchar** s) { return (s+1); }
+static inline gchar **next_gcharptr(gchar **s) { return (s + 1); }
