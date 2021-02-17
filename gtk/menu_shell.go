@@ -12,6 +12,29 @@ import (
 	"github.com/gotk3/gotk3/glib"
 )
 
+func init() {
+	tm := []glib.TypeMarshaler{
+		{glib.Type(C.gtk_menu_direction_type_get_type()), marshalMenuDirectionType},
+	}
+
+	glib.RegisterGValueMarshalers(tm)
+}
+
+// MenuDirectionType is a representation of GTK's GtkMenuDirectionType.
+type MenuDirectionType int
+
+const (
+	MENU_DIR_PARENT MenuDirectionType = C.GTK_MENU_DIR_PARENT
+	MENU_DIR_CHILD  MenuDirectionType = C.GTK_MENU_DIR_CHILD
+	MENU_DIR_NEXT   MenuDirectionType = C.GTK_MENU_DIR_NEXT
+	MENU_DIR_PREV   MenuDirectionType = C.GTK_MENU_DIR_PREV
+)
+
+func marshalMenuDirectionType(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return MenuDirectionType(c), nil
+}
+
 /*
  * GtkMenuShell
  */
@@ -94,9 +117,41 @@ func (v *MenuShell) SetTakeFocus(takeFocus bool) {
 	C.gtk_menu_shell_set_take_focus(v.native(), gbool(takeFocus))
 }
 
-// TODO:
-// gboolean 	gtk_menu_shell_get_take_focus ()
-// GtkWidget * 	gtk_menu_shell_get_selected_item ()
-// GtkWidget * 	gtk_menu_shell_get_parent_shell ()
-// void 	gtk_menu_shell_bind_model ()
-// GtkMenuDirectionType
+// GetTakeFocus is a wrapper around gtk_menu_shell_get_take_focus().
+func (v *MenuShell) GetTakeFocus() bool {
+	return gobool(C.gtk_menu_shell_get_take_focus(v.native()))
+}
+
+// GetSelectedItem is a wrapper around gtk_menu_shell_get_selected_item().
+func (v *MenuShell) GetSelectedItem() (IMenuItem, error) {
+	c := C.gtk_menu_shell_get_selected_item(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapMenuItem(obj), nil
+}
+
+// GetParentShell is a wrapper around gtk_menu_shell_get_parent_shell().
+func (v *MenuShell) GetParentShell() (*MenuShell, error) {
+	c := C.gtk_menu_shell_get_parent_shell(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapMenuShell(obj), nil
+}
+
+// BindModel is a wrapper around gtk_menu_shell_bind_model().
+func (v *MenuShell) BindModel(model *glib.MenuModel,
+	action_namespace string, with_separators bool) {
+
+	cstr := C.CString(action_namespace)
+	defer C.free(unsafe.Pointer(cstr))
+
+	C.gtk_menu_shell_bind_model(
+		v.native(),
+		(*C.GMenuModel)(unsafe.Pointer(model.Native())),
+		cstr,
+		gbool(with_separators))
+}
