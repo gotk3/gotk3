@@ -10,4 +10,5 @@
   - [juniorz](https://github.com/juniorz)
   - [thanhps42](https://github.com/thanhps42)
   - [cubiest](https://github.com/cubiest/gotk3) - [MJacred](https://github.com/MJacred) & [founderio](https://github.com/founderio)
+  - [hfmrow (H.F.M)](https://github.com/hfmrow/)
   - you?
