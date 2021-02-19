@@ -274,8 +274,14 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 		if g, err := GValue(rv[0].Interface()); err != nil {
 			fmt.Fprintf(os.Stderr,
 				"cannot save callback return value: %v", err)
+		} else if t, _, err := g.Type(); err != nil {
+			fmt.Fprintf(os.Stderr,
+				"cannot determine callback return value type: %v", err)
 		} else {
-			*retValue = *g.native()
+			// Explicitly copy the return value as it may point to go-owned memory.
+			C.g_value_unset(retValue)
+			C.g_value_init(retValue, C.GType(t))
+			C.g_value_copy(g.native(), retValue)
 		}
 	}
 }
