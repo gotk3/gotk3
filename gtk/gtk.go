@@ -2456,10 +2456,12 @@ func (v *CellRenderer) GetState(widget IWidget,
 		widget.toWidget(),
 		C.GtkCellRendererState(flags)))
 }
+
 // SetAlignment is a wrapper around gtk_tree_view_column_set_alignment().
 func (v *CellRenderer) SetAlignment(xalign float64, yalign float64) {
 	C.gtk_cell_renderer_set_alignment(v.native(), C.gfloat(xalign), C.gfloat(yalign))
 }
+
 // TODO: gtk_cell_renderer_get_aligned_area
 // TODO: gtk_cell_renderer_get_size
 // TODO: gtk_cell_renderer_render
@@ -6474,6 +6476,16 @@ func (v *MenuItem) SetSubmenu(submenu IWidget) {
 	C.gtk_menu_item_set_submenu(v.native(), submenu.toWidget())
 }
 
+// GetSubmenu is a wrapper around gtk_menu_item_get_submenu().
+func (v *MenuItem) GetSubmenu() (IMenu, error) {
+	c := C.gtk_menu_item_get_submenu(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapMenu(obj), nil
+}
+
 // SetLabel is a wrapper around gtk_menu_item_set_label().
 func (v *MenuItem) SetLabel(label string) {
 	cstr := C.CString(label)
@@ -6498,15 +6510,43 @@ func (v *MenuItem) GetUseUnderline() bool {
 	return gobool(c)
 }
 
-// TODO:
-// gtk_menu_item_get_submenu().
-// gtk_menu_item_select().
-// gtk_menu_item_deselect().
-// gtk_menu_item_activate().
-// gtk_menu_item_toggle_size_request().
-// gtk_menu_item_toggle_size_allocate().
-// gtk_menu_item_get_reserve_indicator().
-// gtk_menu_item_set_reserve_indicator().
+// Select is a wrapper around gtk_menu_item_select()
+func (v *MenuItem) Select() {
+	C.gtk_menu_item_select(v.native())
+}
+
+// Deselect is a wrapper around gtk_menu_item_deselect()
+func (v *MenuItem) Deselect() {
+	C.gtk_menu_item_deselect(v.native())
+}
+
+// Activate is a wrapper around gtk_menu_item_activate()
+func (v *MenuItem) Activate() {
+	C.gtk_menu_item_activate(v.native())
+}
+
+// ToggleSizeRequest is a wrapper around gtk_menu_item_toggle_size_request()
+func (v *MenuItem) ToggleSizeRequest(requisition int) int {
+	cint := new(C.gint)
+	*cint = C.gint(requisition)
+	C.gtk_menu_item_toggle_size_request(v.native(), cint)
+	return int(*cint)
+}
+
+// ToggleSizeAllocate is a wrapper around gtk_menu_item_toggle_size_allocate()
+func (v *MenuItem) ToggleSizeAllocate(allocation int) {
+	C.gtk_menu_item_toggle_size_allocate(v.native(), C.gint(allocation))
+}
+
+// GetReserveIndicator is a wrapper around gtk_menu_item_get_reserve_indicator().
+func (v *MenuItem) GetReserveIndicator() bool {
+	return gobool(C.gtk_menu_item_get_reserve_indicator(v.native()))
+}
+
+// SetReserveIndicator is a wrapper around gtk_menu_item_set_reserve_indicator().
+func (v *MenuItem) SetReserveIndicator(reserve bool) {
+	C.gtk_menu_item_set_reserve_indicator(v.native(), gbool(reserve))
+}
 
 /*
  * GtkMessageDialog
