@@ -1944,6 +1944,70 @@ func (c *RGBA) Hash() uint {
 }
 
 /*
+ * GdkPoint
+ */
+
+// Point is a representation of GDK's GdkPoint type.
+type Point struct {
+	GdkPoint C.GdkPoint
+}
+
+func WrapPoint(p uintptr) *Point {
+	return wrapPoint((*C.GdkPoint)(unsafe.Pointer(p)))
+}
+
+func wrapPoint(obj *C.GdkPoint) *Point {
+	if obj == nil {
+		return nil
+	}
+	return &Point{*obj}
+}
+
+// Native() returns a pointer to the underlying GdkPoint.
+func (v *Point) native() *C.GdkPoint {
+	return &v.GdkPoint
+}
+
+// PointNew helper function to create a GdkPoint
+func PointNew(x, y int) *Point {
+	var p C.GdkPoint
+	p.x = C.gint(x)
+	p.y = C.gint(y)
+	return &Point{p}
+}
+
+// GetPointInt helper function to get GdkPoint values
+func (v *Point) GetPointInt() (x, y int) {
+	return int(v.native().x), int(v.native().y)
+}
+
+// SetPointInt helper function to set GdkPoint values
+func (v *Point) SetPointInt(x, y int) {
+	v.native().x = C.gint(x)
+	v.native().y = C.gint(y)
+}
+
+// GetX returns x field of the underlying GdkPoint.
+func (v *Point) GetX() int {
+	return int(v.native().x)
+}
+
+// SetX sets x field of the underlying GdkPoint.
+func (v *Point) SetX(x int) {
+	v.native().x = C.gint(x)
+}
+
+// GetY returns y field of the underlying GdkPoint.
+func (v *Point) GetY() int {
+	return int(v.native().y)
+}
+
+// SetY sets y field of the underlying GdkPoint.
+func (v *Point) SetY(y int) {
+	v.native().y = C.gint(y)
+}
+
+/*
  * GdkRectangle
  */
 
@@ -1966,6 +2030,46 @@ func wrapRectangle(obj *C.GdkRectangle) *Rectangle {
 // Native() returns a pointer to the underlying GdkRectangle.
 func (r *Rectangle) native() *C.GdkRectangle {
 	return &r.GdkRectangle
+}
+
+// RectangleIntersect is a wrapper around gdk_rectangle_intersect().
+func (v *Rectangle) RectangleIntersect(rect *Rectangle) (*Rectangle, bool) {
+	r := new(C.GdkRectangle)
+	c := C.gdk_rectangle_intersect(v.native(), rect.native(), r)
+	return wrapRectangle(r), gobool(c)
+}
+
+// RectangleUnion is a wrapper around gdk_rectangle_union().
+func (v *Rectangle) RectangleUnion(rect *Rectangle) *Rectangle {
+	r := new(C.GdkRectangle)
+	C.gdk_rectangle_union(v.native(), rect.native(), r)
+	return wrapRectangle(r)
+}
+
+// RectangleNew helper function to create a GdkRectanlge
+func RectangleNew(x, y, width, height int) *Rectangle {
+	var r C.GdkRectangle
+	r.x = C.int(x)
+	r.y = C.int(y)
+	r.width = C.int(width)
+	r.height = C.int(height)
+	return &Rectangle{r}
+}
+
+// SetRectangleInt helper function to set GdkRectanlge values
+func (v *Rectangle) SetRectangleInt(x, y, width, height int) {
+	v.native().x = C.int(x)
+	v.native().y = C.int(y)
+	v.native().width = C.int(width)
+	v.native().height = C.int(height)
+}
+
+// GetRectangleInt helper function to get GdkRectanlge values
+func (v *Rectangle) GetRectangleInt() (x, y, width, height int) {
+	return int(v.native().x),
+		int(v.native().y),
+		int(v.native().width),
+		int(v.native().height)
 }
 
 // GetX returns x field of the underlying GdkRectangle.
