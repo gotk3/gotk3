@@ -78,3 +78,12 @@ func toSeat(s *C.GdkSeat) (*Seat, error) {
 func (v *Seat) GetPointer() (*Device, error) {
 	return toDevice(C.gdk_seat_get_pointer(v.native()))
 }
+
+/*
+ * GdkRectangle
+ */
+
+// RectangleEqual is a wrapper around gdk_rectangle_equal().
+func (v *Rectangle) RectangleEqual(rect *Rectangle) bool {
+	return gobool(C.gdk_rectangle_equal(v.native(), rect.native()))
+}
