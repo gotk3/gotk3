@@ -177,6 +177,50 @@ func PixbufNewFromDataOnly(pixbufData []byte) (*Pixbuf, error) {
 	return pixbufLoader.WriteAndReturnPixbuf(pixbufData)
 }
 
+// PixbufNewFromResource is a wrapper around gdk_pixbuf_new_from_resource()
+func PixbufNewFromResource(resourcePath string) (*Pixbuf, error) {
+	var gerr *C.GError
+
+	cstr := C.CString(resourcePath)
+	defer C.free(unsafe.Pointer(cstr))
+
+	c := C.gdk_pixbuf_new_from_resource((*C.gchar)(cstr), &gerr)
+
+	if gerr != nil {
+		defer C.g_error_free(gerr)
+		return nil, errors.New(C.GoString(gerr.message))
+	}
+
+	obj := glib.Take(unsafe.Pointer(c))
+	return &Pixbuf{obj}, nil
+}
+
+// PixbufNewFromResourceAtScale is a wrapper around gdk_pixbuf_new_from_resource_at_scale()
+func PixbufNewFromResourceAtScale(resourcePath string, width, height int, preserveAspectRatio bool) (*Pixbuf, error) {
+	var gerr *C.GError
+
+	cstr := C.CString(resourcePath)
+	defer C.free(unsafe.Pointer(cstr))
+
+	cPreserveAspectRatio := gbool(preserveAspectRatio)
+
+	c := C.gdk_pixbuf_new_from_resource_at_scale(
+		(*C.gchar)(cstr),
+		C.gint(width),
+		C.gint(height),
+		C.gboolean(cPreserveAspectRatio),
+		&gerr,
+	)
+
+	if gerr != nil {
+		defer C.g_error_free(gerr)
+		return nil, errors.New(C.GoString(gerr.message))
+	}
+
+	obj := glib.Take(unsafe.Pointer(c))
+	return &Pixbuf{obj}, nil
+}
+
 // TODO:
 // gdk_pixbuf_new_from_xpm_data().
 // gdk_pixbuf_new_subpixbuf()
