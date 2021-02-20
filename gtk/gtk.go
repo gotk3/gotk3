@@ -2244,6 +2244,11 @@ func (v *CellLayout) AddAttribute(cell ICellRenderer, attribute string, column i
 		(*C.gchar)(cstr), C.gint(column))
 }
 
+// ClearAttributes is a wrapper around gtk_cell_layout_clear_attributes()
+func (v *CellLayout) ClearAttributes(cell ICellRenderer) {
+	C.gtk_cell_layout_clear_attributes(v.native(), cell.toCellRenderer())
+}
+
 /*
  * GtkCellView
  */
