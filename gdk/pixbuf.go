@@ -178,7 +178,7 @@ func PixbufNewFromDataOnly(pixbufData []byte) (*Pixbuf, error) {
 }
 
 // PixbufNewFromResource is a wrapper around gdk_pixbuf_new_from_resource()
-func PixbufNewFromResource(resourcePath string) (*gdk.Pixbuf, error) {
+func PixbufNewFromResource(resourcePath string) (*Pixbuf, error) {
 	var gerr *C.GError
 
 	cstr := C.CString(resourcePath)
@@ -192,11 +192,11 @@ func PixbufNewFromResource(resourcePath string) (*gdk.Pixbuf, error) {
 	}
 
 	obj := glib.Take(unsafe.Pointer(c))
-	return &gdk.Pixbuf{obj}, nil
+	return &Pixbuf{obj}, nil
 }
 
 // PixbufNewFromResourceAtScale is a wrapper around gdk_pixbuf_new_from_resource_at_scale()
-func PixbufNewFromResourceAtScale(resourcePath string, width, height int, preserveAspectRatio bool) (*gdk.Pixbuf, error) {
+func PixbufNewFromResourceAtScale(resourcePath string, width, height int, preserveAspectRatio bool) (*Pixbuf, error) {
 	var gerr *C.GError
 
 	cstr := C.CString(resourcePath)
@@ -218,7 +218,7 @@ func PixbufNewFromResourceAtScale(resourcePath string, width, height int, preser
 	}
 
 	obj := glib.Take(unsafe.Pointer(c))
-	return &gdk.Pixbuf{obj}, nil
+	return &Pixbuf{obj}, nil
 }
 
 // TODO:
