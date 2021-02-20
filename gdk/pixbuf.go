@@ -202,7 +202,7 @@ func PixbufNewFromResourceAtScale(resourcePath string, width, height int, preser
 	cstr := C.CString(resourcePath)
 	defer C.free(unsafe.Pointer(cstr))
 
-	cPreserveAspectRatio := gbool(presereAspectRatio)
+	cPreserveAspectRatio := gbool(preserveAspectRatio)
 
 	c := C.gdk_pixbuf_new_from_resource_at_scale(
 		(*C.gchar)(cstr),
