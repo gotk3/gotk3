@@ -22,8 +22,10 @@ import "C"
  * GtkRadioMenuItem
  */
 
-// TODO
-// gtk_radio_menu_item_join_group().
+// JoinGroup is a wrapper around gtk_radio_menu_item_join_group().
+func (v *RadioMenuItem) JoinGroup(group_source *RadioMenuItem) {
+	C.gtk_radio_menu_item_join_group(v.native(), group_source.native())
+}
 
 /*
  * GtkOverlay
