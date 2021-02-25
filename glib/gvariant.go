@@ -8,6 +8,7 @@ package glib
 import "C"
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"unsafe"
@@ -419,7 +420,21 @@ func (v *Variant) AnnotatedString() string {
 //gboolean	g_variant_dict_remove ()
 //GVariant *	g_variant_dict_end ()
 //#define	G_VARIANT_PARSE_ERROR
-//GVariant *	g_variant_parse ()
+
+// VariantParse is a wrapper around g_variant_parse()
+func VariantParse(vType *VariantType, text string) (*Variant, error) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	var gerr *C.GError
+	c := C.g_variant_parse(vType.native(), cstr, nil, nil, &gerr)
+	if c == nil {
+		defer C.g_error_free(gerr)
+		return nil, errors.New(goString(gerr.message))
+	}
+	// will be freed during GC
+	return takeVariant(c), nil
+}
+
 //GVariant *	g_variant_new_parsed_va ()
 //GVariant *	g_variant_new_parsed ()
 //gchar *	g_variant_parse_error_print_context ()

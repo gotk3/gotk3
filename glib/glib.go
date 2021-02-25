@@ -1351,7 +1351,8 @@ func marshalObject(p uintptr) (interface{}, error) {
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {
-	return nil, errors.New("variant conversion not yet implemented")
+	c := C.g_value_get_variant((*C.GValue)(unsafe.Pointer(p)))
+	return newVariant((*C.GVariant)(c)), nil
 }
 
 // GoValue converts a Value to comparable Go type.  GoValue()
