@@ -167,6 +167,13 @@ func VariantFromBoolean(value bool) *Variant {
 	return takeVariant(C.g_variant_new_boolean(gbool(value)))
 }
 
+// VariantFromFloat64 is a wrapper around g_variant_new_double().
+// I chose to respect the Golang float64 nomenclature instead
+// of 'double' 'C'. Corresponding VariantType is: 'VARIANT_TYPE_DOUBLE'
+func VariantFromFloat64(value float64) *Variant {
+	return takeVariant(C.g_variant_new_double(C.gdouble(value)))
+}
+
 // VariantFromString is a wrapper around g_variant_new_string/g_variant_new_take_string.
 // Uses g_variant_new_take_string to reduce memory allocations if possible.
 func VariantFromString(value string) *Variant {
@@ -195,6 +202,11 @@ func (v *Variant) IsContainer() bool {
 // GetBoolean returns the bool value of this variant.
 func (v *Variant) GetBoolean() bool {
 	return gobool(C.g_variant_get_boolean(v.native()))
+}
+
+// GetDouble is a wrapper around g_variant_get_double()
+func (v *Variant) GetDouble() float64 {
+	return float64(C.g_variant_get_double(v.native()))
 }
 
 // GetString is a wrapper around g_variant_get_string.
@@ -340,7 +352,6 @@ func (v *Variant) AnnotatedString() string {
 //GVariant *	g_variant_new ()
 //GVariant *	g_variant_new_va ()
 //GVariant *	g_variant_new_handle ()
-//GVariant *	g_variant_new_double ()
 //GVariant *	g_variant_new_printf ()
 //GVariant *	g_variant_new_object_path ()
 //gboolean	g_variant_is_object_path ()

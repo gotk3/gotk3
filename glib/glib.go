@@ -262,7 +262,9 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 			case "s":
 				val = objVal.GetString()
 			case "b":
-				val = objVal.GetBoolean()
+				val = gobool(C.g_variant_get_boolean(objVal.native()))
+			case "d":
+				val = float64(C.g_variant_get_double(objVal.native()))
 			case "n":
 				val = int16(C.g_variant_get_int16(objVal.native()))
 			case "i":
