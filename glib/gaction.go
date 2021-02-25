@@ -50,7 +50,7 @@ func (v *Action) toAction() *Action {
 func ActionPrintDetailedName(action_name string, target_value *Variant) string {
 	cstr := C.CString(action_name)
 	defer C.free(unsafe.Pointer(cstr))
-	return C.GoString((*C.char)(C.g_action_print_detailed_name(cstr, target_value.native())))
+	return C.GoString((*C.char)(C.g_action_print_detailed_name((*C.gchar)(cstr), target_value.native())))
 }
 
 // native() returns a pointer to the underlying GAction.

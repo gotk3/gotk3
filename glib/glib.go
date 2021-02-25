@@ -256,6 +256,31 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 			} else {
 				val = innerVal
 			}
+
+		case *Variant:
+			switch objVal.TypeString() {
+			case "s":
+				val = objVal.GetString()
+			case "b":
+				val = objVal.GetBoolean()
+			case "n":
+				val = int16(C.g_variant_get_int16(objVal.native()))
+			case "i":
+				val = int32(C.g_variant_get_int32(objVal.native()))
+			case "x":
+				val = int64(C.g_variant_get_int64(objVal.native()))
+			case "y":
+				val = uint8(C.g_variant_get_byte(objVal.native()))
+			case "q":
+				val = uint16(C.g_variant_get_uint16(objVal.native()))
+			case "u":
+				val = uint32(C.g_variant_get_uint32(objVal.native()))
+			case "t":
+				val = uint64(C.g_variant_get_uint64(objVal.native()))
+			default:
+				fmt.Fprintf(os.Stderr,
+					"warning: variant conversion not yet implemented for %s\n", objVal.TypeString())
+			}
 		}
 		rv := reflect.ValueOf(val)
 		args = append(args, rv.Convert(cc.rf.Type().In(i)))

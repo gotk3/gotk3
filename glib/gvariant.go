@@ -426,7 +426,7 @@ func VariantParse(vType *VariantType, text string) (*Variant, error) {
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 	var gerr *C.GError
-	c := C.g_variant_parse(vType.native(), cstr, nil, nil, &gerr)
+	c := C.g_variant_parse(vType.native(), (*C.gchar)(cstr), nil, nil, &gerr)
 	if c == nil {
 		defer C.g_error_free(gerr)
 		return nil, errors.New(goString(gerr.message))
