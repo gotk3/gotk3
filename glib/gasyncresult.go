@@ -7,7 +7,6 @@ package glib
 import "C"
 import (
 	"errors"
-	"sync"
 	"unsafe"
 )
 
@@ -21,33 +20,7 @@ type IAsyncResult interface {
 }
 
 // AsyncReadyCallback is a representation of GAsyncReadyCallback
-type AsyncReadyCallback func(object *Object, res *AsyncResult, data uintptr)
-
-type asyncReadyCallbackData struct {
-	fn       AsyncReadyCallback
-	userData uintptr
-}
-
-var (
-	asyncReadyCallbackRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]asyncReadyCallbackData
-	}{
-		next: 1,
-		m:    make(map[int]asyncReadyCallbackData),
-	}
-)
-
-func registerAsyncReadyCallback(fn AsyncReadyCallback, userData uintptr) int {
-	asyncReadyCallbackRegistry.Lock()
-	id := asyncReadyCallbackRegistry.next
-	asyncReadyCallbackRegistry.next++
-	asyncReadyCallbackRegistry.m[id] = asyncReadyCallbackData{fn: fn, userData: userData}
-	asyncReadyCallbackRegistry.Unlock()
-
-	return id
-}
+type AsyncReadyCallback func(object *Object, res *AsyncResult)
 
 // AsyncResult is a representation of GIO's GAsyncResult.
 type AsyncResult struct {

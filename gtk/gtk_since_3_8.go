@@ -25,11 +25,6 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
-import (
-	"sync"
-
-	"github.com/gotk3/gotk3/gdk"
-)
 
 /*
  * Constants
@@ -38,27 +33,4 @@ import (
 const (
 	STATE_FLAG_DIR_LTR StateFlags = C.GTK_STATE_FLAG_DIR_LTR
 	STATE_FLAG_DIR_RTL StateFlags = C.GTK_STATE_FLAG_DIR_RTL
-)
-
-/*
- * GtkTickCallback
- */
-
-// TickCallback is a representation of GtkTickCallback
-type TickCallback func(widget *Widget, frameClock *gdk.FrameClock, userData ...interface{}) bool
-
-type tickCallbackData struct {
-	fn       TickCallback
-	userData []interface{}
-}
-
-var (
-	tickCallbackRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]tickCallbackData
-	}{
-		next: 1,
-		m:    make(map[int]tickCallbackData),
-	}
 )

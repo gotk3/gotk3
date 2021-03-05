@@ -140,18 +140,19 @@ static GObjectClass *_g_object_get_class(GObject *object) {
 extern void goMarshal(GClosure *, GValue *, guint, GValue *, gpointer,
                       GValue *);
 
-static GClosure *_g_closure_new() {
+static inline GClosure *_g_closure_new() {
   GClosure *closure;
 
   closure = g_closure_new_simple(sizeof(GClosure), NULL);
   g_closure_set_marshal(closure, (GClosureMarshal)(goMarshal));
-  return (closure);
+  return closure;
 }
 
 extern void removeClosure(gpointer, GClosure *);
 
-static void _g_closure_add_finalize_notifier(GClosure *closure) {
-  g_closure_add_finalize_notifier(closure, NULL, removeClosure);
+static inline void _g_closure_add_finalize_notifier(GClosure *closure) {
+  g_closure_add_finalize_notifier(closure, NULL,
+                                  (GClosureNotify)(removeClosure));
 }
 
 static inline guint _g_signal_new(const gchar *name) {
@@ -183,7 +184,7 @@ static inline void set_string(char **strings, int n, char *str) {
 
 static inline gchar **next_gcharptr(gchar **s) { return (s + 1); }
 
-extern void goCompareDataFuncs(gconstpointer a, gconstpointer b,
+extern gint goCompareDataFuncs(gconstpointer a, gconstpointer b,
                                gpointer user_data);
 
 #endif

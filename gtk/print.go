@@ -2,15 +2,16 @@ package gtk
 
 // #include <gtk/gtk.h>
 // #include "gtk.go.h"
+// #include "print.go.h"
 import "C"
 import (
 	"errors"
 	"runtime"
-	"sync"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/glib"
+	"github.com/gotk3/gotk3/internal/callback"
 	"github.com/gotk3/gotk3/pango"
 )
 
@@ -978,34 +979,11 @@ func PrintRunPageSetupDialog(parent IWindow, pageSetup *PageSetup, settings *Pri
 	return wrapPageSetup(obj)
 }
 
-type PageSetupDoneCallback func(setup *PageSetup, userData ...interface{})
-
-type pageSetupDoneCallbackData struct {
-	fn   PageSetupDoneCallback
-	data []interface{}
-}
-
-var (
-	pageSetupDoneCallbackRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]pageSetupDoneCallbackData
-	}{
-		next: 1,
-		m:    make(map[int]pageSetupDoneCallbackData),
-	}
-)
+type PageSetupDoneCallback func(setup *PageSetup)
 
 // PrintRunPageSetupDialogAsync() is a wrapper around gtk_print_run_page_setup_dialog_async().
 func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
-	settings *PrintSettings, cb PageSetupDoneCallback, data ...interface{}) {
-
-	pageSetupDoneCallbackRegistry.Lock()
-	id := pageSetupDoneCallbackRegistry.next
-	pageSetupDoneCallbackRegistry.next++
-	pageSetupDoneCallbackRegistry.m[id] =
-		pageSetupDoneCallbackData{fn: cb, data: data}
-	pageSetupDoneCallbackRegistry.Unlock()
+	settings *PrintSettings, cb PageSetupDoneCallback) {
 
 	var w *C.GtkWindow = nil
 	if parent != nil {
@@ -1013,9 +991,7 @@ func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
 	}
 
 	C._gtk_print_run_page_setup_dialog_async(w, setup.native(),
-		settings.native(), C.gpointer(uintptr(id)))
-
-	// This callback is cleaned up as soon as it has been called by GTK.
+		settings.native(), C.gpointer(callback.Assign(cb)))
 }
 
 /*
@@ -1199,39 +1175,15 @@ func (ps *PrintSettings) Unset(key string) {
 	C.gtk_print_settings_unset(ps.native(), (*C.gchar)(cstr))
 }
 
-type PrintSettingsCallback func(key, value string, userData ...interface{})
-
-type printSettingsCallbackData struct {
-	fn       PrintSettingsCallback
-	userData []interface{}
-}
-
-var (
-	printSettingsCallbackRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]printSettingsCallbackData
-	}{
-		next: 1,
-		m:    make(map[int]printSettingsCallbackData),
-	}
-)
+type PrintSettingsCallback func(key, value string)
 
 // Foreach() is a wrapper around gtk_print_settings_foreach().
-func (ps *PrintSettings) ForEach(cb PrintSettingsCallback, userData ...interface{}) {
-	printSettingsCallbackRegistry.Lock()
-	id := printSettingsCallbackRegistry.next
-	printSettingsCallbackRegistry.next++
-	printSettingsCallbackRegistry.m[id] =
-		printSettingsCallbackData{fn: cb, userData: userData}
-	printSettingsCallbackRegistry.Unlock()
-
-	C._gtk_print_settings_foreach(ps.native(), C.gpointer(uintptr(id)))
-
+func (ps *PrintSettings) ForEach(cb PrintSettingsCallback) {
 	// Clean up callback immediately as we only need it for the duration of this Foreach call
-	printSettingsCallbackRegistry.Lock()
-	delete(printSettingsCallbackRegistry.m, id)
-	printSettingsCallbackRegistry.Unlock()
+	id := callback.Assign(cb)
+	defer callback.Delete(id)
+
+	C._gtk_print_settings_foreach(ps.native(), C.gpointer(id))
 }
 
 // GetBool() is a wrapper around gtk_print_settings_get_bool().

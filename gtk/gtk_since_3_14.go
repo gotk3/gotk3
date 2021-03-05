@@ -8,9 +8,9 @@ package gtk
 // #include "gtk_since_3_14.go.h"
 import "C"
 import (
-	"sync"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/internal/callback"
 	"github.com/gotk3/gotk3/glib"
 )
 
@@ -60,38 +60,14 @@ func (v *ListBox) UnselectAll() {
 }
 
 // ListBoxForeachFunc is a representation of GtkListBoxForeachFunc
-type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow, userData ...interface{}) int
-
-type listBoxForeachFuncData struct {
-	fn       ListBoxForeachFunc
-	userData []interface{}
-}
-
-var (
-	listBoxForeachFuncRegistry = struct {
-		sync.RWMutex
-		next int
-		m    map[int]listBoxForeachFuncData
-	}{
-		next: 1,
-		m:    make(map[int]listBoxForeachFuncData),
-	}
-)
+type ListBoxForeachFunc func(box *ListBox, row *ListBoxRow) int
 
 // SelectedForeach is a wrapper around gtk_list_box_selected_foreach().
-func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc, userData ...interface{}) {
-	listBoxForeachFuncRegistry.Lock()
-	id := listBoxForeachFuncRegistry.next
-	listBoxForeachFuncRegistry.next++
-	listBoxForeachFuncRegistry.m[id] = listBoxForeachFuncData{fn: fn, userData: userData}
-	listBoxForeachFuncRegistry.Unlock()
+func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc) {
+	id := callback.Assign(fn)
+	defer callback.Delete(id)
 
-	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(uintptr(id)))
-
-	// Clean up callback immediately as we only need it for the duration of this Foreach call
-	listBoxForeachFuncRegistry.Lock()
-	delete(listBoxForeachFuncRegistry.m, id)
-	listBoxForeachFuncRegistry.Unlock()
+	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(id))
 }
 
 // GetSelectedRows is a wrapper around gtk_list_box_get_selected_rows().

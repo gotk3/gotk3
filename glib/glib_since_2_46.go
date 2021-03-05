@@ -11,19 +11,13 @@ package glib
 // #include "glib_since_2_44.go.h"
 // #include "glib_since_2_46.go.h"
 import "C"
+import "github.com/gotk3/gotk3/internal/callback"
 
 /*
  * GListStore
  */
 
 // Sort is a wrapper around g_list_store_sort().
-func (v *ListStore) Sort(compareFunc CompareDataFunc, userData ...interface{}) {
-	// TODO: figure out a way to determine when we can clean up
-	compareDataFuncRegistry.Lock()
-	id := compareDataFuncRegistry.next
-	compareDataFuncRegistry.next++
-	compareDataFuncRegistry.m[id] = compareDataFuncData{fn: compareFunc, userData: userData}
-	compareDataFuncRegistry.Unlock()
-
-	C._g_list_store_sort(v.native(), C.gpointer(uintptr(id)))
+func (v *ListStore) Sort(compareFunc CompareDataFunc) {
+	C._g_list_store_sort(v.native(), C.gpointer(callback.Assign(compareFunc)))
 }

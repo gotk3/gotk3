@@ -48,7 +48,7 @@ func TestPrintSettings(t *testing.T) {
 	settings.Set("Key3", "String2")
 	settings.SetInt("Key4", 2)
 
-	settings.ForEach(func(key, value string, userData ...interface{}) {
+	settings.ForEach(func(key, value string) {
 	}, 0)
 }
 

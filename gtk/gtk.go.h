@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// gotk3_callbackDelete satisfies the GDestroyNotify type.
+extern void gotk3_callbackDelete(gpointer callback_id);
+
 static GtkAboutDialog *toGtkAboutDialog(void *p) {
   return (GTK_ABOUT_DIALOG(p));
 }
@@ -548,33 +551,26 @@ static inline void _gtk_builder_connect_signals_full(GtkBuilder *builder) {
       builder, (GtkBuilderConnectFunc)(goBuilderConnect), NULL);
 }
 
-extern void goPrintSettings(gchar *key, gchar *value, gpointer user_data);
+extern gboolean goTreeViewSearchEqualFunc(GtkTreeModel *model, gint column,
+                                          gchar *key, GtkTreeIter *iter,
+                                          gpointer data);
 
-static inline void _gtk_print_settings_foreach(GtkPrintSettings *ps,
-                                               gpointer user_data) {
-  gtk_print_settings_foreach(ps, (GtkPrintSettingsFunc)(goPrintSettings),
-                             user_data);
+static inline void _gtk_tree_view_set_search_equal_func(GtkTreeView *tree_view,
+                                                        gpointer user_data) {
+  gtk_tree_view_set_search_equal_func(
+      tree_view, (GtkTreeViewSearchEqualFunc)(goTreeViewSearchEqualFunc),
+      user_data, (GDestroyNotify)(gotk3_callbackDelete));
 }
 
-extern void goPageSetupDone(GtkPageSetup *setup, gpointer data);
-
-static inline void
-_gtk_print_run_page_setup_dialog_async(GtkWindow *parent, GtkPageSetup *setup,
-                                       GtkPrintSettings *settings,
-                                       gpointer data) {
-  gtk_print_run_page_setup_dialog_async(
-      parent, setup, settings, (GtkPageSetupDoneFunc)(goPageSetupDone), data);
-}
-
-extern gboolean goTreeModelFilterFuncs(GtkTreeModel *model, GtkTreeIter *iter,
-                                       gpointer data);
+extern gboolean goTreeModelFilterVisibleFunc(GtkTreeModel *model,
+                                             GtkTreeIter *iter, gpointer data);
 
 static inline void
 _gtk_tree_model_filter_set_visible_func(GtkTreeModelFilter *filter,
                                         gpointer user_data) {
   gtk_tree_model_filter_set_visible_func(
-      filter, (GtkTreeModelFilterVisibleFunc)(goTreeModelFilterFuncs),
-      user_data, NULL);
+      filter, (GtkTreeModelFilterVisibleFunc)(goTreeModelFilterVisibleFunc),
+      user_data, (GDestroyNotify)(gotk3_callbackDelete));
 }
 
 static inline void _gtk_text_buffer_insert_with_tag_by_name(
@@ -591,23 +587,23 @@ static inline void _gtk_text_buffer_insert_with_tag(GtkTextBuffer *buffer,
   gtk_text_buffer_insert_with_tags(buffer, iter, text, len, tag, NULL);
 }
 
-extern gint goTreeSortableSortFuncs(GtkTreeModel *model, GtkTreeIter *a,
-                                    GtkTreeIter *b, gpointer data);
+extern gint goTreeSortableSortFunc(GtkTreeModel *model, GtkTreeIter *a,
+                                   GtkTreeIter *b, gpointer data);
 
 static inline void _gtk_tree_sortable_set_sort_func(GtkTreeSortable *sortable,
                                                     gint sort_column_id,
                                                     gpointer user_data) {
   gtk_tree_sortable_set_sort_func(
       sortable, sort_column_id,
-      (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data, NULL);
+      (GtkTreeIterCompareFunc)(goTreeSortableSortFunc), user_data, NULL);
 }
 
 static inline void
 _gtk_tree_sortable_set_default_sort_func(GtkTreeSortable *sortable,
                                          gpointer user_data) {
   gtk_tree_sortable_set_default_sort_func(
-      sortable, (GtkTreeIterCompareFunc)(goTreeSortableSortFuncs), user_data,
-      NULL);
+      sortable, (GtkTreeIterCompareFunc)(goTreeSortableSortFunc), user_data,
+      (GDestroyNotify)(gotk3_callbackDelete));
 }
 
 static GtkWidget *_gtk_dialog_new_with_buttons(const gchar *title,
@@ -649,5 +645,7 @@ static inline void
 _gtk_tree_selection_set_select_function(GtkTreeSelection *selection,
                                         gpointer user_data) {
   gtk_tree_selection_set_select_function(
-      selection, (GtkTreeSelectionFunc)(goTreeSelectionFunc), user_data, NULL);
+
+      selection, (GtkTreeSelectionFunc)(goTreeSelectionFunc), user_data,
+      (GDestroyNotify)(gotk3_callbackDelete));
 }
