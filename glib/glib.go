@@ -256,6 +256,33 @@ func goMarshal(closure *C.GClosure, retValue *C.GValue,
 			} else {
 				val = innerVal
 			}
+
+		case *Variant:
+			switch objVal.TypeString() {
+			case "s":
+				val = objVal.GetString()
+			case "b":
+				val = gobool(C.g_variant_get_boolean(objVal.native()))
+			case "d":
+				val = float64(C.g_variant_get_double(objVal.native()))
+			case "n":
+				val = int16(C.g_variant_get_int16(objVal.native()))
+			case "i":
+				val = int32(C.g_variant_get_int32(objVal.native()))
+			case "x":
+				val = int64(C.g_variant_get_int64(objVal.native()))
+			case "y":
+				val = uint8(C.g_variant_get_byte(objVal.native()))
+			case "q":
+				val = uint16(C.g_variant_get_uint16(objVal.native()))
+			case "u":
+				val = uint32(C.g_variant_get_uint32(objVal.native()))
+			case "t":
+				val = uint64(C.g_variant_get_uint64(objVal.native()))
+			default:
+				fmt.Fprintf(os.Stderr,
+					"warning: variant conversion not yet implemented for %s\n", objVal.TypeString())
+			}
 		}
 		rv := reflect.ValueOf(val)
 		args = append(args, rv.Convert(cc.rf.Type().In(i)))
@@ -1351,7 +1378,8 @@ func marshalObject(p uintptr) (interface{}, error) {
 }
 
 func marshalVariant(p uintptr) (interface{}, error) {
-	return nil, errors.New("variant conversion not yet implemented")
+	c := C.g_value_get_variant((*C.GValue)(unsafe.Pointer(p)))
+	return newVariant((*C.GVariant)(c)), nil
 }
 
 // GoValue converts a Value to comparable Go type.  GoValue()

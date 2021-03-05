@@ -5,7 +5,19 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
+
+func init() {
+	tm := []TypeMarshaler{
+		// Objects/Interfaces
+		{Type(C.g_simple_action_get_type()), marshalSimpleAction},
+		{Type(C.g_action_get_type()), marshalAction},
+		{Type(C.g_property_action_get_type()), marshalPropertyAction},
+	}
+	RegisterGValueMarshalers(tm)
+}
 
 // Action is a representation of glib's GAction GInterface.
 type Action struct {
@@ -33,7 +45,13 @@ func (v *Action) toAction() *Action {
 }
 
 // gboolean g_action_parse_detailed_name (const gchar *detailed_name, gchar **action_name, GVariant **target_value, GError **error);
-// gchar * g_action_print_detailed_name (const gchar *action_name, GVariant *target_value);
+
+// ActionPrintDetailedName is a wrapper around g_action_print_detailed_name().
+func ActionPrintDetailedName(action_name string, target_value *Variant) string {
+	cstr := C.CString(action_name)
+	defer C.free(unsafe.Pointer(cstr))
+	return C.GoString((*C.char)(C.g_action_print_detailed_name((*C.gchar)(cstr), target_value.native())))
+}
 
 // native() returns a pointer to the underlying GAction.
 func (v *Action) native() *C.GAction {

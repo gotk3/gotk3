@@ -8,6 +8,7 @@ package glib
 import "C"
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"unsafe"
@@ -166,6 +167,13 @@ func VariantFromBoolean(value bool) *Variant {
 	return takeVariant(C.g_variant_new_boolean(gbool(value)))
 }
 
+// VariantFromFloat64 is a wrapper around g_variant_new_double().
+// I chose to respect the Golang float64 nomenclature instead
+// of 'double' 'C'. Corresponding VariantType is: 'VARIANT_TYPE_DOUBLE'
+func VariantFromFloat64(value float64) *Variant {
+	return takeVariant(C.g_variant_new_double(C.gdouble(value)))
+}
+
 // VariantFromString is a wrapper around g_variant_new_string/g_variant_new_take_string.
 // Uses g_variant_new_take_string to reduce memory allocations if possible.
 func VariantFromString(value string) *Variant {
@@ -194,6 +202,11 @@ func (v *Variant) IsContainer() bool {
 // GetBoolean returns the bool value of this variant.
 func (v *Variant) GetBoolean() bool {
 	return gobool(C.g_variant_get_boolean(v.native()))
+}
+
+// GetDouble is a wrapper around g_variant_get_double()
+func (v *Variant) GetDouble() float64 {
+	return float64(C.g_variant_get_double(v.native()))
 }
 
 // GetString is a wrapper around g_variant_get_string.
@@ -339,7 +352,6 @@ func (v *Variant) AnnotatedString() string {
 //GVariant *	g_variant_new ()
 //GVariant *	g_variant_new_va ()
 //GVariant *	g_variant_new_handle ()
-//GVariant *	g_variant_new_double ()
 //GVariant *	g_variant_new_printf ()
 //GVariant *	g_variant_new_object_path ()
 //gboolean	g_variant_is_object_path ()
@@ -419,7 +431,21 @@ func (v *Variant) AnnotatedString() string {
 //gboolean	g_variant_dict_remove ()
 //GVariant *	g_variant_dict_end ()
 //#define	G_VARIANT_PARSE_ERROR
-//GVariant *	g_variant_parse ()
+
+// VariantParse is a wrapper around g_variant_parse()
+func VariantParse(vType *VariantType, text string) (*Variant, error) {
+	cstr := C.CString(text)
+	defer C.free(unsafe.Pointer(cstr))
+	var gerr *C.GError
+	c := C.g_variant_parse(vType.native(), (*C.gchar)(cstr), nil, nil, &gerr)
+	if c == nil {
+		defer C.g_error_free(gerr)
+		return nil, errors.New(goString(gerr.message))
+	}
+	// will be freed during GC
+	return takeVariant(c), nil
+}
+
 //GVariant *	g_variant_new_parsed_va ()
 //GVariant *	g_variant_new_parsed ()
 //gchar *	g_variant_parse_error_print_context ()
