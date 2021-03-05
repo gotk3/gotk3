@@ -187,13 +187,6 @@ func (v *Attribute) native() *C.PangoAttribute {
 	return (*C.PangoAttribute)(unsafe.Pointer(v.pangoAttribute))
 }
 
-func AttrInsertHyphensNew(insertHyphens bool) *Attribute {
-	c := C.pango_attr_insert_hyphens_new(gbool(insertHyphens))
-	attr := new(Attribute)
-	attr.pangoAttribute = c
-	return attr
-}
-
 /*
 //typedef gboolean (*PangoAttrFilterFunc) (PangoAttribute *attribute,
 //					 gpointer        user_data);
