@@ -3,128 +3,27 @@ User visible changes for gotk3
   Go bindings for GTK3
 ============================================================================
 
-Changes for next Version
-  - Add new binding support
-    - gdk: fix memory leak in Pixbuf finalizers
-    - gdk: new functions for Pixbuf: ApplyEmbeddedOrientation, SaveJPEG, SavePNG
-    - gdk: PixbufLoader wrapper
-    - gtk: new functions for Adjustment: GetPageSize, SetPageSize, Configure
-    - gtk: new functions for Range: SetIncrements, SetRange
-    - gtk: new wrappers: IRecentChooser, RecentChooser, RecentChooserMenu, 
-    - gtk: RecentFilter, RecentManager, IScrollable, Scrollable, IViewport, Viewport, Allocation
-    - gtk: new function for ScrolledWindow: SetHAdjustment
-    - gtk: new function for SpinButton: SetIncrements
-    - gtk: new functions for Widget: GetAllocation, SetAllocation, SizeAllocate
-    - gtk: new function RecentChooser
-    - gtk: added Widget.GetStyleContext, new wrappers for GtkCssProvider
-  - API Break Warning: no longer support for gtk 3.16 deprecated mark functions/elements
-
-Changes in 0.3.0 (Wed Jun 10 2015)
-  - API Break Warning: function signatures changed
-  - Add new binding support
-  	- GtkBuilder
-  	- GtkButton
-  	- GtkCellRenderer
-  	- GtkStatusIcon
-  	- GtkStatusbar
-  	- GtkTreeView
-  - better and more support for cairo
-  - better and more support for pango
-
-Changes in 0.2.0 (Mon Feb 10 2014)
-  - API BREAK: Modify function signatures for ListStore bindings so unset
-    iterators need not be created and passed as pointers to be set
-
-  - Add cairo package (currently targeting cairo 1.10) and add initial binding
-    support for cairo Surface and Context
-
-  - Add new binding support for the following GTK classes:
-    - GdkPixbuf (https://github.com/geoffholden/gotk3/issues/40)
-    - GtkAboutDialog
-    - GtkAlignment
-    - GtkArrow
-    - GtkCalendar
-    - GtkDrawingArea
-    - GtkEventBox
-    - GtkOffscreenWindow (https://github.com/geoffholden/gotk3/issues/33)
-    - GtkSpinner
-    - GtkSwitch
-
-  - Add additional bindings for gtk.Label
-
-  - Add glib.TimeoutAdd (https://github.com/geoffholden/gotk3/issues/41)
-
-  - Call correct C function to create a new TextTagTable
-    (https://github.com/geoffholden/gotk3/issues/40)
-
-  - Create correct go values from glib values
-    (https://github.com/geoffholden/gotk3/issues/39 and
-    https://github.com/geoffholden/gotk3/issues/41)
-
-Changes in 0.1.1 (Tue Jan 14 2014)
-  - Fix a (*glib.Object).Connect crash where an allocated GValue was
-    prematurely unset
-
-  - Fix memory leaks when adding callbacks with (*glib.Object).Connect and
-    glib.IdleAdd
-
-  - Make all constants typed for increased compile-time type safety
-
-  - Remove a duplicate example file (resulting in two main functions)
-    which broke recursive go get
-
-  - Add ALIGN_BASELINE const (since GTK 3.10)
-
-Changes in 0.1.0 (Thu Jan 09 2014)
-  - Modify signal callback API to remove glib.CallbackContext
-
-  - New support for the following types:
-    - gtk.CellRendererToggle
-    - gtk.HeaderBar
-    - gtk.TextView
-
-  - Additional function support for the following types:
-    - gtk.MessageDialog
-    - gtk.Window
-
-  - Add examples for gtk.TextView bindings
-
-  - Fix build when building with gccgo
-    (https://github.com/geoffholden/gotk3/issues/19 and
-    https://github.com/geoffholden/gotk3/issues/20)
-
-Changes in 0.0.2 (Wed Nov 13 2013)
-  - Begin GTK 3.10 support
-
-  - Add support for targeting GTK 3.6
-
-  - Add build tags to target previous GTK releases
-
-  - Additional function support for the following types:
-    - gtk.Label
-    - gtk.Misc
-    - gtk.Scrollbar
-    - gtk.SpinButton
-    - gtk.Window
-
-  - New support for the following types:
-    - gtk.Builder
-    - gtk.CheckButton
-    - gtk.Frame
-    - gtk.Range
-    - gtk.Scrollbar
-    - gtk.Separator
-    - gtk.SeparatorMenuItem
-    - gtk.ShadowType
-    - gtk.ToggleButton
-
-  - Add glib.GetUserSpecialDir
-
-  - Use C constants directly instead of using iota
-
-  - Fix several nil pointer dereferences
-
-  - General code cleanup
-
-Initial Release 0.0.1 (Tue Jul 16 2013)
-  - Initial release
+Changes for next Version 0.6.0
+ - Breaking changes in API
+ - General code cleanup 
+ - #685  Refactor Gtk callback setters and types enhancement missing binding
+ - #706 Refactor internal closure handling and several API changes breaking changes
+ - #746 Add build tag pango_1_42 for Pango
+ - #743 Solving #741- Add possibility to use GVariant in signal handler
+ - #740 Add binding for GtkRadioMenuItem
+ - #738 Adds binding for gtk_cell_layout_clear_attributes()
+ - #737 Adds bindings for gdk_pixbuf_new_from_resource() and gdk_pixbuf_new_from_resource_at_scale()
+ - #736 Add bindings/helper methods GdkRectangle GdkPoint
+ - #735 Add GtkMenuItem bindings
+ - #734 Add bindings GtkMenuShell
+ - #732 add as contributor
+ - #731 add bindings to GtkMenu
+ - #730 Solve GtkAccelKey issue with golang 1.16
+ - #728 It is not safe to reference memory returned in a signal callback.
+ - #687 Don't merge until publication of Golang v1.16: GtkAccelKey v1.16 issue fix next version
+ - #724 Implemented CellRenderer.SetAlignment
+ - #723 Added SetOrientation to gkt.SpinButton
+ - #720 Add Prgname getter and setter
+ - #716 Add (Get/Set) methods to GdkRGBA & GdkVisual & GdkDisplayManager bind…
+ - #715 Add some GtkRange bindings
+ - #712 glib.Take to return nil and gtk.marshal* to allow nil
