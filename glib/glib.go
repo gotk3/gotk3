@@ -223,18 +223,19 @@ func goMarshal(
 		}
 
 		// Parameters that are descendants of GObject come wrapped in another
-		// GObject.  For C applications, the default marshaller
+		// GObject. For C applications, the default marshaller
 		// (g_cclosure_marshal_VOID__VOID in gmarshal.c in the GTK glib library)
 		// 'peeks' into the enclosing object and passes the wrapped object to
 		// the handler. Use the *Object.goValue function to emulate that for Go
 		// signal handlers.
-		if obj, ok := val.(*Object); ok {
-			if innerVal, err := obj.goValue(); err == nil {
+		switch objVal := val.(type) {
+		case *Object:
+			if innerVal, err := objVal.goValue(); err == nil {
 				val = innerVal
 			}
 
 		case *Variant:
-			switch objVal.TypeString() {
+			switch ts := objVal.TypeString(); ts {
 			case "s":
 				val = objVal.GetString()
 			case "b":
@@ -256,8 +257,7 @@ func goMarshal(
 			case "t":
 				val = uint64(C.g_variant_get_uint64(objVal.native()))
 			default:
-				fmt.Fprintf(os.Stderr,
-					"warning: variant conversion not yet implemented for %s\n", objVal.TypeString())
+				fs.Panicf("variant conversion not yet implemented for type %s", ts)
 			}
 		}
 
