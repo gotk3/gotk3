@@ -4895,9 +4895,24 @@ func (v *FileChooser) SetPreviewWidget(widget IWidget) {
 	C.gtk_file_chooser_set_preview_widget(v.native(), widget.toWidget())
 }
 
+// GetPreviewWidget is a wrapper around gtk_file_chooser_get_preview_widget().
+func (v *FileChooser) GetPreviewWidget() (IWidget, error) {
+	c := C.gtk_file_chooser_get_preview_widget(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return castWidget(c)
+}
+
 // SetPreviewWidgetActive is a wrapper around gtk_file_chooser_set_preview_widget_active().
 func (v *FileChooser) SetPreviewWidgetActive(active bool) {
 	C.gtk_file_chooser_set_preview_widget_active(v.native(), gbool(active))
+}
+
+// GetPreviewWidgetActive is a wrapper around gtk_file_chooser_get_preview_widget_active().
+func (v *FileChooser) GetPreviewWidgetActive() bool {
+	c := C.gtk_file_chooser_get_preview_widget_active(v.native())
+	return gobool(c)
 }
 
 // GetPreviewFilename is a wrapper around gtk_file_chooser_get_preview_filename().
@@ -4958,6 +4973,20 @@ func (v *FileChooser) SetSelectMultiple(value bool) {
 func (v *FileChooser) GetSelectMultiple() bool {
 	c := C.gtk_file_chooser_get_select_multiple(v.native())
 	return gobool(c)
+}
+
+// SetExtraWidget is a wrapper around gtk_file_chooser_set_extra_widget().
+func (v *FileChooser) SetExtraWidget(widget IWidget) {
+	C.gtk_file_chooser_set_extra_widget(v.native(), widget.toWidget())
+}
+
+// GetExtraWidget is a wrapper around gtk_file_chooser_get_extra_widget().
+func (v *FileChooser) GetExtraWidget() (IWidget, error) {
+	c := C.gtk_file_chooser_get_extra_widget(v.native())
+	if c == nil {
+		return nil, nilPtrErr
+	}
+	return castWidget(c)
 }
 
 /*
