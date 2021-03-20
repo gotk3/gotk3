@@ -21,12 +21,46 @@ func (v *Popover) Popdown() {
  * GtkScrolledWindow
  */
 
-// TODO:
-// gtk_scrolled_window_get_max_content_width().
-// gtk_scrolled_window_set_max_content_width().
-// gtk_scrolled_window_get_max_content_height().
-// gtk_scrolled_window_set_max_content_height().
-// gtk_scrolled_window_get_propagate_natural_width().
-// gtk_scrolled_window_set_propagate_natural_width().
-// gtk_scrolled_window_get_propagate_natural_height().
-// gtk_scrolled_window_set_propagate_natural_height().
+// GetMaxContentWidth is a wrapper around gtk_scrolled_window_get_max_content_width().
+func (v *ScrolledWindow) GetMaxContentWidth() int {
+	c := C.gtk_scrolled_window_get_max_content_width(v.native())
+	return int(c)
+}
+
+// SetMaxContentWidth is a wrapper around gtk_scrolled_window_set_max_content_width().
+func (v *ScrolledWindow) SetMaxContentWidth(width int) {
+	C.gtk_scrolled_window_set_max_content_width(v.native(), C.gint(width))
+}
+
+// GetMaxContentHeight is a wrapper around gtk_scrolled_window_get_max_content_height().
+func (v *ScrolledWindow) GetMaxContentHeight() int {
+	c := C.gtk_scrolled_window_get_max_content_height(v.native())
+	return int(c)
+}
+
+// SetMaxContentHeight is a wrapper around gtk_scrolled_window_set_max_content_height().
+func (v *ScrolledWindow) SetMaxContentHeight(width int) {
+	C.gtk_scrolled_window_set_max_content_height(v.native(), C.gint(width))
+}
+
+// GetPropagateNaturalWidth is a wrapper around gtk_scrolled_window_get_propagate_natural_width().
+func (v *ScrolledWindow) GetPropagateNaturalWidth() bool {
+	c := C.gtk_scrolled_window_get_propagate_natural_width(v.native())
+	return gobool(c)
+}
+
+// SetPropagateNaturalWidth is a wrapper around gtk_scrolled_window_set_propagate_natural_width().
+func (v *ScrolledWindow) SetPropagateNaturalWidth(propagate bool) {
+	C.gtk_scrolled_window_set_propagate_natural_width(v.native(), gbool(propagate))
+}
+
+// GetPropagateNaturalHeight is a wrapper around gtk_scrolled_window_get_propagate_natural_height().
+func (v *ScrolledWindow) GetPropagateNaturalHeight() bool {
+	c := C.gtk_scrolled_window_get_propagate_natural_height(v.native())
+	return gobool(c)
+}
+
+// SetPropagateNaturalHeight is a wrapper around gtk_scrolled_window_set_propagate_natural_height().
+func (v *ScrolledWindow) SetPropagateNaturalHeight(propagate bool) {
+	C.gtk_scrolled_window_set_propagate_natural_height(v.native(), gbool(propagate))
+}
