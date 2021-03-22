@@ -552,6 +552,10 @@ func (v *ListBoxRow) GetHeader() (IWidget, error) {
 
 // SetHeader is a wrapper around gtk_list_box_row_set_header().
 func (v *ListBoxRow) SetHeader(header IWidget) {
+	if header == nil {
+		C.gtk_list_box_row_set_header(v.native(), nil)
+		return
+	}
 	C.gtk_list_box_row_set_header(v.native(), header.toWidget())
 }
 
