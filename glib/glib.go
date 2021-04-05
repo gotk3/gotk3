@@ -893,6 +893,11 @@ func (v *Value) unset() {
 	C.g_value_unset(v.native())
 }
 
+// Unset is wrapper for g_value_unset
+func (v *Value) Unset() {
+	v.unset()
+}
+
 // Type is a wrapper around the G_VALUE_HOLDS_GTYPE() macro and
 // the g_value_get_gtype() function.  GetType() returns TYPE_INVALID if v
 // does not hold a Type, or otherwise returns the Type of v.
