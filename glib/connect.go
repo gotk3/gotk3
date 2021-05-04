@@ -136,7 +136,6 @@ func ClosureNew(f interface{}) *C.GClosure {
 // internals.
 func ClosureNewFunc(funcStack closure.FuncStack) *C.GClosure {
 	gclosure := C._g_closure_new()
-	C._g_closure_add_finalize_notifier(gclosure)
 	closure.Assign(unsafe.Pointer(gclosure), funcStack)
 
 	return gclosure

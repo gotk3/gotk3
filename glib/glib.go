@@ -32,6 +32,7 @@ import (
 	"runtime"
 	"unsafe"
 
+	"github.com/gotk3/gotk3/internal/callback"
 	"github.com/gotk3/gotk3/internal/closure"
 )
 
@@ -313,6 +314,32 @@ const (
 
 type SourceHandle uint
 
+// sourceFunc is the callback for g_idle_add_full and g_timeout_add_full that
+// replaces the GClosure API.
+//
+//export sourceFunc
+func sourceFunc(data C.gpointer) C.gboolean {
+	v := callback.Get(uintptr(data))
+	fs := v.(closure.FuncStack)
+
+	rv := fs.Func.Call(nil)
+	if len(rv) == 1 && rv[0].Bool() {
+		return C.TRUE
+	}
+
+	return C.FALSE
+}
+
+//export removeSourceFunc
+func removeSourceFunc(data C.gpointer) {
+	callback.Delete(uintptr(data))
+}
+
+var (
+	_sourceFunc       = (*[0]byte)(C.sourceFunc)
+	_removeSourceFunc = (*[0]byte)(C.removeSourceFunc)
+)
+
 // IdleAdd adds an idle source to the default main event loop context with the
 // DefaultIdle priority. If f is not a function with no parameter, then IdleAdd
 // will panic.
@@ -320,19 +347,21 @@ type SourceHandle uint
 // After running once, the source func will be removed from the main event loop,
 // unless f returns a single bool true.
 func IdleAdd(f interface{}) SourceHandle {
-	return sourceAttach(
-		C.g_idle_source_new(),
-		f, PRIORITY_DEFAULT_IDLE, false,
-	)
+	return idleAdd(PRIORITY_DEFAULT, f)
 }
 
 // IdleAddPriority adds an idle source to the default main event loop context
 // with the given priority. Its behavior is the same as IdleAdd.
 func IdleAddPriority(priority Priority, f interface{}) SourceHandle {
-	return sourceAttach(
-		C.g_idle_source_new(),
-		f, priority, true,
-	)
+	return idleAdd(priority, f)
+}
+
+func idleAdd(priority Priority, f interface{}) SourceHandle {
+	fs := closure.NewIdleFuncStack(f, 2)
+	id := C.gpointer(callback.Assign(fs))
+	h := C.g_idle_add_full(C.gint(priority), _sourceFunc, id, _removeSourceFunc)
+
+	return SourceHandle(h)
 }
 
 // TimeoutAdd adds an timeout source to the default main event loop context.
@@ -342,63 +371,38 @@ func IdleAddPriority(priority Priority, f interface{}) SourceHandle {
 // After running once, the source func will be removed from the main event loop,
 // unless f returns a single bool true.
 func TimeoutAdd(milliseconds uint, f interface{}) SourceHandle {
-	return sourceAttach(
-		C.g_timeout_source_new(C.guint(milliseconds)),
-		f, PRIORITY_DEFAULT, false,
-	)
+	return timeoutAdd(milliseconds, false, PRIORITY_DEFAULT, f)
 }
 
 // TimeoutAddPriority is similar to TimeoutAdd with the given priority. Refer to
 // TimeoutAdd for more information.
 func TimeoutAddPriority(milliseconds uint, priority Priority, f interface{}) SourceHandle {
-	return sourceAttach(
-		C.g_timeout_source_new(C.guint(milliseconds)),
-		f, priority, true,
-	)
+	return timeoutAdd(milliseconds, false, priority, f)
 }
 
 // TimeoutSecondsAdd is similar to TimeoutAdd, except with seconds granularity.
 func TimeoutSecondsAdd(seconds uint, f interface{}) SourceHandle {
-	return sourceAttach(
-		C.g_timeout_source_new_seconds(C.guint(seconds)),
-		f, PRIORITY_DEFAULT, false,
-	)
+	return timeoutAdd(seconds, true, PRIORITY_DEFAULT, f)
 }
 
 // TimeoutSecondsAddPriority adds a timeout source with the given priority.
 // Refer to TimeoutSecondsAdd for more information.
 func TimeoutSecondsAddPriority(seconds uint, priority Priority, f interface{}) SourceHandle {
-	return sourceAttach(
-		C.g_timeout_source_new_seconds(C.guint(seconds)),
-		f, priority, true,
-	)
+	return timeoutAdd(seconds, true, priority, f)
 }
 
-// sourceAttach attaches a source to the default main loop context.
-func sourceAttach(src *C.struct__GSource, f interface{}, priority Priority, set bool) SourceHandle {
-	if src == nil {
-		panic("unexpected nil GSource")
+func timeoutAdd(time uint, sec bool, priority Priority, f interface{}) SourceHandle {
+	fs := closure.NewIdleFuncStack(f, 2)
+	id := C.gpointer(callback.Assign(fs))
+
+	var h C.guint
+	if sec {
+		h = C.g_timeout_add_seconds_full(C.gint(priority), C.guint(time), _sourceFunc, id, _removeSourceFunc)
+	} else {
+		h = C.g_timeout_add_full(C.gint(priority), C.guint(time), _sourceFunc, id, _removeSourceFunc)
 	}
 
-	fs := closure.NewFuncStack(f, 2)
-	// Ensure no parameters prematurely.
-	if fs.Func.Type().NumIn() > 0 {
-		fs.Panicf("timeout source should have no parameters")
-	}
-
-	if set {
-		C.g_source_set_priority(src, C.gint(priority))
-	}
-
-	// Create a new GClosure from f that invalidates itself when f returns
-	// false. The error is ignored here, as this will always be a function.
-	gclosure := ClosureNewFunc(fs)
-
-	// Set closure to run as a callback when the idle source runs.
-	C.g_source_set_closure(src, gclosure)
-
-	// Attach the idle source func to the default main event loop context.
-	return SourceHandle(C.g_source_attach(src, nil))
+	return SourceHandle(h)
 }
 
 // Destroy is a wrapper around g_source_destroy()
