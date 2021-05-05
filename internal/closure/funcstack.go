@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // FrameSize is the number of frames that FuncStack should trace back from.
@@ -40,6 +41,46 @@ func NewFuncStack(fn interface{}, frameSkip int) FuncStack {
 		Func:   rf,
 		Frames: frames,
 	}
+}
+
+var (
+	idleTypeCache    sync.Map
+	idleTypeSentinel = struct{}{}
+)
+
+// NewIdleFuncStack works akin to NewFuncStack, but it also validates the given
+// function type for the correct acceptable signatures for SourceFunc while also
+// caching the checks.
+func NewIdleFuncStack(fn interface{}, frameSkip int) FuncStack {
+	fs := NewFuncStack(fn, frameSkip+1)
+	funcType := fs.Func.Type()
+
+	// LoadOrStore will actually ensure that only 1 check is done at a time, but
+	// future checks on failed functions may trigger a late panic.
+	_, checked := idleTypeCache.LoadOrStore(funcType, idleTypeSentinel)
+	if checked {
+		return fs
+	}
+
+	// Ensure no parameters prematurely.
+	if funcType.NumIn() > 0 {
+		fs.Panicf("timeout source should have no parameters")
+	}
+
+	// Ensure proper return types.
+	switch out := funcType.NumOut(); out {
+	case 0:
+		break
+	case 1:
+		out0 := funcType.Out(0)
+		if out0.Kind() != reflect.Bool {
+			fs.Panicf("expected bool in return type, got %v", out0.Kind())
+		}
+	default:
+		fs.Panicf("unexpected return count (expecting 0 or 1): %d", out)
+	}
+
+	return fs
 }
 
 // IsValid returns true if the given FuncStack is not a zero-value i.e.  valid.
