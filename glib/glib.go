@@ -282,8 +282,6 @@ func goMarshal(
 		C.g_value_unset(retValue)
 		C.g_value_init(retValue, C.GType(t))
 		C.g_value_copy(g.native(), retValue)
-
-		*retValue = *g.native()
 	}
 }
 
