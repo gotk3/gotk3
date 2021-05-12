@@ -11778,6 +11778,7 @@ var WrapMap = map[string]WrapFn{
 	"GtkBin":                  wrapBin,
 	"GtkBox":                  wrapBox,
 	"GtkButton":               wrapButton,
+	"GtkButtonBox":            wrapButtonBox,
 	"GtkCalendar":             wrapCalendar,
 	"GtkCellLayout":           wrapCellLayout,
 	"GtkCellEditable":         wrapCellEditable,

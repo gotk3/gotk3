@@ -48,3 +48,18 @@ func (v *MainContext) FindSourceById(hdlSrc SourceHandle) *Source {
 	}
 	return (*Source)(c)
 }
+
+// Acquire is a wrapper around g_main_context_acquire().
+func (v *MainContext) Acquire() bool {
+	return gobool(C.g_main_context_acquire(v.native()))
+}
+
+// Release is a wrapper around g_main_context_release().
+func (v *MainContext) Release() {
+	C.g_main_context_release(v.native())
+}
+
+// IsOwner is a wrapper around g_main_context_is_owner().
+func (v *MainContext) IsOwner() bool {
+	return gobool(C.g_main_context_is_owner(v.native()))
+}
