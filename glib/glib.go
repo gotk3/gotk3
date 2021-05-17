@@ -345,7 +345,7 @@ var (
 // After running once, the source func will be removed from the main event loop,
 // unless f returns a single bool true.
 func IdleAdd(f interface{}) SourceHandle {
-	return idleAdd(PRIORITY_DEFAULT, f)
+	return idleAdd(PRIORITY_DEFAULT_IDLE, f)
 }
 
 // IdleAddPriority adds an idle source to the default main event loop context
