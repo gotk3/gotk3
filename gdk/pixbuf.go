@@ -171,7 +171,7 @@ func PixbufNewFromData(pixbufData []byte, cs Colorspace, hasAlpha bool, bitsPerS
 // PixbufNewFromDataOnly is a convenient alternative to PixbufNewFromData() and also a wrapper around gdk_pixbuf_new_from_data().
 func PixbufNewFromDataOnly(pixbufData []byte) (*Pixbuf, error) {
 	pixbufLoader, err := PixbufLoaderNew()
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 	return pixbufLoader.WriteAndReturnPixbuf(pixbufData)
