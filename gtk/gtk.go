@@ -11848,7 +11848,10 @@ var WrapMap = map[string]WrapFn{
 func castInternal(className string, obj *glib.Object) (interface{}, error) {
 	fn, ok := WrapMap[className]
 	if !ok {
-		return nil, errors.New("unrecognized class name '" + className + "'")
+		fn, ok = glib.WrapMap[className]
+		if !ok {
+			return nil, errors.New("unrecognized class name '" + className + "'")
+		}
 	}
 
 	// Check that the wrapper function is actually a function
