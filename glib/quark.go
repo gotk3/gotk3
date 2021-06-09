@@ -5,6 +5,7 @@ import (
 )
 
 // #include <glib.h>
+// #include <stdlib.h>
 import "C"
 
 // QuarkFromString is a wrapper around g_quark_from_string().
