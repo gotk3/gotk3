@@ -44,7 +44,10 @@ func PixbufGetFormats() []*PixbufFormat {
 
 	ret := make([]*PixbufFormat, 0, formats.Length())
 	formats.Foreach(func(item interface{}) {
-		ret = append(ret, &PixbufFormat{item.(*C.GdkPixbufFormat)})
+		ret = append(
+			ret,
+			&PixbufFormat{
+				(*C.GdkPixbufFormat)(item.(unsafe.Pointer))})
 	})
 
 	return ret

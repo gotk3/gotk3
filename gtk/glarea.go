@@ -112,7 +112,6 @@ func (v *GLArea) SetRequiredVersion(major, minor int) {
 }
 
 // TODO:
-// void gtk_gl_area_set_error (GtkGLArea *area, const GError *error);
 // gtk_gl_area_set_has_alpha().
 // gtk_gl_area_get_has_alpha().
 
@@ -171,7 +170,7 @@ func (v *GLArea) AttachBuffers() {
 	C.gtk_gl_area_attach_buffers(v.native())
 }
 
-// GError* gtk_gl_area_get_error (GtkGLArea *area);
+// GetError is a wrapper around gtk_gl_area_get_error().
 func (v *GLArea) GetError() error {
 	var err *C.GError = nil
 	err = C.gtk_gl_area_get_error(v.native())
@@ -180,4 +179,15 @@ func (v *GLArea) GetError() error {
 		return errors.New(goString(err.message))
 	}
 	return nil
+}
+
+// SetError is a wrapper around gtk_gl_area_set_error().
+func (v *GLArea) SetError(domain glib.Quark, code int, err error) {
+	cstr := (*C.gchar)(C.CString(err.Error()))
+	defer C.free(unsafe.Pointer(cstr))
+
+	gerr := C.g_error_new_literal(C.GQuark(domain), C.gint(code), cstr)
+	defer C.g_error_free(gerr)
+
+	C.gtk_gl_area_set_error(v.native(), gerr)
 }
