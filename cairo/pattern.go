@@ -12,6 +12,23 @@ import (
 
 //--------------------------------------------[ cairo_pattern_t  ==  Pattern ]--
 
+// Filter is a representation of Cairo's cairo_filter_t.
+type Filter int
+
+const (
+	FILTER_FAST     Filter = C.CAIRO_FILTER_FAST
+	FILTER_GOOD     Filter = C.CAIRO_FILTER_GOOD
+	FILTER_BEST     Filter = C.CAIRO_FILTER_BEST
+	FILTER_NEAREST  Filter = C.CAIRO_FILTER_NEAREST
+	FILTER_BILINEAR Filter = C.CAIRO_FILTER_BILINEAR
+	FILTER_GAUSSIAN Filter = C.CAIRO_FILTER_GAUSSIAN
+)
+
+func marshalFilter(p uintptr) (interface{}, error) {
+	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+	return Filter(c), nil
+}
+
 // Pattern is a representation of Cairo's cairo_pattern_t.
 type Pattern struct {
 	pattern *C.cairo_pattern_t
@@ -109,4 +126,14 @@ func (v *Pattern) AddColorStopRGBA(offset, red, green, blue, alpha float64) erro
 	C.cairo_pattern_add_color_stop_rgba(v.native(), C.double(offset),
 		C.double(red), C.double(green), C.double(blue), C.double(alpha))
 	return v.Status().ToError()
+}
+
+// PatternSetFilter is a wrapper around cairo_pattern_set_filter().
+func (v *Pattern) PatternSetFilter(filter Filter) {
+	C.cairo_pattern_set_filter(v.native(), C.cairo_filter_t(filter))
+}
+
+// PatternGetFilter is a wrapper around cairo_pattern_get_filter().
+func (v *Pattern) PatternGetFilter() Filter {
+	return Filter(C.cairo_pattern_get_filter(v.native()))
 }
