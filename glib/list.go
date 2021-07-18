@@ -5,6 +5,7 @@ package glib
 // #include "glib.go.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 )
 
@@ -19,6 +20,7 @@ type List struct {
 	// or Data() is called to wrap raw underlying
 	// value into appropriate type.
 	dataWrap func(unsafe.Pointer) interface{}
+	head     *List // keep the head alive, prevent GC
 }
 
 func WrapList(obj uintptr) *List {
@@ -29,7 +31,9 @@ func wrapList(obj *C.struct__GList) *List {
 	if obj == nil {
 		return nil
 	}
-	return &List{list: obj}
+	l := &List{list: obj}
+	l.head = l
+	return l
 }
 
 func (v *List) wrapNewHead(obj *C.struct__GList) *List {
@@ -39,7 +43,32 @@ func (v *List) wrapNewHead(obj *C.struct__GList) *List {
 	return &List{
 		list:     obj,
 		dataWrap: v.dataWrap,
+		head:     v,
 	}
+}
+
+// AttachFinalizer attaches a finalizer into the List to be freed when it is no
+// longer used by Go. New List heads created from this list will have the
+// finalizer attached as well. If the freeData callback is not nil, then the
+// data inside will be freed as well.
+//
+// It is the caller's responsibility to call this method on the head of the list
+// and not on any of the children heads. Doing so is undefined behavior and may
+// cause double frees.
+func (v *List) AttachFinalizer(freeData func(uintptr)) {
+	if v == nil {
+		return
+	}
+
+	runtime.SetFinalizer(v, func(v *List) {
+		if freeData != nil {
+			for list := v.list; list != nil; list = list.next {
+				freeData(uintptr(list.data))
+			}
+		}
+
+		C.g_list_free(v.list)
+	})
 }
 
 func (v *List) Native() uintptr {
