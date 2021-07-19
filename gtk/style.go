@@ -9,6 +9,7 @@ import "C"
 import (
 	"unsafe"
 
+	"github.com/gotk3/gotk3/cairo"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 )
@@ -22,6 +23,18 @@ const (
 	STYLE_PROVIDER_PRIORITY_APPLICATION                       = C.GTK_STYLE_PROVIDER_PRIORITY_APPLICATION
 	STYLE_PROVIDER_PRIORITY_USER                              = C.GTK_STYLE_PROVIDER_PRIORITY_USER
 )
+
+// RenderBackground is a wrapper around gtk_render_background().
+func RenderBackground(context *StyleContext, cr *cairo.Context, x, y, w, h float64) {
+	C.gtk_render_background(
+		context.native(),
+		(*C.cairo_t)(unsafe.Pointer(cr.Native())),
+		C.gdouble(x),
+		C.gdouble(y),
+		C.gdouble(w),
+		C.gdouble(h),
+	)
+}
 
 /*
  * GtkStyleContext
