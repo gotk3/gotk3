@@ -5,7 +5,11 @@
 package gtk
 
 // #include <gtk/gtk.h>
+// #include "gtk.go.h"
 import "C"
+import (
+	"unsafe"
+)
 
 // Popup is a wrapper around gtk_popover_popup().
 func (v *Popover) Popup() {
@@ -15,6 +19,66 @@ func (v *Popover) Popup() {
 // Popdown is a wrapper around gtk_popover_popdown().
 func (v *Popover) Popdown() {
 	C.gtk_popover_popdown(v.native())
+}
+
+/*
+ * GtkFileChooser
+ */
+
+// AddChoice is a wrapper around gtk_file_chooser_add_choice().
+func (v *FileChooser) AddChoice(id, label string, options, optionLabels []string) {
+	cId := C.CString(id)
+	defer C.free(unsafe.Pointer(cId))
+
+	cLabel := C.CString(label)
+	defer C.free(unsafe.Pointer(cLabel))
+
+	if options == nil || optionLabels == nil {
+		C.gtk_file_chooser_add_choice(v.native(), (*C.gchar)(cId), (*C.gchar)(cLabel), nil, nil)
+		return
+	}
+
+	cOptions := C.make_strings(C.int(len(options) + 1))
+	for i, option := range options {
+		cstr := C.CString(option)
+		defer C.free(unsafe.Pointer(cstr))
+		C.set_string(cOptions, C.int(i), (*C.gchar)(cstr))
+	}
+	C.set_string(cOptions, C.int(len(options)), nil)
+
+	cOptionLabels := C.make_strings(C.int(len(optionLabels) + 1))
+	for i, optionLabel := range optionLabels {
+		cstr := C.CString(optionLabel)
+		defer C.free(unsafe.Pointer(cstr))
+		C.set_string(cOptionLabels, C.int(i), (*C.gchar)(cstr))
+	}
+	C.set_string(cOptionLabels, C.int(len(optionLabels)), nil)
+
+	C.gtk_file_chooser_add_choice(v.native(), (*C.gchar)(cId), (*C.gchar)(cLabel), cOptions, cOptionLabels)
+}
+
+// RemoveChoice is a wrapper around gtk_file_chooser_remove_choice().
+func (v *FileChooser) RemoveChoice(id string) {
+	cId := C.CString(id)
+	defer C.free(unsafe.Pointer(cId))
+	C.gtk_file_chooser_remove_choice(v.native(), (*C.gchar)(cId))
+}
+
+// SetChoice is a wrapper around gtk_file_chooser_set_choice().
+func (v *FileChooser) SetChoice(id, option string) {
+	cId := C.CString(id)
+	defer C.free(unsafe.Pointer(cId))
+	cOption := C.CString(option)
+	defer C.free(unsafe.Pointer(cOption))
+	C.gtk_file_chooser_set_choice(v.native(), (*C.gchar)(cId), (*C.gchar)(cOption))
+}
+
+// GetChoice is a wrapper around gtk_file_chooser_get_choice().
+func (v *FileChooser) GetChoice(id string) string {
+	cId := C.CString(id)
+	defer C.free(unsafe.Pointer(cId))
+	c := C.gtk_file_chooser_get_choice(v.native(), (*C.gchar)(cId))
+	return C.GoString(c)
 }
 
 /*

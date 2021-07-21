@@ -916,3 +916,14 @@ func BuilderNewFromString(resource string) (*Builder, error) {
 // gtk_builder_lookup_callback_symbol
 // gtk_builder_set_application
 // gtk_builder_get_application
+
+/*
+ * GtkFileChooser
+ */
+
+// GetCurrentName is a wrapper around gtk_file_chooser_get_current_name().
+func (v *FileChooser) GetCurrentName() string {
+	c := C.gtk_file_chooser_get_current_name(v.native())
+	defer C.free(unsafe.Pointer(c))
+	return goString(c)
+}
