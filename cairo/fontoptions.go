@@ -165,20 +165,3 @@ func (o *FontOptions) SetHintMetrics(hintMetrics HintMetrics) {
 func (o *FontOptions) GetHintMetrics() HintMetrics {
 	return HintMetrics(C.cairo_font_options_get_hint_metrics(o.native))
 }
-
-// GetVariations is a wrapper around cairo_font_options_get_variations().
-func (o *FontOptions) GetVariations() string {
-	return C.GoString(C.cairo_font_options_get_variations(o.native))
-}
-
-// SetVariations is a wrapper around cairo_font_options_set_variations().
-func (o *FontOptions) SetVariations(variations string) {
-	var cvariations *C.char
-	if variations != "" {
-		cvariations = C.CString(variations)
-		// Cairo will call strdup on its own.
-		defer C.free(unsafe.Pointer(cvariations))
-	}
-
-	C.cairo_font_options_set_variations(o.native, cvariations)
-}
