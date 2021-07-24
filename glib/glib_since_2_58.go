@@ -4,12 +4,11 @@
 
 package glib
 
-// // #include <gio/gio.h>
-// // #include <glib.h>
-// // #include <glib-object.h>
-// // #include "glib.go.h"
-// // #include "glib_since_2_44.go.h"
-// import "C"
+// #include <gio/gio.h>
+// #include <glib.h>
+// #include <glib-object.h>
+// #include "glib.go.h"
+import "C"
 
 const (
 	FORMAT_SIZE_BITS FormatSizeFlags = C.G_FORMAT_SIZE_BITS
