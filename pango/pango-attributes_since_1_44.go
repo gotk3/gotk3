@@ -1,4 +1,4 @@
-// +build !pango_1_42
+// +build !pango_1_36,!pango_1_38,!pango_1_40,!pango_1_42
 
 package pango
 
