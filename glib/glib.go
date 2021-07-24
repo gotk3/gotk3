@@ -494,7 +494,6 @@ const (
 	FORMAT_SIZE_DEFAULT     FormatSizeFlags = C.G_FORMAT_SIZE_DEFAULT
 	FORMAT_SIZE_LONG_FORMAT FormatSizeFlags = C.G_FORMAT_SIZE_LONG_FORMAT
 	FORMAT_SIZE_IEC_UNITS   FormatSizeFlags = C.G_FORMAT_SIZE_IEC_UNITS
-	FORMAT_SIZE_BITS        FormatSizeFlags = C.G_FORMAT_SIZE_BITS
 )
 
 // FormatSizeFull is a wrapper around g_format_size_full().
