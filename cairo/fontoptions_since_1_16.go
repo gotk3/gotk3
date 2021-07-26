@@ -1,4 +1,4 @@
-// +build !cairo_1_10,!cairo_1_12,!cairo_1_14
+// +build !cairo_1_9,!cairo_1_10,!cairo_1_11,!cairo_1_12,!cairo_1_13,!cairo_1_14,!cairo_1_15
 
 package cairo
 
