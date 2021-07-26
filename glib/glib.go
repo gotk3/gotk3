@@ -587,7 +587,7 @@ func Take(ptr unsafe.Pointer) *Object {
 	}
 
 	obj.RefSink()
-	runtime.SetFinalizer(obj, (*Object).Unref)
+	runtime.SetFinalizer(obj, func(v *Object) { FinalizerStrategy(v.Unref) })
 	return obj
 }
 
@@ -602,7 +602,7 @@ func Take(ptr unsafe.Pointer) *Object {
 // mark as such.
 func AssumeOwnership(ptr unsafe.Pointer) *Object {
 	obj := newObject(ToGObject(ptr))
-	runtime.SetFinalizer(obj, (*Object).Unref)
+	runtime.SetFinalizer(obj, func(v *Object) { FinalizerStrategy(v.Unref) })
 	return obj
 }
 
@@ -857,13 +857,14 @@ func ValueAlloc() (*Value, error) {
 	//We need to double check before unsetting, to prevent:
 	//`g_value_unset: assertion 'G_IS_VALUE (value)' failed`
 	runtime.SetFinalizer(v, func(f *Value) {
+		FinalizerStrategy(func() {
+			if !f.IsValue() {
+				C.g_free(C.gpointer(f.native()))
+				return
+			}
 
-		if !f.IsValue() {
-			C.g_free(C.gpointer(f.native()))
-			return
-		}
-
-		f.unset()
+			f.unset()
+		})
 	})
 
 	return v, nil
@@ -881,7 +882,7 @@ func ValueInit(t Type) (*Value, error) {
 
 	v := &Value{c}
 
-	runtime.SetFinalizer(v, (*Value).unset)
+	runtime.SetFinalizer(v, func(vv *Value) { FinalizerStrategy(vv.unset) })
 	return v, nil
 }
 
