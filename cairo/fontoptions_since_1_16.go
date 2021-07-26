@@ -1,4 +1,4 @@
-// +build !cairo_1_10,!cairo_1_12,!cairo_1_13,!cairo_1_13,!cairo_1_14,!cairo_1_15
+// +build !cairo_1_10,!cairo_1_12,!cairo_1_13,!cairo_1_14,!cairo_1_15
 
 package cairo
 
@@ -24,5 +24,5 @@ func (o *FontOptions) SetVariations(variations string) {
 		defer C.free(unsafe.Pointer(cvariations))
 	}
 
-	C.cairo_font_options_set_variations(o.native, cvariations)
+	C.ds(o.native, cvariations)
 }
