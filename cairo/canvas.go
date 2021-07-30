@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"runtime"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
 )
 
 // Context is a representation of Cairo's cairo_t.
@@ -57,7 +59,7 @@ func (v *Context) Close() {
 func Create(target *Surface) *Context {
 	c := C.cairo_create(target.native())
 	ctx := wrapContext(c)
-	runtime.SetFinalizer(ctx, (*Context).destroy)
+	runtime.SetFinalizer(ctx, func(v *Context) { glib.FinalizerStrategy(v.destroy) })
 	return ctx
 }
 
@@ -95,7 +97,7 @@ func (v *Context) GetTarget() *Surface {
 	c := C.cairo_get_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 	return s
 }
 
@@ -122,7 +124,7 @@ func (v *Context) GetGroupTarget() *Surface {
 	c := C.cairo_get_group_target(v.native())
 	s := wrapSurface(c)
 	s.reference()
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 	return s
 }
 

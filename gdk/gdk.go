@@ -811,7 +811,7 @@ func (v *Display) GetEvent() (*Event, error) {
 
 	//The finalizer is not on the glib.Object but on the event.
 	e := &Event{c}
-	runtime.SetFinalizer(e, (*Event).free)
+	runtime.SetFinalizer(e, func(v *Event) { glib.FinalizerStrategy(v.free) })
 	return e, nil
 }
 
@@ -824,7 +824,7 @@ func (v *Display) PeekEvent() (*Event, error) {
 
 	//The finalizer is not on the glib.Object but on the event.
 	e := &Event{c}
-	runtime.SetFinalizer(e, (*Event).free)
+	runtime.SetFinalizer(e, func(v *Event) { glib.FinalizerStrategy(v.free) })
 	return e, nil
 }
 
@@ -1927,7 +1927,7 @@ func (c *RGBA) Copy() (*RGBA, error) {
 	}
 	obj := wrapRGBA(cRgba)
 
-	runtime.SetFinalizer(obj, (*RGBA).free)
+	runtime.SetFinalizer(obj, func(v *RGBA) { glib.FinalizerStrategy(v.free) })
 	return obj, nil
 }
 
@@ -2420,7 +2420,7 @@ func (v *Window) PixbufGetFromWindow(x, y, w, h int) (*Pixbuf, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 
@@ -2432,7 +2432,7 @@ func (v *Window) GetDevicePosition(d *Device) (*Window, int, int, ModifierType) 
 	underneathWindow := C.gdk_window_get_device_position(v.native(), d.native(), &x, &y, &mt)
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(underneathWindow))}
 	rw := &Window{obj}
-	runtime.SetFinalizer(rw, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(rw, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return rw, int(x), int(y), ModifierType(mt)
 }
 
@@ -2445,7 +2445,7 @@ func PixbufGetFromSurface(surface *cairo.Surface, src_x, src_y, width, height in
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 

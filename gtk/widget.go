@@ -914,7 +914,7 @@ func requisitionFromNative(requisitionNative *C.GtkRequisition) (*Requisition, e
 	if requisition == nil {
 		return nil, nilPtrErr
 	}
-	runtime.SetFinalizer(requisition, (*Requisition).free)
+	runtime.SetFinalizer(requisition, func(l *Requisition) { glib.FinalizerStrategy(l.free) })
 	return requisition, nil
 }
 

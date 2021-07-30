@@ -112,7 +112,7 @@ func newRegionFromNative(regionNative *C.cairo_region_t) (*Region, error) {
 	if e != nil {
 		return nil, e
 	}
-	runtime.SetFinalizer(ptr, (*Region).destroy)
+	runtime.SetFinalizer(ptr, func(v *Region) { glib.FinalizerStrategy(v.destroy) })
 	return ptr, nil
 }
 

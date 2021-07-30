@@ -39,7 +39,7 @@ func PixbufNewFromFileAtScale(filename string, width, height int, preserveAspect
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 
@@ -55,7 +55,7 @@ func (v *Pixbuf) RotateSimple(angle PixbufRotation) (*Pixbuf, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 
@@ -69,6 +69,6 @@ func (v *Pixbuf) Flip(horizontal bool) (*Pixbuf, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }

@@ -88,7 +88,7 @@ func takeVariant(p *C.GVariant) *Variant {
 		obj.Ref()
 	}
 
-	runtime.SetFinalizer(obj, (*Variant).Unref)
+	runtime.SetFinalizer(obj, func(v *Variant) { FinalizerStrategy(v.Unref) })
 	return obj
 }
 
@@ -234,7 +234,7 @@ func (v *Variant) GetVariant() *Variant {
 	// The returned value is returned with full ownership transfer,
 	// only Unref(), don't Ref().
 	obj := newVariant(c)
-	runtime.SetFinalizer(obj, (*Variant).Unref)
+	runtime.SetFinalizer(obj, func(v *Variant) { FinalizerStrategy(v.Unref) })
 	return obj
 }
 

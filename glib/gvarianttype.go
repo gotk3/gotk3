@@ -52,7 +52,7 @@ func takeVariantType(v *C.GVariantType) *VariantType {
 		return nil
 	}
 	obj := &VariantType{v}
-	runtime.SetFinalizer(obj, (*VariantType).Free)
+	runtime.SetFinalizer(obj, func(v *VariantType) { FinalizerStrategy(v.Free) })
 	return obj
 }
 

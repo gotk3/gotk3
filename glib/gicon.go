@@ -101,7 +101,7 @@ func IconNewForString(str string) (*Icon, error) {
 	obj := &Object{ToGObject(unsafe.Pointer(c))}
 	i := &Icon{obj}
 
-	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(i, func(_ interface{}) { FinalizerStrategy(obj.Unref) })
 	return i, nil
 }
 

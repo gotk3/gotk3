@@ -12,6 +12,7 @@ import (
 	"unsafe"
 
 	"github.com/gotk3/gotk3/cairo"
+	"github.com/gotk3/gotk3/glib"
 )
 
 // TODO:
@@ -44,7 +45,7 @@ func CairoSurfaceCreateFromPixbuf(pixbuf *Pixbuf, scale int, window *Window) (*c
 	}
 
 	surface := cairo.WrapSurface(uintptr(unsafe.Pointer(v)))
-	runtime.SetFinalizer(surface, (*cairo.Surface).Close)
+	runtime.SetFinalizer(surface, func(v *cairo.Surface) { glib.FinalizerStrategy(v.Close) })
 
 	return surface, nil
 }

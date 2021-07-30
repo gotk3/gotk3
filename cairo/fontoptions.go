@@ -87,7 +87,7 @@ func CreateFontOptions() *FontOptions {
 	native := C.cairo_font_options_create()
 
 	opts := &FontOptions{native}
-	runtime.SetFinalizer(opts, (*FontOptions).destroy)
+	runtime.SetFinalizer(opts, func(v *FontOptions) { glib.FinalizerStrategy(v.destroy) })
 
 	return opts
 }
@@ -101,7 +101,7 @@ func (o *FontOptions) Copy() *FontOptions {
 	native := C.cairo_font_options_copy(o.native)
 
 	opts := &FontOptions{native}
-	runtime.SetFinalizer(opts, (*FontOptions).destroy)
+	runtime.SetFinalizer(opts, func(v *FontOptions) { glib.FinalizerStrategy(v.destroy) })
 
 	return opts
 }
