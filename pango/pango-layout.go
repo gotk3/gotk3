@@ -312,7 +312,7 @@ func (v *Layout) GetTabs() (*TabArray, error) {
 		return nil, nilPtrErr
 	}
 	ta := wrapTabArray(c)
-	runtime.SetFinalizer(ta, (*TabArray).free)
+	runtime.SetFinalizer(ta, func(v *TabArray) { glib.FinalizerStrategy(v.free) })
 	return ta, nil
 }
 
@@ -359,7 +359,7 @@ func TabArrayNew(initialSize int, positionsInPixels bool) *TabArray {
 	c := C.pango_tab_array_new(C.gint(initialSize), gbool(positionsInPixels))
 
 	tabArray := new(TabArray)
-	runtime.SetFinalizer(tabArray, (*TabArray).free)
+	runtime.SetFinalizer(tabArray, func(v *TabArray) { glib.FinalizerStrategy(v.free) })
 	tabArray.pangoTabArray = (*C.PangoTabArray)(c)
 	return tabArray
 }
@@ -369,7 +369,7 @@ func TabArrayNew(initialSize int, positionsInPixels bool) *TabArray {
 // 	c := C.pango_tab_array_new_with_positions(C.gint(size), gbool(positionsInPixels), ...)
 
 // 	tabArray := new(TabArray)
-//	runtime.SetFinalizer(e, (*TabArray).free)
+//	runtime.SetFinalizer(e, func(v *TabArray) { glib.FinalizerStrategy(v.free) })
 // 	tabArray.pangoTabArray = (*C.PangoTabArray)(c)
 // 	return tabArray
 // }
@@ -381,7 +381,7 @@ func (v *TabArray) Copy() (*TabArray, error) {
 		return nil, nilPtrErr
 	}
 	ta := wrapTabArray(c)
-	runtime.SetFinalizer(ta, (*TabArray).free)
+	runtime.SetFinalizer(ta, func(v *TabArray) { glib.FinalizerStrategy(v.free) })
 	return ta, nil
 }
 

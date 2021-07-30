@@ -83,9 +83,7 @@ func (v *WindowGroup) ListWindows() *glib.List {
 	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapWindow(glib.Take(ptr))
 	})
-	runtime.SetFinalizer(glist, func(l *glib.List) {
-		l.Free()
-	})
+	runtime.SetFinalizer(glist, func(l *glib.List) { glib.FinalizerStrategy(l.Free) })
 	return glist
 }
 

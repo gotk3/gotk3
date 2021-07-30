@@ -28,6 +28,6 @@ func (v *Pixbuf) ApplyEmbeddedOrientation() (*Pixbuf, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }

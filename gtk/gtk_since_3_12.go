@@ -569,6 +569,6 @@ func TreePathNewFromIndicesv(indices []int) (*TreePath, error) {
 		return nil, nilPtrErr
 	}
 	t := &TreePath{c}
-	runtime.SetFinalizer(t, (*TreePath).free)
+	runtime.SetFinalizer(t, func(l *TreePath) { glib.FinalizerStrategy(l.free) })
 	return t, nil
 }

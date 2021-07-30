@@ -3189,7 +3189,7 @@ func (v *Clipboard) WaitForContents(target gdk.Atom) (*SelectionData, error) {
 		return nil, nilPtrErr
 	}
 	p := &SelectionData{c}
-	runtime.SetFinalizer(p, (*SelectionData).free)
+	runtime.SetFinalizer(p, func(l *SelectionData) { glib.FinalizerStrategy(l.free) })
 	return p, nil
 }
 
@@ -4189,7 +4189,7 @@ func (v *Entry) GetIconGIcon(iconPos EntryIconPosition) (*glib.Icon, error) {
 	}
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	i := &glib.Icon{obj}
-	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(i, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return i, nil
 }
 
@@ -5835,7 +5835,7 @@ func (v *Image) GetGIcon() (*glib.Icon, IconSize, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(gicon))}
 	i := &glib.Icon{obj}
 
-	runtime.SetFinalizer(i, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(i, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return i, IconSize(*size), nil
 }
 
@@ -8612,7 +8612,7 @@ func (v *SelectionData) GetPixbuf() *gdk.Pixbuf {
 
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &gdk.Pixbuf{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 
 	return p
 }
@@ -9244,7 +9244,7 @@ func TargetEntryNew(target string, flags TargetFlags, info uint) (*TargetEntry, 
 	}
 	t := (*TargetEntry)(unsafe.Pointer(c))
 	// causes setFinilizer error
-	//	runtime.SetFinalizer(t, (*TargetEntry).free)
+	//  runtime.SetFinalizer(t, func(v *TargetEntry) { glib.FinalizerStrategy(v.free) })
 	return t, nil
 }
 
@@ -10522,7 +10522,7 @@ func (v *TreeIter) Copy() (*TreeIter, error) {
 		return nil, nilPtrErr
 	}
 	t := &TreeIter{*c}
-	runtime.SetFinalizer(t, (*TreeIter).free)
+	runtime.SetFinalizer(t, func(v *TreeIter) { glib.FinalizerStrategy(v.free) })
 	return t, nil
 }
 
@@ -10642,7 +10642,7 @@ func (v *TreeModel) GetPath(iter *TreeIter) (*TreePath, error) {
 		return nil, nilPtrErr
 	}
 	p := &TreePath{c}
-	runtime.SetFinalizer(p, (*TreePath).free)
+	runtime.SetFinalizer(p, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return p, nil
 }
 
@@ -10795,7 +10795,7 @@ func (v *TreeModelFilter) ConvertChildPathToPath(childPath *TreePath) *TreePath 
 		return nil
 	}
 	p := &TreePath{path}
-	runtime.SetFinalizer(p, (*TreePath).free)
+	runtime.SetFinalizer(p, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return p
 }
 
@@ -10822,7 +10822,7 @@ func (v *TreeModelFilter) ConvertPathToChildPath(filterPath *TreePath) *TreePath
 		return nil
 	}
 	p := &TreePath{path}
-	runtime.SetFinalizer(p, (*TreePath).free)
+	runtime.SetFinalizer(p, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return p
 }
 
@@ -10919,7 +10919,7 @@ func TreePathNewFromString(path string) (*TreePath, error) {
 		return nil, nilPtrErr
 	}
 	t := &TreePath{c}
-	runtime.SetFinalizer(t, (*TreePath).free)
+	runtime.SetFinalizer(t, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return t, nil
 }
 
@@ -10945,7 +10945,7 @@ func TreePathNewFirst() (*TreePath, error) {
 		return nil, nilPtrErr
 	}
 	t := &TreePath{c}
-	runtime.SetFinalizer(t, (*TreePath).free)
+	runtime.SetFinalizer(t, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return t, nil
 }
 
@@ -10971,7 +10971,7 @@ func (v *TreePath) Copy() (*TreePath, error) {
 		return nil, nilPtrErr
 	}
 	t := &TreePath{c}
-	runtime.SetFinalizer(t, (*TreePath).free)
+	runtime.SetFinalizer(t, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return t, nil
 }
 
@@ -11057,9 +11057,11 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 		return &TreePath{(*C.GtkTreePath)(ptr)}
 	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		glist.FreeFull(func(item interface{}) {
-			path := item.(*TreePath)
-			C.gtk_tree_path_free(path.GtkTreePath)
+		glib.FinalizerStrategy(func() {
+			glist.FreeFull(func(item interface{}) {
+				path := item.(*TreePath)
+				C.gtk_tree_path_free(path.GtkTreePath)
+			})
 		})
 	})
 
@@ -11169,7 +11171,7 @@ func TreeRowReferenceNew(model *TreeModel, path *TreePath) (*TreeRowReference, e
 		return nil, nilPtrErr
 	}
 	r := &TreeRowReference{c}
-	runtime.SetFinalizer(r, (*TreeRowReference).free)
+	runtime.SetFinalizer(r, func(v *TreeRowReference) { glib.FinalizerStrategy(v.free) })
 	return r, nil
 }
 
@@ -11180,7 +11182,7 @@ func (v *TreeRowReference) GetPath() *TreePath {
 		return nil
 	}
 	t := &TreePath{c}
-	runtime.SetFinalizer(t, (*TreePath).free)
+	runtime.SetFinalizer(t, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return t
 }
 
@@ -11360,7 +11362,7 @@ func (v *TreeModelSort) ConvertChildPathToPath(childPath *TreePath) *TreePath {
 		return nil
 	}
 	p := &TreePath{path}
-	runtime.SetFinalizer(p, (*TreePath).free)
+	runtime.SetFinalizer(p, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return p
 }
 
@@ -11379,7 +11381,7 @@ func (v *TreeModelSort) ConvertPathToChildPath(sortPath *TreePath) *TreePath {
 		return nil
 	}
 	p := &TreePath{path}
-	runtime.SetFinalizer(p, (*TreePath).free)
+	runtime.SetFinalizer(p, func(v *TreePath) { glib.FinalizerStrategy(v.free) })
 	return p
 }
 

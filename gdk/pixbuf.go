@@ -113,7 +113,7 @@ func PixbufNew(colorspace Colorspace, hasAlpha bool, bitsPerSample, width, heigh
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 
@@ -134,7 +134,7 @@ func PixbufNewFromFile(filename string) (*Pixbuf, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 
@@ -163,7 +163,7 @@ func PixbufNewFromData(pixbufData []byte, cs Colorspace, hasAlpha bool, bitsPerS
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 
 	return p, nil
 }
@@ -235,7 +235,7 @@ func PixbufCopy(v *Pixbuf) (*Pixbuf, error) {
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 
@@ -279,7 +279,7 @@ func (v *Pixbuf) GetPixels() (channels []byte) {
 	// To make sure the slice doesn't outlive the Pixbuf, add a reference
 	v.Ref()
 	runtime.SetFinalizer(&channels, func(_ *[]byte) {
-		v.Unref()
+		glib.FinalizerStrategy(v.Unref)
 	})
 	return
 }
@@ -327,7 +327,7 @@ func (v *Pixbuf) ScaleSimple(destWidth, destHeight int, interpType InterpType) (
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
 	//obj.Ref()
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 
@@ -388,7 +388,7 @@ func (v *Pixbuf) AddAlpha(substituteColor bool, r, g, b uint8) *Pixbuf {
 
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &Pixbuf{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 
 	return p
 }
@@ -494,7 +494,7 @@ func (v *PixbufAnimation) GetStaticImage() *Pixbuf {
 	// Add a reference so the pixbuf doesn't outlive the parent pixbuf
 	// animation.
 	v.Ref()
-	runtime.SetFinalizer(p, func(*Pixbuf) { v.Unref() })
+	runtime.SetFinalizer(p, func(*Pixbuf) { glib.FinalizerStrategy(v.Unref) })
 
 	return p
 }
@@ -519,7 +519,7 @@ func PixbufAnimationNewFromFile(filename string) (*PixbufAnimation, error) {
 
 	obj := &glib.Object{glib.ToGObject(unsafe.Pointer(c))}
 	p := &PixbufAnimation{obj}
-	runtime.SetFinalizer(p, func(_ interface{}) { obj.Unref() })
+	runtime.SetFinalizer(p, func(_ interface{}) { glib.FinalizerStrategy(obj.Unref) })
 	return p, nil
 }
 

@@ -165,8 +165,6 @@ func (v *Application) GetWindows() *glib.List {
 	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return wrapWindow(glib.Take(ptr))
 	})
-	runtime.SetFinalizer(glist, func(l *glib.List) {
-		l.Free()
-	})
+	runtime.SetFinalizer(glist, func(v *glib.List) { glib.FinalizerStrategy(v.Free) })
 	return glist
 }

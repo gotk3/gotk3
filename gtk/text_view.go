@@ -246,7 +246,7 @@ func (v *TextView) GetTabs() (*pango.TabArray, error) {
 		return nil, nilPtrErr
 	}
 	ta := pango.WrapTabArray(uintptr(unsafe.Pointer(c)))
-	runtime.SetFinalizer(ta, (*pango.TabArray).Free)
+	runtime.SetFinalizer(ta, func(v *pango.TabArray) { glib.FinalizerStrategy(v.Free) })
 	return ta, nil
 }
 

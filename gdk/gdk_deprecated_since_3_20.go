@@ -48,7 +48,7 @@ func (v *DeviceManager) ListDevices(tp DeviceType) *glib.List {
 		return &Device{&glib.Object{glib.ToGObject(ptr)}}
 	})
 	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		glist.Free()
+		glib.FinalizerStrategy(glist.Free)
 	})
 	return glist
 }

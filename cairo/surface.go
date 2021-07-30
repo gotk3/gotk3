@@ -9,6 +9,8 @@ import "C"
 import (
 	"runtime"
 	"unsafe"
+
+	"github.com/gotk3/gotk3/glib"
 )
 
 /*
@@ -47,7 +49,7 @@ func CreateImageSurfaceForData(data []byte, format Format, width, height, stride
 
 	s := wrapSurface(surfaceNative)
 
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 
 	return s, nil
 }
@@ -57,7 +59,7 @@ func CreateImageSurface(format Format, width, height int) *Surface {
 	c := C.cairo_image_surface_create(C.cairo_format_t(format),
 		C.int(width), C.int(height))
 	s := wrapSurface(c)
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 	return s
 }
 
@@ -75,7 +77,7 @@ func CreatePDFSurface(fileName string, width float64, height float64) (*Surface,
 
 	s := wrapSurface(surfaceNative)
 
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 
 	return s, nil
 }
@@ -114,7 +116,7 @@ func NewSurface(s uintptr, needsRef bool) *Surface {
 	if needsRef {
 		surface.reference()
 	}
-	runtime.SetFinalizer(surface, (*Surface).destroy)
+	runtime.SetFinalizer(surface, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 	return surface
 }
 
@@ -133,7 +135,7 @@ func (v *Surface) CreateSimilar(content Content, width, height int) *Surface {
 	c := C.cairo_surface_create_similar(v.native(),
 		C.cairo_content_t(content), C.int(width), C.int(height))
 	s := wrapSurface(c)
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 	return s
 }
 
@@ -144,7 +146,7 @@ func (v *Surface) CreateForRectangle(x, y, width, height float64) *Surface {
 	c := C.cairo_surface_create_for_rectangle(v.native(), C.double(x),
 		C.double(y), C.double(width), C.double(height))
 	s := wrapSurface(c)
-	runtime.SetFinalizer(s, (*Surface).destroy)
+	runtime.SetFinalizer(s, func(v *Surface) { glib.FinalizerStrategy(v.destroy) })
 	return s
 }
 
