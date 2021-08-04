@@ -188,11 +188,7 @@ func (v *Layout) SetAttributes(attrs *AttrList) {
 // GetAttributes is a wrapper around pango_layout_get_attributes().
 func (v *Layout) GetAttributes() *AttrList {
 	c := C.pango_layout_get_attributes(v.native())
-
-	attrList := new(AttrList)
-	attrList.pangoAttrList = (*C.PangoAttrList)(c)
-
-	return attrList
+	return wrapAttrList(c)
 }
 
 // SetText is a wrapper around pango_layout_set_text().

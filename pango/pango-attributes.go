@@ -153,9 +153,8 @@ func (v *AttrList) GetAttributes() (*glib.SList, error) {
 
 // AttrListNew is a wrapper around "pango_attr_list_new".
 func AttrListNew() *AttrList {
-	attrList := new(AttrList)
-	attrList.internal = C.pango_attr_list_new()
-	return attrList
+	c := C.pango_attr_list_new()
+	return wrapAttrList(c)
 }
 
 // AttrType is a representation of Pango's PangoAttrType.
