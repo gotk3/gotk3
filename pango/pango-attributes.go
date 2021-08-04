@@ -106,6 +106,14 @@ func (v *AttrList) native() *C.PangoAttrList {
 	return C.toPangoAttrList(unsafe.Pointer(v.internal))
 }
 
+func wrapAttrList(c *C.PangoAttrList) *AttrList {
+	if c == nil {
+		return nil
+	}
+
+	return &AttrList{c}
+}
+
 // WrapAttrList wraps a unsafe.Pointer as a AttrList.
 // This function is exported for visibility in other gotk3 packages and
 // is not meant to be used by applications.
