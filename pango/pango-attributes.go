@@ -111,6 +111,26 @@ func (v *AttrList) Insert(attribute *Attribute) {
 	C.pango_attr_list_insert(v.internal, attribute.native())
 }
 
+// GetAttributes is a wrapper around "pango_attr_list_get_attributes".
+func (v *AttrList) GetAttributes() (*glib.SList, error) {
+	orig := C.pango_attr_list_get_iterator(v.internal)
+	iter := C.pango_attr_iterator_copy(orig)
+
+	gslist := (*C.struct__GSList)(C.pango_attr_iterator_get_attrs(iter))
+	list := glib.WrapSList(uintptr(unsafe.Pointer(gslist)))
+	if list == nil {
+		return nil, nilPtrErr
+	}
+
+	defer list.Free()
+
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return &Attribute{(*C.PangoAttribute)(ptr)}
+	})
+
+	return list, nil
+}
+
 // AttrListNew is a wrapper around "pango_attr_list_new".
 func AttrListNew() *AttrList {
 	attrList := new(AttrList)
