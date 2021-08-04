@@ -94,7 +94,7 @@ func (v *Color) ToString() string {
 
 // AttrList is a representation of PangoAttrList.
 type AttrList struct {
-	pangoAttrList *C.PangoAttrList
+	internal *C.PangoAttrList
 }
 
 // Native returns a pointer to the underlying PangoLayout.
@@ -103,19 +103,18 @@ func (v *AttrList) Native() uintptr {
 }
 
 func (v *AttrList) native() *C.PangoAttrList {
-	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
+	return (*C.PangoAttrList)(unsafe.Pointer(v.internal))
 }
 
 // Insert is a wrapper around "pango_attr_list_insert".
 func (v *AttrList) Insert(attribute *Attribute) {
-	C.pango_attr_list_insert(v.pangoAttrList, attribute.native())
+	C.pango_attr_list_insert(v.internal, attribute.native())
 }
 
 // AttrListNew is a wrapper around "pango_attr_list_new".
 func AttrListNew() *AttrList {
-	c := C.pango_attr_list_new()
 	attrList := new(AttrList)
-	attrList.pangoAttrList = c
+	attrList.internal = C.pango_attr_list_new()
 	return attrList
 }
 
