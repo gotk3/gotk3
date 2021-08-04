@@ -21,3 +21,5 @@
 #include <string.h>
 
 static PangoColor *toPangoColor(void *p) { return ((PangoColor *)(p)); }
+
+static PangoAttrList * toPangoAttrList(void *p) { return *((PangoAttrList *)(p)); }

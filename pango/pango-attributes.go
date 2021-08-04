@@ -103,7 +103,7 @@ func (v *AttrList) Native() uintptr {
 }
 
 func (v *AttrList) native() *C.PangoAttrList {
-	return (*C.PangoAttrList)(unsafe.Pointer(v.internal))
+	return C.toPangoAttrList(unsafe.Pointer(v.internal))
 }
 
 // Insert is a wrapper around "pango_attr_list_insert".
