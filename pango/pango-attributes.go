@@ -196,7 +196,7 @@ const (
 
 // Attribute is a representation of Pango's PangoAttribute.
 type Attribute struct {
-	pangoAttribute *C.PangoAttribute
+	internal *C.PangoAttribute
 }
 
 // Native returns a pointer to the underlying PangoColor.
@@ -205,27 +205,27 @@ func (v *Attribute) Native() uintptr {
 }
 
 func (v *Attribute) native() *C.PangoAttribute {
-	return (*C.PangoAttribute)(unsafe.Pointer(v.pangoAttribute))
+	return (*C.PangoAttribute)(unsafe.Pointer(v.internal))
 }
 
 // GetStartIndex returns the index of the start of the attribute application in the text.
 func (v *Attribute) GetStartIndex() uint {
-	return uint(v.pangoAttribute.start_index)
+	return uint(v.internal.start_index)
 }
 
 // SetStartIndex sets the index of the start of the attribute application in the text.
 func (v *Attribute) SetStartIndex(setting uint) {
-	v.pangoAttribute.start_index = C.guint(setting)
+	v.internal.start_index = C.guint(setting)
 }
 
 // GetEndIndex returns the index of the end of the attribute application in the text.
 func (v *Attribute) GetEndIndex() uint {
-	return uint(v.pangoAttribute.end_index)
+	return uint(v.internal.end_index)
 }
 
 // SetEndIndex the index of the end of the attribute application in the text.
 func (v *Attribute) SetEndIndex(setting uint) {
-	v.pangoAttribute.end_index = C.guint(setting)
+	v.internal.end_index = C.guint(setting)
 }
 
 /*
