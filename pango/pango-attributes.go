@@ -106,6 +106,18 @@ func (v *AttrList) native() *C.PangoAttrList {
 	return C.toPangoAttrList(unsafe.Pointer(v.internal))
 }
 
+// WrapAttrList wraps a unsafe.Pointer as a AttrList.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
+func WrapAttrList(ptr unsafe.Pointer) *AttrList {
+	internal := C.toPangoAttrList(ptr)
+	if internal == nil {
+		return nil
+	}
+
+	return &AttrList{internal}
+}
+
 // Insert is a wrapper around "pango_attr_list_insert".
 func (v *AttrList) Insert(attribute *Attribute) {
 	C.pango_attr_list_insert(v.internal, attribute.native())
