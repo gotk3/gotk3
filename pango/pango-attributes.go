@@ -52,30 +52,31 @@ func (v *Color) native() *C.PangoColor {
 	return (*C.PangoColor)(unsafe.Pointer(v.pangoColor))
 }
 
+// Set sets the new values for the red, green, and blue color properties.
 func (v *Color) Set(red, green, blue uint16) {
 	v.native().red = C.guint16(red)
 	v.native().green = C.guint16(green)
 	v.native().blue = C.guint16(blue)
 }
 
+// Get returns the red, green, and blue color values.
 func (v *Color) Get() (red, green, blue uint16) {
 	return uint16(v.native().red), uint16(v.native().green), uint16(v.native().blue)
 }
 
-//PangoColor *pango_color_copy     (const PangoColor *src);
+// Copy is a wrapper around "pango_color_copy".
 func (v *Color) Copy(c *Color) *Color {
 	w := new(Color)
 	w.pangoColor = C.pango_color_copy(v.native())
 	return w
 }
 
-//void        pango_color_free     (PangoColor       *color);
+// Free is a wrapper around "pango_color_free".
 func (v *Color) Free() {
 	C.pango_color_free(v.native())
 }
 
-//gboolean    pango_color_parse    (PangoColor       *color,
-//			  const char       *spec);
+// Parse is a wrapper around "pango_color_parse".
 func (v *Color) Parse(spec string) bool {
 	cstr := C.CString(spec)
 	defer C.free(unsafe.Pointer(cstr))
@@ -83,7 +84,7 @@ func (v *Color) Parse(spec string) bool {
 	return gobool(c)
 }
 
-//gchar      *pango_color_to_string(const PangoColor *color);
+// ToString is a wrapper around "pango_color_to_string".
 func (v *Color) ToString() string {
 	c := C.pango_color_to_string(v.native())
 	return C.GoString((*C.char)(c))
@@ -105,10 +106,12 @@ func (v *AttrList) native() *C.PangoAttrList {
 	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
 }
 
+// Insert is a wrapper around "pango_attr_list_insert".
 func (v *AttrList) Insert(attribute *Attribute) {
 	C.pango_attr_list_insert(v.pangoAttrList, attribute.native())
 }
 
+// AttrListNew is a wrapper around "pango_attr_list_new".
 func AttrListNew() *AttrList {
 	c := C.pango_attr_list_new()
 	attrList := new(AttrList)
