@@ -86,7 +86,7 @@ func (v *Label) GetAttributes() (*pango.AttrList, error) {
 		return nil, nilPtrErr
 	}
 
-	return pango.WrapAttrList(ptr), nil
+	return pango.WrapAttrList(unsafe.Pointer(ptr)), nil
 }
 
 // SetMarkup is a wrapper around gtk_label_set_markup().
