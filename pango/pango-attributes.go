@@ -52,30 +52,31 @@ func (v *Color) native() *C.PangoColor {
 	return (*C.PangoColor)(unsafe.Pointer(v.pangoColor))
 }
 
+// Set sets the new values for the red, green, and blue color properties.
 func (v *Color) Set(red, green, blue uint16) {
 	v.native().red = C.guint16(red)
 	v.native().green = C.guint16(green)
 	v.native().blue = C.guint16(blue)
 }
 
+// Get returns the red, green, and blue color values.
 func (v *Color) Get() (red, green, blue uint16) {
 	return uint16(v.native().red), uint16(v.native().green), uint16(v.native().blue)
 }
 
-//PangoColor *pango_color_copy     (const PangoColor *src);
+// Copy is a wrapper around "pango_color_copy".
 func (v *Color) Copy(c *Color) *Color {
 	w := new(Color)
 	w.pangoColor = C.pango_color_copy(v.native())
 	return w
 }
 
-//void        pango_color_free     (PangoColor       *color);
+// Free is a wrapper around "pango_color_free".
 func (v *Color) Free() {
 	C.pango_color_free(v.native())
 }
 
-//gboolean    pango_color_parse    (PangoColor       *color,
-//			  const char       *spec);
+// Parse is a wrapper around "pango_color_parse".
 func (v *Color) Parse(spec string) bool {
 	cstr := C.CString(spec)
 	defer C.free(unsafe.Pointer(cstr))
@@ -83,7 +84,7 @@ func (v *Color) Parse(spec string) bool {
 	return gobool(c)
 }
 
-//gchar      *pango_color_to_string(const PangoColor *color);
+// ToString is a wrapper around "pango_color_to_string".
 func (v *Color) ToString() string {
 	c := C.pango_color_to_string(v.native())
 	return C.GoString((*C.char)(c))
@@ -93,7 +94,7 @@ func (v *Color) ToString() string {
 
 // AttrList is a representation of PangoAttrList.
 type AttrList struct {
-	pangoAttrList *C.PangoAttrList
+	internal *C.PangoAttrList
 }
 
 // Native returns a pointer to the underlying PangoLayout.
@@ -102,18 +103,58 @@ func (v *AttrList) Native() uintptr {
 }
 
 func (v *AttrList) native() *C.PangoAttrList {
-	return (*C.PangoAttrList)(unsafe.Pointer(v.pangoAttrList))
+	return C.toPangoAttrList(unsafe.Pointer(v.internal))
 }
 
+func wrapAttrList(c *C.PangoAttrList) *AttrList {
+	if c == nil {
+		return nil
+	}
+
+	return &AttrList{c}
+}
+
+// WrapAttrList wraps a unsafe.Pointer as a AttrList.
+// This function is exported for visibility in other gotk3 packages and
+// is not meant to be used by applications.
+func WrapAttrList(ptr unsafe.Pointer) *AttrList {
+	internal := C.toPangoAttrList(ptr)
+	if internal == nil {
+		return nil
+	}
+
+	return &AttrList{internal}
+}
+
+// Insert is a wrapper around "pango_attr_list_insert".
 func (v *AttrList) Insert(attribute *Attribute) {
-	C.pango_attr_list_insert(v.pangoAttrList, attribute.native())
+	C.pango_attr_list_insert(v.internal, attribute.native())
 }
 
+// GetAttributes is a wrapper around "pango_attr_list_get_attributes".
+func (v *AttrList) GetAttributes() (*glib.SList, error) {
+	orig := C.pango_attr_list_get_iterator(v.internal)
+	iter := C.pango_attr_iterator_copy(orig)
+
+	gslist := (*C.struct__GSList)(C.pango_attr_iterator_get_attrs(iter))
+	list := glib.WrapSList(uintptr(unsafe.Pointer(gslist)))
+	if list == nil {
+		return nil, nilPtrErr
+	}
+
+	defer list.Free()
+
+	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return &Attribute{(*C.PangoAttribute)(ptr)}
+	})
+
+	return list, nil
+}
+
+// AttrListNew is a wrapper around "pango_attr_list_new".
 func AttrListNew() *AttrList {
 	c := C.pango_attr_list_new()
-	attrList := new(AttrList)
-	attrList.pangoAttrList = c
-	return attrList
+	return wrapAttrList(c)
 }
 
 // AttrType is a representation of Pango's PangoAttrType.
@@ -174,8 +215,7 @@ const (
 
 // Attribute is a representation of Pango's PangoAttribute.
 type Attribute struct {
-	pangoAttribute *C.PangoAttribute
-	//start_index, end_index uint
+	internal *C.PangoAttribute
 }
 
 // Native returns a pointer to the underlying PangoColor.
@@ -184,7 +224,27 @@ func (v *Attribute) Native() uintptr {
 }
 
 func (v *Attribute) native() *C.PangoAttribute {
-	return (*C.PangoAttribute)(unsafe.Pointer(v.pangoAttribute))
+	return (*C.PangoAttribute)(unsafe.Pointer(v.internal))
+}
+
+// GetStartIndex returns the index of the start of the attribute application in the text.
+func (v *Attribute) GetStartIndex() uint {
+	return uint(v.internal.start_index)
+}
+
+// SetStartIndex sets the index of the start of the attribute application in the text.
+func (v *Attribute) SetStartIndex(setting uint) {
+	v.internal.start_index = C.guint(setting)
+}
+
+// GetEndIndex returns the index of the end of the attribute application in the text.
+func (v *Attribute) GetEndIndex() uint {
+	return uint(v.internal.end_index)
+}
+
+// SetEndIndex the index of the end of the attribute application in the text.
+func (v *Attribute) SetEndIndex(setting uint) {
+	v.internal.end_index = C.guint(setting)
 }
 
 /*

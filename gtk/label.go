@@ -73,9 +73,20 @@ func (v *Label) SetText(str string) {
 
 // TODO:
 // gtk_label_set_text_with_mnemonic().
-// gtk_label_get_attributes().
+
+// SetAttributes is a wrapper around "gtk_label_set_attributes".
 func (v *Label) SetAttributes(attributes *pango.AttrList) {
 	C.gtk_label_set_attributes(v.native(), (*C.PangoAttrList)(unsafe.Pointer(attributes.Native())))
+}
+
+// GetAttributes is a wrapper around "gtk_label_get_attributes".
+func (v *Label) GetAttributes() (*pango.AttrList, error) {
+	ptr := C.gtk_label_get_attributes(v.native())
+	if ptr == nil {
+		return nil, nilPtrErr
+	}
+
+	return pango.WrapAttrList(unsafe.Pointer(ptr)), nil
 }
 
 // SetMarkup is a wrapper around gtk_label_set_markup().
