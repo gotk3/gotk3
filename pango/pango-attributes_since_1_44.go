@@ -13,6 +13,6 @@ var (
 func AttrInsertHyphensNew(insertHyphens bool) *Attribute {
 	c := C.pango_attr_insert_hyphens_new(gbool(insertHyphens))
 	attr := new(Attribute)
-	attr.pangoAttribute = c
+	attr.internal = c
 	return attr
 }
