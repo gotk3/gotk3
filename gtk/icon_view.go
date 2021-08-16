@@ -330,10 +330,10 @@ func (v *IconView) GetSelectedItems() *glib.List {
 	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return &TreePath{(*C.GtkTreePath)(ptr)}
 	})
-	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		glib.FinalizerStrategy(func() {
-			glist.FreeFull(func(item interface{}) {
-				path := item.(*TreePath)
+
+	glist.FreeFull(func(item interface{}) {
+		runtime.SetFinalizer(item, func(path *TreePath) {
+			glib.FinalizerStrategy(func() {
 				C.gtk_tree_path_free(path.GtkTreePath)
 			})
 		})

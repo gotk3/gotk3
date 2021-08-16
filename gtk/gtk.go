@@ -4807,7 +4807,9 @@ func (v *FileChooser) GetFilenames() ([]string, error) {
 	}
 
 	slist := glib.WrapSList(uintptr(unsafe.Pointer(clist)))
-	defer slist.Free()
+	runtime.SetFinalizer(slist, func(slist *glib.SList) {
+		glib.FinalizerStrategy(slist.Free)
+	})
 
 	var filenames = make([]string, 0, slist.Length())
 	for ; slist.DataRaw() != nil; slist = slist.Next() {
@@ -4829,7 +4831,6 @@ func (v FileChooser) GetURIs() ([]string, error) {
 	}
 
 	slist := glib.WrapSList(uintptr(unsafe.Pointer(clist)))
-	defer slist.Free()
 
 	var uris = make([]string, 0, slist.Length())
 	for ; slist.DataRaw() != nil; slist = slist.Next() {
@@ -11056,10 +11057,10 @@ func (v *TreeSelection) GetSelectedRows(model ITreeModel) *glib.List {
 	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return &TreePath{(*C.GtkTreePath)(ptr)}
 	})
-	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		glib.FinalizerStrategy(func() {
-			glist.FreeFull(func(item interface{}) {
-				path := item.(*TreePath)
+
+	glist.FreeFull(func(item interface{}) {
+		runtime.SetFinalizer(item, func(path *TreePath) {
+			glib.FinalizerStrategy(func() {
 				C.gtk_tree_path_free(path.GtkTreePath)
 			})
 		})

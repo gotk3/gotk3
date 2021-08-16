@@ -8,6 +8,7 @@ package gdk
 // #include "pixbuf.go.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -40,7 +41,9 @@ func PixbufGetFormats() []*PixbufFormat {
 	}
 
 	// "The structures themselves are owned by GdkPixbuf". Free the list only.
-	defer formats.Free()
+	runtime.SetFinalizer(formats, func(formats *glib.SList) {
+		glib.FinalizerStrategy(formats.Free)
+	})
 
 	ret := make([]*PixbufFormat, 0, formats.Length())
 	formats.Foreach(func(item interface{}) {

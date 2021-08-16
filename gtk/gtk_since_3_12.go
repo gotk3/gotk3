@@ -322,7 +322,9 @@ func (fb *FlowBox) GetSelectedChildren() (rv []*FlowBoxChild) {
 		rv = append(rv, o)
 	}
 	// We got a transfer container, so we must free the list.
-	list.Free()
+	runtime.SetFinalizer(list, func(list *glib.List) {
+		glib.FinalizerStrategy(list.Free)
+	})
 
 	return
 }

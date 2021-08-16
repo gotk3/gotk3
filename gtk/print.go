@@ -541,10 +541,9 @@ func PaperSizeGetPaperSizes(includeCustom bool) *glib.List {
 		return &PaperSize{(*C.GtkPaperSize)(ptr)}
 	})
 
-	runtime.SetFinalizer(glist, func(glist *glib.List) {
-		glib.FinalizerStrategy(func() {
-			glist.FreeFull(func(item interface{}) {
-				ps := item.(*PaperSize)
+	glist.FreeFull(func(item interface{}) {
+		runtime.SetFinalizer(item, func(ps *PaperSize) {
+			glib.FinalizerStrategy(func() {
 				C.gtk_paper_size_free(ps.GtkPaperSize)
 			})
 		})

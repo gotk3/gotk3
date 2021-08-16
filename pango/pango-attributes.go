@@ -22,6 +22,7 @@ package pango
 // #include "pango.go.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 
 	"github.com/gotk3/gotk3/glib"
@@ -142,7 +143,9 @@ func (v *AttrList) GetAttributes() (*glib.SList, error) {
 		return nil, nilPtrErr
 	}
 
-	defer list.Free()
+	runtime.SetFinalizer(list, func(list *glib.SList) {
+		glib.FinalizerStrategy(list.Free)
+	})
 
 	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return &Attribute{(*C.PangoAttribute)(ptr)}

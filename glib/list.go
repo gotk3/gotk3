@@ -5,6 +5,7 @@ package glib
 // #include "glib.go.h"
 import "C"
 import (
+	"runtime"
 	"unsafe"
 )
 
@@ -168,7 +169,9 @@ func (v *List) Foreach(fn func(item interface{})) {
 // list.Free() sequentially.
 func (v *List) FreeFull(fn func(item interface{})) {
 	v.Foreach(fn)
-	v.Free()
+	runtime.SetFinalizer(v, func(v *List) {
+		FinalizerStrategy(v.Free)
+	})
 }
 
 // CompareDataFunc is a representation of GCompareDataFunc

@@ -1001,8 +1001,15 @@ func (v *DisplayManager) ListDisplays() *[]Display {
 	if clist == nil {
 		return nil
 	}
+
 	dlist := glib.WrapSList(uintptr(unsafe.Pointer(clist)))
-	defer dlist.Free()
+	if dlist == nil {
+		return nil
+	}
+
+	runtime.SetFinalizer(dlist, func(dlist *glib.SList) {
+		glib.FinalizerStrategy(dlist.Free)
+	})
 
 	var displays = make([]Display, 0, dlist.Length())
 	for ; dlist.DataRaw() != nil; dlist = dlist.Next() {
