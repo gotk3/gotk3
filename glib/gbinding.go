@@ -61,7 +61,8 @@ func (v *Binding) Unbind() {
 
 // Retrieves the GObject instance used as the source of the binding
 func (v *Binding) GetSource() *Object {
-	obj := C.g_binding_get_source(v.native())
+// 	obj := C.g_binding_get_source(v.native())
+	obj := C.g_binding_dup_source(v.native())
 	if obj == nil {
 		return nil
 	}
@@ -71,13 +72,15 @@ func (v *Binding) GetSource() *Object {
 // Retrieves the name of the property of “source” used as the source of
 // the binding.
 func (v *Binding) GetSourceProperty() string {
-	s := C.g_binding_get_source_property(v.native())
+// 	s := C.g_binding_get_source_property(v.native())
+	s := C.g_binding_get_target_property(v.native())
 	return C.GoString((*C.char)(s))
 }
 
 // Retrieves the GObject instance used as the target of the binding.
 func (v *Binding) GetTarget() *Object {
-	obj := C.g_binding_get_target(v.native())
+// 	obj := C.g_binding_get_target(v.native())
+	obj := C.g_binding_dup_target(v.native())
 	if obj == nil {
 		return nil
 	}
