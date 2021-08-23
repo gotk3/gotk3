@@ -142,8 +142,6 @@ func (v *AttrList) GetAttributes() (*glib.SList, error) {
 		return nil, nilPtrErr
 	}
 
-	defer list.Free()
-
 	list.DataWrapper(func(ptr unsafe.Pointer) interface{} {
 		return &Attribute{(*C.PangoAttribute)(ptr)}
 	})
