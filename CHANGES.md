@@ -6,7 +6,7 @@
 
 Changes for Version after 0.6.1:
 
-* **2021-08**: Glib version 2.68 deprecated glib.Binding. **GetSource** and **GetTarget** in favor of **DupSource** and **DupTarget**. Those using glib.Binding should check the [glib changes](https://gitlab.gnome.org/GNOME/glib/-/tags/2.67.1). For those who use **_Glib versions <= 2.66_**, you now need to use the build tag `-tags "glib_2_66"`, see [#827](https://github.com/gotk3/gotk3/pull/827)
+* **2021-08**: Glib version 2.68 deprecated glib.Binding. **GetSource** and **GetTarget** in favor of **DupSource** and **DupTarget**. Those using glib.Binding should check the [glib changes](https://gitlab.gnome.org/GNOME/glib/-/tags/2.67.1). For those who use **_Glib versions <= 2.66_**, you now need to use the build tag `-tags "glib_2_66"`, see [#828](https://github.com/gotk3/gotk3/pull/828)
 
 
 
