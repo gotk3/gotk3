@@ -69,24 +69,6 @@ func (v *Binding) GetSource() *Object {
 	return wrapObject(unsafe.Pointer(obj))
 }
 
-// Retrieves the name of the property of “source” used as the source of
-// the binding.
-func (v *Binding) GetSourceProperty() string {
-// 	s := C.g_binding_get_source_property(v.native())
-	s := C.g_binding_get_target_property(v.native())
-	return C.GoString((*C.char)(s))
-}
-
-// Retrieves the GObject instance used as the target of the binding.
-func (v *Binding) GetTarget() *Object {
-// 	obj := C.g_binding_get_target(v.native())
-	obj := C.g_binding_dup_target(v.native())
-	if obj == nil {
-		return nil
-	}
-	return wrapObject(unsafe.Pointer(obj))
-}
-
 // Retrieves the name of the property of “target” used as the target of
 // the binding.
 func (v *Binding) GetTargetProperty() string {
