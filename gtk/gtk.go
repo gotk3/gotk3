@@ -216,6 +216,7 @@ func init() {
 		{glib.Type(C.gtk_cell_area_get_type()), marshalCellArea},
 		{glib.Type(C.gtk_cell_area_context_get_type()), marshalCellAreaContext},
 		{glib.Type(C.gtk_cell_area_box_get_type()), marshalCellAreaBox},
+		{glib.Type(C.gtk_viewport_get_type()), marshalViewport},
 		{glib.Type(C.gtk_volume_button_get_type()), marshalVolumeButton},
 		{glib.Type(C.gtk_widget_get_type()), marshalWidget},
 		{glib.Type(C.gtk_window_get_type()), marshalWindow},
@@ -11680,6 +11681,12 @@ func wrapViewport(obj *glib.Object) *Viewport {
 		Bin:        *b,
 		Scrollable: *s,
 	}
+}
+
+func marshalViewport(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapViewport(obj), nil
 }
 
 func (v *Viewport) toViewport() *C.GtkViewport {
