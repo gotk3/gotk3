@@ -1409,3 +1409,11 @@ func Local(input string) string {
 
 	return C.GoString(C.localize(cstr))
 }
+
+// MarkupEscapeText will escape the given text
+func MarkupEscapeText(input string) string {
+	cstr := C.CString(input)
+	defer C.free(unsafe.Pointer(cstr))
+
+	return C.GoString(C.g_markup_escape_text(cstr, -1))
+}
