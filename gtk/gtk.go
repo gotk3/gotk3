@@ -4854,6 +4854,16 @@ func (v *FileChooser) GetDoOverwriteConfirmation() bool {
 	return gobool(c)
 }
 
+// SetAction is a wrapper around gtk_file_chooser_set_action().
+func (v *FileChooser) SetAction(action FileChooserAction) {
+	C.gtk_file_chooser_set_action(v.native(), C.GtkFileChooserAction(action))
+}
+
+// GetAction is a wrapper around gtk_file_chooser_get_action().
+func (v *FileChooser) GetAction() FileChooserAction {
+	return FileChooserAction(C.gtk_file_chooser_get_action(v.native()))
+}
+
 // SetCreateFolders is a wrapper around gtk_file_chooser_set_create_folders().
 func (v *FileChooser) SetCreateFolders(value bool) {
 	C.gtk_file_chooser_set_create_folders(v.native(), gbool(value))
