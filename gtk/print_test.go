@@ -49,7 +49,7 @@ func TestPrintSettings(t *testing.T) {
 	settings.SetInt("Key4", 2)
 
 	settings.ForEach(func(key, value string) {
-	}, 0)
+	})
 }
 
 // TestPrintContext tests creating and manipulating PrintContext
