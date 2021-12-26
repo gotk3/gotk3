@@ -160,6 +160,13 @@ static inline guint _g_signal_new(const gchar *name) {
                       G_TYPE_NONE, 0);
 }
 
+static inline guint _g_signal_newv(const gchar *name, const GType return_type,
+                                   const guint n_params, GType *const param_types) {
+  return g_signal_newv(name, G_TYPE_OBJECT, G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+                       NULL, NULL, NULL, g_cclosure_marshal_VOID__POINTER,
+                       return_type, n_params, param_types);
+}
+
 static void init_i18n(const char *domain, const char *dir) {
   setlocale(LC_ALL, "");
   bindtextdomain(domain, dir);
