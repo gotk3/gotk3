@@ -59,6 +59,10 @@ static GtkColorChooserDialog *toGtkColorChooserDialog(void *p) {
   return (GTK_COLOR_CHOOSER_DIALOG(p));
 }
 
+static GtkFontChooserDialog *toGtkFontChooserDialog(void *p) {
+  return (GTK_FONT_CHOOSER_DIALOG(p));
+}
+
 static GtkDrawingArea *toGtkDrawingArea(void *p) {
   return (GTK_DRAWING_AREA(p));
 }
