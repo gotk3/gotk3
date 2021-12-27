@@ -119,7 +119,7 @@ type ColorChooserDialog struct {
 	ColorChooser
 }
 
-// native returns a pointer to the underlying GtkColorChooserButton.
+// native returns a pointer to the underlying GtkColorChooserDialog.
 func (v *ColorChooserDialog) native() *C.GtkColorChooserDialog {
 	if v == nil || v.GObject == nil {
 		return nil
