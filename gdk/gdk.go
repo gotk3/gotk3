@@ -1432,9 +1432,9 @@ func (v *EventTouch) State() uint {
 
 /*TODO GdkEventSequence *sequence */
 
-func (v *EventTouch) EmulatingPointer() bool {
+func (v *EventTouch) EmulatingPointer() uint {
 	c := v.native().emulating_pointer
-	return bool(c)
+	return uint(c)
 }
 
 /*TODO GdkDevice *device */
