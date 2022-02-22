@@ -1153,9 +1153,6 @@ func (v *Keymap) GetModifierState() uint {
  * GDK Keyval
  */
 
-// TODO:
-// gdk_keyval_name().
-
 // KeyvalFromName() is a wrapper around gdk_keyval_from_name().
 func KeyvalFromName(keyvalName string) uint {
 	str := (*C.gchar)(C.CString(keyvalName))
@@ -1200,6 +1197,11 @@ func KeyvalToUnicode(v uint) rune {
 // UnicodeToKeyval is a wrapper around gdk_unicode_to_keyval().
 func UnicodeToKeyval(v rune) uint {
 	return uint(C.gdk_unicode_to_keyval(C.guint32(v)))
+}
+
+// KeyValName is a wrapper around gdk_keyval_name().
+func KeyValName(keyval uint) string {
+	return C.GoString(C.gdk_keyval_name(C.guint(keyval)))
 }
 
 /*

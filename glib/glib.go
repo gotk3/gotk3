@@ -1339,18 +1339,67 @@ type Signal struct {
 	signalId C.guint
 }
 
-func SignalNew(s string) (*Signal, error) {
-	cstr := C.CString(s)
+func SignalNew(signalName string) (*Signal, error) {
+	cstr := C.CString(signalName)
 	defer C.free(unsafe.Pointer(cstr))
 
 	signalId := C._g_signal_new((*C.gchar)(cstr))
 
 	if signalId == 0 {
-		return nil, fmt.Errorf("invalid signal name: %s", s)
+		return nil, fmt.Errorf("invalid signal name: %s", signalName)
 	}
 
 	return &Signal{
-		name:     s,
+		name:     signalName,
+		signalId: signalId,
+	}, nil
+}
+
+// SignalNewV is a wrapper around g_signal_newv().
+//
+// Parameters:
+//   - signalName          : The name for the signal.
+//   - returnType          : The type of return value, or TYPE_NONE for a signal without a return value.
+//   - nParams             : Amount of extra parameters the signal is going to recieve (the object who emits the signal does not count).
+//   - paramsTypes...      : Datatypes of the parameters (amount of elements must match nParams, except when nParams is 0).
+//                           If nParams is 0 then paramsTypes has to be TYPE_NONE.
+//                           If nParams is 1 then paramsTypes has to be different from TYPE_NONE.
+func SignalNewV(
+	signalName string,
+	returnType Type,
+	nParams uint,
+	paramsTypes ...Type,
+) (*Signal, error) {
+	if nParams == 0 {
+		if paramsTypes[0] != TYPE_NONE || len(paramsTypes) != 1 {
+			return nil, fmt.Errorf("invalid Types: the amount of parameters is %d, paramsTypes must be TYPE_NONE", nParams)
+		}
+	} else if nParams == 1 {
+		if paramsTypes[0] == TYPE_NONE || len(paramsTypes) != 1 {
+			return nil, fmt.Errorf("invalid Types: the amount of parameters is %d, paramsTypes must be different from TYPE_NONE", nParams)
+		}
+	} else {
+		if len(paramsTypes) != int(nParams) {
+			return nil, fmt.Errorf("invalid Types: The amount of elements of paramsTypes has to be equal to %d", nParams)
+		}
+	}
+
+	cstr := C.CString(signalName)
+	defer C.free(unsafe.Pointer(cstr))
+
+	var sliceOfGTypes []C.GType
+	for _, paramType := range paramsTypes {
+		sliceOfGTypes = append(sliceOfGTypes, C.ulong(paramType))
+	}
+
+	signalId := C._g_signal_newv((*C.gchar)(cstr), C.ulong(returnType), C.guint(nParams), (*C.GType)(&sliceOfGTypes[0]))
+
+	if signalId == 0 {
+		return nil, fmt.Errorf("invalid signal name: %s", signalName)
+	}
+
+	return &Signal{
+		name:     signalName,
 		signalId: signalId,
 	}, nil
 }
