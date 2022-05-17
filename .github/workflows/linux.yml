@@ -1,0 +1,31 @@
+name: Build and test on Linux
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.18
+
+    - name: Print versions
+      run: |
+        echo glib: $(pkg-config --modversion glib-2.0)
+        echo gdk: $(pkg-config --modversion gdk-3.0)
+        echo gtk: $(pkg-config --modversion gtk+-3.0)
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Test
+      run: go test -v ./...
