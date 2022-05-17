@@ -1389,10 +1389,10 @@ func SignalNewV(
 
 	var sliceOfGTypes []C.GType
 	for _, paramType := range paramsTypes {
-		sliceOfGTypes = append(sliceOfGTypes, C.ulong(paramType))
+		sliceOfGTypes = append(sliceOfGTypes, C.gsize(paramType))
 	}
 
-	signalId := C._g_signal_newv((*C.gchar)(cstr), C.ulong(returnType), C.guint(nParams), (*C.GType)(&sliceOfGTypes[0]))
+	signalId := C._g_signal_newv((*C.gchar)(cstr), C.gsize(returnType), C.guint(nParams), (*C.GType)(&sliceOfGTypes[0]))
 
 	if signalId == 0 {
 		return nil, fmt.Errorf("invalid signal name: %s", signalName)
