@@ -18,6 +18,11 @@ jobs:
       with:
         go-version: 1.18
 
+    - name: Install Dependencies
+      run: |
+        sudo apt update
+        sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
+
     - name: Print versions
       run: |
         echo glib: $(pkg-config --modversion glib-2.0)
@@ -25,7 +30,7 @@ jobs:
         echo gtk: $(pkg-config --modversion gtk+-3.0)
 
     - name: Build
-      run: go build -v ./...
+      run: go build --tags=glib_deprecated -v ./...
 
     - name: Test
       run: go test -v ./...
