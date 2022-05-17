@@ -43,18 +43,6 @@ func TestConnectNotifySignal(t *testing.T) {
 	gtk.Main()
 }
 
-/*At this moment Visionect specific*/
-func TestTimeoutAdd(t *testing.T) {
-	runtime.LockOSThread()
-
-	glib.TimeoutAdd(2500, func() bool {
-		gtk.MainQuit()
-		return false
-	})
-
-	gtk.Main()
-}
-
 // TestTypeNames tests both glib.TypeFromName and glib.Type.Name
 func TestTypeNames(t *testing.T) {
 	tp := glib.TypeFromName("GtkWindow")
