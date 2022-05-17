@@ -21,7 +21,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev
+        sudo apt install libgtk-3-0 libgtk-3-dev libcairo2-dev libglib2.0-dev
 
     - name: Print versions
       run: |
@@ -29,8 +29,8 @@ jobs:
         echo gdk: $(pkg-config --modversion gdk-3.0)
         echo gtk: $(pkg-config --modversion gtk+-3.0)
 
-    - name: Build
-      run: go build --tags=glib_deprecated -v ./...
+    # - name: Build
+    #   run: go build --tags=glib_deprecated -v ./...
 
     - name: Test
       run: go test -v --tags=glib_deprecated -v ./...
