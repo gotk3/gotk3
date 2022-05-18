@@ -2438,6 +2438,11 @@ func (v *Window) GetDevicePosition(d *Device) (*Window, int, int, ModifierType) 
 	return rw, int(x), int(y), ModifierType(mt)
 }
 
+// SetOverrideRedirect is a wrapper around gdk_window_set_override_redirect().
+func (v *Window) SetOverrideRedirect(overrideRedirect bool) {
+	C.gdk_window_set_override_redirect(v.native(), gbool(overrideRedirect))
+}
+
 func PixbufGetFromSurface(surface *cairo.Surface, src_x, src_y, width, height int) (*Pixbuf, error) {
 	c := C.gdk_pixbuf_get_from_surface((*C.cairo_surface_t)(unsafe.Pointer(surface.Native())), C.gint(src_x), C.gint(src_y), C.gint(width), C.gint(height))
 	if c == nil {
