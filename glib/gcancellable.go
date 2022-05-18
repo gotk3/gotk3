@@ -81,3 +81,13 @@ func (v *Cancellable) SourceNew() *Source {
 	c := C.g_cancellable_source_new(v.native())
 	return wrapSource(c)
 }
+
+// Reset is a wrapper around g_cancellable_reset().
+func (v *Cancellable) Reset() {
+	C.g_cancellable_reset(v.native())
+}
+
+// Cancel is a wrapper around g_cancellable_cancel().
+func (v *Cancellable) Cancel() {
+	C.g_cancellable_cancel(v.native())
+}

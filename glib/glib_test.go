@@ -1,85 +1,68 @@
 package glib_test
 
 import (
-	"runtime"
 	"testing"
 
 	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/gtk"
 )
 
-func init() {
-	gtk.Init(nil)
-}
-
-// TestConnectNotifySignal ensures that property notification signals (those
-// whose name begins with "notify::") are queried by the name "notify" (with the
-// "::" and the property name omitted). This is because the signal is "notify"
-// and the characters after the "::" are not recognized by the signal system.
-//
-// See
-// https://developer.gnome.org/gobject/stable/gobject-The-Base-Object-Type.html#GObject-notify
-// for background, and
-// https://developer.gnome.org/gobject/stable/gobject-Signals.html#g-signal-new
-// for the specification of valid signal names.
-func TestConnectNotifySignal(t *testing.T) {
-	runtime.LockOSThread()
+// TestConnectSignal tests that specific callback connected to the signal.
+func TestConnectSignal(t *testing.T) {
+	ctx := glib.MainContextDefault()
+	mainLoop := glib.MainLoopNew(ctx, true)
 
 	// Create any GObject that has defined properties.
-	spacing := 0
-	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, spacing)
+	obj, _ := glib.CancellableNew()
 
 	// Connect to a "notify::" signal to listen on property changes.
-	box.Connect("notify::spacing", func() {
-		gtk.MainQuit()
+	obj.Connect("cancelled", func() {
+		mainLoop.Quit()
 	})
 
 	glib.IdleAdd(func() bool {
-		spacing++
-		box.SetSpacing(spacing)
-		return true
+		obj.Cancel()
+		return false
 	})
 
-	gtk.Main()
+	mainLoop.Run()
 }
 
 // TestTypeNames tests both glib.TypeFromName and glib.Type.Name
 func TestTypeNames(t *testing.T) {
-	tp := glib.TypeFromName("GtkWindow")
+	tp := glib.TypeFromName("GObject")
 	name := tp.Name()
 
-	if name != "GtkWindow" {
-		t.Error("Expected GtkWindow, got", name)
+	if name != "GObject" {
+		t.Error("Expected GObject, got", name)
 	}
 }
 
 func TestTypeIsA(t *testing.T) {
-	tp := glib.TypeFromName("GtkApplicationWindow")
-	tpParent := glib.TypeFromName("GtkWindow")
+	tp := glib.TypeFromName("GCancellable")
+	tpParent := glib.TypeFromName("GObject")
 
 	isA := tp.IsA(tpParent)
 
 	if !isA {
-		t.Error("Expected true, GtkApplicationWindow is a GtkWindow")
+		t.Error("Expected true, GCancellable is a GObject")
 	}
 }
 
 func TestTypeNextBase(t *testing.T) {
-	tpLeaf := glib.TypeFromName("GtkWindow")
-	tpParent := glib.TypeFromName("GtkContainer")
+	// http://manual.freeshell.org/glibmm-2.4/reference/html/classGlib_1_1ObjectBase.html
+	tpLeaf := glib.TypeFromName("GFileInputStream")
+	tpParent := glib.TypeFromName("GObject")
 
 	tpNextBase := glib.TypeNextBase(tpLeaf, tpParent)
 	name := tpNextBase.Name()
 
-	if name != "GtkBin" {
-		t.Error("Expected GtkBin, got", name)
+	if name != "GInputStream" {
+		t.Error("Expected GInputStream, got", name)
 	}
 }
 
 func TestValueString_NonEmpty(t *testing.T) {
-
 	expected := "test"
-
 	value, err := glib.GValue(expected)
 	if err != nil {
 		t.Error("acquiring gvalue failed:", err.Error())
@@ -98,9 +81,7 @@ func TestValueString_NonEmpty(t *testing.T) {
 }
 
 func TestValueString_Empty(t *testing.T) {
-
 	expected := ""
-
 	value, err := glib.GValue(expected)
 	if err != nil {
 		t.Error("acquiring gvalue failed:", err.Error())
