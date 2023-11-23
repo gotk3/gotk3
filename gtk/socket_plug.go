@@ -1,4 +1,4 @@
-// +build linux
+// +build !nox11
 
 package gtk
 
