@@ -76,6 +76,21 @@ func (v *StyleContext) RemoveClass(class_name string) {
 	C.gtk_style_context_remove_class(v.native(), (*C.gchar)(cstr))
 }
 
+// ListClasses is a wrapper around gtk_style_context_list_classes().
+func (v *StyleContext) ListClasses() *glib.List {
+	clist := C.gtk_style_context_list_classes(v.native())
+	if clist == nil {
+		return nil
+	}
+
+	glist := glib.WrapList(uintptr(unsafe.Pointer(clist)))
+	glist.DataWrapper(func(ptr unsafe.Pointer) interface{} {
+		return C.GoString((*C.char)(ptr))
+	})
+
+	return glist
+}
+
 func fromNativeStyleContext(c *C.GtkStyleContext) (*StyleContext, error) {
 	if c == nil {
 		return nil, nilPtrErr
@@ -246,4 +261,3 @@ func RemoveProviderForScreen(s *gdk.Screen, provider IStyleProvider) {
 // void 	gtk_style_context_set_frame_clock ()
 // void 	gtk_style_context_set_scale ()
 // gint 	gtk_style_context_get_scale ()
-// GList * 	gtk_style_context_list_classes ()
