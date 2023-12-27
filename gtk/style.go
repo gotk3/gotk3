@@ -76,6 +76,7 @@ func (v *StyleContext) RemoveClass(class_name string) {
 	C.gtk_style_context_remove_class(v.native(), (*C.gchar)(cstr))
 }
 
+// ListClasses is a wrapper around gtk_style_context_list_classes().
 func (v *StyleContext) ListClasses() *glib.List {
 	clist := C.gtk_style_context_list_classes(v.native())
 	if clist == nil {
