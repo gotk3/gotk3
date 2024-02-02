@@ -7291,12 +7291,12 @@ func (v *Paned) GetChild2() (IWidget, error) {
 }
 
 // GetHandleWindow() is a wrapper around gtk_paned_get_handle_window().
-func (v *Paned) GetHandleWindow() (*gdk.Window, error) {
+func (v *Paned) GetHandleWindow() (*Window, error) {
 	c := C.gtk_paned_get_handle_window(v.native())
 	if c == nil {
 		return nil, nilPtrErr
 	}
-	return &gdk.Window{glib.Take(unsafe.Pointer(c))}, nil
+	return wrapWindow(glib.Take(unsafe.Pointer(c))), nil
 }
 
 // GetPosition() is a wrapper around gtk_paned_get_position().
