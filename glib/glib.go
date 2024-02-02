@@ -729,7 +729,7 @@ func (v *Object) SetProperty(name string, value interface{}) error {
 //
 // Note that this code is unsafe in that the types of values in args are
 // not checked against whether they are suitable for the callback.
-func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
+func (v *Object) Emit(s string, retType Type, args ...interface{}) (interface{}, error) {
 	cstr := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr))
 
@@ -755,7 +755,13 @@ func (v *Object) Emit(s string, args ...interface{}) (interface{}, error) {
 	// TODO: use just the signal name
 	id := C.g_signal_lookup((*C.gchar)(cstr), C.GType(t))
 
-	ret, err := ValueAlloc()
+	var ret *Value
+	if retType == TYPE_NONE {
+		ret, err = ValueAlloc()
+	} else {
+		ret, err = ValueInit(retType)
+	}
+
 	if err != nil {
 		return nil, errors.New("Error creating Value for return value")
 	}
