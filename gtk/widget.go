@@ -855,9 +855,13 @@ func (v *Widget) SetStateFlags(stateFlags StateFlags, clear bool) {
 	C.gtk_widget_set_state_flags(v.native(), C.GtkStateFlags(stateFlags), gbool(clear))
 }
 
-// TODO:
-// gtk_widget_unset_state_flags().
-// gtk_widget_get_state_flags().
+func (v *Widget) UnsetStateFlags(stateFlags StateFlags) {
+	C.gtk_widget_unset_state_flags(v.native(), C.GtkStateFlags(stateFlags))
+}
+
+func (v *Widget) GetStateFlags() StateFlags {
+	return StateFlags(C.gtk_widget_get_state_flags(v.native()))
+}
 
 // GetWindow is a wrapper around gtk_widget_get_window().
 func (v *Widget) GetWindow() (*gdk.Window, error) {
