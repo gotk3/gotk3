@@ -870,7 +870,7 @@ func TestBuilder(t *testing.T) {
 		},
 	})
 
-	go button.Emit("clicked")
+	go button.Emit("clicked", glib.TYPE_STRING)
 
 	select {
 	case <-done:
