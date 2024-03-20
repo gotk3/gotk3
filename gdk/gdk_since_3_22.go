@@ -41,8 +41,23 @@ func init() {
  * Constants
  */
 
-// TODO:
-// GdkSeatCapabilities
+// SeatCapabilities is a representation of GDK's GdkSeatCapabilities
+type SeatCapabilities int
+
+const (
+    SEAT_CAPABILITY_NONE          SeatCapabilities = C.GDK_SEAT_CAPABILITY_NONE
+    SEAT_CAPABILITY_POINTER       SeatCapabilities = C.GDK_SEAT_CAPABILITY_POINTER
+    SEAT_CAPABILITY_TOUCH         SeatCapabilities = C.GDK_SEAT_CAPABILITY_TOUCH
+    SEAT_CAPABILITY_TABLET_STYLUS SeatCapabilities = C.GDK_SEAT_CAPABILITY_TABLET_STYLUS
+    SEAT_CAPABILITY_KEYBOARD      SeatCapabilities = C.GDK_SEAT_CAPABILITY_KEYBOARD
+    SEAT_CAPABILITY_ALL_POINTING  SeatCapabilities = C.GDK_SEAT_CAPABILITY_ALL_POINTING
+    SEAT_CAPABILITY_ALL           SeatCapabilities = C.GDK_SEAT_CAPABILITY_ALL
+)
+
+func marshalSeatCapabilitiesLayout(p uintptr) (interface{}, error) {
+    c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+    return SeatCapabilities(c), nil
+}
 
 // SubpixelLayout is a representation of GDK's GdkSubpixelLayout.
 type SubpixelLayout int
@@ -112,15 +127,56 @@ func (v *Display) GetMonitorAtPoint(x int, y int) (*Monitor, error) {
  * GdkSeat
  */
 
-// TODO:
 // GdkSeatGrabPrepareFunc
-// gdk_seat_get_display().
-// gdk_seat_grab().
-// gdk_seat_ungrab().
-// gdk_seat_get_capabilities().
-// gdk_seat_get_pointer().
-// gdk_seat_get_keyboard().
-// gdk_seat_get_slaves().
+type GrabPrepareFunc func(seat *Seat, window *Window, user_data C.gpointer)
+
+// GetDisplay is a wrapper around gdk_seat_get_display().
+func (v *Seat) GetDisplay() (*Display, error) {
+    return toDisplay(C.gdk_seat_get_display(v.native()))
+}
+
+// Grab is a wrapper around gdk_seat_grab().
+func (v *Seat) Grab(window *Window, capabilities SeatCapabilities, owner_events bool, cursor *Cursor, event *Event, prepare_func GrabPrepareFunc, prepare_func_data C.gpointer) GrabStatus {
+    return GrabStatus(C.gdk_seat_grab(v.native(), window.native(), C.GdkSeatCapabilities(capabilities), gbool(owner_events), cursor.native(), event.native(), (*[0]byte)(C.gpointer(callback.Assign(prepare_func))), prepare_func_data))
+}
+
+// UnGrab is a wrapper around gdk_seat_ungrab().
+func (v *Seat) UnGrab() {
+    C.gdk_seat_ungrab(v.native())
+}
+
+// GetCapabilities is a wrapper around gdk_seat_get_capabilities().
+func (v *Seat) GetCapabilities() SeatCapabilities {
+    return SeatCapabilities(C.gdk_seat_get_capabilities(v.native()))
+}
+
+// GetKeyboard is a wrapper around gdk_seat_get_keyboard().
+func (v *Seat) GetKeyboard() (*Device, error) {
+    return toDevice(C.gdk_seat_get_keyboard(v.native()))
+}
+
+// GetSlaves is a wrapper around gdk_seat_get_slaves().
+func (v *Seat) GetSlaves(capabilities SeatCapabilities) *[]Device {
+
+    clist := C.gdk_seat_get_slaves(v.native(), C.GdkSeatCapabilities(capabilities))
+    if clist == nil {
+        return nil
+    }
+    dlist := glib.WrapSList(uintptr(unsafe.Pointer(clist)))
+    defer dlist.Free()
+
+    var slaves = make([]Device, 0, dlist.Length())
+    for ; dlist.DataRaw() != nil; dlist = dlist.Next() {
+
+        d := (*C.GdkDevice)(dlist.DataRaw())
+        obj := &glib.Object{glib.ToGObject(unsafe.Pointer(d))}
+
+        slaves = append(slaves, Device{obj})
+    }
+    return &slaves
+}
+
+
 
 /*
  * GdkMonitor
