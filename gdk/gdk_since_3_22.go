@@ -41,8 +41,23 @@ func init() {
  * Constants
  */
 
-// TODO:
-// GdkSeatCapabilities
+// SeatCapabilities is a representation of GDK's GdkSeatCapabilities
+type SeatCapabilities int
+
+const (
+    SEAT_CAPABILITY_NONE          SeatCapabilities = C.GDK_SEAT_CAPABILITY_NONE
+    SEAT_CAPABILITY_POINTER       SeatCapabilities = C.GDK_SEAT_CAPABILITY_POINTER
+    SEAT_CAPABILITY_TOUCH         SeatCapabilities = C.GDK_SEAT_CAPABILITY_TOUCH
+    SEAT_CAPABILITY_TABLET_STYLUS SeatCapabilities = C.GDK_SEAT_CAPABILITY_TABLET_STYLUS
+    SEAT_CAPABILITY_KEYBOARD      SeatCapabilities = C.GDK_SEAT_CAPABILITY_KEYBOARD
+    SEAT_CAPABILITY_ALL_POINTING  SeatCapabilities = C.GDK_SEAT_CAPABILITY_ALL_POINTING
+    SEAT_CAPABILITY_ALL           SeatCapabilities = C.GDK_SEAT_CAPABILITY_ALL
+)
+
+func marshalSeatCapabilitiesLayout(p uintptr) (interface{}, error) {
+    c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
+    return SeatCapabilities(c), nil
+}
 
 // SubpixelLayout is a representation of GDK's GdkSubpixelLayout.
 type SubpixelLayout int
