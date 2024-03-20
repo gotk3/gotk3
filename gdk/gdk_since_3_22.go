@@ -127,15 +127,17 @@ func (v *Display) GetMonitorAtPoint(x int, y int) (*Monitor, error) {
  * GdkSeat
  */
 
-// TODO:
-// gdk_seat_grab().
-
 // GdkSeatGrabPrepareFunc
 type GrabPrepareFunc func(seat *Seat, window *Window, user_data C.gpointer)
 
 // GetDisplay is a wrapper around gdk_seat_get_display().
 func (v *Seat) GetDisplay() (*Display, error) {
     return toDisplay(C.gdk_seat_get_display(v.native()))
+}
+
+// Grab is a wrapper around gdk_seat_grab().
+func (v *Seat) Grab(window *Window, capabilities SeatCapabilities, owner_events bool, cursor *Cursor, event *Event, prepare_func GrabPrepareFunc, prepare_func_data C.gpointer) GrabStatus {
+    return GrabStatus(C.gdk_seat_grab(v.native(), window.native(), C.GdkSeatCapabilities(capabilities), gbool(owner_events), cursor.native(), event.native(), (*[0]byte)(C.gpointer(callback.Assign(prepare_func))), prepare_func_data))
 }
 
 // UnGrab is a wrapper around gdk_seat_ungrab().
