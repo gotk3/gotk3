@@ -905,3 +905,27 @@ func TestTextTagEvent(t *testing.T) {
 	}
 
 }
+
+func TestCssProviderParsingErrorEvent(t *testing.T) {
+	css, err := CssProviderNew()
+	if err != nil {
+		t.Error("could not create CSS provider")
+	}
+
+	done := make(chan bool)
+
+	css.Connect("parsing-error",
+		// The first argument must be a CssProvider
+		func(css *CssProvider) {
+			done <- true
+		},
+	)
+
+	go css.LoadFromData(";")
+
+	select {
+	case <-done:
+	case <-time.After(1 * time.Second):
+		t.Error("Failed to call callback")
+	}
+}

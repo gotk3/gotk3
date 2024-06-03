@@ -146,6 +146,7 @@ func init() {
 		{glib.Type(C.gtk_check_menu_item_get_type()), marshalCheckMenuItem},
 		{glib.Type(C.gtk_clipboard_get_type()), marshalClipboard},
 		{glib.Type(C.gtk_container_get_type()), marshalContainer},
+		{glib.Type(C.gtk_css_provider_get_type()), marshalCssProvider},
 		{glib.Type(C.gtk_dialog_get_type()), marshalDialog},
 		{glib.Type(C.gtk_drawing_area_get_type()), marshalDrawingArea},
 		{glib.Type(C.gtk_editable_get_type()), marshalEditable},
@@ -1675,17 +1676,16 @@ func (b *Builder) AddFromString(str string) error {
 // is an IObject, so it will need to be type-asserted to the appropriate type before
 // being used. For example, to get an object and type assert it as a window:
 //
-//   obj, err := builder.GetObject("window")
-//   if err != nil {
-//       // object not found
-//       return
-//   }
-//   if w, ok := obj.(*gtk.Window); ok {
-//       // do stuff with w here
-//   } else {
-//       // not a *gtk.Window
-//   }
-//
+//	obj, err := builder.GetObject("window")
+//	if err != nil {
+//	    // object not found
+//	    return
+//	}
+//	if w, ok := obj.(*gtk.Window); ok {
+//	    // do stuff with w here
+//	} else {
+//	    // not a *gtk.Window
+//	}
 func (b *Builder) GetObject(name string) (glib.IObject, error) {
 	cstr := C.CString(name)
 	defer C.free(unsafe.Pointer(cstr))
@@ -3411,6 +3411,12 @@ func (v *CssProvider) native() *C.GtkCssProvider {
 	}
 	p := unsafe.Pointer(v.GObject)
 	return C.toGtkCssProvider(p)
+}
+
+func marshalCssProvider(p uintptr) (interface{}, error) {
+	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
+	obj := glib.Take(unsafe.Pointer(c))
+	return wrapCssProvider(obj), nil
 }
 
 func wrapCssProvider(obj *glib.Object) *CssProvider {
@@ -6175,9 +6181,12 @@ func (v *ListStore) SetColumnTypes(types ...glib.Type) {
 // match, or Set() will return a non-nil error.
 //
 // As an example, a call to:
-//  store.Set(iter, []int{0, 1}, []interface{}{"Foo", "Bar"})
+//
+//	store.Set(iter, []int{0, 1}, []interface{}{"Foo", "Bar"})
+//
 // is functionally equivalent to calling the native C GTK function:
-//  gtk_list_store_set(store, iter, 0, "Foo", 1, "Bar", -1);
+//
+//	gtk_list_store_set(store, iter, 0, "Foo", 1, "Bar", -1);
 func (v *ListStore) Set(iter *TreeIter, columns []int, values []interface{}) error {
 	if len(columns) != len(values) {
 		return errors.New("columns and values lengths do not match")
@@ -11953,8 +11962,8 @@ func castInternal(className string, obj *glib.Object) (interface{}, error) {
 }
 
 // cast takes a native GObject and casts it to the appropriate Go struct.
-//TODO change all wrapFns to return an IObject
-//^- not sure about this TODO. This may make some usages of the wrapper functions quite verbose, no?
+// TODO change all wrapFns to return an IObject
+// ^- not sure about this TODO. This may make some usages of the wrapper functions quite verbose, no?
 func cast(c *C.GObject) (glib.IObject, error) {
 	ptr := unsafe.Pointer(c)
 	var (
