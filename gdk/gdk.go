@@ -1272,6 +1272,10 @@ func (v *Event) free() {
 	C.gdk_event_free(v.native())
 }
 
+func (v *Event) ScanCode() int {
+    return int(C.gdk_event_get_scancode(v.native()))
+}
+
 /*
  * GdkEventButton
  */
