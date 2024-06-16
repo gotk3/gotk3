@@ -138,10 +138,10 @@ func (v *Seat) GetDisplay() (*Display, error) {
 
 // Grab is a wrapper around gdk_seat_grab().
 func (v *Seat) Grab(window *Window, capabilities SeatCapabilities, owner_events bool, cursor *Cursor, event *Event, prepare_func GrabPrepareFunc, prepare_func_data C.gpointer) GrabStatus {
-	prepare_func_wrapped := (*[0]byte)(nil)
-	if(prepare_func != nil) {
-		prepare_func_wrapped = (*[0]byte)(C.gpointer(callback.Assign(prepare_func)))
-	}
+    prepare_func_wrapped := (*[0]byte)(nil)
+    if(prepare_func != nil) {
+        prepare_func_wrapped = (*[0]byte)(C.gpointer(callback.Assign(prepare_func)))
+    }
 
     return GrabStatus(C.gdk_seat_grab(v.native(), window.native(), C.GdkSeatCapabilities(capabilities), gbool(owner_events), cursor.native(), event.native(), prepare_func_wrapped, prepare_func_data))
 }
