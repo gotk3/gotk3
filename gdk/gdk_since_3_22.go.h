@@ -18,5 +18,21 @@
 
 //#include <stdlib.h>
 
+extern void goGdkSeatGrabPrepareFunc(GdkSeat *seat, GdkWindow *window,
+                                     gpointer user_data);
+
+static GdkGrabStatus _gdk_seat_grab(GdkSeat *seat, GdkWindow *window,
+                                    GdkSeatCapabilities caps,
+                                    gboolean owner_events, GdkCursor *cursor,
+                                    const GdkEvent *event,
+                                    gboolean has_prepare_func,
+                                    gpointer prepare_func_data) {
+  GdkSeatGrabPrepareFunc fn =
+      has_prepare_func ? (GdkSeatGrabPrepareFunc)goGdkSeatGrabPrepareFunc
+                       : NULL;
+  return gdk_seat_grab(seat, window, caps, owner_events, cursor, event, fn,
+                       prepare_func_data);
+}
+
 // Type Casting
 static GdkMonitor *toGdkMonitor(void *p) { return (GDK_MONITOR(p)); }

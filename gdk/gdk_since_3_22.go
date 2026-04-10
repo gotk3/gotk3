@@ -131,6 +131,19 @@ func (v *Display) GetMonitorAtPoint(x int, y int) (*Monitor, error) {
 // GdkSeatGrabPrepareFunc
 type GrabPrepareFunc func(seat *Seat, window *Window, user_data C.gpointer)
 
+type seatGrabPrepareData struct {
+    fn   GrabPrepareFunc
+    data C.gpointer
+}
+
+//export goGdkSeatGrabPrepareFunc
+func goGdkSeatGrabPrepareFunc(cseat *C.GdkSeat, cwindow *C.GdkWindow, data C.gpointer) {
+    d := callback.Get(uintptr(data)).(*seatGrabPrepareData)
+    seat := &Seat{&glib.Object{glib.ToGObject(unsafe.Pointer(cseat))}}
+    window := &Window{&glib.Object{glib.ToGObject(unsafe.Pointer(cwindow))}}
+    d.fn(seat, window, d.data)
+}
+
 // GetDisplay is a wrapper around gdk_seat_get_display().
 func (v *Seat) GetDisplay() (*Display, error) {
     return toDisplay(C.gdk_seat_get_display(v.native()))
@@ -138,12 +151,14 @@ func (v *Seat) GetDisplay() (*Display, error) {
 
 // Grab is a wrapper around gdk_seat_grab().
 func (v *Seat) Grab(window *Window, capabilities SeatCapabilities, owner_events bool, cursor *Cursor, event *Event, prepare_func GrabPrepareFunc, prepare_func_data C.gpointer) GrabStatus {
-    prepare_func_wrapped := (*[0]byte)(nil)
-    if(prepare_func != nil) {
-        prepare_func_wrapped = (*[0]byte)(C.gpointer(callback.Assign(prepare_func)))
+    cPrepareData := C.gpointer(nil)
+    if prepare_func != nil {
+        d := &seatGrabPrepareData{fn: prepare_func, data: prepare_func_data}
+        id := callback.Assign(d)
+        defer callback.Delete(id)
+        cPrepareData = C.gpointer(id)
     }
-
-    return GrabStatus(C.gdk_seat_grab(v.native(), window.native(), C.GdkSeatCapabilities(capabilities), gbool(owner_events), cursor.native(), event.native(), prepare_func_wrapped, prepare_func_data))
+    return GrabStatus(C._gdk_seat_grab(v.native(), window.native(), C.GdkSeatCapabilities(capabilities), gbool(owner_events), cursor.native(), event.native(), gbool(prepare_func != nil), cPrepareData))
 }
 
 // UnGrab is a wrapper around gdk_seat_ungrab().
