@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/glib"
 )
 
 // Context is a representation of Cairo's cairo_t.

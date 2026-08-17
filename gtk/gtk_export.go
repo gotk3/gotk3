@@ -7,8 +7,8 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/glib"
+	"github.com/kozorork/gotk3/internal/callback"
 )
 
 //export goBuilderConnect

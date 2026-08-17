@@ -50,14 +50,6 @@ func (v *SettingsSchema) GetPath() string {
 	return C.GoString((*C.char)(C.g_settings_schema_get_path(v.native())))
 }
 
-// HasKey() is a wrapper around g_settings_schema_has_key().
-func (v *SettingsSchema) HasKey(v1 string) bool {
-	cstr := (*C.gchar)(C.CString(v1))
-	defer C.free(unsafe.Pointer(cstr))
-
-	return gobool(C.g_settings_schema_has_key(v.native(), cstr))
-}
-
 func toGoStringArray(c **C.gchar) []string {
 	var strs []string
 	originalc := c

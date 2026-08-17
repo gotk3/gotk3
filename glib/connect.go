@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/internal/closure"
+	"github.com/kozorork/gotk3/internal/closure"
 )
 
 /*

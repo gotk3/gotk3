@@ -10,10 +10,8 @@ import "unsafe"
 // Predefined attribute names for GMenu
 var (
 	MENU_ATTRIBUTE_ACTION           string = C.G_MENU_ATTRIBUTE_ACTION
-	MENU_ATTRIBUTE_ACTION_NAMESPACE string = C.G_MENU_ATTRIBUTE_ACTION_NAMESPACE
 	MENU_ATTRIBUTE_TARGET           string = C.G_MENU_ATTRIBUTE_TARGET
 	MENU_ATTRIBUTE_LABEL            string = C.G_MENU_ATTRIBUTE_LABEL
-	MENU_ATTRIBUTE_ICON             string = C.G_MENU_ATTRIBUTE_ICON
 )
 
 // Predefined link names for GMenu
@@ -234,11 +232,6 @@ func (v *Menu) AppendSubmenu(label string, submenu *MenuModel) {
 // Remove is a wrapper around g_menu_remove().
 func (v *Menu) Remove(position int) {
 	C.g_menu_remove(v.native(), C.gint(position))
-}
-
-// RemoveAll is a wrapper around g_menu_remove_all().
-func (v *Menu) RemoveAll() {
-	C.g_menu_remove_all(v.native())
 }
 
 // MenuItem is a representation of GMenuItem.

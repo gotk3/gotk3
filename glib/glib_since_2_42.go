@@ -1,6 +1,6 @@
 // Same copyright and license as the rest of the files in this project
 
-// +build !glib_2_40
+// +build !glib_2_34,!glib_2_40
 
 package glib
 

@@ -2256,7 +2256,6 @@ const (
 	KEY_TouchpadToggle              = uint(C.GDK_KEY_TouchpadToggle)
 	KEY_TouchpadOn                  = uint(C.GDK_KEY_TouchpadOn)
 	KEY_TouchpadOff                 = uint(C.GDK_KEY_TouchpadOff)
-	KEY_AudioMicMute                = uint(C.GDK_KEY_AudioMicMute)
 	KEY_Switch_VT_1                 = uint(C.GDK_KEY_Switch_VT_1)
 	KEY_Switch_VT_2                 = uint(C.GDK_KEY_Switch_VT_2)
 	KEY_Switch_VT_3                 = uint(C.GDK_KEY_Switch_VT_3)

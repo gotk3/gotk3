@@ -53,12 +53,6 @@ func BindProperty(source *Object, sourceProperty string,
 	return &Binding{wrapObject(unsafe.Pointer(obj))}
 }
 
-// Explicitly releases the binding between the source and the target property
-// expressed by Binding
-func (v *Binding) Unbind() {
-	C.g_binding_unbind(v.native())
-}
-
 // Retrieves the name of the property of “target” used as the target of
 // the binding.
 func (v *Binding) GetTargetProperty() string {

@@ -5,7 +5,7 @@ package glib_test
 import (
 	"testing"
 
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/glib"
 )
 
 func TestVariantTypeEqual(t *testing.T) {

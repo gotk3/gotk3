@@ -52,11 +52,6 @@ func (v *Screen) GetMonitorPlugName(m int) (string, error) {
 	return toString(C.gdk_screen_get_monitor_plug_name(v.native(), C.gint(m)))
 }
 
-// GetMonitorScaleFactor is a wrapper around gdk_screen_get_monitor_scale_factor().
-func (v *Screen) GetMonitorScaleFactor(m int) int {
-	return int(C.gdk_screen_get_monitor_scale_factor(v.native(), C.gint(m)))
-}
-
 // GetMonitorWidthMM is a wrapper around gdk_screen_get_monitor_width_mm().
 func (v *Screen) GetMonitorWidthMM(m int) int {
 	return int(C.gdk_screen_get_monitor_width_mm(v.native(), C.gint(m)))

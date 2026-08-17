@@ -10,7 +10,7 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/internal/callback"
 )
 
 // Permission is a representation of GIO's GPermission.

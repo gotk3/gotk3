@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/gdk"
+	"github.com/kozorork/gotk3/glib"
 )
 
 /*
@@ -283,16 +283,6 @@ func (v *IconView) SetItemPadding(itemPadding int) {
 // GetItemPadding is a wrapper around gtk_icon_view_get_item_padding().
 func (v *IconView) GetItemPadding() int {
 	return int(C.gtk_icon_view_get_item_padding(v.native()))
-}
-
-// SetActivateOnSingleClick is a wrapper around gtk_icon_view_set_activate_on_single_click().
-func (v *IconView) SetActivateOnSingleClick(single bool) {
-	C.gtk_icon_view_set_activate_on_single_click(v.native(), gbool(single))
-}
-
-// GetActivateOnSingleClick is a wrapper around gtk_icon_view_get_activate_on_single_click().
-func (v *IconView) GetActivateOnSingleClick() bool {
-	return gobool(C.gtk_icon_view_get_activate_on_single_click(v.native()))
 }
 
 // GetCellRect is a wrapper around gtk_icon_view_get_cell_rect().

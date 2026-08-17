@@ -19,8 +19,6 @@ static GVariantBuilder *toGVariantBuilder(void *p) {
   return (GVariantBuilder *)p;
 }
 
-static GVariantDict *toGVariantDict(void *p) { return (GVariantDict *)p; }
-
 static GVariantIter *toGVariantIter(void *p) { return (GVariantIter *)p; }
 
 #endif

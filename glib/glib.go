@@ -33,9 +33,18 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/internal/callback"
-	"github.com/gotk3/gotk3/internal/closure"
+	"github.com/kozorork/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/internal/closure"
 )
+
+// Go guarantees package-level variables are initialized BEFORE 
+// any init() functions in the package run.
+var _ = C.initGlibTypeSystem()
+
+/* this function must be called if building with glib < 2.36! */
+func InitTypeSystem() {
+    //C.initGlibTypeSystem()
+}
 
 /*
  * Type conversions

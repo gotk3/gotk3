@@ -174,15 +174,6 @@ func VariantFromFloat64(value float64) *Variant {
 	return takeVariant(C.g_variant_new_double(C.gdouble(value)))
 }
 
-// VariantFromString is a wrapper around g_variant_new_string/g_variant_new_take_string.
-// Uses g_variant_new_take_string to reduce memory allocations if possible.
-func VariantFromString(value string) *Variant {
-	cstr := (*C.gchar)(C.CString(value))
-	// g_variant_new_take_string takes owhership of the cstring and will call free() on it when done.
-	// Do NOT free this string in this function!
-	return takeVariant(C.g_variant_new_take_string(cstr))
-}
-
 // VariantFromVariant is a wrapper around g_variant_new_variant.
 func VariantFromVariant(value *Variant) *Variant {
 	return takeVariant(C.g_variant_new_variant(value.native()))

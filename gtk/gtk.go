@@ -57,11 +57,11 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/cairo"
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/internal/callback"
-	"github.com/gotk3/gotk3/pango"
+	"github.com/kozorork/gotk3/cairo"
+	"github.com/kozorork/gotk3/gdk"
+	"github.com/kozorork/gotk3/glib"
+	"github.com/kozorork/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/pango"
 )
 
 func init() {
@@ -314,7 +314,7 @@ func ucharString(guchar *C.guchar) string {
 // nextgcharptr increments gcharptr by 1. Hopefully, this could be inlined by
 // the Go compiler.
 func nextgcharptr(gcharptr **C.gchar) **C.gchar {
-	return (**C.gchar)(unsafe.Pointer(uintptr(unsafe.Pointer(gcharptr)) + 1))
+	return (**C.gchar)(unsafe.Pointer(uintptr(unsafe.Pointer(gcharptr)) + unsafe.Sizeof(*gcharptr)))
 }
 
 func goString(cstr *C.gchar) string {
@@ -5645,14 +5645,6 @@ func (v *IconTheme) HasIcon(iconName string) bool {
 
 	c := C.gtk_icon_theme_has_icon(v.Theme, (*C.gchar)(cstr))
 	return gobool(c)
-}
-
-// AddResourcePath is a wrapper around gtk_icon_theme_add_resource_path().
-func (v *IconTheme) AddResourcePath(path string) {
-	cstr := C.CString(path)
-	defer C.free(unsafe.Pointer(cstr))
-
-	C.gtk_icon_theme_add_resource_path(v.Theme, (*C.gchar)(cstr))
 }
 
 // AppendSearchPath is a wrapper around gtk_icon_theme_append_search_path().

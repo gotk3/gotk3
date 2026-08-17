@@ -25,8 +25,8 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/glib"
+	"github.com/kozorork/gotk3/internal/callback"
 )
 
 func init() {
@@ -75,6 +75,13 @@ const (
 func marshalSubpixelLayout(p uintptr) (interface{}, error) {
 	c := C.g_value_get_enum((*C.GValue)(unsafe.Pointer(p)))
 	return SubpixelLayout(c), nil
+}
+
+/*
+ * GdkEvent
+ */
+func (v *Event) ScanCode() int {
+    return int(C.gdk_event_get_scancode(v.native()))
 }
 
 /*

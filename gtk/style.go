@@ -9,9 +9,9 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/cairo"
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/cairo"
+	"github.com/kozorork/gotk3/gdk"
+	"github.com/kozorork/gotk3/glib"
 )
 
 type StyleProviderPriority int

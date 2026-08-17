@@ -11,9 +11,9 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/gdk"
+	"github.com/kozorork/gotk3/glib"
+	"github.com/kozorork/gotk3/internal/callback"
 )
 
 /*
@@ -190,16 +190,6 @@ func (v *TreeView) GetHeadersClickable() bool {
 // SetHeadersClickable is a wrapper around gtk_tree_view_set_headers_clickable().
 func (v *TreeView) SetHeadersClickable(show bool) {
 	C.gtk_tree_view_set_headers_clickable(v.native(), gbool(show))
-}
-
-// GetActivateOnSingleClick is a wrapper around gtk_tree_view_get_activate_on_single_click().
-func (v *TreeView) GetActivateOnSingleClick() bool {
-	return gobool(C.gtk_tree_view_get_activate_on_single_click(v.native()))
-}
-
-// SetActivateOnSingleClick is a wrapper around gtk_tree_view_set_activate_on_single_click().
-func (v *TreeView) SetActivateOnSingleClick(show bool) {
-	C.gtk_tree_view_set_activate_on_single_click(v.native(), gbool(show))
 }
 
 // RemoveColumn is a wrapper around gtk_tree_view_remove_column().

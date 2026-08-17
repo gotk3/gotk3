@@ -9,12 +9,12 @@ import (
 	"unsafe"
 )
 
+// GPropertyAction does not exist in glib 2.34
 func init() {
 	tm := []TypeMarshaler{
 		// Objects/Interfaces
 		{Type(C.g_simple_action_get_type()), marshalSimpleAction},
 		{Type(C.g_action_get_type()), marshalAction},
-		{Type(C.g_property_action_get_type()), marshalPropertyAction},
 	}
 	RegisterGValueMarshalers(tm)
 }
@@ -46,13 +46,6 @@ func (v *Action) toAction() *Action {
 
 // gboolean g_action_parse_detailed_name (const gchar *detailed_name, gchar **action_name, GVariant **target_value, GError **error);
 
-// ActionPrintDetailedName is a wrapper around g_action_print_detailed_name().
-func ActionPrintDetailedName(action_name string, target_value *Variant) string {
-	cstr := C.CString(action_name)
-	defer C.free(unsafe.Pointer(cstr))
-	return C.GoString((*C.char)(C.g_action_print_detailed_name((*C.gchar)(cstr), target_value.native())))
-}
-
 // native() returns a pointer to the underlying GAction.
 func (v *Action) native() *C.GAction {
 	if v == nil || v.GObject == nil {
@@ -72,12 +65,6 @@ func marshalAction(p uintptr) (interface{}, error) {
 
 func wrapAction(obj *Object) *Action {
 	return &Action{obj}
-}
-
-// ActionNameIsValid is a wrapper around g_action_name_is_valid
-func ActionNameIsValid(actionName string) bool {
-	cstr := (*C.gchar)(C.CString(actionName))
-	return gobool(C.g_action_name_is_valid(cstr))
 }
 
 // GetName is a wrapper around g_action_get_name
@@ -192,36 +179,3 @@ func (v *SimpleAction) SetState(value *Variant) {
 	C.g_simple_action_set_state(v.native(), value.native())
 }
 
-// PropertyAction is a representation of GPropertyAction
-type PropertyAction struct {
-	Action
-}
-
-func (v *PropertyAction) native() *C.GPropertyAction {
-	if v == nil || v.GObject == nil {
-		return nil
-	}
-	return C.toGPropertyAction(unsafe.Pointer(v.GObject))
-}
-
-func (v *PropertyAction) Native() uintptr {
-	return uintptr(unsafe.Pointer(v.native()))
-}
-
-func marshalPropertyAction(p uintptr) (interface{}, error) {
-	c := C.g_value_get_object((*C.GValue)(unsafe.Pointer(p)))
-	return wrapPropertyAction(wrapObject(unsafe.Pointer(c))), nil
-}
-
-func wrapPropertyAction(obj *Object) *PropertyAction {
-	return &PropertyAction{Action{obj}}
-}
-
-// PropertyActionNew is a wrapper around g_property_action_new
-func PropertyActionNew(name string, object *Object, propertyName string) *PropertyAction {
-	c := C.g_property_action_new((*C.gchar)(C.CString(name)), C.gpointer(unsafe.Pointer(object.native())), (*C.gchar)(C.CString(propertyName)))
-	if c == nil {
-		return nil
-	}
-	return wrapPropertyAction(wrapObject(unsafe.Pointer(c)))
-}

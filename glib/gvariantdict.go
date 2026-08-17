@@ -1,4 +1,4 @@
-// Same copyright and license as the rest of the files in this project
+// +build !glib_2_34
 
 //GVariant : GVariant — strongly typed value datatype
 // https://developer.gnome.org/glib/2.26/glib-GVariant.html
@@ -9,6 +9,7 @@ package glib
 // #include <glib-object.h>
 // #include "glib.go.h"
 // #include "gvariant.go.h"
+// #include "glib_since_2_40.go.h"
 import "C"
 import "unsafe"
 

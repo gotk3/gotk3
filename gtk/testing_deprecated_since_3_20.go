@@ -5,7 +5,7 @@ package gtk
 // #include <gtk/gtk.h>
 import "C"
 import (
-	"github.com/gotk3/gotk3/gdk"
+	"github.com/kozorork/gotk3/gdk"
 )
 
 /*

@@ -1,7 +1,51 @@
-gotk3 [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3)
+gotk3 (fork) [![GoDoc](https://godoc.org/github.com/gotk3/gotk3?status.svg)](https://godoc.org/github.com/gotk3/gotk3)
 =====
 
 [![Build Status](https://travis-ci.org/gotk3/gotk3.svg?branch=master)](https://travis-ci.org/gotk3/gotk3)
+
+This fork adds a couple of features and bugfixes, but its main purpose is to
+modify the upstream project in such a way that it is possible to compile
+programs using this library for Windows XP. This means the following:
+
+- GTK 3.6 is supported (compiles) if the build tag `gtk_3_6` is used.
+- GDK 3.6 is supported (compiles) if the build tag `gtk_3_6` is used.
+- GLib 2.34 is supported with the build tag `glib_2_34`
+- Cairo 1.10.2 is supported with the build tag `cairo_1_10`. The upstream repository already
+claims 1.10 support, however there are some 1.12 features (for example CAIRO_ANTIALIAS_GOOD)
+that are in untagged files. This fork fixes that, meaning that it is possible to compile this
+on a system with Cairo 1.10.2
+
+## Important information
+
+- to compile an application for Windows XP, you need the following build tags:
+  `gtk_3_6 glib_2_34 cairo_1_10 pango_1_36 gdk_pixbuf_2_26`
+
+  You will probably need a bundle for this. You can get it
+  [here](https://web.archive.org/web/20180228011133/http://win32builder.gnome.org/gtk+-bundle_3.6.4-20130921_win32.zip)
+
+  The SHA256 hash of this bundle is: `1c1a6019746ae58c6a112e59c6b50463b838900d2244c494d94dea8ebea0f715`
+
+- When using the `glib_2_34` build tag, the GLib package must be initialized
+  before any initialization code in the other gotk3 packages that uses the
+  GObject type system. Prior to GLib 2.36, `g_type_init()` had to be called
+  explicitly to initialize the type system.
+
+  Since gotk3 uses private `init()` functions in several packages, this fork
+  initializes the GObject type system from a package-level variable in the
+  `glib` package. Package-level variables are initialized before `init()`
+  functions, and imported packages are initialized before packages that depend
+  on them. This ensures that `g_type_init()` is called before the initialization
+  code of gotk3 packages that depend on `glib`.
+
+  Since the library already calls this function internally when the package-level
+  variable is initialized, no extra code should be required.
+
+- Pango 1.30 is supported. `The pango_1_36` build tag can be used with Pango 1.30
+  because the only API exposed between these compatibility levels that is not present
+  in Pango 1.30 is `WEIGHT_SEMILIGHT`, which is represented by its numeric value (350)
+  and does not reference a newer Pango C symbol.
+
+# The upstream gotk3 README
 
 The gotk3 project provides Go bindings for GTK 3 and dependent
 projects.  Each component is given its own subdirectory, which is used

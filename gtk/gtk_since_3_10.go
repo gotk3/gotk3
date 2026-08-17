@@ -14,11 +14,11 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/cairo"
-	"github.com/gotk3/gotk3/gdk"
-	"github.com/gotk3/gotk3/glib"
-	"github.com/gotk3/gotk3/internal/callback"
-	"github.com/gotk3/gotk3/pango"
+	"github.com/kozorork/gotk3/cairo"
+	"github.com/kozorork/gotk3/gdk"
+	"github.com/kozorork/gotk3/glib"
+	"github.com/kozorork/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/pango"
 )
 
 func init() {
@@ -926,4 +926,19 @@ func (v *FileChooser) GetCurrentName() string {
 	c := C.gtk_file_chooser_get_current_name(v.native())
 	defer C.free(unsafe.Pointer(c))
 	return goString(c)
+}
+
+/*
+ * GtkInfoBar
+ */
+
+// GetShowCloseButton is a wrapper around gtk_info_bar_get_show_close_button().
+func (v *InfoBar) GetShowCloseButton() bool {
+	b := C.gtk_info_bar_get_show_close_button(v.native())
+	return gobool(b)
+}
+
+// SetShowCloseButton is a wrapper around gtk_info_bar_set_show_close_button().
+func (v *InfoBar) SetShowCloseButton(setting bool) {
+	C.gtk_info_bar_set_show_close_button(v.native(), gbool(setting))
 }

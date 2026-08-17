@@ -1,6 +1,6 @@
 // Same copyright and license as the rest of the files in this project
 
-// +build !glib_2_40,!glib_2_42
+// +build !glib_2_34,!glib_2_40,!glib_2_42
 
 package glib
 
@@ -8,6 +8,7 @@ package glib
 // #include <glib.h>
 // #include <glib-object.h>
 // #include "glib.go.h"
+// #include "glib_since_2_40.go.h"
 // #include "glib_since_2_44.go.h"
 import "C"
 

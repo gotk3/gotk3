@@ -26,8 +26,8 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/cairo"
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/cairo"
+	"github.com/kozorork/gotk3/glib"
 )
 
 func init() {
@@ -271,7 +271,6 @@ const (
 	WINDOW_STATE_ABOVE      WindowState = C.GDK_WINDOW_STATE_ABOVE
 	WINDOW_STATE_BELOW      WindowState = C.GDK_WINDOW_STATE_BELOW
 	WINDOW_STATE_FOCUSED    WindowState = C.GDK_WINDOW_STATE_FOCUSED
-	WINDOW_STATE_TILED      WindowState = C.GDK_WINDOW_STATE_TILED
 )
 
 // WindowTypeHint is a representation of GDK's GdkWindowTypeHint
@@ -482,13 +481,6 @@ const (
 // gdk_error_trap_push(). deprecated
 // gdk_error_trap_pop(). deprecated
 // gdk_error_trap_pop_ignored(). deprecated
-
-// SetAllowedBackends is a wrapper around gdk_set_allowed_backends
-func SetAllowedBackends(backends string) {
-	cstr := C.CString(backends)
-	defer C.free(unsafe.Pointer(cstr))
-	C.gdk_set_allowed_backends((*C.gchar)(cstr))
-}
 
 /*
  * GdkAtom
@@ -1270,10 +1262,6 @@ func marshalEvent(p uintptr) (interface{}, error) {
 
 func (v *Event) free() {
 	C.gdk_event_free(v.native())
-}
-
-func (v *Event) ScanCode() int {
-    return int(C.gdk_event_get_scancode(v.native()))
 }
 
 /*

@@ -6,7 +6,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/glib"
 )
 
 func init() {
@@ -115,17 +115,6 @@ func (v *InfoBar) GetContentArea() (*Box, error) {
 	}
 
 	return wrapBox(glib.Take(unsafe.Pointer(c))), nil
-}
-
-// GetShowCloseButton is a wrapper around gtk_info_bar_get_show_close_button().
-func (v *InfoBar) GetShowCloseButton() bool {
-	b := C.gtk_info_bar_get_show_close_button(v.native())
-	return gobool(b)
-}
-
-// SetShowCloseButton is a wrapper around gtk_info_bar_set_show_close_button().
-func (v *InfoBar) SetShowCloseButton(setting bool) {
-	C.gtk_info_bar_set_show_close_button(v.native(), gbool(setting))
 }
 
 // TODO: for GTK+ 3.22.29

@@ -10,7 +10,7 @@ package gtk_test
 import (
 	"testing"
 
-	"github.com/gotk3/gotk3/gtk"
+	"github.com/kozorork/gotk3/gtk"
 )
 
 func TestWindowGetSetTitlebar(t *testing.T) {

@@ -8,7 +8,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/gdk"
+	"github.com/kozorork/gotk3/gdk"
 )
 
 // PopupAtRect is a wrapper around gtk_menu_popup_at_rect().

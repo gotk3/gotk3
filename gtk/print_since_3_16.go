@@ -11,7 +11,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/glib"
 )
 
 // PaperSizeNewFromIpp is a wrapper around gtk_paper_size_new_from_ipp().

@@ -1,6 +1,6 @@
 // Same copyright and license as the rest of the files in this project
 
-// +build !glib_2_40,!glib_2_42
+// +build !glib_2_34,!glib_2_40,!glib_2_42
 
 package glib
 
@@ -13,7 +13,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/internal/callback"
 )
 
 /*

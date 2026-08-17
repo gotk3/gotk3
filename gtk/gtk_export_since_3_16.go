@@ -5,7 +5,7 @@ package gtk
 
 // #include <gtk/gtk.h>
 import "C"
-import "github.com/gotk3/gotk3/internal/callback"
+import "github.com/kozorork/gotk3/internal/callback"
 
 //export goListBoxCreateWidgetFuncs
 func goListBoxCreateWidgetFuncs(item, userData C.gpointer) {

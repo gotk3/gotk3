@@ -6,7 +6,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/gotk3/gotk3/glib"
+	"github.com/kozorork/gotk3/glib"
 )
 
 func nativeGPermission(permission *glib.Permission) *C.GPermission {

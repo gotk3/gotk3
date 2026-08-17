@@ -23,14 +23,47 @@
 
 package gtk
 
+// #include <stdlib.h>
 // #include <gtk/gtk.h>
 import "C"
+import (
+	"errors"
+	"unsafe"
+
+	"github.com/kozorork/gotk3/cairo"
+	"github.com/kozorork/gotk3/gdk"
+	"github.com/kozorork/gotk3/glib"
+	"github.com/kozorork/gotk3/internal/callback"
+	"github.com/kozorork/gotk3/pango"
+)
+
 
 /*
- * Constants
+ * GtkIconView
  */
 
-const (
-	STATE_FLAG_DIR_LTR StateFlags = C.GTK_STATE_FLAG_DIR_LTR
-	STATE_FLAG_DIR_RTL StateFlags = C.GTK_STATE_FLAG_DIR_RTL
-)
+// SetActivateOnSingleClick is a wrapper around gtk_icon_view_set_activate_on_single_click().
+func (v *IconView) SetActivateOnSingleClick(single bool) {
+	C.gtk_icon_view_set_activate_on_single_click(v.native(), gbool(single))
+}
+
+// GetActivateOnSingleClick is a wrapper around gtk_icon_view_get_activate_on_single_click().
+func (v *IconView) GetActivateOnSingleClick() bool {
+	return gobool(C.gtk_icon_view_get_activate_on_single_click(v.native()))
+}
+
+/*
+ * GtkTreeView
+ */
+
+// GetActivateOnSingleClick is a wrapper around gtk_tree_view_get_activate_on_single_click().
+func (v *TreeView) GetActivateOnSingleClick() bool {
+	return gobool(C.gtk_tree_view_get_activate_on_single_click(v.native()))
+}
+
+// SetActivateOnSingleClick is a wrapper around gtk_tree_view_set_activate_on_single_click().
+func (v *TreeView) SetActivateOnSingleClick(show bool) {
+	C.gtk_tree_view_set_activate_on_single_click(v.native(), gbool(show))
+}
+
+
