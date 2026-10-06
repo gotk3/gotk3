@@ -13,7 +13,7 @@ import (
 )
 
 //export goListBoxForEachFuncs
-func goListBoxForEachFuncs(box *C.GtkListBox, row *C.GtkListBoxRow, userData C.gpointer) {
+func goListBoxForEachFuncs(box *C.GtkListBox, row *C.GtkListBoxRow, userData C.guintptr) {
 	fn := callback.Get(uintptr(userData)).(ListBoxForeachFunc)
 	fn(wrapListBox(glib.Take(unsafe.Pointer(box))), wrapListBoxRow(glib.Take(unsafe.Pointer(row))))
 }

@@ -2,24 +2,32 @@
 
 #include <stdlib.h>
 
+// The callback ID is a guintptr, not a gpointer: see "Callback IDs" in
+// glib/glib.go.h.
 extern gboolean goPixbufSaveCallback(gchar *buf, gsize count, GError **error,
-                                     gpointer data);
+                                     guintptr id);
+
+static inline gboolean _gotk3_goPixbufSaveCallback(const gchar *buf,
+                                                   gsize count, GError **error,
+                                                   gpointer data) {
+  return goPixbufSaveCallback((gchar *)buf, count, error, (guintptr)data);
+}
 
 static inline gboolean _gdk_pixbuf_save_png_writer(GdkPixbuf *pixbuf,
-                                                   gpointer callback_id,
+                                                   guintptr callback_id,
                                                    GError **err,
                                                    const char *compression) {
   return gdk_pixbuf_save_to_callback(
-      pixbuf, (GdkPixbufSaveFunc)(goPixbufSaveCallback), callback_id, "png",
+      pixbuf, _gotk3_goPixbufSaveCallback, (gpointer)callback_id, "png",
       err, "compression", compression, NULL);
 }
 
 static inline gboolean _gdk_pixbuf_save_jpeg_writer(GdkPixbuf *pixbuf,
-                                                    gpointer callback_id,
+                                                    guintptr callback_id,
                                                     GError **err,
                                                     const char *quality) {
   return gdk_pixbuf_save_to_callback(
-      pixbuf, (GdkPixbufSaveFunc)(goPixbufSaveCallback), callback_id, "jpeg",
+      pixbuf, _gotk3_goPixbufSaveCallback, (gpointer)callback_id, "jpeg",
       err, "quality", quality, NULL);
 }
 

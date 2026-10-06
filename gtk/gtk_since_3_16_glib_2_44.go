@@ -20,6 +20,6 @@ func (v *ListBox) BindModel(listModel *glib.ListModel, createWidgetFunc ListBoxC
 	C._gtk_list_box_bind_model(
 		v.native(),
 		C.toGListModel(unsafe.Pointer(listModel.Native())),
-		C.gpointer(callback.Assign(createWidgetFunc)),
+		C.guintptr(callback.Assign(createWidgetFunc)),
 	)
 }

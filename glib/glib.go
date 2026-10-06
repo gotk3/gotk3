@@ -317,8 +317,8 @@ type SourceHandle uint
 // replaces the GClosure API.
 //
 //export sourceFunc
-func sourceFunc(data C.gpointer) C.gboolean {
-	v := callback.Get(uintptr(data))
+func sourceFunc(id C.guintptr) C.gboolean {
+	v := callback.Get(uintptr(id))
 	fs := v.(closure.FuncStack)
 
 	rv := fs.Func.Call(nil)
@@ -330,14 +330,9 @@ func sourceFunc(data C.gpointer) C.gboolean {
 }
 
 //export removeSourceFunc
-func removeSourceFunc(data C.gpointer) {
-	callback.Delete(uintptr(data))
+func removeSourceFunc(id C.guintptr) {
+	callback.Delete(uintptr(id))
 }
-
-var (
-	_sourceFunc       = (*[0]byte)(C.sourceFunc)
-	_removeSourceFunc = (*[0]byte)(C.removeSourceFunc)
-)
 
 // IdleAdd adds an idle source to the default main event loop context with the
 // DefaultIdle priority. If f is not a function with no parameter, then IdleAdd
@@ -357,8 +352,8 @@ func IdleAddPriority(priority Priority, f interface{}) SourceHandle {
 
 func idleAdd(priority Priority, f interface{}) SourceHandle {
 	fs := closure.NewIdleFuncStack(f, 2)
-	id := C.gpointer(callback.Assign(fs))
-	h := C.g_idle_add_full(C.gint(priority), _sourceFunc, id, _removeSourceFunc)
+	id := C.guintptr(callback.Assign(fs))
+	h := C._g_idle_add_full(C.gint(priority), id)
 
 	return SourceHandle(h)
 }
@@ -392,13 +387,13 @@ func TimeoutSecondsAddPriority(seconds uint, priority Priority, f interface{}) S
 
 func timeoutAdd(time uint, sec bool, priority Priority, f interface{}) SourceHandle {
 	fs := closure.NewIdleFuncStack(f, 2)
-	id := C.gpointer(callback.Assign(fs))
+	id := C.guintptr(callback.Assign(fs))
 
 	var h C.guint
 	if sec {
-		h = C.g_timeout_add_seconds_full(C.gint(priority), C.guint(time), _sourceFunc, id, _removeSourceFunc)
+		h = C._g_timeout_add_seconds_full(C.gint(priority), C.guint(time), id)
 	} else {
-		h = C.g_timeout_add_full(C.gint(priority), C.guint(time), _sourceFunc, id, _removeSourceFunc)
+		h = C._g_timeout_add_full(C.gint(priority), C.guint(time), id)
 	}
 
 	return SourceHandle(h)

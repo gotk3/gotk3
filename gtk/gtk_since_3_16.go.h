@@ -37,11 +37,16 @@ static GtkStackSidebar *toGtkStackSidebar(void *p) {
 
 static GtkGLArea *toGtkGLArea(void *p) { return (GTK_GL_AREA(p)); }
 
-extern void goListBoxCreateWidgetFuncs(gpointer item, gpointer user_data);
+extern void goListBoxCreateWidgetFuncs(gpointer item, guintptr user_data);
+
+static inline GtkWidget *_gotk3_goListBoxCreateWidgetFuncs(gpointer item,
+                                                           gpointer user_data) {
+  goListBoxCreateWidgetFuncs(item, (guintptr)user_data);
+  return NULL;
+}
 
 static inline void _gtk_list_box_bind_model(GtkListBox *box, GListModel *model,
-                                            gpointer user_data) {
-  gtk_list_box_bind_model(
-      box, model, (GtkListBoxCreateWidgetFunc)(goListBoxCreateWidgetFuncs),
-      user_data, (GDestroyNotify)(gotk3_callbackDelete));
+                                            guintptr user_data) {
+  gtk_list_box_bind_model(box, model, _gotk3_goListBoxCreateWidgetFuncs,
+                          (gpointer)user_data, _gotk3_callbackDelete);
 }

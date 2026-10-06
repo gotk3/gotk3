@@ -466,7 +466,7 @@ type ListBoxFilterFunc func(row *ListBoxRow) bool
 
 // SetFilterFunc is a wrapper around gtk_list_box_set_filter_func
 func (v *ListBox) SetFilterFunc(fn ListBoxFilterFunc) {
-	C._gtk_list_box_set_filter_func(v.native(), C.gpointer(callback.Assign(fn)))
+	C._gtk_list_box_set_filter_func(v.native(), C.guintptr(callback.Assign(fn)))
 }
 
 // ListBoxHeaderFunc is a representation of GtkListBoxUpdateHeaderFunc
@@ -474,7 +474,7 @@ type ListBoxHeaderFunc func(row *ListBoxRow, before *ListBoxRow)
 
 // SetHeaderFunc is a wrapper around gtk_list_box_set_header_func
 func (v *ListBox) SetHeaderFunc(fn ListBoxHeaderFunc) {
-	C._gtk_list_box_set_header_func(v.native(), C.gpointer(callback.Assign(fn)))
+	C._gtk_list_box_set_header_func(v.native(), C.guintptr(callback.Assign(fn)))
 }
 
 // ListBoxSortFunc is a representation of GtkListBoxSortFunc
@@ -482,7 +482,7 @@ type ListBoxSortFunc func(row1 *ListBoxRow, row2 *ListBoxRow) int
 
 // SetSortFunc is a wrapper around gtk_list_box_set_sort_func
 func (v *ListBox) SetSortFunc(fn ListBoxSortFunc) {
-	C._gtk_list_box_set_sort_func(v.native(), C.gpointer(callback.Assign(fn)))
+	C._gtk_list_box_set_sort_func(v.native(), C.guintptr(callback.Assign(fn)))
 }
 
 // DragHighlightRow is a wrapper around gtk_list_box_drag_highlight_row()

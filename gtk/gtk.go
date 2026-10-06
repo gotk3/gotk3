@@ -238,7 +238,7 @@ func init() {
  */
 
 //export gotk3_callbackDelete
-func gotk3_callbackDelete(callbackID C.gpointer) {
+func gotk3_callbackDelete(callbackID C.guintptr) {
 	callback.Delete(uintptr(callbackID))
 }
 
@@ -10783,7 +10783,7 @@ func (v *TreeModel) ForEach(f TreeModelForeachFunc) {
 	id := callback.Assign(f)
 	defer callback.Delete(id)
 
-	C._gtk_tree_model_foreach(v.toTreeModel(), C.gpointer(id))
+	C._gtk_tree_model_foreach(v.toTreeModel(), C.guintptr(id))
 }
 
 /*
@@ -10882,7 +10882,7 @@ type TreeModelFilterVisibleFunc func(model *TreeModel, iter *TreeIter) bool
 
 // SetVisibleFunc is a wrapper around gtk_tree_model_filter_set_visible_func().
 func (v *TreeModelFilter) SetVisibleFunc(f TreeModelFilterVisibleFunc) {
-	C._gtk_tree_model_filter_set_visible_func(v.native(), C.gpointer(callback.Assign(f)))
+	C._gtk_tree_model_filter_set_visible_func(v.native(), C.guintptr(callback.Assign(f)))
 }
 
 // Down() is a wrapper around gtk_tree_path_down()
@@ -11177,7 +11177,7 @@ func (v *TreeSelection) SelectedForEach(f TreeSelectionForeachFunc) {
 	id := callback.Assign(f)
 	defer callback.Delete(id)
 
-	C._gtk_tree_selection_selected_foreach(v.native(), C.gpointer(id))
+	C._gtk_tree_selection_selected_foreach(v.native(), C.guintptr(id))
 }
 
 // TreeSelectionFunc defines the function prototype for the gtk_tree_selection_set_select_function
@@ -11186,7 +11186,7 @@ type TreeSelectionFunc func(selection *TreeSelection, model *TreeModel, path *Tr
 
 // SetSelectFunction() is a wrapper around gtk_tree_selection_set_select_function()
 func (v *TreeSelection) SetSelectFunction(f TreeSelectionFunc) {
-	C._gtk_tree_selection_set_select_function(v.native(), C.gpointer(callback.Assign(f)))
+	C._gtk_tree_selection_set_select_function(v.native(), C.guintptr(callback.Assign(f)))
 }
 
 /*
@@ -11312,12 +11312,12 @@ func (v *TreeSortable) SetSortColumnId(column int, order SortType) {
 
 // SetSortFunc() is a wrapper around gtk_tree_sortable_set_sort_func().
 func (v *TreeSortable) SetSortFunc(sortColumn int, f TreeIterCompareFunc) {
-	C._gtk_tree_sortable_set_sort_func(v.native(), C.gint(sortColumn), C.gpointer(callback.Assign(f)))
+	C._gtk_tree_sortable_set_sort_func(v.native(), C.gint(sortColumn), C.guintptr(callback.Assign(f)))
 }
 
 // SetDefaultSortFunc() is a wrapper around gtk_tree_sortable_set_default_sort_func().
 func (v *TreeSortable) SetDefaultSortFunc(f TreeIterCompareFunc) {
-	C._gtk_tree_sortable_set_default_sort_func(v.native(), C.gpointer(callback.Assign(f)))
+	C._gtk_tree_sortable_set_default_sort_func(v.native(), C.guintptr(callback.Assign(f)))
 }
 
 func (v *TreeSortable) HasDefaultSortFunc() bool {

@@ -14,7 +14,7 @@ import (
 )
 
 //export goTickCallbacks
-func goTickCallbacks(widget *C.GtkWidget, frameClock *C.GdkFrameClock, userData C.gpointer) C.gboolean {
+func goTickCallbacks(widget *C.GtkWidget, frameClock *C.GdkFrameClock, userData C.guintptr) C.gboolean {
 	fn := callback.Get(uintptr(userData)).(TickCallback)
 	return gbool(fn(
 		wrapWidget(glib.Take(unsafe.Pointer(widget))),

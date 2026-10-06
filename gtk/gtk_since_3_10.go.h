@@ -35,30 +35,45 @@ static GtkStackSwitcher *toGtkStackSwitcher(void *p) {
   return (GTK_STACK_SWITCHER(p));
 }
 
-extern gboolean goListBoxFilterFuncs(GtkListBoxRow *row, gpointer user_data);
+extern gboolean goListBoxFilterFuncs(GtkListBoxRow *row, guintptr user_data);
+
+static inline gboolean _gotk3_goListBoxFilterFuncs(GtkListBoxRow *row,
+                                                   gpointer user_data) {
+  return goListBoxFilterFuncs(row, (guintptr)user_data);
+}
 
 static inline void _gtk_list_box_set_filter_func(GtkListBox *box,
-                                                 gpointer user_data) {
-  gtk_list_box_set_filter_func(box,
-                               (GtkListBoxFilterFunc)(goListBoxFilterFuncs),
-                               user_data, (GDestroyNotify)(gotk3_callbackDelete));
+                                                 guintptr user_data) {
+  gtk_list_box_set_filter_func(box, _gotk3_goListBoxFilterFuncs,
+                               (gpointer)user_data, _gotk3_callbackDelete);
 }
 
 extern void goListBoxHeaderFuncs(GtkListBoxRow *row, GtkListBoxRow *before,
-                                 gpointer user_data);
+                                 guintptr user_data);
+
+static inline void _gotk3_goListBoxHeaderFuncs(GtkListBoxRow *row,
+                                               GtkListBoxRow *before,
+                                               gpointer user_data) {
+  goListBoxHeaderFuncs(row, before, (guintptr)user_data);
+}
 
 static inline void _gtk_list_box_set_header_func(GtkListBox *box,
-                                                 gpointer user_data) {
-  gtk_list_box_set_header_func(
-      box, (GtkListBoxUpdateHeaderFunc)(goListBoxHeaderFuncs), user_data,
-      (GDestroyNotify)(gotk3_callbackDelete));
+                                                 guintptr user_data) {
+  gtk_list_box_set_header_func(box, _gotk3_goListBoxHeaderFuncs,
+                               (gpointer)user_data, _gotk3_callbackDelete);
 }
 
 extern gint goListBoxSortFuncs(GtkListBoxRow *row1, GtkListBoxRow *row2,
-                               gpointer user_data);
+                               guintptr user_data);
+
+static inline gint _gotk3_goListBoxSortFuncs(GtkListBoxRow *row1,
+                                             GtkListBoxRow *row2,
+                                             gpointer user_data) {
+  return goListBoxSortFuncs(row1, row2, (guintptr)user_data);
+}
 
 static inline void _gtk_list_box_set_sort_func(GtkListBox *box,
-                                               gpointer user_data) {
-  gtk_list_box_set_sort_func(box, (GtkListBoxSortFunc)(goListBoxSortFuncs),
-                             user_data, (GDestroyNotify)(gotk3_callbackDelete));
+                                               guintptr user_data) {
+  gtk_list_box_set_sort_func(box, _gotk3_goListBoxSortFuncs,
+                             (gpointer)user_data, _gotk3_callbackDelete);
 }

@@ -420,7 +420,7 @@ type TreeViewSearchEqualFunc func(model *TreeModel, column int, key string, iter
 
 // SetSearchEqualFunc is a wrapper around gtk_tree_view_set_search_equal_func().
 func (v *TreeView) SetSearchEqualFunc(f TreeViewSearchEqualFunc) {
-	C._gtk_tree_view_set_search_equal_func(v.native(), C.gpointer(callback.Assign(f)))
+	C._gtk_tree_view_set_search_equal_func(v.native(), C.guintptr(callback.Assign(f)))
 }
 
 // SetSearchEqualSubstringMatch calls SetSearchEqualFunc with a strings.Contains

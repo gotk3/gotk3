@@ -137,8 +137,44 @@ static GObjectClass *_g_object_get_class(GObject *object) {
  * Closure support
  */
 
-extern void removeSourceFunc(gpointer data);
-extern gboolean sourceFunc(gpointer data);
+/*
+ * Callback IDs
+ *
+ * Go code passes the IDs of callbacks registered in internal/callback as
+ * guintptr, never as gpointer, and exported Go functions take them back as
+ * guintptr. The IDs are small integers, not pointers: held in a Go
+ * unsafe.Pointer they crash the runtime with "invalid pointer found on stack"
+ * when it copies a goroutine's stack. The functions below convert them to and
+ * from the gpointer user data that GLib carries.
+ */
+
+extern void removeSourceFunc(guintptr id);
+extern gboolean sourceFunc(guintptr id);
+
+static inline void _gotk3_removeSourceFunc(gpointer data) {
+  removeSourceFunc((guintptr)data);
+}
+
+static inline gboolean _gotk3_sourceFunc(gpointer data) {
+  return sourceFunc((guintptr)data);
+}
+
+static inline guint _g_idle_add_full(gint priority, guintptr id) {
+  return g_idle_add_full(priority, _gotk3_sourceFunc, (gpointer)id,
+                         _gotk3_removeSourceFunc);
+}
+
+static inline guint _g_timeout_add_full(gint priority, guint interval,
+                                        guintptr id) {
+  return g_timeout_add_full(priority, interval, _gotk3_sourceFunc,
+                            (gpointer)id, _gotk3_removeSourceFunc);
+}
+
+static inline guint _g_timeout_add_seconds_full(gint priority, guint interval,
+                                                guintptr id) {
+  return g_timeout_add_seconds_full(priority, interval, _gotk3_sourceFunc,
+                                    (gpointer)id, _gotk3_removeSourceFunc);
+}
 
 extern void goMarshal(GClosure *, GValue *, guint, GValue *, gpointer,
                       GValue *);
@@ -191,6 +227,11 @@ static inline void set_string(char **strings, int n, char *str) {
 static inline gchar **next_gcharptr(gchar **s) { return (s + 1); }
 
 extern gint goCompareDataFuncs(gconstpointer a, gconstpointer b,
-                               gpointer user_data);
+                               guintptr user_data);
+
+static inline gint _gotk3_goCompareDataFuncs(gconstpointer a, gconstpointer b,
+                                             gpointer user_data) {
+  return goCompareDataFuncs(a, b, (guintptr)user_data);
+}
 
 #endif

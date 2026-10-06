@@ -10,7 +10,7 @@ import (
 )
 
 //export goAsyncReadyCallbacks
-func goAsyncReadyCallbacks(sourceObject *C.GObject, res *C.GAsyncResult, userData C.gpointer) {
+func goAsyncReadyCallbacks(sourceObject *C.GObject, res *C.GAsyncResult, userData C.guintptr) {
 	var source *Object
 	if sourceObject != nil {
 		source = wrapObject(unsafe.Pointer(sourceObject))
@@ -21,7 +21,7 @@ func goAsyncReadyCallbacks(sourceObject *C.GObject, res *C.GAsyncResult, userDat
 }
 
 //export goCompareDataFuncs
-func goCompareDataFuncs(a, b C.gconstpointer, userData C.gpointer) C.gint {
+func goCompareDataFuncs(a, b C.gconstpointer, userData C.guintptr) C.gint {
 	fn := callback.Get(uintptr(userData)).(CompareDataFunc)
 	return C.gint(fn(uintptr(a), uintptr(b)))
 }

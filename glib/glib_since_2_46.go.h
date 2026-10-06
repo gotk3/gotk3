@@ -5,6 +5,6 @@
 #include <glib-object.h>
 #include <glib.h>
 
-static inline void _g_list_store_sort(GListStore *model, gpointer user_data) {
-  g_list_store_sort(model, (GCompareDataFunc)(goCompareDataFuncs), user_data);
+static inline void _g_list_store_sort(GListStore *model, guintptr user_data) {
+  g_list_store_sort(model, _gotk3_goCompareDataFuncs, (gpointer)user_data);
 }

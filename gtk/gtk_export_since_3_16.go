@@ -8,7 +8,7 @@ import "C"
 import "github.com/gotk3/gotk3/internal/callback"
 
 //export goListBoxCreateWidgetFuncs
-func goListBoxCreateWidgetFuncs(item, userData C.gpointer) {
+func goListBoxCreateWidgetFuncs(item C.gpointer, userData C.guintptr) {
 	fn := callback.Get(uintptr(userData)).(ListBoxCreateWidgetFunc)
 	fn(uintptr(item))
 }

@@ -993,7 +993,7 @@ func PrintRunPageSetupDialogAsync(parent IWindow, setup *PageSetup,
 	}
 
 	C._gtk_print_run_page_setup_dialog_async(w, setup.native(),
-		settings.native(), C.gpointer(callback.Assign(cb)))
+		settings.native(), C.guintptr(callback.Assign(cb)))
 }
 
 /*
@@ -1185,7 +1185,7 @@ func (ps *PrintSettings) ForEach(cb PrintSettingsCallback) {
 	id := callback.Assign(cb)
 	defer callback.Delete(id)
 
-	C._gtk_print_settings_foreach(ps.native(), C.gpointer(id))
+	C._gtk_print_settings_foreach(ps.native(), C.guintptr(id))
 }
 
 // GetBool() is a wrapper around gtk_print_settings_get_bool().

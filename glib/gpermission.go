@@ -76,7 +76,7 @@ func (v *Permission) Acquire(cancellable *Cancellable) error {
 
 // AcquireAsync is a wrapper around g_permission_acquire_async().
 func (v *Permission) AcquireAsync(cancellable *Cancellable, fn AsyncReadyCallback) {
-	C._g_permission_acquire_async(v.native(), cancellable.native(), C.gpointer(callback.Assign(fn)))
+	C._g_permission_acquire_async(v.native(), cancellable.native(), C.guintptr(callback.Assign(fn)))
 }
 
 // AcquireFinish is a wrapper around g_permission_acquire_finish().
@@ -105,7 +105,7 @@ func (v *Permission) Release(cancellable *Cancellable) error {
 
 // ReleaseAsync is a wrapper around g_permission_release_async().
 func (v *Permission) ReleaseAsync(cancellable *Cancellable, fn AsyncReadyCallback) {
-	C._g_permission_release_async(v.native(), cancellable.native(), C.gpointer(callback.Assign(fn)))
+	C._g_permission_release_async(v.native(), cancellable.native(), C.guintptr(callback.Assign(fn)))
 }
 
 // ReleaseFinish is a wrapper around g_permission_release_finish().

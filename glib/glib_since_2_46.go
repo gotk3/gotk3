@@ -19,5 +19,5 @@ import "github.com/gotk3/gotk3/internal/callback"
 
 // Sort is a wrapper around g_list_store_sort().
 func (v *ListStore) Sort(compareFunc CompareDataFunc) {
-	C._g_list_store_sort(v.native(), C.gpointer(callback.Assign(compareFunc)))
+	C._g_list_store_sort(v.native(), C.guintptr(callback.Assign(compareFunc)))
 }

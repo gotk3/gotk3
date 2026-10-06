@@ -47,7 +47,7 @@ func goBuilderConnect(
 }
 
 //export goTreeViewSearchEqualFunc
-func goTreeViewSearchEqualFunc(model *C.GtkTreeModel, column C.gint, key *C.gchar, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
+func goTreeViewSearchEqualFunc(model *C.GtkTreeModel, column C.gint, key *C.gchar, iter *C.GtkTreeIter, data C.guintptr) C.gboolean {
 	fn := callback.Get(uintptr(data)).(TreeViewSearchEqualFunc)
 	return gbool(fn(
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
@@ -58,7 +58,7 @@ func goTreeViewSearchEqualFunc(model *C.GtkTreeModel, column C.gint, key *C.gcha
 }
 
 //export goTreeModelFilterVisibleFunc
-func goTreeModelFilterVisibleFunc(model *C.GtkTreeModel, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
+func goTreeModelFilterVisibleFunc(model *C.GtkTreeModel, iter *C.GtkTreeIter, data C.guintptr) C.gboolean {
 	goIter := &TreeIter{(C.GtkTreeIter)(*iter)}
 	fn := callback.Get(uintptr(data)).(TreeModelFilterVisibleFunc)
 	return gbool(fn(
@@ -68,7 +68,7 @@ func goTreeModelFilterVisibleFunc(model *C.GtkTreeModel, iter *C.GtkTreeIter, da
 }
 
 //export goTreeSortableSortFunc
-func goTreeSortableSortFunc(model *C.GtkTreeModel, a, b *C.GtkTreeIter, data C.gpointer) C.gint {
+func goTreeSortableSortFunc(model *C.GtkTreeModel, a, b *C.GtkTreeIter, data C.guintptr) C.gint {
 	fn := callback.Get(uintptr(data)).(TreeIterCompareFunc)
 	return C.gint(fn(
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
@@ -78,7 +78,7 @@ func goTreeSortableSortFunc(model *C.GtkTreeModel, a, b *C.GtkTreeIter, data C.g
 }
 
 //export goTreeModelForeachFunc
-func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.gpointer) C.gboolean {
+func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.guintptr) C.gboolean {
 	fn := callback.Get(uintptr(data)).(TreeModelForeachFunc)
 	return gbool(fn(
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
@@ -88,7 +88,7 @@ func goTreeModelForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.
 }
 
 //export goTreeSelectionForeachFunc
-func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.gpointer) {
+func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter *C.GtkTreeIter, data C.guintptr) {
 	fn := callback.Get(uintptr(data)).(TreeSelectionForeachFunc)
 	fn(
 		wrapTreeModel(glib.Take(unsafe.Pointer(model))),
@@ -98,7 +98,7 @@ func goTreeSelectionForeachFunc(model *C.GtkTreeModel, path *C.GtkTreePath, iter
 }
 
 //export goTreeSelectionFunc
-func goTreeSelectionFunc(selection *C.GtkTreeSelection, model *C.GtkTreeModel, path *C.GtkTreePath, selected C.gboolean, data C.gpointer) C.gboolean {
+func goTreeSelectionFunc(selection *C.GtkTreeSelection, model *C.GtkTreeModel, path *C.GtkTreePath, selected C.gboolean, data C.guintptr) C.gboolean {
 	fn := callback.Get(uintptr(data)).(TreeSelectionFunc)
 	return gbool(fn(
 		wrapTreeSelection(glib.Take(unsafe.Pointer(selection))),

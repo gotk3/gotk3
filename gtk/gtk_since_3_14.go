@@ -67,7 +67,7 @@ func (v *ListBox) SelectedForeach(fn ListBoxForeachFunc) {
 	id := callback.Assign(fn)
 	defer callback.Delete(id)
 
-	C._gtk_list_box_selected_foreach(v.native(), C.gpointer(id))
+	C._gtk_list_box_selected_foreach(v.native(), C.guintptr(id))
 }
 
 // GetSelectedRows is a wrapper around gtk_list_box_get_selected_rows().

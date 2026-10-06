@@ -70,7 +70,7 @@ func (v *Widget) GetFrameClock() *gdk.FrameClock {
 
 // AddTickCallback is a wrapper around gtk_widget_add_tick_callback().
 func (v *Widget) AddTickCallback(fn TickCallback) int {
-	return int(C._gtk_widget_add_tick_callback(v.native(), C.gpointer(callback.Assign(fn))))
+	return int(C._gtk_widget_add_tick_callback(v.native(), C.guintptr(callback.Assign(fn))))
 }
 
 // RemoveTickCallback is a wrapper around gtk_widget_remove_tick_callback().

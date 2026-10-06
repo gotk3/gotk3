@@ -20,11 +20,17 @@
 #include <stdlib.h>
 
 extern gboolean goTickCallbacks(GtkWidget *widget, GdkFrameClock *frame_clock,
-                                gpointer user_data);
+                                guintptr user_data);
+
+static inline gboolean _gotk3_goTickCallbacks(GtkWidget *widget,
+                                              GdkFrameClock *frame_clock,
+                                              gpointer user_data) {
+  return goTickCallbacks(widget, frame_clock, (guintptr)user_data);
+}
 
 static inline guint _gtk_widget_add_tick_callback(GtkWidget *widget,
-                                                  gpointer user_data) {
-  return gtk_widget_add_tick_callback(
-      widget, (GtkTickCallback)(goTickCallbacks), user_data,
-      (GDestroyNotify)(gotk3_callbackDelete));
+                                                  guintptr user_data) {
+  return gtk_widget_add_tick_callback(widget, _gotk3_goTickCallbacks,
+                                      (gpointer)user_data,
+                                      _gotk3_callbackDelete);
 }

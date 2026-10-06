@@ -12,13 +12,13 @@ import (
 )
 
 //export goListBoxFilterFuncs
-func goListBoxFilterFuncs(row *C.GtkListBoxRow, userData C.gpointer) C.gboolean {
+func goListBoxFilterFuncs(row *C.GtkListBoxRow, userData C.guintptr) C.gboolean {
 	fn := callback.Get(uintptr(userData)).(ListBoxFilterFunc)
 	return gbool(fn(wrapListBoxRow(glib.Take(unsafe.Pointer(row)))))
 }
 
 //export goListBoxHeaderFuncs
-func goListBoxHeaderFuncs(row *C.GtkListBoxRow, before *C.GtkListBoxRow, userData C.gpointer) {
+func goListBoxHeaderFuncs(row *C.GtkListBoxRow, before *C.GtkListBoxRow, userData C.guintptr) {
 	fn := callback.Get(uintptr(userData)).(ListBoxHeaderFunc)
 	fn(
 		wrapListBoxRow(glib.Take(unsafe.Pointer(row))),
@@ -27,7 +27,7 @@ func goListBoxHeaderFuncs(row *C.GtkListBoxRow, before *C.GtkListBoxRow, userDat
 }
 
 //export goListBoxSortFuncs
-func goListBoxSortFuncs(row1 *C.GtkListBoxRow, row2 *C.GtkListBoxRow, userData C.gpointer) C.gint {
+func goListBoxSortFuncs(row1 *C.GtkListBoxRow, row2 *C.GtkListBoxRow, userData C.guintptr) C.gint {
 	fn := callback.Get(uintptr(userData)).(ListBoxSortFunc)
 	return C.gint(fn(
 		wrapListBoxRow(glib.Take(unsafe.Pointer(row1))),

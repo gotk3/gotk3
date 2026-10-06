@@ -27,7 +27,7 @@ import (
 // File saving
 
 //export goPixbufSaveCallback
-func goPixbufSaveCallback(buf *C.gchar, count C.gsize, gerr **C.GError, id C.gpointer) C.gboolean {
+func goPixbufSaveCallback(buf *C.gchar, count C.gsize, gerr **C.GError, id C.guintptr) C.gboolean {
 	v := callback.Get(uintptr(id))
 
 	if v == nil {
@@ -63,7 +63,7 @@ func (v *Pixbuf) WritePNG(w io.Writer, compression int) error {
 	id := callback.Assign(w)
 
 	var err *C.GError
-	c := C._gdk_pixbuf_save_png_writer(v.native(), C.gpointer(id), &err, ccompression)
+	c := C._gdk_pixbuf_save_png_writer(v.native(), C.guintptr(id), &err, ccompression)
 
 	callback.Delete(id)
 
@@ -85,7 +85,7 @@ func (v *Pixbuf) WriteJPEG(w io.Writer, quality int) error {
 	id := callback.Assign(w)
 
 	var err *C.GError
-	c := C._gdk_pixbuf_save_jpeg_writer(v.native(), C.gpointer(id), &err, cquality)
+	c := C._gdk_pixbuf_save_jpeg_writer(v.native(), C.guintptr(id), &err, cquality)
 
 	callback.Delete(id)
 
