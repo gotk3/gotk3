@@ -200,6 +200,13 @@ func FileChooserNativeDialogNew(title string, parent IWindow, action FileChooser
  */
 func OpenFileChooserNative(title string, parent IWindow) *string {
 	c_title := C.CString(title)
+	defer C.free(unsafe.Pointer(c_title))
+
+	c_accept_label := C.CString("_Open")
+	defer C.free(unsafe.Pointer(c_accept_label))
+
+	c_cancel_label := C.CString("_Cancel")
+	defer C.free(unsafe.Pointer(c_cancel_label))
 
 	var native *C.GtkFileChooserNative
 
@@ -211,10 +218,11 @@ func OpenFileChooserNative(title string, parent IWindow) *string {
 	native = C.gtk_file_chooser_native_new((*C.gchar)(c_title),
 		w,
 		C.GtkFileChooserAction(FILE_CHOOSER_ACTION_OPEN),
-		(*C.gchar)(C.CString("_Open")),
-		(*C.gchar)(C.CString("_Cancel")))
+		(*C.gchar)(c_accept_label),
+		(*C.gchar)(c_cancel_label))
 
 	p := unsafe.Pointer(unsafe.Pointer(native))
+	defer C.g_object_unref(C.gpointer(p))
 	dlg := C.toGtkNativeDialog(p)
 	res := C.gtk_native_dialog_run(dlg)
 
