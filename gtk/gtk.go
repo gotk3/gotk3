@@ -6022,6 +6022,7 @@ func (v *LinkButton) GetUri() string {
 // SetUri is a wrapper around gtk_link_button_set_uri().
 func (v *LinkButton) SetUri(uri string) {
 	cstr := C.CString(uri)
+	defer C.free(unsafe.Pointer(cstr))
 	C.gtk_link_button_set_uri(v.native(), (*C.gchar)(cstr))
 }
 
